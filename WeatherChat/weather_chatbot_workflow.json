@@ -150,7 +150,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\n  \"status\": \"success\",\n  \"reply\": \"{{ $json.candidates[0].content.parts[0].text.replace(/\\\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\",\n  \"city\": \"{{ $('Set Variables').item.json.city }}\"\n}",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"reply\": \"{{ $json.candidates[0].content.parts[0].text.replace(/\\\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\",\n  \"city\": \"{{ $('Set Variables').item.json.city }}\",\n  \"condition\": \"{{ $('Get Weather').item.json.weather[0].main }}\",\n  \"icon\": \"{{ $('Get Weather').item.json.weather[0].icon }}\",\n  \"temp\": {{ $('Get Weather').item.json.main.temp }},\n  \"country\": \"{{ $('Get Weather').item.json.sys.country }}\"\n}",
         "options": {
           "responseHeaders": {
             "entries": [
