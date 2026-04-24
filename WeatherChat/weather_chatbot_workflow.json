@@ -125,6 +125,27 @@
     },
     {
       "parameters": {
+        "method": "GET",
+        "url": "https://api.openweathermap.org/geo/1.0/reverse",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "lat",   "value": "={{ $('Get Weather').item.json.coord.lat }}" },
+            { "name": "lon",   "value": "={{ $('Get Weather').item.json.coord.lon }}" },
+            { "name": "limit", "value": "1" },
+            { "name": "appid", "value": "={{ $env.OPENWEATHER_API_KEY }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1a2b3c4d-0009-0009-0009-000000000009",
+      "name": "Get State",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
         "sendQuery": true,
@@ -138,7 +159,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"You are a friendly weather assistant. Answer the user's question in 2-3 conversational sentences. Be helpful and include relevant details.\\n\\nUser question: {{ $('Set Variables').item.json.userMessage }}\\n\\nCurrent weather in {{ $json.name }}, {{ $json.sys.country }}:\\n- Temperature: {{ $json.main.temp }}°C (feels like {{ $json.main.feels_like }}°C)\\n- Condition: {{ $json.weather[0].description }}\\n- Humidity: {{ $json.main.humidity }}%\\n- Wind speed: {{ $json.wind.speed }} m/s\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"You are a friendly weather assistant. Answer the user's question in 2-3 conversational sentences. Be helpful and include relevant details.\\n\\nUser question: {{ $('Set Variables').item.json.userMessage }}\\n\\nCurrent weather in {{ $('Get Weather').item.json.name }}, {{ $('Get Weather').item.json.sys.country }}:\\n- Temperature: {{ $('Get Weather').item.json.main.temp }}°C (feels like {{ $('Get Weather').item.json.main.feels_like }}°C)\\n- Condition: {{ $('Get Weather').item.json.weather[0].description }}\\n- Humidity: {{ $('Get Weather').item.json.main.humidity }}%\\n- Wind speed: {{ $('Get Weather').item.json.wind.speed }} m/s\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "id": "1a2b3c4d-0006-0006-0006-000000000006",
@@ -150,7 +171,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\n  \"status\": \"success\",\n  \"reply\": \"{{ $json.candidates[0].content.parts[0].text.replace(/\\\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\",\n  \"city\": \"{{ $('Set Variables').item.json.city }}\",\n  \"condition\": \"{{ $('Get Weather').item.json.weather[0].main }}\",\n  \"icon\": \"{{ $('Get Weather').item.json.weather[0].icon }}\",\n  \"temp\": {{ $('Get Weather').item.json.main.temp }},\n  \"country\": \"{{ $('Get Weather').item.json.sys.country }}\"\n}",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"reply\": \"{{ $json.candidates[0].content.parts[0].text.replace(/\\\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\",\n  \"city\": \"{{ $('Set Variables').item.json.city }}\",\n  \"state\": \"{{ $('Get State').item.json[0].state || '' }}\",\n  \"country\": \"{{ $('Get Weather').item.json.sys.country }}\",\n  \"condition\": \"{{ $('Get Weather').item.json.weather[0].main }}\",\n  \"icon\": \"{{ $('Get Weather').item.json.weather[0].icon }}\",\n  \"temp\": {{ $('Get Weather').item.json.main.temp }}\n}",
         "options": {
           "responseHeaders": {
             "entries": [
@@ -221,6 +242,11 @@
       ]
     },
     "Get Weather": {
+      "main": [
+        [{ "node": "Get State", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get State": {
       "main": [
         [{ "node": "Format Response", "type": "main", "index": 0 }]
       ]
