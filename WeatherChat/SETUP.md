@@ -7,7 +7,7 @@
 | **Server hostname** | `srv1601018.hstgr.cloud` |
 | **Domain name** | `framegenai.cloud` |
 | **Webhook URL** | `https://srv1601018.hstgr.cloud/webhook/weather-chat` |
-| **UI URL** | `https://framegenai.cloud/index.html` |
+| **Chat UI URL** | `https://framegenai.cloud/chat_interface.html` |
 
 ---
 
