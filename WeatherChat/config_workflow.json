@@ -1,0 +1,63 @@
+{
+  "name": "Config Provider for Weather UI",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "get-weather-config",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "e6a3e8b8-1b4f-4a9f-a2b1-1d4a8e2c3d4f",
+      "name": "Config Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "c2a7f3b1-8e9f-4b1d-9c3a-2e1d8f7c6b5a"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"apiKey\": \"{{ $env.OPENWEATHER_API_KEY }}\" }",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a9b4c5d6-2e3f-4a1b-8c9d-0e1f2a3b4c5d",
+      "name": "Respond with Key",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Config Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond with Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
