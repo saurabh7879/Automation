@@ -63,12 +63,12 @@
     },
     {
       "parameters": {
-        "functionCode": "const topic = $input.first().json.Topic || '';\nconst tone = $input.first().json.Tone || 'professional';\n\nconst prompt = `You are a LinkedIn content expert. Write a LinkedIn post strictly following this format:\n\nTopic: ${topic}\nTone: ${tone}\n\n---FORMAT TO FOLLOW EXACTLY---\n\nLine 1: [relevant emoji] [Topic Title]: [Catchy subtitle]\n\n[blank line]\n\nOne sentence explanation of what the topic is.\n\n[blank line]\n\n👉 Real-time Example: [Relatable real-world scenario]\n[emoji] [sub-point 1]\n[emoji] [sub-point 2]\n[emoji] [sub-point 3]\n[emoji] [sub-point 4]\nAll are part of one closing sentence.\n\n[blank line]\n\n⚡ Pros:\n[positive point] [emoji]\n[positive point] [emoji]\n\n[blank line]\n\n⚠️ Cons:\n[negative point]\n[negative point] [emoji]\n\n[blank line]\n\n💡 In short: [One sentence summary with core tradeoff]\n\n[blank line]\n\n💬 Question for you: [Engaging question to spark comments]\n\n👇 Share your thoughts!\n\n#Hashtag1 #Hashtag2 #Hashtag3 #Hashtag4 #Hashtag5\n---END FORMAT---\n\nReturn ONLY the post text.`;\n\nreturn [{ json: { prompt } }];"
+        "functionCode": "const topic = $input.first().json.Topic || '';\nconst tone = $input.first().json.Tone || 'professional';\n\nconst prompt = `You are a LinkedIn content expert. Write a LinkedIn post strictly following this format.\\n\\nTopic: ${topic}\\nTone: ${tone}\\n\\n---FORMAT TO FOLLOW EXACTLY---\\n\\nLine 1: [relevant emoji] [Topic Title]: [Catchy subtitle]\\n\\n[blank line]\\n\\nOne sentence explanation of what the topic is.\\n\\n[blank line]\\n\\n\\uD83D\\uDC49 Real-time Example: [Relatable real-world scenario]\\n[emoji] [sub-point 1]\\n[emoji] [sub-point 2]\\n[emoji] [sub-point 3]\\n[emoji] [sub-point 4]\\nAll are part of one closing sentence.\\n\\n[blank line]\\n\\n\\u26A1 Pros:\\n[positive point] [emoji]\\n[positive point] [emoji]\\n\\n[blank line]\\n\\n\\u26A0\\uFE0F Cons:\\n[negative point]\\n[negative point] [emoji]\\n\\n[blank line]\\n\\n\\uD83D\\uDCA1 In short: [One sentence summary with core tradeoff]\\n\\n[blank line]\\n\\n\\uD83D\\uDCAC Question for you: [Engaging question to spark comments]\\n\\n\\uD83D\\uDC47 Share your thoughts!\\n\\n#Hashtag1 #Hashtag2 #Hashtag3 #Hashtag4 #Hashtag5\\n---END FORMAT---\\n\\nReturn ONLY the post text.`;\n\nreturn [{ json: { prompt: prompt } }];"
       },
       "id": "lip-0004b-0004b-0004b-0004b-000000000004b",
       "name": "Build Prompt",
       "type": "n8n-nodes-base.function",
-      "typeVersion": 2,
+      "typeVersion": 1,
       "position": [1020, 200]
     },
     {
@@ -89,7 +89,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": {{ $json.prompt }}\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "{\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": {{ JSON.stringify($json.prompt) }}\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "id": "lip-0005-0005-0005-0005-000000000005",
@@ -105,26 +105,26 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization",              "value": "=Bearer {{ $env.LINKEDIN_ACCESS_TOKEN }}" },
-            { "name": "Content-Type",               "value": "application/json" },
+            { "name": "Authorization",             "value": "=Bearer {{ $env.LINKEDIN_ACCESS_TOKEN }}" },
+            { "name": "Content-Type",              "value": "application/json" },
             { "name": "X-Restli-Protocol-Version", "value": "2.0.0" }
           ]
         },
         "sendBody": true,
-        "specifyBody": "string",
-        "body": "{\"author\":\"{{ $env.LINKEDIN_PERSON_URN }}\",\"lifecycleState\":\"PUBLISHED\",\"specificContent\":{\"com.linkedin.ugc.ShareContent\":{\"shareCommentary\":{\"text\":\"{{ $json.candidates[0].content.parts[0].text.trim().replace(/\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\"},\"shareMediaCategory\":\"NONE\"}},\"visibility\":{\"com.linkedin.ugc.MemberNetworkVisibility\":\"PUBLIC\"}}",
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"author\": {{ JSON.stringify($env.LINKEDIN_PERSON_URN) }},\n  \"lifecycleState\": \"PUBLISHED\",\n  \"specificContent\": {\n    \"com.linkedin.ugc.ShareContent\": {\n      \"shareCommentary\": {\n        \"text\": {{ JSON.stringify($json.candidates[0].content.parts[0].text.trim()) }}\n      },\n      \"shareMediaCategory\": \"NONE\"\n    }\n  },\n  \"visibility\": {\n    \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"\n  }\n}",
         "options": {}
       },
       "id": "lip-0006-0006-0006-0006-000000000006",
       "name": "Publish to LinkedIn",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1340, 200]
+      "position": [1400, 200]
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\n  \"status\": \"success\",\n  \"topic\": \"{{ $('Parse CSV').item.json.Topic }}\",\n  \"linkedInPostId\": \"{{ $json.id }}\",\n  \"postContent\": \"{{ $('Generate Post').item.json.candidates[0].content.parts[0].text.trim().replace(/\\\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\"\n}",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"topic\": \"{{ $('Parse CSV').item.json.Topic }}\",\n  \"linkedInPostId\": \"{{ $json.id }}\",\n  \"postContent\": {{ JSON.stringify($('Generate Post').item.json.candidates[0].content.parts[0].text.trim()) }}\n}",
         "options": {
           "responseHeaders": {
             "entries": [
@@ -138,7 +138,7 @@
       "name": "Success Response",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1560, 200]
+      "position": [1600, 200]
     },
     {
       "parameters": {
@@ -173,7 +173,7 @@
     "Topic Exists?": {
       "main": [
         [{ "node": "Build Prompt",       "type": "main", "index": 0 }],
-        [{ "node": "No Topics Response","type": "main", "index": 0 }]
+        [{ "node": "No Topics Response", "type": "main", "index": 0 }]
       ]
     },
     "Build Prompt": {
