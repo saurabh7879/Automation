@@ -1,5 +1,11 @@
 {
+  "redirects": [
+    { "source": "/", "destination": "/WeatherChat/", "permanent": false }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/WeatherChat/(.*)", "destination": "/WeatherChat/index.html" }
+  ],
+  "routes": [
+    { "src": "/(?!WeatherChat).*", "dest": "/WeatherChat/", "status": 404 }
   ]
 }
