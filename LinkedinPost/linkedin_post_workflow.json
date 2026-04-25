@@ -63,6 +63,16 @@
     },
     {
       "parameters": {
+        "functionCode": "const topic = $input.first().json.Topic || '';\nconst tone = $input.first().json.Tone || 'professional';\n\nconst prompt = `You are a LinkedIn content expert. Write a LinkedIn post strictly following this format:\n\nTopic: ${topic}\nTone: ${tone}\n\n---FORMAT TO FOLLOW EXACTLY---\n\nLine 1: [relevant emoji] [Topic Title]: [Catchy subtitle]\n\n[blank line]\n\nOne sentence explanation of what the topic is.\n\n[blank line]\n\n👉 Real-time Example: [Relatable real-world scenario]\n[emoji] [sub-point 1]\n[emoji] [sub-point 2]\n[emoji] [sub-point 3]\n[emoji] [sub-point 4]\nAll are part of one closing sentence.\n\n[blank line]\n\n⚡ Pros:\n[positive point] [emoji]\n[positive point] [emoji]\n\n[blank line]\n\n⚠️ Cons:\n[negative point]\n[negative point] [emoji]\n\n[blank line]\n\n💡 In short: [One sentence summary with core tradeoff]\n\n[blank line]\n\n💬 Question for you: [Engaging question to spark comments]\n\n👇 Share your thoughts!\n\n#Hashtag1 #Hashtag2 #Hashtag3 #Hashtag4 #Hashtag5\n---END FORMAT---\n\nReturn ONLY the post text.`;\n\nreturn [{ json: { prompt } }];"
+      },
+      "id": "lip-0004b-0004b-0004b-0004b-000000000004b",
+      "name": "Build Prompt",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [1020, 200]
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
         "sendQuery": true,
@@ -78,15 +88,15 @@
           ]
         },
         "sendBody": true,
-        "specifyBody": "string",
-        "body": "{\"contents\":[{\"parts\":[{\"text\":\"You are a LinkedIn content expert. Write a LinkedIn post for the topic below. Follow the format exactly. Topic: {{ $('Parse CSV').item.json.Topic }} Tone: {{ $('Parse CSV').item.json.Tone || 'professional' }} FORMAT: Line 1 - relevant emoji + Topic title + colon + catchy subtitle. Blank line. One sentence explaining the topic. Blank line. Pointing hand emoji + Real-time Example with a relatable scenario. Four sub-points each starting with a relevant emoji. One closing sentence. Blank line. Lightning emoji + Pros with two points each ending with an emoji. Blank line. Warning emoji + Cons with two points. Blank line. Bulb emoji + In short: one sentence core tradeoff. Blank line. Thought bubble emoji + Question for you: an engaging question. Blank line. Down arrow emoji + Share your thoughts! Blank line. Five relevant hashtags. Return ONLY the post text with no extra commentary.\"}]}]}",
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": {{ $json.prompt }}\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "id": "lip-0005-0005-0005-0005-000000000005",
       "name": "Generate Post",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1120, 200]
+      "position": [1200, 200]
     },
     {
       "parameters": {
@@ -162,9 +172,12 @@
     },
     "Topic Exists?": {
       "main": [
-        [{ "node": "Generate Post",     "type": "main", "index": 0 }],
+        [{ "node": "Build Prompt",       "type": "main", "index": 0 }],
         [{ "node": "No Topics Response","type": "main", "index": 0 }]
       ]
+    },
+    "Build Prompt": {
+      "main": [[{ "node": "Generate Post", "type": "main", "index": 0 }]]
     },
     "Generate Post": {
       "main": [[{ "node": "Publish to LinkedIn", "type": "main", "index": 0 }]]
