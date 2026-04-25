@@ -19,18 +19,19 @@
       "parameters": {
         "method": "GET",
         "url": "https://raw.githubusercontent.com/saurabh7879/Automation/n8n/LinkedinPost/topics.csv",
-        "options": {
-          "response": {
-            "response": {
-              "responseFormat": "text"
-            }
-          }
-        }
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "User-Agent", "value": "n8n-workflow" },
+            { "name": "Accept", "value": "text/plain, */*" }
+          ]
+        },
+        "options": {}
       },
       "id": "lip-0002-0002-0002-0002-000000000002",
       "name": "Fetch CSV",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "typeVersion": 3,
       "position": [460, 300]
     },
     {
@@ -84,7 +85,7 @@
       "id": "lip-0005-0005-0005-0005-000000000005",
       "name": "Generate Post",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "typeVersion": 3,
       "position": [1120, 200]
     },
     {
@@ -107,7 +108,7 @@
       "id": "lip-0006-0006-0006-0006-000000000006",
       "name": "Publish to LinkedIn",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "typeVersion": 3,
       "position": [1340, 200]
     },
     {
