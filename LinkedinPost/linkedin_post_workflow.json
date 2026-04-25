@@ -18,7 +18,7 @@
     {
       "parameters": {
         "method": "GET",
-        "url": "https://raw.githubusercontent.com/saurabh7879/Automation/main/LinkedInPost/topics.csv",
+        "url": "https://raw.githubusercontent.com/saurabh7879/Automation/n8n/LinkedinPost/topics.csv",
         "options": {
           "response": {
             "response": {
