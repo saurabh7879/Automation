@@ -101,18 +101,19 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.linkedin.com/rest/posts",
+        "url": "https://api.linkedin.com/v2/ugcPosts",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization",             "value": "=Bearer {{ $env.LINKEDIN_ACCESS_TOKEN }}" },
+            { "name": "Authorization",             "value": "=Bearer AQV1cJUY3s12lg0SAMFt3J9kkVEM20VLYPg4KQ-tE3BLTo4OpjsrbTgPh79rxkkC9l5NasPmH_J2_u2zNEBOQfByrPiEjW8bEYFnmSKiRLmuAeP3SGEQ-gIyuGFXmQZ0ONnNTZAFf9v4GWJWVMhavsBuYOGQab0QZARP1U6VpEoSEGjGzGcrV8xnHK35WU6sRBXxFI9gzn5gZNe92o5HYM9iesSeK3D2uu9jQvC1ZgqaZsWnXLAlSt1Gbn7HTPg7-UkH42urztFS4Nl7qonwKG__sFo3Huva3m_GZg_2-lICmHBce_hO1r3B0UVw2kpDplwn2uMlliwuoMzBX_J7iw_w0uwnbw" },
             { "name": "Content-Type",              "value": "application/json" },
-            { "name": "X-Restli-Protocol-Version", "value": "2.0.0" }
+            { "name": "X-Restli-Protocol-Version", "value": "2.0.0" },
+            { "name": "LinkedIn-Version",          "value": "202402" }
           ]
         },
         "sendBody": true,
-        "specifyBody": "expression",
-        "jsonBody": "={{ ({  \"author\": $env.LINKEDIN_PERSON_URN,  \"lifecycleState\": \"PUBLISHED\",  \"specificContent\": {    \"com.linkedin.ugc.ShareContent\": {      \"shareCommentary\": {        \"text\": $json.candidates[0].content.parts[0].text.trim()      },      \"shareMediaCategory\": \"NONE\"    }  },  \"visibility\": {    \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"  }}) }}",
+        "specifyBody": "json",
+        "jsonBody": "={{ { author: \"urn:li:person:1H9p-wtG1P\", lifecycleState: \"PUBLISHED\", specificContent: { \"com.linkedin.ugc.ShareContent\": { shareCommentary: { text: $json.candidates[0].content.parts[0].text.trim() }, shareMediaCategory: \"NONE\" } }, visibility: { \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\" } } }}",
         "options": {}
       },
       "id": "lip-0006-0006-0006-0006-000000000006",
