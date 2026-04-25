@@ -101,7 +101,7 @@
         },
         "sendBody": true,
         "specifyBody": "string",
-        "body": "={\"author\":\"{{ $env.LINKEDIN_PERSON_URN }}\",\"lifecycleState\":\"PUBLISHED\",\"specificContent\":{\"com.linkedin.ugc.ShareContent\":{\"shareCommentary\":{\"text\":\"{{ $json.candidates[0].content.parts[0].text.trim().replace(/\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\"},\"shareMediaCategory\":\"NONE\"}},\"visibility\":{\"com.linkedin.ugc.MemberNetworkVisibility\":\"PUBLIC\"}}",
+        "body": "{\"author\":\"{{ $env.LINKEDIN_PERSON_URN }}\",\"lifecycleState\":\"PUBLISHED\",\"specificContent\":{\"com.linkedin.ugc.ShareContent\":{\"shareCommentary\":{\"text\":\"{{ $json.candidates[0].content.parts[0].text.trim().replace(/\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\"},\"shareMediaCategory\":\"NONE\"}},\"visibility\":{\"com.linkedin.ugc.MemberNetworkVisibility\":\"PUBLIC\"}}",
         "options": {}
       },
       "id": "lip-0006-0006-0006-0006-000000000006",
