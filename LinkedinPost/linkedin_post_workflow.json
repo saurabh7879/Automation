@@ -1,0 +1,173 @@
+{
+  "name": "LinkedIn Post Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "linkedin-post",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "lip-0001-0001-0001-0001-000000000001",
+      "name": "Post Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "linkedin-post-hook"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://raw.githubusercontent.com/saurabh7879/Automation/main/LinkedInPost/topics.csv",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "lip-0002-0002-0002-0002-000000000002",
+      "name": "Fetch CSV",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "var raw = items[0].json.data || items[0].json.body || '';\nvar lines = raw.split(/\\r?\\n/).filter(function(l) { return l.trim(); });\n\nif (lines.length < 1) {\n  return [{ json: { Topic: '' } }];\n}\n\nfunction parseCSVLine(line) {\n  var result = [];\n  var current = '';\n  var inQuotes = false;\n  for (var i = 0; i < line.length; i++) {\n    var ch = line[i];\n    if (ch === '\"') { inQuotes = !inQuotes; }\n    else if (ch === ',' && !inQuotes) { result.push(current.trim()); current = ''; }\n    else { current += ch; }\n  }\n  result.push(current.trim());\n  return result;\n}\n\nvar first = null;\nfor (var i = 0; i < lines.length; i++) {\n  var vals = parseCSVLine(lines[i]);\n  if (vals[0] && vals[0].trim()) {\n    first = { Topic: vals[0] || '', Tone: vals[1] || 'professional', Audience: vals[2] || 'professionals' };\n    break;\n  }\n}\n\nreturn first ? [{ json: first }] : [{ json: { Topic: '' } }];"
+      },
+      "id": "lip-0003-0003-0003-0003-000000000003",
+      "name": "Parse CSV",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.Topic }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "lip-0004-0004-0004-0004-000000000004",
+      "name": "Topic Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "key", "value": "={{ $env.GEMINI_API_KEY }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"You are a LinkedIn content expert. Write a LinkedIn post strictly following this format:\\n\\nTopic: {{ $('Parse CSV').item.json.Topic }}\\nTone: {{ $('Parse CSV').item.json.Tone || 'professional' }}\\n\\n---FORMAT TO FOLLOW EXACTLY---\\n\\nLine 1: [relevant emoji] [Topic Title]: [Catchy subtitle]\\n\\n[blank line]\\n\\nOne sentence explanation of what the topic is.\\n\\n[blank line]\\n\\n\\ud83d\\udc49 Real-time Example: [Relatable real-world scenario]\\n[emoji] [sub-point 1]\\n[emoji] [sub-point 2]\\n[emoji] [sub-point 3]\\n[emoji] [sub-point 4]\\nAll are part of one closing sentence.\\n\\n[blank line]\\n\\n\\u26a1 Pros:\\n[positive point] [emoji]\\n[positive point] [emoji]\\n\\n[blank line]\\n\\n\\u26a0\\ufe0f Cons:\\n[negative point]\\n[negative point] [emoji]\\n\\n[blank line]\\n\\n\\ud83d\\udca1 In short: [One sentence summary with core tradeoff]\\n\\n[blank line]\\n\\n\\ud83d\\udcad Question for you: [Engaging question to spark comments]\\n\\n\\ud83d\\udc47 Share your thoughts!\\n\\n#Hashtag1 #Hashtag2 #Hashtag3 #Hashtag4 #Hashtag5\\n---END FORMAT---\\n\\nReturn ONLY the post text.\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "lip-0005-0005-0005-0005-000000000005",
+      "name": "Generate Post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.linkedin.com/v2/ugcPosts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization",              "value": "=Bearer {{ $env.LINKEDIN_ACCESS_TOKEN }}" },
+            { "name": "Content-Type",               "value": "application/json" },
+            { "name": "X-Restli-Protocol-Version", "value": "2.0.0" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"author\": \"{{ $env.LINKEDIN_PERSON_URN }}\",\n  \"lifecycleState\": \"PUBLISHED\",\n  \"specificContent\": {\n    \"com.linkedin.ugc.ShareContent\": {\n      \"shareCommentary\": {\n        \"text\": \"{{ $json.candidates[0].content.parts[0].text.trim().replace(/\\\"/g, '\\\\\"') }}\"\n      },\n      \"shareMediaCategory\": \"NONE\"\n    }\n  },\n  \"visibility\": {\n    \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"\n  }\n}",
+        "options": {}
+      },
+      "id": "lip-0006-0006-0006-0006-000000000006",
+      "name": "Publish to LinkedIn",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"topic\": \"{{ $('Parse CSV').item.json.Topic }}\",\n  \"linkedInPostId\": \"{{ $json.id }}\",\n  \"postContent\": \"{{ $('Generate Post').item.json.candidates[0].content.parts[0].text.trim().replace(/\\\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\"\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" },
+              { "name": "Content-Type",                "value": "application/json" }
+            ]
+          }
+        }
+      },
+      "id": "lip-0007-0007-0007-0007-000000000007",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1560, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"done\",\n  \"message\": \"No topics found in CSV. Add rows to linkedin-topics.csv and re-upload.\"\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" },
+              { "name": "Content-Type",                "value": "application/json" }
+            ]
+          }
+        }
+      },
+      "id": "lip-0008-0008-0008-0008-000000000008",
+      "name": "No Topics Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 440]
+    }
+  ],
+  "connections": {
+    "Post Webhook": {
+      "main": [[{ "node": "Fetch CSV", "type": "main", "index": 0 }]]
+    },
+    "Fetch CSV": {
+      "main": [[{ "node": "Parse CSV", "type": "main", "index": 0 }]]
+    },
+    "Parse CSV": {
+      "main": [[{ "node": "Topic Exists?", "type": "main", "index": 0 }]]
+    },
+    "Topic Exists?": {
+      "main": [
+        [{ "node": "Generate Post",     "type": "main", "index": 0 }],
+        [{ "node": "No Topics Response","type": "main", "index": 0 }]
+      ]
+    },
+    "Generate Post": {
+      "main": [[{ "node": "Publish to LinkedIn", "type": "main", "index": 0 }]]
+    },
+    "Publish to LinkedIn": {
+      "main": [[{ "node": "Success Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings":   { "executionOrder": "v1" },
+  "staticData": null,
+  "tags":       [],
+  "pinData":    {}
+}
