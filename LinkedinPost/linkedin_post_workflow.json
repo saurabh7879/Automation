@@ -85,7 +85,7 @@
       "id": "lip-0005-0005-0005-0005-000000000005",
       "name": "Generate Post",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 3,
+      "typeVersion": 4.2,
       "position": [1120, 200]
     },
     {
@@ -108,7 +108,7 @@
       "id": "lip-0006-0006-0006-0006-000000000006",
       "name": "Publish to LinkedIn",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 3,
+      "typeVersion": 4.2,
       "position": [1340, 200]
     },
     {
