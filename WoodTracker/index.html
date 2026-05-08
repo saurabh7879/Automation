@@ -306,8 +306,13 @@
       try {
         const payload = encodeURIComponent(JSON.stringify({ action, ...params }));
         const res = await fetch(`${BACKEND_URL}?payload=${payload}`, { redirect: 'follow' });
-        const data = await res.json();
-        onSuccess(data);
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          onSuccess(data);
+        } catch (_) {
+          onFailure({ message: 'Backend error: ' + text.slice(0, 200) });
+        }
       } catch (err) {
         onFailure({ message: err.message });
       }
