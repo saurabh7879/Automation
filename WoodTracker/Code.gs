@@ -12,6 +12,25 @@ function doGet(e) {
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
+function doPost(e) {
+  let result;
+  try {
+    const data = JSON.parse(e.postData.contents);
+    switch (data.action) {
+      case 'loginUser':      result = loginUser(data.email, data.password); break;
+      case 'forgotPassword': result = forgotPassword(data.email); break;
+      case 'resetPassword':  result = resetPassword(data.email, data.otp, data.newPassword); break;
+      case 'getSWRData':     result = getSWRData(data.role); break;
+      case 'processSale':    result = processSale(data.payload, data.userId, data.role); break;
+      default: result = { success: false, message: 'Unknown action: ' + data.action };
+    }
+  } catch (err) {
+    result = { success: false, message: err.message };
+  }
+  return ContentService.createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
