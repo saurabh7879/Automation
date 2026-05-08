@@ -289,7 +289,7 @@
     let appData = JSON.parse(localStorage.getItem('woodpos_data')) || null;
     let cart = [];
     
-    const API = google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure);
+    const BACKEND_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
     let currentCallback = null;
 
     function onSuccess(res) {
@@ -300,6 +300,19 @@
     function onFailure(err) {
       showModal('❌', 'Error', err.message || 'Server communication failed.');
       currentCallback = null;
+    }
+
+    async function callGAS(action, params) {
+      try {
+        const res = await fetch(BACKEND_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action, ...params })
+        });
+        const data = await res.json();
+        onSuccess(data);
+      } catch (err) {
+        onFailure({ message: err.message });
+      }
     }
 
     /* ==========================================
@@ -340,7 +353,7 @@
           showModal('❌', 'Login Failed', res.message);
         }
       };
-      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).loginUser(email, pwd);
+      callGAS('loginUser', { email, password: pwd });
     }
 
     function requestOTP() {
@@ -353,7 +366,7 @@
           showModal('❌', 'Error', res.message);
         }
       };
-      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).forgotPassword(email);
+      callGAS('forgotPassword', { email });
     }
 
     function resetPassword() {
@@ -369,7 +382,7 @@
           showModal('❌', 'Error', res.message);
         }
       };
-      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).resetPassword(email, otp, pwd);
+      callGAS('resetPassword', { email, otp, newPassword: pwd });
     }
 
     function logout() {
@@ -432,7 +445,7 @@
           if(showUI) showModal('✅', 'Synced', 'Data is up to date.');
         }
       };
-      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).getSWRData(currentUser.role);
+      callGAS('getSWRData', { role: currentUser.role });
     }
 
     function repaintApp() {
@@ -603,56 +616,11 @@
           showModal('❌', 'Error', res.message);
         }
       };
-      callBackend('processSale', { payload, userId: currentUser.id, role: currentUser.role });
+      callGAS('processSale', { payload, userId: currentUser.id, role: currentUser.role });
     }
 
     /* ==========================================
        Inventory & Reports (DataTables)
-       ========================================== */
-    function renderInventory() {
-      if(!appData) return;
-      if ($.fn.DataTable.isDataTable('#inventory-table')) {
-        $('#inventory-table').DataTable().destroy();
-      }
-      
-      const tbody = document.querySelector('#inventory-table tbody');
-      tbody.innerHTML = appData.wood_stocks.map(w => `
-        <tr>
-          <td>${w.serial}</td>
-          <td>${w.sub_cat}</td>
-          <td>${w.width}x${w.length}</td>
-          <td>${w.cft}</td>
-          <td>$${w.sell_rate}</td>
-          <td>${w.qty}</td>
-          <td><span class="trend-pill trend-up">${w.status}</span></td>
-        </tr>
-      `).join('');
-      
-      $('#inventory-table').DataTable();
-    }
-
-    function renderReports() {
-      if(!appData) return;
-      if ($.fn.DataTable.isDataTable('#reports-table')) {
-        $('#reports-table').DataTable().destroy();
-      }
-      
-      const tbody = document.querySelector('#reports-table tbody');
-      tbody.innerHTML = appData.sales.map(s => `
-        <tr>
-          <td>${s.id}</td>
-          <td>${new Date(s.date).toLocaleDateString()}</td>
-          <td>$${s.total_amount}</td>
-          <td><span class="trend-pill ${s.status==='completed'?'trend-up':''}">${s.status}</span></td>
-        </tr>
-      `).join('');
-      
-      $('#reports-table').DataTable();
-    }
-
-  </script>
-</body>
-</html>bles)
        ========================================== */
     function renderInventory() {
       if(!appData) return;
