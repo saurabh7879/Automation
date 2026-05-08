@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wood Trading POS</title>
+  
+  <!-- External Libraries -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style>
+    /* ==========================================
+       Rameez Scripts - Wood Trading POS System
+       Navy Blue Theme & Core Styles
+       ========================================== */
+    :root {
+      --primary: #0A192F;
+      --secondary: #112240;
+      --accent: #64FFDA;
+      --text-main: #CCD6F6;
+      --text-muted: #8892B0;
+      --bg-main: #020C1B;
+      --bg-panel: #112240;
+      --danger: #FF6B6B;
+      --success: #4CAF50;
+      --border: #233554;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+    
+    /* Layout */
+    #sidebar { width: 250px; background: var(--primary); border-right: 1px solid var(--border); transition: width 0.3s; display: flex; flex-direction: column; }
+    #sidebar.collapsed { width: 60px; }
+    .sidebar-logo { padding: 20px; font-weight: bold; font-size: 1.2rem; color: var(--accent); border-bottom: 1px solid var(--border); text-align: center; }
+    .nav-item { padding: 15px 20px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.2s; display: flex; align-items: center; gap: 10px; }
+    .nav-item:hover, .nav-item.active { background: var(--secondary); color: var(--accent); }
+    
+    #main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
+    #topbar { height: 60px; background: var(--primary); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+    
+    .view-container { padding: 20px; display: none; }
+    .view-container.active { display: block; animation: fadeIn 0.3s ease; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Dashboard Cards */
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+    .card { background: var(--bg-panel); border-radius: 8px; padding: 20px; border: 1px solid var(--border); }
+    .card-title { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
+    .card-value { font-size: 1.8rem; font-weight: bold; color: var(--text-main); }
+    .trend-pill { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; margin-top: 10px; }
+    .trend-up { background: rgba(76, 175, 80, 0.2); color: var(--success); }
+    .trend-down { background: rgba(255, 107, 107, 0.2); color: var(--danger); }
+
+    /* POS System */
+    .pos-layout { display: flex; gap: 20px; height: calc(100vh - 100px); }
+    .pos-items { flex: 2; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; align-content: start; overflow-y: auto; }
+    .wood-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; padding: 15px; cursor: pointer; text-align: center; transition: transform 0.1s; }
+    .wood-card:active { transform: scale(0.95); }
+    .wood-card:hover { border-color: var(--accent); }
+    
+    .pos-cart { flex: 1; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; }
+    .cart-header { padding: 15px; border-bottom: 1px solid var(--border); background: var(--primary); }
+    .cart-items { flex: 1; overflow-y: auto; padding: 10px; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border); }
+    .cart-totals { padding: 15px; background: var(--primary); border-top: 1px solid var(--border); }
+    .quick-pay { display: flex; gap: 10px; margin-top: 15px; }
+    
+    /* Buttons & Inputs */
+    button { background: var(--accent); color: var(--primary); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; }
+    button:hover { opacity: 0.9; }
+    button.outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+    button.danger { background: var(--danger); color: white; }
+    
+    input, select { width: 100%; padding: 10px; background: var(--bg-main); border: 1px solid var(--border); color: var(--text-main); border-radius: 4px; margin-bottom: 15px; }
+    input:focus, select:focus { outline: 1px solid var(--accent); }
+
+    /* Custom Modal (Swal Replacement) */
+    #custom-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 9999; }
+    #custom-modal { background: var(--bg-panel); border: 1px solid var(--accent); padding: 30px; border-radius: 8px; width: 400px; max-width: 90%; text-align: center; }
+    #modal-icon { font-size: 3rem; margin-bottom: 15px; }
+    #modal-title { font-size: 1.5rem; margin-bottom: 10px; }
+    #modal-text { color: var(--text-muted); margin-bottom: 20px; }
+    #modal-buttons { display: flex; justify-content: center; gap: 10px; }
+
+    /* Auth Views */
+    #auth-view { position: fixed; inset: 0; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+    .auth-box { background: var(--bg-panel); padding: 40px; border-radius: 8px; width: 350px; border: 1px solid var(--border); }
+
+    /* DataTables Overrides */
+    table.dataTable { background: var(--bg-panel); color: var(--text-main); }
+    .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate { color: var(--text-muted) !important; }
+    table.dataTable tbody tr { background-color: var(--bg-panel) !important; }
+    table.dataTable tbody tr:hover { background-color: var(--secondary) !important; }
+    
+    .loading-spinner { border: 4px solid var(--border); border-top: 4px solid var(--accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Auth View -->
+  <div id="auth-view">
+    <div class="auth-box" id="login-box">
+      <h2 style="color:var(--accent); margin-bottom:20px; text-align:center;">Wood Trading POS</h2>
+      <input type="email" id="login-email" placeholder="Email (e.g. admin@example.com)">
+      <input type="password" id="login-pwd" placeholder="Password (admin123)">
+      <button style="width:100%" onclick="handleLogin()">Login</button>
+      <p style="text-align:center; margin-top:15px; color:var(--text-muted); cursor:pointer; font-size:0.9rem;" onclick="toggleAuth('forgot')">Forgot Password?</p>
+    </div>
+    
+    <div class="auth-box" id="forgot-box" style="display:none;">
+      <h2 style="color:var(--accent); margin-bottom:20px; text-align:center;">Reset Password</h2>
+      <input type="email" id="forgot-email" placeholder="Enter your Email">
+      <button style="width:100%; margin-bottom:10px;" onclick="requestOTP()">Send OTP</button>
+      
+      <div id="otp-section" style="display:none;">
+        <input type="text" id="reset-otp" placeholder="6-digit OTP">
+        <input type="password" id="reset-pwd" placeholder="New Password">
+        <button style="width:100%" onclick="resetPassword()">Reset & Login</button>
+      </div>
+      <p style="text-align:center; margin-top:15px; color:var(--text-muted); cursor:pointer; font-size:0.9rem;" onclick="toggleAuth('login')">Back to Login</p>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="sidebar">
+    <div class="sidebar-logo">WoodPOS</div>
+    <div class="nav-item active" data-view="dashboard" onclick="navigate('dashboard')">📊 Dashboard</div>
+    <div class="nav-item" data-view="pos" onclick="navigate('pos')" id="nav-pos">🛒 POS</div>
+    <div class="nav-item" data-view="inventory" onclick="navigate('inventory')">📦 Inventory</div>
+    <div class="nav-item" data-view="reports" onclick="navigate('reports')">📈 Reports</div>
+  </div>
+
+  <div id="main-content">
+    <div id="topbar">
+      <div style="cursor:pointer;" onclick="toggleSidebar()">☰</div>
+      <div style="display:flex; gap:15px; align-items:center;">
+        <span id="user-info" style="color:var(--accent); font-weight:bold;"></span>
+        <button class="outline" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="dashboard" class="view-container active">
+      <h2>Welcome back, <span id="dash-name"></span>!</h2>
+      <p style="color:var(--text-muted); margin-bottom:20px;">Here is what's happening today.</p>
+      
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-title">Today's Sales</div>
+          <div class="card-value" id="dash-sales">$0</div>
+          <div class="trend-pill trend-up">↑ 12% vs yesterday</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Stock Value</div>
+          <div class="card-value" id="dash-stock">$0</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Total Customers</div>
+          <div class="card-value" id="dash-cust">0</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Expenses</div>
+          <div class="card-value" id="dash-exp">$0</div>
+          <div class="trend-pill trend-down">↓ 5% vs yesterday</div>
+        </div>
+      </div>
+
+      <div class="grid-4" style="grid-template-columns: 2fr 1fr;">
+        <div class="card">
+          <div class="card-title">Daily Sales Trend</div>
+          <canvas id="salesChart" height="100"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-title">Expense Breakdown</div>
+          <canvas id="expenseChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- POS View -->
+    <div id="pos" class="view-container">
+      <div class="pos-layout">
+        <div class="pos-items" id="pos-grid">
+          <!-- Wood cards populated here -->
+        </div>
+        
+        <div class="pos-cart">
+          <div class="cart-header">
+            <select id="pos-customer">
+              <option value="">Select Customer...</option>
+            </select>
+            <input type="text" placeholder="Scan Barcode / Search..." id="pos-search" oninput="filterPOS()">
+          </div>
+          <div class="cart-items" id="cart-items-container">
+            <!-- Cart items here -->
+            <div style="text-align:center; color:var(--text-muted); margin-top:50px;">Cart is empty</div>
+          </div>
+          <div class="cart-totals">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+              <span>Total:</span> <strong id="cart-total">$0.00</strong>
+            </div>
+            <input type="number" id="cart-paid" placeholder="Amount Paid" oninput="calculateChange()">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--accent);">
+              <span>Balance/Change:</span> <strong id="cart-change">$0.00</strong>
+            </div>
+            
+            <div class="quick-pay">
+              <button style="flex:1;" onclick="setQuickPay('full')">Full Pay</button>
+              <button style="flex:1;" onclick="setQuickPay('half')">Half Pay</button>
+              <button style="flex:1; background:var(--bg-main); color:var(--text-main);" onclick="setQuickPay('none')">Unpaid</button>
+            </div>
+            <div class="quick-pay">
+              <select id="pay-method" style="flex:1; margin-bottom:0;">
+                <option value="cash">Cash</option>
+                <option value="bank">Bank Transfer</option>
+                <option value="card">Card</option>
+              </select>
+              <button style="flex:2;" onclick="processPOS()">Complete Sale</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory View -->
+    <div id="inventory" class="view-container">
+      <h2>Wood Inventory</h2>
+      <button style="margin-bottom:15px;" onclick="fetchSWRData(true)">Sync Data</button>
+      <div class="card" style="background:white;">
+        <table id="inventory-table" class="display" style="width:100%">
+          <thead>
+            <tr>
+              <th>Serial</th>
+              <th>Sub Cat</th>
+              <th>Dimensions</th>
+              <th>CFT</th>
+              <th>Rate</th>
+              <th>Qty</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Reports View -->
+    <div id="reports" class="view-container">
+      <h2>System Reports</h2>
+      <p style="color:var(--text-muted);">View detailed metrics and DataTables.</p>
+      <!-- Placeholders for reporting tables -->
+      <div class="card" style="margin-top:20px; background:white;">
+        <h3 style="color:black;">Recent Sales Summary</h3>
+        <table id="reports-table" class="display" style="width:100%">
+          <thead>
+            <tr><th>Sale ID</th><th>Date</th><th>Amount</th><th>Status</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Custom Modal -->
+  <div id="custom-modal-overlay">
+    <div id="custom-modal">
+      <div id="modal-icon">ℹ️</div>
+      <div id="modal-title">Notification</div>
+      <div id="modal-text">Action completed successfully.</div>
+      <div id="modal-buttons">
+        <button id="modal-ok" onclick="closeModal()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================
+       Global State & SWR
+       ========================================== */
+    let currentUser = JSON.parse(localStorage.getItem('woodpos_user')) || null;
+    let appData = JSON.parse(localStorage.getItem('woodpos_data')) || null;
+    let cart = [];
+    
+    const API = google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure);
+    let currentCallback = null;
+
+    function onSuccess(res) {
+      if(currentCallback) currentCallback(res);
+      currentCallback = null;
+    }
+    
+    function onFailure(err) {
+      showModal('❌', 'Error', err.message || 'Server communication failed.');
+      currentCallback = null;
+    }
+
+    /* ==========================================
+       Initialization
+       ========================================== */
+    window.onload = () => {
+      if(currentUser) {
+        document.getElementById('auth-view').style.display = 'none';
+        setupUserUI();
+        initSWR();
+      }
+    };
+
+    /* ==========================================
+       Authentication
+       ========================================== */
+    function toggleAuth(view) {
+      document.getElementById('login-box').style.display = view === 'login' ? 'block' : 'none';
+      document.getElementById('forgot-box').style.display = view === 'forgot' ? 'block' : 'none';
+    }
+
+    function handleLogin() {
+      const email = document.getElementById('login-email').value;
+      const pwd = document.getElementById('login-pwd').value;
+      if(!email || !pwd) return showModal('⚠️', 'Validation', 'Please enter email and password.');
+      
+      showModal('⏳', 'Authenticating', 'Verifying credentials...', false);
+      
+      currentCallback = (res) => {
+        if(res.success) {
+          currentUser = res.user;
+          localStorage.setItem('woodpos_user', JSON.stringify(currentUser));
+          document.getElementById('auth-view').style.display = 'none';
+          closeModal();
+          setupUserUI();
+          initSWR();
+        } else {
+          showModal('❌', 'Login Failed', res.message);
+        }
+      };
+      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).loginUser(email, pwd);
+    }
+
+    function requestOTP() {
+      const email = document.getElementById('forgot-email').value;
+      currentCallback = (res) => {
+        if(res.success) {
+          document.getElementById('otp-section').style.display = 'block';
+          showModal('✅', 'Sent', 'OTP sent to email.');
+        } else {
+          showModal('❌', 'Error', res.message);
+        }
+      };
+      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).forgotPassword(email);
+    }
+
+    function resetPassword() {
+      const email = document.getElementById('forgot-email').value;
+      const otp = document.getElementById('reset-otp').value;
+      const pwd = document.getElementById('reset-pwd').value;
+      
+      currentCallback = (res) => {
+        if(res.success) {
+          showModal('✅', 'Success', 'Password reset! You can now login.');
+          toggleAuth('login');
+        } else {
+          showModal('❌', 'Error', res.message);
+        }
+      };
+      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).resetPassword(email, otp, pwd);
+    }
+
+    function logout() {
+      localStorage.removeItem('woodpos_user');
+      localStorage.removeItem('woodpos_data');
+      location.reload();
+    }
+
+    /* ==========================================
+       UI & Routing
+       ========================================== */
+    function setupUserUI() {
+      document.getElementById('user-info').innerText = `${currentUser.name} (${currentUser.role})`;
+      document.getElementById('dash-name').innerText = currentUser.name;
+      
+      if(currentUser.role === 'warehouse_staff') {
+        document.getElementById('nav-pos').style.display = 'none';
+        navigate('inventory');
+      } else {
+        navigate('dashboard');
+      }
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+    }
+
+    function navigate(viewId) {
+      document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(viewId).classList.add('active');
+      document.querySelector(`[data-view="${viewId}"]`).classList.add('active');
+      
+      if(viewId === 'dashboard') renderDashboard();
+      if(viewId === 'pos') renderPOS();
+      if(viewId === 'inventory') renderInventory();
+      if(viewId === 'reports') renderReports();
+    }
+
+    /* ==========================================
+       SWR Caching Logic
+       ========================================== */
+    function initSWR() {
+      if(appData) {
+        // Instant Repaint
+        repaintApp();
+      }
+      fetchSWRData(); // Silent revalidation
+    }
+
+    function fetchSWRData(showUI = false) {
+      if(showUI) showModal('⏳', 'Syncing', 'Fetching latest data...', false);
+      
+      currentCallback = (res) => {
+        if(res.success) {
+          appData = res.data;
+          localStorage.setItem('woodpos_data', JSON.stringify(appData));
+          repaintApp();
+          if(showUI) showModal('✅', 'Synced', 'Data is up to date.');
+        }
+      };
+      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).getSWRData(currentUser.role);
+    }
+
+    function repaintApp() {
+      const activeView = document.querySelector('.view-container.active').id;
+      if(activeView === 'dashboard') renderDashboard();
+      if(activeView === 'pos') renderPOS();
+      if(activeView === 'inventory') renderInventory();
+      if(activeView === 'reports') renderReports();
+    }
+
+    /* ==========================================
+       Modals
+       ========================================== */
+    function showModal(icon, title, text, showBtn = true) {
+      document.getElementById('modal-icon').innerText = icon;
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-text').innerText = text;
+      document.getElementById('modal-buttons').style.display = showBtn ? 'flex' : 'none';
+      document.getElementById('custom-modal-overlay').style.display = 'flex';
+    }
+    
+    function closeModal() {
+      document.getElementById('custom-modal-overlay').style.display = 'none';
+    }
+
+    /* ==========================================
+       Dashboard View
+       ========================================== */
+    let salesChartInst, expChartInst;
+    function renderDashboard() {
+      if(!appData) return;
+      
+      // Calculate Stats
+      const totalSales = appData.sales.reduce((sum, s) => sum + Number(s.total_amount || 0), 0);
+      const totalExp = appData.expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+      
+      document.getElementById('dash-sales').innerText = `$${totalSales}`;
+      document.getElementById('dash-exp').innerText = `$${totalExp}`;
+      document.getElementById('dash-cust').innerText = appData.customers.length;
+
+      // Charts
+      const ctxSales = document.getElementById('salesChart').getContext('2d');
+      if(salesChartInst) salesChartInst.destroy();
+      salesChartInst = new Chart(ctxSales, {
+        type: 'line',
+        data: {
+          labels: appData.sales.map(s => s.date.split('T')[0]),
+          datasets: [{ label: 'Sales', data: appData.sales.map(s => s.total_amount), borderColor: '#64FFDA', tension: 0.4 }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+      });
+
+      const ctxExp = document.getElementById('expenseChart').getContext('2d');
+      if(expChartInst) expChartInst.destroy();
+      expChartInst = new Chart(ctxExp, {
+        type: 'doughnut',
+        data: {
+          labels: appData.expenses.map(e => e.title),
+          datasets: [{ data: appData.expenses.map(e => e.amount), backgroundColor: ['#FF6B6B', '#4CAF50', '#FFC107'] }]
+        },
+        options: { responsive: true, cutout: '70%' }
+      });
+    }
+
+    /* ==========================================
+       POS View
+       ========================================== */
+    function renderPOS() {
+      if(!appData) return;
+      
+      // Populate Customers
+      const custSelect = document.getElementById('pos-customer');
+      if(custSelect.options.length <= 1) {
+        appData.customers.forEach(c => {
+          custSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+        });
+      }
+
+      // Populate Wood Cards
+      const grid = document.getElementById('pos-grid');
+      grid.innerHTML = '';
+      appData.wood_stocks.filter(w => w.status === 'available').forEach(w => {
+        grid.innerHTML += `
+          <div class="wood-card" onclick="addToCart('${w.serial}', ${w.sell_rate})">
+            <h4>${w.serial}</h4>
+            <p style="font-size:0.8rem; color:var(--text-muted);">${w.width}x${w.length}</p>
+            <strong style="color:var(--accent);">$${w.sell_rate}</strong>
+            <p style="font-size:0.8rem;">Qty: ${w.qty}</p>
+          </div>
+        `;
+      });
+      renderCart();
+    }
+
+    function addToCart(serial, rate) {
+      const existing = cart.find(i => i.serial === serial);
+      if(existing) existing.qty++;
+      else cart.push({ serial, rate, qty: 1 });
+      renderCart();
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cart-items-container');
+      if(cart.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:50px;">Cart is empty</div>`;
+        document.getElementById('cart-total').innerText = '$0.00';
+        return;
+      }
+
+      container.innerHTML = cart.map((item, idx) => `
+        <div class="cart-item">
+          <div>
+            <strong>${item.serial}</strong><br>
+            <span style="font-size:0.8rem; color:var(--text-muted);">$${item.rate} x ${item.qty}</span>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <strong>$${item.rate * item.qty}</strong>
+            <button class="danger" style="padding:5px 10px;" onclick="removeFromCart(${idx})">X</button>
+          </div>
+        </div>
+      `).join('');
+      
+      const total = cart.reduce((sum, item) => sum + (item.rate * item.qty), 0);
+      document.getElementById('cart-total').innerText = `$${total}`;
+      calculateChange();
+    }
+
+    function removeFromCart(idx) {
+      cart.splice(idx, 1);
+      renderCart();
+    }
+
+    function calculateChange() {
+      const total = cart.reduce((sum, item) => sum + (item.rate * item.qty), 0);
+      const paid = parseFloat(document.getElementById('cart-paid').value) || 0;
+      const change = paid - total;
+      document.getElementById('cart-change').innerText = `$${change.toFixed(2)}`;
+    }
+
+    function setQuickPay(type) {
+      const total = cart.reduce((sum, item) => sum + (item.rate * item.qty), 0);
+      const input = document.getElementById('cart-paid');
+      if(type === 'full') input.value = total;
+      if(type === 'half') input.value = total / 2;
+      if(type === 'none') input.value = 0;
+      calculateChange();
+    }
+
+    function processPOS() {
+      if(cart.length === 0) return showModal('⚠️', 'Empty', 'Cart is empty!');
+      const customer_id = document.getElementById('pos-customer').value;
+      if(!customer_id) return showModal('⚠️', 'Validation', 'Select a customer!');
+
+      const total = cart.reduce((sum, item) => sum + (item.rate * item.qty), 0);
+      const paid = parseFloat(document.getElementById('cart-paid').value) || 0;
+      const method = document.getElementById('pay-method').value;
+
+      const payload = { customer_id, items: cart, total_amount: total, paid_amount: paid, method };
+
+      showModal('⏳', 'Processing', 'Saving sale...', false);
+      currentCallback = (res) => {
+        if(res.success) {
+          showModal('✅', 'Success', `Sale completed! ID: ${res.sale_id}`);
+          cart = [];
+          document.getElementById('cart-paid').value = '';
+          fetchSWRData(); // Revalidate
+        } else {
+          showModal('❌', 'Error', res.message);
+        }
+      };
+      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).processSale(payload, currentUser.id, currentUser.role);
+    }
+
+    /* ==========================================
+       Inventory & Reports (DataTables)
+       ========================================== */
+    function renderInventory() {
+      if(!appData) return;
+      if ($.fn.DataTable.isDataTable('#inventory-table')) {
+        $('#inventory-table').DataTable().destroy();
+      }
+      
+      const tbody = document.querySelector('#inventory-table tbody');
+      tbody.innerHTML = appData.wood_stocks.map(w => `
+        <tr>
+          <td>${w.serial}</td>
+          <td>${w.sub_cat}</td>
+          <td>${w.width}x${w.length}</td>
+          <td>${w.cft}</td>
+          <td>$${w.sell_rate}</td>
+          <td>${w.qty}</td>
+          <td><span class="trend-pill trend-up">${w.status}</span></td>
+        </tr>
+      `).join('');
+      
+      $('#inventory-table').DataTable();
+    }
+
+    function renderReports() {
+      if(!appData) return;
+      if ($.fn.DataTable.isDataTable('#reports-table')) {
+        $('#reports-table').DataTable().destroy();
+      }
+      
+      const tbody = document.querySelector('#reports-table tbody');
+      tbody.innerHTML = appData.sales.map(s => `
+        <tr>
+          <td>${s.id}</td>
+          <td>${new Date(s.date).toLocaleDateString()}</td>
+          <td>$${s.total_amount}</td>
+          <td><span class="trend-pill ${s.status==='completed'?'trend-up':''}">${s.status}</span></td>
+        </tr>
+      `).join('');
+      
+      $('#reports-table').DataTable();
+    }
+
+  </script>
+</body>
+</html>
