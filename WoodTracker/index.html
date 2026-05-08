@@ -603,11 +603,56 @@
           showModal('❌', 'Error', res.message);
         }
       };
-      google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).processSale(payload, currentUser.id, currentUser.role);
+      callBackend('processSale', { payload, userId: currentUser.id, role: currentUser.role });
     }
 
     /* ==========================================
        Inventory & Reports (DataTables)
+       ========================================== */
+    function renderInventory() {
+      if(!appData) return;
+      if ($.fn.DataTable.isDataTable('#inventory-table')) {
+        $('#inventory-table').DataTable().destroy();
+      }
+      
+      const tbody = document.querySelector('#inventory-table tbody');
+      tbody.innerHTML = appData.wood_stocks.map(w => `
+        <tr>
+          <td>${w.serial}</td>
+          <td>${w.sub_cat}</td>
+          <td>${w.width}x${w.length}</td>
+          <td>${w.cft}</td>
+          <td>$${w.sell_rate}</td>
+          <td>${w.qty}</td>
+          <td><span class="trend-pill trend-up">${w.status}</span></td>
+        </tr>
+      `).join('');
+      
+      $('#inventory-table').DataTable();
+    }
+
+    function renderReports() {
+      if(!appData) return;
+      if ($.fn.DataTable.isDataTable('#reports-table')) {
+        $('#reports-table').DataTable().destroy();
+      }
+      
+      const tbody = document.querySelector('#reports-table tbody');
+      tbody.innerHTML = appData.sales.map(s => `
+        <tr>
+          <td>${s.id}</td>
+          <td>${new Date(s.date).toLocaleDateString()}</td>
+          <td>$${s.total_amount}</td>
+          <td><span class="trend-pill ${s.status==='completed'?'trend-up':''}">${s.status}</span></td>
+        </tr>
+      `).join('');
+      
+      $('#reports-table').DataTable();
+    }
+
+  </script>
+</body>
+</html>bles)
        ========================================== */
     function renderInventory() {
       if(!appData) return;
