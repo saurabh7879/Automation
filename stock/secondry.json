@@ -1,0 +1,265 @@
+{
+  "name": "Get Chart Technical Analysis",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Workflow Input Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "outputKey": "valid",
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.ticker }}",
+                    "rightValue": "^[A-Z0-9]+$",
+                    "operator": {
+                      "type": "regex"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "id": "2",
+      "name": "Check Ticker Format",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://query1.finance.yahoo.com/v1/finance/search?q=' + $json.ticker }}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "Lookup Exchange",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { ticker: $json.ticker, interval: '1D', exchange: 'NASDAQ' } }];"
+      },
+      "id": "4",
+      "name": "Parse Interval",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        350
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "symbol",
+              "value": "={{ $json.ticker }}",
+              "type": "string"
+            },
+            {
+              "name": "interval",
+              "value": "={{ $json.interval }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "5",
+      "name": "Set Ticker",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        950,
+        350
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://api.chart-img.com/v2/tradingview/advanced-chart?symbol=' + $json.symbol + '&interval=' + $json.interval }}"
+      },
+      "id": "6",
+      "name": "Get Chart URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1200,
+        350
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url || $json.chartUrl || $json.image }}",
+        "responseFormat": "file"
+      },
+      "id": "7",
+      "name": "Download Chart",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1450,
+        350
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "prompt": "Analyze this stock or crypto trading chart. Provide trend analysis, support and resistance zones, momentum analysis, candlestick behavior, and trading suggestion.",
+        "binaryPropertyName": "data"
+      },
+      "id": "8",
+      "name": "Technical Analysis",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        350
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "1",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "analysis",
+              "value": "={{ $json.content || $json.text || $json.response }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "9",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1950,
+        350
+      ]
+    }
+  ],
+  "connections": {
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check Ticker Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Ticker Format": {
+      "main": [
+        [
+          {
+            "node": "Lookup Exchange",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Exchange": {
+      "main": [
+        [
+          {
+            "node": "Parse Interval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Interval": {
+      "main": [
+        [
+          {
+            "node": "Set Ticker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Ticker": {
+      "main": [
+        [
+          {
+            "node": "Get Chart URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chart URL": {
+      "main": [
+        [
+          {
+            "node": "Download Chart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Chart": {
+      "main": [
+        [
+          {
+            "node": "Technical Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Technical Analysis": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "1"
+}

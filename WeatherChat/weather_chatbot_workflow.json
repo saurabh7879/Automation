@@ -18,19 +18,23 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-        "sendQuery": true,
-        "queryParameters": {
+        "url": "https://api.openai.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
           "parameters": [
             {
-              "name": "key",
-              "value": "={{ $env.GEMINI_API_KEY }}"
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
             }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Extract ONLY the city name from this weather query. Reply with just the city name and nothing else (no punctuation, no explanation). If no city is mentioned, reply with the single word: UNKNOWN\\n\\nQuery: {{ $('Chat Webhook').item.json.body.message }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"model\": \"gpt-4o-mini\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Extract ONLY the city name from this weather query. Reply with just the city name and nothing else (no punctuation, no explanation). If no city is mentioned, reply with the single word: UNKNOWN\\n\\nQuery: {{ $('Chat Webhook').item.json.body.message }}\"\n    }\n  ]\n}",
         "options": {}
       },
       "id": "1a2b3c4d-0002-0002-0002-000000000002",
@@ -46,7 +50,7 @@
             {
               "id": "asn-city",
               "name": "city",
-              "value": "={{ $json.candidates[0].content.parts[0].text.trim() }}",
+              "value": "={{ $json.choices[0].message.content.trim() }}",
               "type": "string"
             },
             {
@@ -126,19 +130,23 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-        "sendQuery": true,
-        "queryParameters": {
+        "url": "https://api.openai.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
           "parameters": [
             {
-              "name": "key",
-              "value": "={{ $env.GEMINI_API_KEY }}"
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
             }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"You are a friendly weather assistant. Answer the user's question in 2-3 conversational sentences. Be helpful and include relevant details.\\n\\nUser question: {{ $('Set Variables').item.json.userMessage }}\\n\\nCurrent weather in {{ $json.name }}, {{ $json.sys.country }}:\\n- Temperature: {{ $json.main.temp }}°C (feels like {{ $json.main.feels_like }}°C)\\n- Condition: {{ $json.weather[0].description }}\\n- Humidity: {{ $json.main.humidity }}%\\n- Wind speed: {{ $json.wind.speed }} m/s\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"model\": \"gpt-4o-mini\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are a friendly weather assistant. Answer the user's question in 2-3 conversational sentences. Be helpful and include relevant details.\\n\\nUser question: {{ $('Set Variables').item.json.userMessage }}\\n\\nCurrent weather in {{ $json.name }}, {{ $json.sys.country }}:\\n- Temperature: {{ $json.main.temp }}°C (feels like {{ $json.main.feels_like }}°C)\\n- Condition: {{ $json.weather[0].description }}\\n- Humidity: {{ $json.main.humidity }}%\\n- Wind speed: {{ $json.wind.speed }} m/s\"\n    }\n  ]\n}",
         "options": {}
       },
       "id": "1a2b3c4d-0006-0006-0006-000000000006",
@@ -150,7 +158,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\n  \"status\": \"success\",\n  \"reply\": \"{{ $json.candidates[0].content.parts[0].text.replace(/\\\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\",\n  \"city\": \"{{ $('Set Variables').item.json.city }}\",\n  \"condition\": \"{{ $('Get Weather').item.json.weather[0].main }}\",\n  \"icon\": \"{{ $('Get Weather').item.json.weather[0].icon }}\",\n  \"temp\": {{ $('Get Weather').item.json.main.temp }},\n  \"country\": \"{{ $('Get Weather').item.json.sys.country }}\"\n}",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"reply\": \"{{ $json.choices[0].message.content.replace(/\\\"/g, '\\\\\"').replace(/\\n/g, '\\\\n') }}\",\n  \"city\": \"{{ $('Set Variables').item.json.city }}\",\n  \"condition\": \"{{ $('Get Weather').item.json.weather[0].main }}\",\n  \"icon\": \"{{ $('Get Weather').item.json.weather[0].icon }}\",\n  \"temp\": {{ $('Get Weather').item.json.main.temp }},\n  \"country\": \"{{ $('Get Weather').item.json.sys.country }}\"\n}",
         "options": {
           "responseHeaders": {
             "entries": [
