@@ -91,22 +91,17 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            { "name": "key", "value": "={{ $env.GEMINI_API_KEY }}" }
-          ]
-        },
+        "url": "https://api.openai.com/v1/chat/completions",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.OPENAI_API_KEY }}" },
             { "name": "Content-Type", "value": "application/json" }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { contents: [ { parts: [ { text: $json.prompt } ] } ] } }}",
+        "jsonBody": "={{ { model: \"gpt-4o-mini\", messages: [ { role: \"user\", content: $json.prompt } ] } }}",
         "options": {}
       },
       "id": "lip-0005-0005-0005-0005-000000000005",
@@ -130,7 +125,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { author: \"urn:li:person:1H9p-wtG1P\", lifecycleState: \"PUBLISHED\", specificContent: { \"com.linkedin.ugc.ShareContent\": { shareCommentary: { text: $json.candidates[0].content.parts[0].text.trim() }, shareMediaCategory: \"NONE\" } }, visibility: { \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\" } } }}",
+        "jsonBody": "={{ { author: \"urn:li:person:1H9p-wtG1P\", lifecycleState: \"PUBLISHED\", specificContent: { \"com.linkedin.ugc.ShareContent\": { shareCommentary: { text: $json.choices[0].message.content.trim() }, shareMediaCategory: \"NONE\" } }, visibility: { \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\" } } }}",
         "options": {}
       },
       "id": "lip-0006-0006-0006-0006-000000000006",
@@ -142,7 +137,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ ({  \"status\": \"success\",  \"topic\": $('Parse CSV').item.json.Topic,  \"linkedInPostId\": $json.id,  \"postContent\": $('Generate Post').item.json.candidates[0].content.parts[0].text.trim()}) }}",
+        "responseBody": "={{ ({  \"status\": \"success\",  \"topic\": $('Parse CSV').item.json.Topic,  \"linkedInPostId\": $json.id,  \"postContent\": $('Generate Post').item.json.choices[0].message.content.trim()}) }}",
         "options": {
           "responseHeaders": {
             "entries": [
