@@ -95,7 +95,7 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{ $env.OPENAI_API_KEY }}" },
+            { "name": "Authorization", "value": "Bearer YOUR_OPENAI_API_KEY" },
             { "name": "Content-Type", "value": "application/json" }
           ]
         },

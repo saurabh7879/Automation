@@ -24,7 +24,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+              "value": "Bearer YOUR_OPENAI_API_KEY"
             },
             {
               "name": "Content-Type",
@@ -136,7 +136,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+              "value": "Bearer YOUR_OPENAI_API_KEY"
             },
             {
               "name": "Content-Type",
