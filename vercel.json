@@ -1,8 +1,7 @@
 {
-  "rewrites": [
-    { "source": "/Profile",    "destination": "/Profile/profile.html" },
-    { "source": "/Profile/",   "destination": "/Profile/profile.html" },
-    { "source": "/WeatherChat",  "destination": "/WeatherChat/index.html" },
-    { "source": "/WeatherChat/", "destination": "/WeatherChat/index.html" }
+  "routes": [
+    { "src": "^/Profile(/.*)?$",     "dest": "/Profile/profile.html" },
+    { "src": "^/WeatherChat(/.*)?$", "dest": "/WeatherChat/index.html" },
+    { "src": ".*",                   "status": 404 }
   ]
 }
