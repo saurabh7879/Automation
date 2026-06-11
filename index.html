@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frame Gen AI — Cloud &amp; AI Projects</title>
+  <meta name="description" content="Frame Gen AI — Explore AI-powered apps: Weather Chatbot and Developer Profile." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #07070c;
+      --surface:   rgba(255,255,255,0.04);
+      --border:    rgba(255,255,255,0.08);
+      --border-h:  rgba(255,255,255,0.18);
+      --text:      #f5f5f7;
+      --muted:     #9a9aab;
+      --accent:    #a78bfa;
+      --accent2:   #f59e0b;
+      --accent3:   #06b6d4;
+      --grad:      linear-gradient(135deg, #a78bfa 0%, #f472b6 50%, #f59e0b 100%);
+      --radius:    20px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Background ── */
+    .bg {
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(167,139,250,.12), transparent 45%),
+        radial-gradient(circle at 85% 90%, rgba(245,158,11,.09), transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(6,182,212,.06), transparent 60%),
+        var(--bg);
+    }
+    .grid {
+      position: fixed; inset: 0; z-index: -1;
+      background-image:
+        linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(90px); opacity: .28;
+      animation: float 20s ease-in-out infinite; pointer-events: none;
+    }
+    .orb-1 { width: 480px; height: 480px; top: -140px; left: -120px; background: #a78bfa; }
+    .orb-2 { width: 560px; height: 560px; bottom: -160px; right: -140px; background: #f472b6; animation-delay: -8s; }
+    .orb-3 { width: 340px; height: 340px; top: 40%; left: 40%; background: #06b6d4; opacity: .15; animation-delay: -14s; }
+    @keyframes float {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      50%       { transform: translate(30px,-24px) scale(1.04); }
+    }
+
+    /* ── Header ── */
+    .header { text-align: center; margin-bottom: 56px; }
+
+    .logo-row {
+      display: inline-flex; align-items: center; gap: 14px;
+      margin-bottom: 20px;
+    }
+    .logo-mark {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: var(--grad); color: #0a0a0f;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 17px;
+      display: grid; place-items: center; letter-spacing: -0.02em;
+      box-shadow: 0 8px 30px rgba(167,139,250,.4);
+    }
+    .logo-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+    }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--border-h);
+      font-size: 11px; color: var(--muted); font-weight: 500;
+      margin-bottom: 20px;
+    }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #10b981; box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 700; letter-spacing: -0.04em; line-height: 1.05;
+      margin-bottom: 14px;
+    }
+    .grad-text {
+      background: var(--grad);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent; -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      font-size: clamp(14px, 1.8vw, 17px); color: var(--muted);
+      max-width: 480px; margin: 0 auto; line-height: 1.6;
+    }
+
+    /* ── Cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      width: 100%; max-width: 780px;
+    }
+
+    .card {
+      position: relative; overflow: hidden;
+      padding: 36px 32px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; gap: 16px;
+      transition: transform .3s, border-color .3s, box-shadow .3s;
+      cursor: pointer;
+    }
+    .card::before {
+      content: ''; position: absolute; inset: 0;
+      opacity: 0; transition: opacity .3s; pointer-events: none;
+    }
+    .card-weather::before { background: linear-gradient(135deg, rgba(102,126,234,.12), rgba(118,75,162,.08)); }
+    .card-profile::before { background: linear-gradient(135deg, rgba(167,139,250,.12), rgba(245,158,11,.07)); }
+
+    .card:hover { transform: translateY(-6px); border-color: var(--border-h); box-shadow: 0 24px 60px -20px rgba(0,0,0,.5); }
+    .card:hover::before { opacity: 1; }
+    .card-weather:hover { border-color: rgba(102,126,234,.5); box-shadow: 0 24px 60px -20px rgba(102,126,234,.25); }
+    .card-profile:hover { border-color: rgba(167,139,250,.5); box-shadow: 0 24px 60px -20px rgba(167,139,250,.25); }
+
+    .card-icon {
+      width: 54px; height: 54px; border-radius: 16px;
+      display: grid; place-items: center;
+      font-size: 26px; position: relative; z-index: 1;
+      border: 1px solid var(--border-h);
+    }
+    .card-weather .card-icon { background: linear-gradient(135deg, rgba(102,126,234,.2), rgba(118,75,162,.15)); }
+    .card-profile .card-icon { background: linear-gradient(135deg, rgba(167,139,250,.2), rgba(245,158,11,.1)); }
+
+    .card-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase;
+      position: relative; z-index: 1;
+    }
+    .card-weather .card-label { color: #818cf8; }
+    .card-profile .card-label { color: var(--accent); }
+
+    .card h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
+      position: relative; z-index: 1;
+    }
+    .card p {
+      font-size: 13.5px; color: var(--muted); line-height: 1.65;
+      position: relative; z-index: 1; flex: 1;
+    }
+
+    .card-tags {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      position: relative; z-index: 1;
+    }
+    .card-tags span {
+      padding: 4px 10px; border-radius: 999px;
+      background: rgba(255,255,255,.05); border: 1px solid var(--border);
+      font-size: 10px; color: var(--muted); font-weight: 500;
+    }
+
+    .card-arrow {
+      position: absolute; top: 28px; right: 28px;
+      width: 34px; height: 34px; border-radius: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      display: grid; place-items: center;
+      color: var(--muted); z-index: 1;
+      transition: background .25s, border-color .25s, color .25s, transform .25s;
+    }
+    .card:hover .card-arrow { background: var(--border-h); color: var(--text); transform: translate(2px,-2px); }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 56px; text-align: center;
+      font-size: 12px; color: var(--muted);
+      display: flex; flex-direction: column; gap: 10px; align-items: center;
+    }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a {
+      color: var(--muted); text-decoration: none; font-size: 12px;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ── Animations ── */
+    .fade-up { opacity: 0; transform: translateY(24px); animation: fadeUp .7s ease forwards; }
+    .fade-up:nth-child(1) { animation-delay: .05s; }
+    .fade-up:nth-child(2) { animation-delay: .15s; }
+    .fade-up:nth-child(3) { animation-delay: .25s; }
+    .fade-up:nth-child(4) { animation-delay: .35s; }
+    .card:nth-child(1) { animation-delay: .3s; }
+    .card:nth-child(2) { animation-delay: .42s; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .cards { grid-template-columns: 1fr; max-width: 400px; }
+      .card { padding: 28px 24px; }
+      h1 { font-size: clamp(30px, 8vw, 42px); }
+      .header { margin-bottom: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="grid"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Header -->
+<header class="header">
+  <div class="logo-row fade-up">
+    <div class="logo-mark">FG</div>
+    <span class="logo-name">Frame Gen AI</span>
+  </div>
+
+  <div class="status-pill fade-up">
+    <span class="dot"></span> Live · Cloud &amp; AI Projects
+  </div>
+
+  <h1 class="fade-up">
+    Build smarter with<br /><span class="grad-text">AI &amp; Cloud</span>
+  </h1>
+
+  <p class="subtitle fade-up">
+    Explore AI-powered tools and engineering resources built on modern cloud infrastructure.
+  </p>
+</header>
+
+<!-- App Cards -->
+<main class="cards">
+
+  <a href="/WeatherChat" class="card card-weather fade-up">
+    <div class="card-arrow">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    </div>
+    <div class="card-icon">🌤️</div>
+    <span class="card-label">AI Chatbot</span>
+    <h2>Weather Chat</h2>
+    <p>Real-time weather assistant powered by n8n and AI. Ask anything about the weather and get intelligent, conversational responses.</p>
+    <div class="card-tags">
+      <span>n8n</span><span>AI</span><span>Real-time</span><span>Chat</span>
+    </div>
+  </a>
+
+  <a href="/Profile" class="card card-profile fade-up">
+    <div class="card-arrow">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    </div>
+    <div class="card-icon">👨‍💻</div>
+    <span class="card-label">Portfolio</span>
+    <h2>Saurabh Kumar</h2>
+    <p>Senior .NET Engineer &amp; Engineering Lead with 15+ years at JPMorgan Chase. Expert in cloud architecture, DevOps, and Generative AI.</p>
+    <div class="card-tags">
+      <span>.NET</span><span>AWS</span><span>Azure</span><span>GenAI</span>
+    </div>
+  </a>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-links">
+    <a href="/WeatherChat">Weather Chat</a>
+    <a href="/Profile">Profile</a>
+    <a href="mailto:saurabhkumar79@hotmail.com">Email</a>
+  </div>
+  <span>© <span id="yr"></span> Frame Gen AI · Saurabh Kumar</span>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
