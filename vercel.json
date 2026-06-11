@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/Profile",    "destination": "/Profile/profile.html" },
+    { "source": "/Profile/",   "destination": "/Profile/profile.html" },
+    { "source": "/WeatherChat",  "destination": "/WeatherChat/index.html" },
+    { "source": "/WeatherChat/", "destination": "/WeatherChat/index.html" }
+  ]
+}
