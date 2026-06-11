@@ -1,9 +1,0 @@
-services:
-  woodtracker:
-    build: .
-    container_name: woodtracker-pos
-    ports:
-      - "80:80"
-    environment:
-      - BACKEND_URL=https://script.google.com/macros/s/AKfycbyysJXc-U6iLW56B2TyhOVPhEwGuxwg4bvITd88oWABZbg8Hzuv0Aae0jNRLJqUKz5B/exec
-    restart: unless-stopped

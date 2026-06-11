@@ -1,5 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/jobs/:path*", "destination": "https://jobfinder-murex.vercel.app/jobs/:path*" }
-  ]
-}
