@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Saurabh Kumar — Senior Software Engineer & Engineering Lead with 15+ years in enterprise .NET, AWS, Azure, DevOps and Generative AI." />
+  <meta name="description" content="Saurabh Kumar — Senior Software Engineer & Engineering Lead with 14+ years in enterprise .NET, AWS, Azure, DevOps and Generative AI." />
   <meta name="author" content="Saurabh Kumar" />
   <title>Saurabh Kumar — Senior Software Engineer · Cloud & Enterprise Architect</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -181,9 +181,8 @@
 
   /* ─── Hero ───────────────────────────────── */
   .hero {
-    height: calc(100vh - 64px);
-    max-height: calc(100vh - 64px);
-    padding: 88px clamp(16px,3vw,48px) 40px;
+    min-height: calc(70vh - 64px);
+    padding: 84px clamp(16px,3vw,48px) 32px;
     margin-bottom: 0;
     display: flex; flex-direction: column; justify-content: space-between;
     position: relative; overflow: visible; z-index: 1;
@@ -553,7 +552,7 @@
   }
 
   /* ─── Sections ───────────────────────────── */
-  .section { padding: clamp(40px,6vh,60px) clamp(20px,4vw,48px); scroll-margin-top: 64px; margin-top: 40px; clear: both; position: relative; z-index: 0; }
+  .section { padding: clamp(40px,6vh,60px) clamp(20px,4vw,48px); scroll-margin-top: 110px; margin-top: 40px; clear: both; position: relative; z-index: 0; }
   .section:first-of-type { margin-top: clamp(60px,10vh,200px); padding-top: clamp(40px,6vh,60px); }
   .container { max-width: var(--max-w); margin: 0 auto; }
   .section-head { margin-bottom: 60px; max-width: 720px; position: relative; }
@@ -572,11 +571,11 @@
   .about-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: start; }
   .about-text p { font-size: var(--fs-body); color: var(--text); margin-bottom: 16px; line-height: 1.75; }
   .about-card {
-    padding: 28px; border-radius: var(--radius-lg);
+    padding: 24px; border-radius: var(--radius-lg);
     background: var(--surface); border: 1px solid var(--border);
-    backdrop-filter: blur(12px); margin-top: 0; position: relative;
+    backdrop-filter: blur(12px); margin-top: -10px; position: relative;
   }
-  .about-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: var(--fs-card); margin-bottom: 20px; margin-top: -12px; font-weight: 600; }
+  .about-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: var(--fs-card); margin-bottom: 20px; margin-top: -14px; font-weight: 600; }
   .facts li {
     display: flex; justify-content: space-between; align-items: center;
     padding: 14px 0; border-bottom: 1px solid var(--border);
@@ -686,7 +685,7 @@
   @media (max-width: 640px) { .cert-grid { grid-template-columns: 1fr; } }
 
   /* ─── Contact ────────────────────────────── */
-  .contact-section { padding-bottom: 100px; scroll-margin-top: 64px; }
+  .contact-section { padding-top: 60px; padding-bottom: 100px; scroll-margin-top: 64px; }
   .contact-card {
     padding: clamp(32px,5vw,60px); border-radius: var(--radius-lg);
     background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(245,158,11,.06));
@@ -703,6 +702,27 @@
   .contact-left .section-title { margin-bottom: 18px; }
   .contact-left p { color: var(--text-muted); font-size: var(--fs-body); margin-bottom: 28px; }
   .contact-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .contact-actions .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 600;
+    color: var(--text);
+  }
+  .contact-actions .btn svg {
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+    color: var(--text);
+  }
+  .contact-actions .btn:hover svg {
+    color: var(--accent);
+  }
+  .contact-actions .btn.btn-ghost {
+    background: rgba(255,255,255,.04);
+    border-color: rgba(255,255,255,.12);
+  }
+  .contact-actions .btn.btn-ghost:hover {
+    color: var(--accent);
+    background: rgba(167,139,250,.12);
+  }
   .contact-right { position: relative; z-index: 1; }
   .avail-card {
     padding: 24px; border-radius: var(--radius);
@@ -721,13 +741,13 @@
 
   /* ─── Footer ─────────────────────────────── */
   .footer {
-    padding: 48px clamp(20px,4vw,48px) 32px;
+    padding: 24px clamp(20px,4vw,48px) 18px;
     border-top: 1px solid var(--border-strong);
     background: linear-gradient(180deg, var(--bg-soft) 0%, rgba(7,7,12,0.95) 100%);
   }
   .footer-inner {
     display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 40px; font-size: 11px; color: var(--text-muted);
+    flex-wrap: wrap; gap: 24px; font-size: 11px; color: var(--text-muted);
     max-width: var(--max-w); margin: 0 auto;
   }
   .footer-inner > div:first-child { display: flex; align-items: center; gap: 14px; }
@@ -953,6 +973,10 @@
   .oss-role { font-weight: 600; color: var(--accent); }
   .oss-link { display: inline-flex; align-items: center; padding: 4px; color: var(--text-muted); transition: color .2s; }
   .oss-link:hover { color: var(--accent); }
+  .oss-link-url {
+    font-size: 13px; color: var(--text-muted); margin-bottom: 12px; word-break: break-all;
+  }
+  .oss-link-url a { color: var(--text); text-decoration: underline; }
   .oss-desc { font-size: var(--fs-body); color: var(--text-muted); margin: 12px 0; line-height: 1.75; }
   .oss-badges { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
   .oss-badge {
@@ -1095,15 +1119,15 @@
         <span>DevOps</span>
         <span>Microservices</span>
         <span class="accent-tag">Cloud & AI Leader</span>
-        <span>BMAD</span>
+        <span class="accent-tag">BMAD</span>
       </div>
       <p class="hero-subtitle fade-in">
         <span class="accent">Senior .NET Architect</span> · Engineering Lead · Generative AI Specialist<br />
         <span class="muted">.NET Core · Microservices · AWS · Azure · RAG · Agentic Automation</span><br />
-        <span class="muted">JPMorgan Chase: <strong>15+ years</strong> enterprise banking applications</span>
+        <span class="muted">JPMorgan Chase: <strong>14+ years</strong> enterprise banking applications</span>
       </p>
       <p class="hero-description fade-in">
-        Distinguished software engineering professional with <strong>15+ years</strong> of proven excellence in enterprise-grade
+        Distinguished software engineering professional with <strong>14+ years</strong> of proven excellence in enterprise-grade
         platforms for global financial services at <strong>JPMorgan Chase</strong>.
         Deep expertise in .NET Core, microservices architecture, cloud platforms, and pioneering
         <strong>Generative AI integration</strong> including LLM orchestration, RAG, and Agentic Automation at scale.
@@ -1142,7 +1166,7 @@
   <!-- STATS INLINE IN HERO -->
   <div class="hero-stats">
     <div class="hero-stat">
-      <div class="hero-stat-num"><span class="hero-stat-value" data-count="16">0</span><span class="hero-stat-suffix">+</span></div>
+      <div class="hero-stat-num"><span class="hero-stat-value" data-count="14">0</span><span class="hero-stat-suffix">+</span></div>
       <span class="hero-stat-label">Yrs Experience</span>
     </div>
     <div class="hero-stat-div"></div>
@@ -1384,11 +1408,88 @@
       <span class="eyebrow">Community & Open Source</span>
       <h2 class="section-title">Sharing knowledge through <span class="gradient-text">open source</span></h2>
       <p style="color: var(--text-muted); max-width: 700px; margin-top: 12px;">
-        Active contributor to the developer community. Building reusable tools, libraries, and frameworks that solve real-world problems at scale. Specializing in .NET, Generative AI, and cloud-native development.
+        Three placeholder open source project cards are shown below. Later you can replace them with your real project names, one-line descriptions, and GitHub URLs.
       </p>
     </div>
     <div class="oss-grid" id="ossContainer">
-      <!-- Open source projects will be rendered here -->
+      <article class="oss-card fade-in">
+        <div class="oss-status active"></div>
+        <div class="oss-header">
+          <div>
+            <h3>Project #1: Your Repo Name</h3>
+            <div class="oss-meta">
+              <span class="oss-role">Open Source Placeholder</span>
+            </div>
+          </div>
+          <a href="https://github.com/your-github-username/your-repo" target="_blank" rel="noopener" class="oss-link" title="View on GitHub">
+            GitHub
+          </a>
+        </div>
+        <p class="oss-desc">One-line description: What this project does.</p>
+        <div class="oss-link-url">GitHub URL: <a href="https://github.com/your-github-username/your-repo" target="_blank" rel="noopener">https://github.com/your-github-username/your-repo</a></div>
+        <div class="oss-badges">
+          <span class="oss-badge oss-badge-language">TBD</span>
+          <span class="oss-badge oss-badge-maintained">Placeholder</span>
+        </div>
+        <div class="oss-tags"><span>GitHub</span><span>Open Source</span><span>Placeholder</span></div>
+        <div class="oss-stats">
+          <div class="oss-stat"><span class="oss-stat-value">0</span><span class="oss-stat-label">Commits</span></div>
+          <div class="oss-stat"><span class="oss-stat-value">0</span><span class="oss-stat-label">Contributors</span></div>
+        </div>
+        <a href="https://github.com/your-github-username/your-repo" target="_blank" rel="noopener" class="oss-cta">View on GitHub</a>
+      </article>
+      <article class="oss-card fade-in">
+        <div class="oss-status active"></div>
+        <div class="oss-header">
+          <div>
+            <h3>Project #2: Your Repo Name</h3>
+            <div class="oss-meta">
+              <span class="oss-role">Open Source Placeholder</span>
+            </div>
+          </div>
+          <a href="https://github.com/your-github-username/your-repo" target="_blank" rel="noopener" class="oss-link" title="View on GitHub">
+            GitHub
+          </a>
+        </div>
+        <p class="oss-desc">One-line description: What this project does.</p>
+        <div class="oss-link-url">GitHub URL: <a href="https://github.com/your-github-username/your-repo" target="_blank" rel="noopener">https://github.com/your-github-username/your-repo</a></div>
+        <div class="oss-badges">
+          <span class="oss-badge oss-badge-language">TBD</span>
+          <span class="oss-badge oss-badge-maintained">Placeholder</span>
+        </div>
+        <div class="oss-tags"><span>GitHub</span><span>Open Source</span><span>Placeholder</span></div>
+        <div class="oss-stats">
+          <div class="oss-stat"><span class="oss-stat-value">0</span><span class="oss-stat-label">Commits</span></div>
+          <div class="oss-stat"><span class="oss-stat-value">0</span><span class="oss-stat-label">Contributors</span></div>
+        </div>
+        <a href="https://github.com/your-github-username/your-repo" target="_blank" rel="noopener" class="oss-cta">View on GitHub</a>
+      </article>
+      <article class="oss-card fade-in">
+        <div class="oss-status active"></div>
+        <div class="oss-header">
+          <div>
+            <h3>Project #3: Your Repo Name</h3>
+            <div class="oss-meta">
+              <span class="oss-role">Open Source Placeholder</span>
+            </div>
+          </div>
+          <a href="https://github.com/your-github-username/your-repo" target="_blank" rel="noopener" class="oss-link" title="View on GitHub">
+            GitHub
+          </a>
+        </div>
+        <p class="oss-desc">One-line description: What this project does.</p>
+        <div class="oss-link-url">GitHub URL: <a href="https://github.com/your-github-username/your-repo" target="_blank" rel="noopener">https://github.com/your-github-username/your-repo</a></div>
+        <div class="oss-badges">
+          <span class="oss-badge oss-badge-language">TBD</span>
+          <span class="oss-badge oss-badge-maintained">Placeholder</span>
+        </div>
+        <div class="oss-tags"><span>GitHub</span><span>Open Source</span><span>Placeholder</span></div>
+        <div class="oss-stats">
+          <div class="oss-stat"><span class="oss-stat-value">0</span><span class="oss-stat-label">Commits</span></div>
+          <div class="oss-stat"><span class="oss-stat-value">0</span><span class="oss-stat-label">Contributors</span></div>
+        </div>
+        <a href="https://github.com/your-github-username/your-repo" target="_blank" rel="noopener" class="oss-cta">View on GitHub</a>
+      </article>
     </div>
   </div>
 </section>
@@ -1496,9 +1597,12 @@
 <!-- CONTACT -->
 <section class="section contact-section" id="contact">
   <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Contact</span>
+      <h2 class="section-title">Let's build something</h2>
+    </div>
     <div class="contact-card">
       <div class="contact-left">
-        <span class="eyebrow">Let's build something</span>
         <h2 class="section-title">Open to <span class="gradient-text">senior engineering &amp; leadership</span> roles</h2>
         <p>
           If you're modernising a complex .NET estate, scaling to cloud, or weaving
@@ -1506,16 +1610,25 @@
         </p>
         <div class="contact-actions">
           <a href="mailto:saurabhkumar79@hotmail.com" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
             saurabhkumar79@hotmail.com
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </a>
           <a href="tel:+919032826098" class="btn btn-ghost">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.08-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.08-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             +91 90328 26098
           </a>
-          <a href="https://www.linkedin.com/in/saurabhk07" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
-          <a href="https://github.com/saurabh7879" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
-          <a href="https://www.youtube.com/@OfficialFrameGenAI" target="_blank" rel="noopener" class="btn btn-ghost">YouTube</a>
+          <a href="https://www.linkedin.com/in/saurabhk07" target="_blank" rel="noopener" class="btn btn-ghost">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            LinkedIn
+          </a>
+          <a href="https://github.com/saurabh7879" target="_blank" rel="noopener" class="btn btn-ghost">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
+          </a>
+          <a href="https://www.youtube.com/@OfficialFrameGenAI" target="_blank" rel="noopener" class="btn btn-ghost">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            YouTube
+          </a>
         </div>
       </div>
       <div class="contact-right">
@@ -1535,35 +1648,6 @@
     </div>
   </div>
 </section>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-inner">
-    <div>
-      <span class="logo-mark">SK</span>
-      <span>© <span id="yr">2026</span> Saurabh Kumar · Senior .NET Architect & Cloud Engineer</span>
-    </div>
-    <div class="footer-links">
-      <a href="tel:+919032826098" title="Call me">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.08-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        <span>+91 90328 26098</span>
-      </a>
-      <div class="footer-divider"></div>
-      <a href="https://www.linkedin.com/in/saurabhk07" target="_blank" rel="noopener" title="LinkedIn Profile">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-        <span>LinkedIn</span>
-      </a>
-      <a href="https://github.com/saurabh7879" target="_blank" rel="noopener" title="GitHub Profile">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-        <span>GitHub</span>
-      </a>
-      <a href="https://www.youtube.com/@OfficialFrameGenAI" target="_blank" rel="noopener" title="YouTube Channel">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
-        <span>YouTube</span>
-      </a>
-    </div>
-  </div>
-</footer>
 
 <script>
 (function () {
@@ -1631,89 +1715,55 @@
   // Open Source Projects Data
   const ossProjects = [
     {
-      id: 'oss-001',
-      name: 'RAG Framework for .NET',
-      featured: true,
-      description: 'Comprehensive Retrieval-Augmented Generation framework for .NET applications. Includes vector database integration, semantic search, and LLM orchestration patterns.',
-      link: 'https://github.com/saurabh7879/rag-framework-dotnet',
-      role: 'Creator & Maintainer',
-      status: 'active',
-      stats: {
-        stars: 342,
-        language: 'C#',
-        contributors: 8,
-        commits: 234
-      },
-      tags: ['.NET Core', 'Generative AI', 'RAG', 'Azure OpenAI', 'Vector DB'],
-      highlights: ['LLM Orchestration', 'Semantic Search', 'Context Management']
-    },
-    {
-      id: 'oss-002',
-      name: '.NET Microservices Template',
-      featured: true,
-      description: 'Production-ready template for building scalable microservices with .NET Core. Includes Docker, Kubernetes, service mesh patterns, and CI/CD setup.',
-      link: 'https://github.com/saurabh7879/dotnet-microservices',
-      role: 'Creator & Maintainer',
-      status: 'active',
-      stats: {
-        stars: 256,
-        language: 'C#',
-        contributors: 12,
-        commits: 189
-      },
-      tags: ['.NET Core', 'Microservices', 'Docker', 'Kubernetes', 'CI/CD'],
-      highlights: ['Service Discovery', 'Circuit Breaker', 'Distributed Tracing']
-    },
-    {
-      id: 'oss-003',
-      name: 'Azure OpenAI Toolkit',
+      id: 'oss-placeholder-1',
+      name: 'Project #1: Your Repo Name',
       featured: false,
-      description: 'Prompt engineering toolkit and best practices for Azure OpenAI integration. Includes prompt templates, optimization utilities, and performance monitoring.',
-      link: 'https://github.com/saurabh7879/azure-openai-toolkit',
-      role: 'Creator',
-      status: 'maintained',
-      stats: {
-        stars: 187,
-        language: 'Python',
-        contributors: 5,
-        commits: 142
-      },
-      tags: ['Azure OpenAI', 'Prompt Engineering', 'Python', 'LLM'],
-      highlights: ['Prompt Optimization', 'Cost Analysis', 'Token Counter']
-    },
-    {
-      id: 'oss-004',
-      name: 'Entity Framework Performance Analyzer',
-      featured: false,
-      description: 'Tool for analyzing and optimizing Entity Framework Core queries. Identifies N+1 queries, suggests indexing strategies, and generates optimization reports.',
-      link: 'https://github.com/saurabh7879/ef-performance-analyzer',
-      role: 'Creator',
+      description: 'One-line description: What this project does',
+      link: 'https://github.com/your-github-username/your-repo',
+      role: 'Your project',
       status: 'active',
       stats: {
-        stars: 203,
-        language: 'C#',
-        contributors: 6,
-        commits: 156
+        stars: 0,
+        language: 'TBD',
+        contributors: 0,
+        commits: 0
       },
-      tags: ['Entity Framework', '.NET Core', 'Database', 'Performance'],
-      highlights: ['Query Analysis', 'Index Suggestions', 'Performance Reports']
+      tags: ['GitHub', 'Placeholder', 'Open Source'],
+      highlights: ['Replace this card', 'Add your repo link', 'Show your project']
     },
     {
-      id: 'oss-005',
-      name: 'Contributed: OpenAI .NET SDK',
+      id: 'oss-placeholder-2',
+      name: 'Project #2: Your Repo Name',
       featured: false,
-      description: 'Contributed RAG module integration and streaming improvements to official OpenAI .NET SDK.',
-      link: 'https://github.com/openai/openai-dotnet',
-      role: 'Contributor',
+      description: 'One-line description: What this project does',
+      link: 'https://github.com/your-github-username/your-repo',
+      role: 'Your project',
       status: 'active',
       stats: {
-        stars: 2400,
-        language: 'C#',
-        contributors: 45,
-        commits: 2
+        stars: 0,
+        language: 'TBD',
+        contributors: 0,
+        commits: 0
       },
-      tags: ['OpenAI', '.NET', 'RAG', 'Streaming'],
-      highlights: ['PR #124, #156: RAG Features', '2 Pull Requests Merged']
+      tags: ['GitHub', 'Placeholder', 'Open Source'],
+      highlights: ['Replace this card', 'Add your repo link', 'Show your project']
+    },
+    {
+      id: 'oss-placeholder-3',
+      name: 'Project #3: Your Repo Name',
+      featured: false,
+      description: 'One-line description: What this project does',
+      link: 'https://github.com/your-github-username/your-repo',
+      role: 'Your project',
+      status: 'active',
+      stats: {
+        stars: 0,
+        language: 'TBD',
+        contributors: 0,
+        commits: 0
+      },
+      tags: ['GitHub', 'Placeholder', 'Open Source'],
+      highlights: ['Replace this card', 'Add your repo link', 'Show your project']
     }
   ];
 
@@ -1739,7 +1789,9 @@
         </div>
 
         <p class="oss-desc">${project.description}</p>
-
+        <div class="oss-link-url">
+          GitHub URL: <a href="${project.link}" target="_blank" rel="noopener">${project.link}</a>
+        </div>
         <div class="oss-badges">
           <span class="oss-badge oss-badge-stars">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
