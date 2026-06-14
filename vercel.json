@@ -1,6 +1,8 @@
 {
   "routes": [
+    { "src": "^/Profile/assets/(.*)$", "dest": "/Profile/assets/$1" },
     { "src": "^/Profile(/.*)?$",     "dest": "/Profile/profile.html" },
+    { "src": "^/WeatherChat/assets/(.*)$", "dest": "/WeatherChat/assets/$1" },
     { "src": "^/WeatherChat(/.*)?$",    "dest": "/WeatherChat/index.html" },
     { "src": "^/InterviewPrep(/.*)?$", "dest": "/InterviewPrep/index.html" },
     { "src": ".*",                     "dest": "/404.html", "status": 404 }
