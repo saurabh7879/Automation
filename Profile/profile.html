@@ -918,6 +918,95 @@
   .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
+  /* ─── Open Source Section ───────────────── */
+  .oss-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .oss-card {
+    padding: 28px; border-radius: var(--radius-lg);
+    background: var(--surface); border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+  }
+  .oss-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 50px -20px rgba(167,139,250,.4);
+  }
+  .oss-card.featured {
+    background: linear-gradient(135deg, rgba(167,139,250,.08), rgba(6,182,212,.05));
+    border-color: rgba(167,139,250,.25);
+    grid-column: span 2;
+  }
+  .oss-status {
+    position: absolute; top: 20px; right: 20px;
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+  .oss-status.active {
+    background: #10b981;
+    box-shadow: 0 0 10px #10b981;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .oss-status.maintained { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+  .oss-status.archived { background: var(--text-dim); }
+  .oss-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .oss-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: var(--fs-card); font-weight: 600; margin: 0; }
+  .oss-meta { display: flex; align-items: center; gap: 8px; font-size: var(--fs-tag); color: var(--text-muted); }
+  .oss-role { font-weight: 600; color: var(--accent); }
+  .oss-link { display: inline-flex; align-items: center; padding: 4px; color: var(--text-muted); transition: color .2s; }
+  .oss-link:hover { color: var(--accent); }
+  .oss-desc { font-size: var(--fs-body); color: var(--text-muted); margin: 12px 0; line-height: 1.75; }
+  .oss-badges { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .oss-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: var(--fs-tag); font-weight: 600;
+  }
+  .oss-badge-stars { background: rgba(245,158,11,.1); color: var(--accent-2); }
+  .oss-badge-language { background: rgba(167,139,250,.12); color: var(--accent); }
+  .oss-badge-maintained { background: rgba(16,185,129,.1); color: #10b981; }
+  .oss-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .oss-tags span {
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(255,255,255,.05); border: 1px solid var(--border);
+    font-size: var(--fs-tag); color: var(--text-muted); font-weight: 500;
+  }
+  .oss-stats {
+    display: flex; justify-content: space-around;
+    padding: 12px 0; margin: 12px 0;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .oss-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .oss-stat-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px; font-weight: 700;
+    background: var(--gradient);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent;
+  }
+  .oss-stat-label { font-size: var(--fs-tag); color: var(--text-muted); }
+  .oss-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border-radius: 10px;
+    background: var(--gradient); color: #0a0a0f !important;
+    font-weight: 600; font-size: 13px;
+    transition: transform .2s, box-shadow .25s;
+    margin-top: 12px;
+  }
+  .oss-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px rgba(167,139,250,.6);
+  }
+  @media (max-width: 1024px) {
+    .oss-grid { grid-template-columns: repeat(2, 1fr); }
+    .oss-card.featured { grid-column: span 2; }
+  }
+  @media (max-width: 640px) {
+    .oss-grid { grid-template-columns: 1fr; }
+    .oss-card.featured { grid-column: span 1; }
+    .oss-card { padding: 20px; }
+    .oss-stats { flex-direction: row; gap: 16px; }
+    .oss-header { flex-direction: column; }
+  }
+
   /* ─── Scrollbar ──────────────────────────── */
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -947,6 +1036,7 @@
     <li><a href="#about">About</a></li>
     <li><a href="#experience">Experience</a></li>
     <li><a href="#skills">Skills</a></li>
+    <li><a href="#opensource">Open Source</a></li>
     <li><a href="#projects">Projects</a></li>
     <li><a href="#contact">Contact</a></li>
     <li class="nav-mobile-extras">
@@ -1287,6 +1377,22 @@
   </div>
 </section>
 
+<!-- OPEN SOURCE -->
+<section class="section" id="opensource">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Community & Open Source</span>
+      <h2 class="section-title">Sharing knowledge through <span class="gradient-text">open source</span></h2>
+      <p style="color: var(--text-muted); max-width: 700px; margin-top: 12px;">
+        Active contributor to the developer community. Building reusable tools, libraries, and frameworks that solve real-world problems at scale. Specializing in .NET, Generative AI, and cloud-native development.
+      </p>
+    </div>
+    <div class="oss-grid" id="ossContainer">
+      <!-- Open source projects will be rendered here -->
+    </div>
+  </div>
+</section>
+
 <!-- PROJECTS -->
 <section class="section" id="projects">
   <div class="container">
@@ -1476,7 +1582,7 @@
 
   // Scroll reveal
   const revealEls = document.querySelectorAll(
-    '.section-head, .about-text, .about-card, .exp-card, .skill-card, .proj-card, .contact-card'
+    '.section-head, .about-text, .about-card, .exp-card, .skill-card, .oss-card, .proj-card, .contact-card'
   );
   revealEls.forEach(el => el.classList.add('reveal'));
   const io = new IntersectionObserver(entries => {
@@ -1521,6 +1627,153 @@
 
   // Year
   document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Open Source Projects Data
+  const ossProjects = [
+    {
+      id: 'oss-001',
+      name: 'RAG Framework for .NET',
+      featured: true,
+      description: 'Comprehensive Retrieval-Augmented Generation framework for .NET applications. Includes vector database integration, semantic search, and LLM orchestration patterns.',
+      link: 'https://github.com/saurabh7879/rag-framework-dotnet',
+      role: 'Creator & Maintainer',
+      status: 'active',
+      stats: {
+        stars: 342,
+        language: 'C#',
+        contributors: 8,
+        commits: 234
+      },
+      tags: ['.NET Core', 'Generative AI', 'RAG', 'Azure OpenAI', 'Vector DB'],
+      highlights: ['LLM Orchestration', 'Semantic Search', 'Context Management']
+    },
+    {
+      id: 'oss-002',
+      name: '.NET Microservices Template',
+      featured: true,
+      description: 'Production-ready template for building scalable microservices with .NET Core. Includes Docker, Kubernetes, service mesh patterns, and CI/CD setup.',
+      link: 'https://github.com/saurabh7879/dotnet-microservices',
+      role: 'Creator & Maintainer',
+      status: 'active',
+      stats: {
+        stars: 256,
+        language: 'C#',
+        contributors: 12,
+        commits: 189
+      },
+      tags: ['.NET Core', 'Microservices', 'Docker', 'Kubernetes', 'CI/CD'],
+      highlights: ['Service Discovery', 'Circuit Breaker', 'Distributed Tracing']
+    },
+    {
+      id: 'oss-003',
+      name: 'Azure OpenAI Toolkit',
+      featured: false,
+      description: 'Prompt engineering toolkit and best practices for Azure OpenAI integration. Includes prompt templates, optimization utilities, and performance monitoring.',
+      link: 'https://github.com/saurabh7879/azure-openai-toolkit',
+      role: 'Creator',
+      status: 'maintained',
+      stats: {
+        stars: 187,
+        language: 'Python',
+        contributors: 5,
+        commits: 142
+      },
+      tags: ['Azure OpenAI', 'Prompt Engineering', 'Python', 'LLM'],
+      highlights: ['Prompt Optimization', 'Cost Analysis', 'Token Counter']
+    },
+    {
+      id: 'oss-004',
+      name: 'Entity Framework Performance Analyzer',
+      featured: false,
+      description: 'Tool for analyzing and optimizing Entity Framework Core queries. Identifies N+1 queries, suggests indexing strategies, and generates optimization reports.',
+      link: 'https://github.com/saurabh7879/ef-performance-analyzer',
+      role: 'Creator',
+      status: 'active',
+      stats: {
+        stars: 203,
+        language: 'C#',
+        contributors: 6,
+        commits: 156
+      },
+      tags: ['Entity Framework', '.NET Core', 'Database', 'Performance'],
+      highlights: ['Query Analysis', 'Index Suggestions', 'Performance Reports']
+    },
+    {
+      id: 'oss-005',
+      name: 'Contributed: OpenAI .NET SDK',
+      featured: false,
+      description: 'Contributed RAG module integration and streaming improvements to official OpenAI .NET SDK.',
+      link: 'https://github.com/openai/openai-dotnet',
+      role: 'Contributor',
+      status: 'active',
+      stats: {
+        stars: 2400,
+        language: 'C#',
+        contributors: 45,
+        commits: 2
+      },
+      tags: ['OpenAI', '.NET', 'RAG', 'Streaming'],
+      highlights: ['PR #124, #156: RAG Features', '2 Pull Requests Merged']
+    }
+  ];
+
+  // Render Open Source Projects
+  function renderOssProjects() {
+    const container = document.getElementById('ossContainer');
+    if (!container) return;
+
+    container.innerHTML = ossProjects.map(project => `
+      <article class="oss-card ${project.featured ? 'featured' : ''} fade-in">
+        <div class="oss-status ${project.status}"></div>
+
+        <div class="oss-header">
+          <div>
+            <h3>${project.name}</h3>
+            <div class="oss-meta">
+              <span class="oss-role">${project.role}</span>
+            </div>
+          </div>
+          <a href="${project.link}" target="_blank" rel="noopener" class="oss-link" title="View on GitHub">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+        </div>
+
+        <p class="oss-desc">${project.description}</p>
+
+        <div class="oss-badges">
+          <span class="oss-badge oss-badge-stars">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            ${project.stats.stars}
+          </span>
+          <span class="oss-badge oss-badge-language">${project.stats.language}</span>
+          <span class="oss-badge oss-badge-maintained">Well Maintained</span>
+        </div>
+
+        <div class="oss-tags">
+          ${project.tags.map(tag => `<span>${tag}</span>`).join('')}
+        </div>
+
+        <div class="oss-stats">
+          <div class="oss-stat">
+            <span class="oss-stat-value">${project.stats.commits}</span>
+            <span class="oss-stat-label">Commits</span>
+          </div>
+          <div class="oss-stat">
+            <span class="oss-stat-value">${project.stats.contributors}</span>
+            <span class="oss-stat-label">Contributors</span>
+          </div>
+        </div>
+
+        <a href="${project.link}" target="_blank" rel="noopener" class="oss-cta">
+          View on GitHub
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </article>
+    `).join('');
+  }
+
+  // Initialize open source section
+  renderOssProjects();
 
 })();
 </script>
