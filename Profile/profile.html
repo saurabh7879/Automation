@@ -237,6 +237,23 @@
     color: transparent; -webkit-text-fill-color: transparent;
   }
   .hero-subtitle { font-size: clamp(13px,1.5vw,16px); margin-bottom: 8px; font-weight: 500; line-height: 1.5; }
+  .hero-tagline {
+    margin: 20px 0 24px 0; padding: 16px 20px;
+    border-radius: 12px; border: 1px solid var(--border-strong);
+    background: linear-gradient(135deg, rgba(167,139,250,.08), rgba(6,182,212,.05));
+    font-size: clamp(12px,1.2vw,14px); font-weight: 600;
+    color: var(--text); line-height: 1.8; letter-spacing: 0.02em;
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  }
+  .hero-tagline span {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 6px;
+    background: rgba(255,255,255,.04); border: 1px solid var(--border);
+    color: var(--text-muted); font-weight: 500;
+    transition: all .25s;
+  }
+  .hero-tagline span:hover { background: rgba(167,139,250,.1); border-color: var(--accent); color: var(--accent); }
+  .hero-tagline .accent-tag { background: rgba(167,139,250,.15); border-color: var(--accent); color: var(--accent); }
   .accent { color: var(--accent); font-weight: 600; }
   .muted  { color: var(--text-muted); font-weight: 400; }
   .hero-description {
@@ -704,18 +721,32 @@
 
   /* ─── Footer ─────────────────────────────── */
   .footer {
-    padding: 32px clamp(20px,4vw,48px);
-    border-top: 1px solid var(--border); background: var(--bg-soft);
+    padding: 48px clamp(20px,4vw,48px) 32px;
+    border-top: 1px solid var(--border-strong);
+    background: linear-gradient(180deg, var(--bg-soft) 0%, rgba(7,7,12,0.95) 100%);
   }
   .footer-inner {
     display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 20px; font-size: 11px; color: var(--text-muted);
+    flex-wrap: wrap; gap: 40px; font-size: 11px; color: var(--text-muted);
     max-width: var(--max-w); margin: 0 auto;
   }
   .footer-inner > div:first-child { display: flex; align-items: center; gap: 14px; }
-  .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .footer-links a { color: var(--text-muted); font-size: 11px; }
-  .footer-links a:hover { color: var(--accent); }
+  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+  .footer-links a {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 14px; border-radius: 8px;
+    background: rgba(255,255,255,.05); border: 1px solid var(--border);
+    color: var(--text-muted); font-size: 13px; font-weight: 500;
+    transition: all .3s ease;
+  }
+  .footer-links a:hover {
+    background: rgba(167,139,250,.15);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .footer-links a svg { width: 16px; height: 16px; }
+  .footer-divider { width: 1px; height: 24px; background: var(--border); }
 
   /* ─── Responsive ─────────────────────── */
 
@@ -887,6 +918,95 @@
   .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
+  /* ─── Open Source Section ───────────────── */
+  .oss-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .oss-card {
+    padding: 28px; border-radius: var(--radius-lg);
+    background: var(--surface); border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+  }
+  .oss-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 50px -20px rgba(167,139,250,.4);
+  }
+  .oss-card.featured {
+    background: linear-gradient(135deg, rgba(167,139,250,.08), rgba(6,182,212,.05));
+    border-color: rgba(167,139,250,.25);
+    grid-column: span 2;
+  }
+  .oss-status {
+    position: absolute; top: 20px; right: 20px;
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+  .oss-status.active {
+    background: #10b981;
+    box-shadow: 0 0 10px #10b981;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .oss-status.maintained { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+  .oss-status.archived { background: var(--text-dim); }
+  .oss-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .oss-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: var(--fs-card); font-weight: 600; margin: 0; }
+  .oss-meta { display: flex; align-items: center; gap: 8px; font-size: var(--fs-tag); color: var(--text-muted); }
+  .oss-role { font-weight: 600; color: var(--accent); }
+  .oss-link { display: inline-flex; align-items: center; padding: 4px; color: var(--text-muted); transition: color .2s; }
+  .oss-link:hover { color: var(--accent); }
+  .oss-desc { font-size: var(--fs-body); color: var(--text-muted); margin: 12px 0; line-height: 1.75; }
+  .oss-badges { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .oss-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: var(--fs-tag); font-weight: 600;
+  }
+  .oss-badge-stars { background: rgba(245,158,11,.1); color: var(--accent-2); }
+  .oss-badge-language { background: rgba(167,139,250,.12); color: var(--accent); }
+  .oss-badge-maintained { background: rgba(16,185,129,.1); color: #10b981; }
+  .oss-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .oss-tags span {
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(255,255,255,.05); border: 1px solid var(--border);
+    font-size: var(--fs-tag); color: var(--text-muted); font-weight: 500;
+  }
+  .oss-stats {
+    display: flex; justify-content: space-around;
+    padding: 12px 0; margin: 12px 0;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .oss-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .oss-stat-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px; font-weight: 700;
+    background: var(--gradient);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent;
+  }
+  .oss-stat-label { font-size: var(--fs-tag); color: var(--text-muted); }
+  .oss-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border-radius: 10px;
+    background: var(--gradient); color: #0a0a0f !important;
+    font-weight: 600; font-size: 13px;
+    transition: transform .2s, box-shadow .25s;
+    margin-top: 12px;
+  }
+  .oss-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px rgba(167,139,250,.6);
+  }
+  @media (max-width: 1024px) {
+    .oss-grid { grid-template-columns: repeat(2, 1fr); }
+    .oss-card.featured { grid-column: span 2; }
+  }
+  @media (max-width: 640px) {
+    .oss-grid { grid-template-columns: 1fr; }
+    .oss-card.featured { grid-column: span 1; }
+    .oss-card { padding: 20px; }
+    .oss-stats { flex-direction: row; gap: 16px; }
+    .oss-header { flex-direction: column; }
+  }
+
   /* ─── Scrollbar ──────────────────────────── */
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -916,31 +1036,32 @@
     <li><a href="#about">About</a></li>
     <li><a href="#experience">Experience</a></li>
     <li><a href="#skills">Skills</a></li>
+    <li><a href="#opensource">Open Source</a></li>
     <li><a href="#projects">Projects</a></li>
     <li><a href="#contact">Contact</a></li>
     <li class="nav-mobile-extras">
-      <a href="tel:+918106832241" class="nav-phone" style="display:inline-flex;">
+      <a href="tel:+919032826098" class="nav-phone" style="display:inline-flex;">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.08-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        <span>+91 81068 32241</span>
+        <span>+91 90328 26098</span>
       </a>
     </li>
     <li class="nav-mobile-extras"><a href="#contact" class="nav-cta" style="display:inline-flex;">Hire Me</a></li>
   </ul>
-  <a href="tel:+918106832241" class="nav-phone">
+  <a href="tel:+919032826098" class="nav-phone">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.08-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-    <span>+91 81068 32241</span>
+    <span>+91 90328 26098</span>
   </a>
   <div class="nav-socials">
     <a href="mailto:saurabhkumar79@hotmail.com" aria-label="Email" title="saurabhkumar79@hotmail.com">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
     </a>
-    <a href="#" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+    <a href="https://www.linkedin.com/in/saurabhk07" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
     </a>
-    <a href="#" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+    <a href="https://github.com/saurabh7879" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
     </a>
-    <a href="#" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube">
+    <a href="https://www.youtube.com/@OfficialFrameGenAI" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
     </a>
   </div>
@@ -955,22 +1076,37 @@
   <div class="hero-grid">
     <div class="hero-text">
       <div class="badge fade-in">
-        <span class="dot"></span> Building Frame Gen AI · YouTube &amp; Cloud Content · Open to Leadership
+        <span class="dot"></span> Senior .NET Architect · Generative AI & Agentic Automation Specialist · Open to Leadership
       </div>
       <h1 class="hero-title fade-in">
         <span class="title-line">Saurabh</span>
         <span class="title-line gradient-text">Kumar</span>
       </h1>
+      <div class="hero-tagline fade-in">
+        <span class="accent-tag">Software Engineer</span>
+        <span class="accent-tag">Enterprise Transformation</span>
+        <span>.NET Core</span>
+        <span>AWS</span>
+        <span>Azure</span>
+        <span class="accent-tag">Generative AI</span>
+        <span class="accent-tag">RAG</span>
+        <span class="accent-tag">Agentic AI</span>
+        <span>System Design</span>
+        <span>DevOps</span>
+        <span>Microservices</span>
+        <span class="accent-tag">Cloud & AI Leader</span>
+        <span>BMAD</span>
+      </div>
       <p class="hero-subtitle fade-in">
-        Senior <span class="accent">.NET Engineer &amp; Engineering Lead</span> · Enterprise Platform Architect<br />
-        <span class="muted">.NET Core · AWS · Azure · DevOps · Generative AI</span><br />
-        <span class="muted">Creator of <strong style="color:var(--accent-3)">Frame Gen AI</strong> · Building Intelligent Cloud Systems</span>
+        <span class="accent">Senior .NET Architect</span> · Engineering Lead · Generative AI Specialist<br />
+        <span class="muted">.NET Core · Microservices · AWS · Azure · RAG · Agentic Automation</span><br />
+        <span class="muted">JPMorgan Chase: <strong>15+ years</strong> enterprise banking applications</span>
       </p>
       <p class="hero-description fade-in">
-        Distinguished software engineering professional with 15+ years building enterprise-grade
-        platforms for global financial services — including <strong>9+ years at JPMorgan Chase</strong>.
-        Expert in end-to-end SDLC, Agile leadership, cloud architecture, and pioneering
-        <strong>Generative AI integration</strong> at scale.
+        Distinguished software engineering professional with <strong>15+ years</strong> of proven excellence in enterprise-grade
+        platforms for global financial services at <strong>JPMorgan Chase</strong>.
+        Deep expertise in .NET Core, microservices architecture, cloud platforms, and pioneering
+        <strong>Generative AI integration</strong> including LLM orchestration, RAG, and Agentic Automation at scale.
       </p>
       <div class="hero-actions fade-in">
         <a href="#experience" class="btn btn-primary">
@@ -1006,13 +1142,13 @@
   <!-- STATS INLINE IN HERO -->
   <div class="hero-stats">
     <div class="hero-stat">
-      <div class="hero-stat-num"><span class="hero-stat-value" data-count="15">0</span><span class="hero-stat-suffix">+</span></div>
+      <div class="hero-stat-num"><span class="hero-stat-value" data-count="16">0</span><span class="hero-stat-suffix">+</span></div>
       <span class="hero-stat-label">Yrs Experience</span>
     </div>
     <div class="hero-stat-div"></div>
     <div class="hero-stat">
-      <div class="hero-stat-num"><span class="hero-stat-value" data-count="20">0</span><span class="hero-stat-suffix">%</span></div>
-      <span class="hero-stat-label">DB Perf Gains</span>
+      <div class="hero-stat-num"><span class="hero-stat-value" data-count="60">0</span><span class="hero-stat-suffix">%</span></div>
+      <span class="hero-stat-label">Perf Improvement</span>
     </div>
     <div class="hero-stat-div"></div>
     <div class="hero-stat">
@@ -1021,13 +1157,13 @@
     </div>
     <div class="hero-stat-div"></div>
     <div class="hero-stat">
-      <div class="hero-stat-num"><span class="hero-stat-value" data-count="7">0</span><span class="hero-stat-suffix">+</span></div>
+      <div class="hero-stat-num"><span class="hero-stat-value" data-count="9">0</span><span class="hero-stat-suffix">+</span></div>
       <span class="hero-stat-label">Major Projects</span>
     </div>
     <div class="hero-stat-div"></div>
     <div class="hero-stat">
-      <div class="hero-stat-num"><span class="hero-stat-value" data-count="4">0</span><span class="hero-stat-suffix">+</span></div>
-      <span class="hero-stat-label">Cloud &amp; AI Certs</span>
+      <div class="hero-stat-num"><span class="hero-stat-value" data-count="5">0</span><span class="hero-stat-suffix">+</span></div>
+      <span class="hero-stat-label">Professional Certs</span>
     </div>
   </div>
 
@@ -1047,33 +1183,35 @@
     <div class="about-grid">
       <div class="about-text">
         <p>
-          Distinguished Software Engineering professional with <strong>15+ years</strong> of proven excellence
-          in enterprise-grade Microsoft technologies — .NET Core, ASP.NET MVC, C#, Web API, LINQ,
-          Entity Framework, ADO.NET, MS SQL Server — and multi-cloud platforms (Azure, AWS).
+          <strong>Senior .NET Architect and Application Owner</strong> with <strong>16+ years</strong> of proven excellence
+          in enterprise banking application development and support. Strong expertise in <strong>.NET Core, microservices, AWS, Azure,</strong>
+          and end-to-end application ownership driving critical financial services platforms.
         </p>
         <p>
-          Expert in end-to-end software development lifecycle orchestration, Agile methodologies,
-          Scrum leadership, and pioneering <strong>Generative AI integration</strong>. Currently leading
-          mission-critical banking applications as Engineering Lead &amp; SME at
-          <strong>JPMorgan Chase</strong>.
+          Expert in designing <strong>high-availability systems, secure APIs, and regulated architectures</strong>
+          for enterprise environments. Led legacy modernization and cloud migration initiatives delivering
+          <strong>up to 60% performance improvements</strong>. Acts as SME and technical authority, driving
+          HLD/LLD reviews, code quality standards, and engineering best practices across portfolios.
         </p>
-        <p class="muted">
-          Seeking a strategic leadership role to spearhead innovative application development,
-          architect robust enterprise systems, and lead high-performing teams delivering
-          mission-critical, scalable solutions that accelerate organizational growth.
+        <p>
+          Implemented <strong>DevOps automation, monitoring (Dynatrace, Splunk), and CI/CD pipelines</strong>
+          improving release stability and production reliability. Hands-on experience with
+          <strong>Generative AI, RAG solutions, and Agentic AI</strong> to improve operational efficiency
+          and developer productivity. Lead Agile delivery, mentor engineers across all levels, and
+          orchestrate zero-downtime migrations maintaining 99.9% uptime SLAs.
         </p>
       </div>
       <div class="about-card">
         <h3>Quick Facts</h3>
         <ul class="facts">
-          <li><span>Current</span><strong>Sr. Software Engineer · JPMorgan Chase</strong></li>
-          <li><span>Education</span><strong>MCA · Sikkim Manipal University</strong></li>
-          <li><span>Focus</span><strong>.NET · Cloud · DevOps · GenAI</strong></li>
-          <li><span>Domains</span><strong>Finance · Healthcare · E-Commerce</strong></li>
-          <li><span>Method</span><strong>Agile / Scrum</strong></li>
-          <li><span>Email</span><strong>saurabhkumar79@hotmail.com</strong></li>
-          <li><span>Phone</span><strong><a href="tel:+918106832241" style="color:inherit">+91 81068 32241</a></strong></li>
-          <li><span>Status</span><strong class="open">Open to senior leadership roles</strong></li>
+          <li><span>Current</span><strong>Senior Engineer / Engineering Lead · JPMorgan Chase</strong></li>
+          <li><span>Education</span><strong>MCA, BSc IT · Sikkim Manipal University</strong></li>
+          <li><span>Focus</span><strong>.NET Core · AWS · Azure · GenAI · Microservices</strong></li>
+          <li><span>Specialties</span><strong>RAG · Agentic Automation · LLM Orchestration</strong></li>
+          <li><span>Domains</span><strong>FinTech · Finance · Healthcare · E-Commerce</strong></li>
+          <li><span>Method</span><strong>Agile / Scrum · HLD/LLD Design</strong></li>
+          <li><span>Email</span><strong><a href="mailto:saurabhkumar79@hotmail.com" style="color:inherit">saurabhkumar79@hotmail.com</a></strong></li>
+          <li><span>Status</span><strong class="open">Open to Principal Engineer & Leadership</strong></li>
         </ul>
       </div>
     </div>
@@ -1093,20 +1231,20 @@
         <div class="exp-header">
           <div class="exp-logo">JPM</div>
           <div>
-            <h3>JPMorgan Chase</h3>
-            <span class="exp-role">Senior Software Engineer / Engineering Lead, SME · Oct 2016 – Present</span>
+            <h3>JPMorgan Chase &amp; Co.</h3>
+            <span class="exp-role">Senior Software Engineer / Engineering Lead, AI Innovation Lead · Oct 2016 – Present</span>
           </div>
         </div>
         <ul class="exp-points">
-          <li>Own end-to-end architecture and operational stability for business-critical banking applications across global operations.</li>
-          <li>Architected cloud-ready platforms using <strong>.NET Core, RESTful APIs, AWS</strong>, and SQL Server with enterprise security and compliance.</li>
-          <li>Delivered <strong>20% DB performance improvement</strong> through Entity Framework optimization and architectural refactoring.</li>
-          <li>Designed 10+ reusable modules cutting code redundancy by <strong>40%</strong> and accelerating cross-team feature delivery.</li>
-          <li>Led a complex data center migration with <strong>zero downtime</strong>, ensuring seamless business continuity.</li>
-          <li>Pioneered Generative AI adoption and CI/CD automation via Jenkins, Ansible, Docker, and Kubernetes.</li>
+          <li>Own end-to-end architecture and operational stability for business-critical banking applications supporting global operations across FinTech and DDA payment domains.</li>
+          <li>Architected cloud-ready, highly available platforms using <strong>.NET Core, RESTful APIs, AWS, and SQL Server</strong> ensuring enterprise security and regulatory compliance.</li>
+          <li>Delivered <strong>60% performance improvement</strong> through database optimization, caching strategies, and architectural refactoring using Entity Framework and TDD.</li>
+          <li>Designed 10+ reusable modules reducing code redundancy by <strong>40%</strong> and accelerating cross-team feature delivery across the application portfolio.</li>
+          <li>Pioneered Generative AI adoption including <strong>Azure OpenAI, RAG pipelines, and Agentic Automation</strong> to reduce manual reconciliation and enhance operational efficiency.</li>
+          <li>Orchestrated <strong>zero-downtime data center migration</strong> maintaining 99.9% uptime SLAs ensuring seamless business continuity.</li>
         </ul>
         <div class="exp-tags">
-          <span>.NET Core</span><span>C#</span><span>AWS</span><span>ReactJS</span><span>Scrum</span><span>CI/CD</span><span>Dynatrace</span><span>Splunk</span>
+          <span>.NET Core</span><span>C#</span><span>AWS</span><span>ReactJS</span><span>Azure OpenAI</span><span>RAG</span><span>Agentic AI</span><span>Microservices</span><span>CI/CD</span>
         </div>
       </article>
 
@@ -1114,28 +1252,31 @@
         <div class="exp-header">
           <div class="exp-logo">AR</div>
           <div>
-            <h3>Aheadrace</h3>
-            <span class="exp-role">Software Engineer / SME · Oct 2015 – Oct 2016</span>
+            <h3>AheadRace Software Development Pvt Ltd</h3>
+            <span class="exp-role">Software Engineer · Oct 2015 – Oct 2016</span>
           </div>
         </div>
         <ul class="exp-points">
-          <li>Led requirements analysis, HLD/LLD creation, class &amp; sequence diagrams, database design, and full-stack UI/API development.</li>
+          <li>Designed and developed Credit Tracker, a full-stack ASP.NET MVC compliance application for CPE credit tracking across New York State licensing requirements.</li>
+          <li>Delivered HLD, LLD, class diagrams, sequence diagrams, Web API, and SQL Server implementation from requirements through production release.</li>
         </ul>
-        <div class="exp-tags"><span>ASP.NET MVC</span><span>Web API</span><span>SQL Server</span><span>jQuery</span></div>
+        <div class="exp-tags"><span>ASP.NET MVC</span><span>Web API</span><span>Entity Framework</span><span>SQL Server</span><span>jQuery</span></div>
       </article>
 
       <article class="exp-card">
         <div class="exp-header">
           <div class="exp-logo">CSC</div>
           <div>
-            <h3>CSC <small style="color:var(--text-muted);font-size:13px">— now DXC Technology</small></h3>
-            <span class="exp-role">Programmer Analyst · May 2012 – Sep 2015</span>
+            <h3>Computer Sciences Corporation (CSC)</h3>
+            <span class="exp-role">Programming Analyst · May 2012 – Sep 2015</span>
           </div>
         </div>
         <ul class="exp-points">
-          <li>Created and hosted WCF services on IIS with SSL. Designed entity models and delivered full-stack features with unit test coverage.</li>
+          <li>Developed and maintained United.com and EmployeeRes airline booking platforms serving employees and passengers for United Airlines.</li>
+          <li>Created WCF services hosted on IIS with SSL, designed Entity Framework schemas, and wrote comprehensive unit test suites.</li>
+          <li>Participated in regression testing automation and Agile knowledge-transfer cycles across multi-geography teams.</li>
         </ul>
-        <div class="exp-tags"><span>ASP.NET</span><span>WCF</span><span>IIS</span><span>SSL</span><span>Unit Testing</span></div>
+        <div class="exp-tags"><span>ASP.NET</span><span>WCF</span><span>IIS</span><span>SSL</span><span>Entity Framework</span><span>Unit Testing</span></div>
       </article>
 
       <article class="exp-card">
@@ -1143,27 +1284,14 @@
           <div class="exp-logo">CY</div>
           <div>
             <h3>Cyient</h3>
-            <span class="exp-role">Software Engineer · Nov 2010 – Apr 2012</span>
+            <span class="exp-role">Senior Software Engineer · Nov 2010 – Apr 2012</span>
           </div>
         </div>
         <ul class="exp-points">
-          <li>Developed real-time alert visualization &amp; monitoring systems; created UML diagrams and implemented POCO entities via EF.</li>
+          <li>Built Alert Visualization and Monitoring application using ASP.NET MVC, AngularJS, C#, WCF, SQL Server, EF5, and HP ALM.</li>
+          <li>Developed real-time alert visualization &amp; monitoring systems; created UML diagrams and implemented POCO entities via Entity Framework.</li>
         </ul>
-        <div class="exp-tags"><span>ASP.NET MVC</span><span>EF</span><span>Real-time</span><span>Monitoring</span></div>
-      </article>
-
-      <article class="exp-card">
-        <div class="exp-header">
-          <div class="exp-logo">AT</div>
-          <div>
-            <h3>Ardent Technologies</h3>
-            <span class="exp-role">Software Engineer · Apr 2008 – Nov 2010</span>
-          </div>
-        </div>
-        <ul class="exp-points">
-          <li>Built ProVu Dashboard Server log viewer UI and WCF-based communication framework between client and dashboard server.</li>
-        </ul>
-        <div class="exp-tags"><span>ASP.NET</span><span>WCF</span><span>Dashboard</span></div>
+        <div class="exp-tags"><span>ASP.NET MVC</span><span>AngularJS</span><span>WCF</span><span>Entity Framework</span><span>Real-time</span><span>HP ALM</span></div>
       </article>
 
     </div>
@@ -1180,6 +1308,20 @@
     <div class="skills-grid">
       <div class="skill-card">
         <div class="skill-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm0 2c-2.209 0-4 1.791-4 4v6h8v-6c0-2.209-1.791-4-4-4zm0 12h-8v2h8v-2zm8-12c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm0 2c-2.209 0-4 1.791-4 4v6h8v-6c0-2.209-1.791-4-4-4z"/></svg>
+        </div>
+        <h3>AI &amp; Generative AI</h3>
+        <ul>
+          <li>LLM Application Development</li>
+          <li>Retrieval-Augmented Generation (RAG)</li>
+          <li>Agentic AI &amp; Multi-Agent Systems</li>
+          <li>Azure OpenAI · AWS Bedrock</li>
+          <li>Prompt Engineering · Vector Databases</li>
+          <li>LangChain · GitHub Copilot</li>
+        </ul>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         </div>
         <h3>Cloud &amp; Infrastructure</h3>
@@ -1187,8 +1329,8 @@
           <li>AWS (EC2, S3, Lambda, RDS)</li>
           <li>Microsoft Azure</li>
           <li>Docker &amp; Kubernetes</li>
-          <li>Terraform</li>
-          <li>High-Availability Systems</li>
+          <li>Terraform &amp; Infrastructure as Code</li>
+          <li>High-Availability Microservices</li>
         </ul>
       </div>
       <div class="skill-card">
@@ -1221,15 +1363,32 @@
         <div class="skill-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
-        <h3>Leadership &amp; Process</h3>
+        <h3>Architecture &amp; Leadership</h3>
         <ul>
+          <li>HLD / LLD Design &amp; Reviews</li>
+          <li>System Design &amp; Architecture</li>
           <li>Agile / Scrum Leadership</li>
-          <li>HLD / LLD Architecture</li>
-          <li>Design Patterns</li>
-          <li>Cross-functional Teams</li>
-          <li>Release Management</li>
+          <li>Technical Authority &amp; SME</li>
+          <li>Cross-functional Team Leadership</li>
+          <li>Release &amp; Project Management</li>
         </ul>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPEN SOURCE -->
+<section class="section" id="opensource">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Community & Open Source</span>
+      <h2 class="section-title">Sharing knowledge through <span class="gradient-text">open source</span></h2>
+      <p style="color: var(--text-muted); max-width: 700px; margin-top: 12px;">
+        Active contributor to the developer community. Building reusable tools, libraries, and frameworks that solve real-world problems at scale. Specializing in .NET, Generative AI, and cloud-native development.
+      </p>
+    </div>
+    <div class="oss-grid" id="ossContainer">
+      <!-- Open source projects will be rendered here -->
     </div>
   </div>
 </section>
@@ -1244,45 +1403,45 @@
     <div class="proj-grid">
       <div class="proj-card">
         <span class="proj-num">01</span>
-        <h3>Business Application Service</h3>
-        <div class="proj-org">JPMorgan Chase · Oct 2019 – Present</div>
-        <p>Engineering Lead for build/release automation, Scrum dashboards, and project management. 20% DB performance gain; 40% code redundancy reduction via modular architecture. Zero-downtime data center migration.</p>
-        <div class="proj-tags"><span>.Net Core MVC</span><span>ReactJS</span><span>AWS</span><span>EF</span></div>
+        <h3>General Reconciliation Engine (GLARE)</h3>
+        <div class="proj-org">JPMorgan Chase · Sep 2025 – Present</div>
+        <p>In-house Recon tool replacing SAP-OIM Module with Generative AI and RAG integration to automate reconciliation, reduce manual reconciler effort, and enhance auto-match capabilities. Architected system to pull transaction details from target business systems, automate manual workflows, reduce reconciler backlogs, and improve account-level visibility. Authored PRD, HLD, LLD, Solution Architecture; led Agile ceremonies from inception.</p>
+        <div class="proj-tags"><span>React.js</span><span>TypeScript</span><span>Spring Boot</span><span>PostgreSQL</span><span>Databricks</span><span>RAG</span><span>LLM</span><span>Generative AI</span><span>System Design</span><span>Docker</span></div>
       </div>
       <div class="proj-card">
         <span class="proj-num">02</span>
-        <h3>eSigna ChequeWriter</h3>
-        <div class="proj-org">JPMorgan Chase · Nov 2019 – Oct 2021</div>
-        <p>Built UI and communication framework between Log Viewer and Dashboard Server. Created WCF services for bidirectional data exchange. Owned build automation and Scrum processes.</p>
-        <div class="proj-tags"><span>.Net Core</span><span>WCF</span><span>MVC</span><span>SQL Server</span></div>
+        <h3>Business Application Service (BAS)</h3>
+        <div class="proj-org">JPMorgan Chase · Oct 2021 – Oct 2025</div>
+        <p>Corporate DDA recovery payment platform processing ~1M payments annually for loan, lease, and charged-off account recovery. Processes Payment Research, Speed Pay Payments, Rejected ACH, and C/O DDA Account payments. Delivered 20% performance improvement via Entity Framework optimization and 40% code reduction through modular architecture. 99.9% uptime SLA.</p>
+        <div class="proj-tags"><span>.NET Core</span><span>React.js</span><span>AWS</span><span>Entity Framework</span><span>SQL Server</span><span>High Availability</span></div>
       </div>
       <div class="proj-card">
         <span class="proj-num">03</span>
-        <h3>Closing Desk</h3>
-        <div class="proj-org">JPMorgan Chase · Dec 2016 – Oct 2019</div>
-        <p>Full SDLC: requirements, HLD/LLD, DB design, UI, API. 20% performance uplift via Entity Framework. TDD adoption across the team.</p>
-        <div class="proj-tags"><span>ASP.Net MVC</span><span>AngularJS</span><span>AWS</span><span>TDD</span></div>
+        <h3>eSigna ChequeWriter</h3>
+        <div class="proj-org">JPMorgan Chase · Nov 2019 – Oct 2021</div>
+        <p>Checking account attachment providing extended computer system for electronic check design, printing, and disbursement monitoring. Designed electronic check printing and disbursement monitoring system with WCF services and automated build/release pipelines. Owned end-to-end deployment automation and CI/CD integration.</p>
+        <div class="proj-tags"><span>.NET Core</span><span>MVC</span><span>WCF</span><span>Web API</span><span>Entity Framework</span><span>CI/CD</span></div>
       </div>
       <div class="proj-card">
         <span class="proj-num">04</span>
-        <h3>Credit Tracker</h3>
-        <div class="proj-org">Aheadrace · Oct 2015 – Oct 2016</div>
-        <p>Requirements analysis, HLD/LLD, UML diagrams, database design, and full-stack implementation for financial credit tracking platform.</p>
-        <div class="proj-tags"><span>ASP.NET MVC</span><span>Web API</span><span>jQuery</span></div>
+        <h3>Closing Desk</h3>
+        <div class="proj-org">JPMorgan Chase · Dec 2016 – Oct 2019</div>
+        <p>Bank-initiated account closure management application used by Fulfillment team to track verification of funds, financial entries, check issuance for fund returns, and account closure. Interfaces with HMS and RSI to retrieve account/customer information and SAP for entry updates. Full SDLC: requirements, HLD/LLD, DB design, UI, API. 20% performance uplift via Entity Framework. TDD adoption.</p>
+        <div class="proj-tags"><span>ASP.NET MVC</span><span>AngularJS</span><span>AWS</span><span>Web API</span><span>Entity Framework</span><span>TDD</span></div>
       </div>
       <div class="proj-card">
         <span class="proj-num">05</span>
-        <h3>United Dot Com</h3>
-        <div class="proj-org">CSC · May 2012 – Aug 2015</div>
-        <p>WCF services on IIS with SSL, full DB and entity design, UI implementation, and unit test coverage for a global enterprise platform.</p>
-        <div class="proj-tags"><span>ASP.NET</span><span>WCF</span><span>IIS</span><span>SSL</span></div>
+        <h3>Credit Tracker</h3>
+        <div class="proj-org">AheadRace · Oct 2015 – Oct 2016</div>
+        <p>CPE credit compliance tracker integrating Smartpros LMS data for New York State licensing requirements. Requirements analysis, HLD/LLD, UML diagrams, database design, and full-stack implementation.</p>
+        <div class="proj-tags"><span>ASP.NET MVC</span><span>Web API</span><span>Entity Framework</span><span>jQuery</span></div>
       </div>
       <div class="proj-card">
         <span class="proj-num">06</span>
-        <h3>Alert Visualization &amp; Monitoring</h3>
-        <div class="proj-org">Cyient · Nov 2010 – Apr 2012</div>
-        <p>Real-time alert monitoring with requirements analysis, UML diagrams, UI design, and POCO entity generation via Entity Framework.</p>
-        <div class="proj-tags"><span>ASP.NET MVC</span><span>EF</span><span>Real-time</span></div>
+        <h3>United.com &amp; EmployeeRes</h3>
+        <div class="proj-org">CSC · May 2012 – Sep 2015</div>
+        <p>Developed and maintained airline booking platforms for United Airlines. WCF services on IIS with SSL, Entity Framework schemas, comprehensive unit test suites, and regression testing automation.</p>
+        <div class="proj-tags"><span>ASP.NET</span><span>WCF</span><span>Entity Framework</span><span>IIS</span><span>Unit Testing</span></div>
       </div>
     </div>
   </div>
@@ -1318,14 +1477,15 @@
         <div class="exp-header">
           <div class="exp-logo">★</div>
           <div>
-            <h3>Certifications</h3>
-            <span class="exp-role">Cloud · DevOps · AI</span>
+            <h3>Certifications &amp; Credentials</h3>
+            <span class="exp-role">Cloud · DevOps · AI & Generative AI</span>
           </div>
         </div>
         <ul class="exp-points">
-          <li>Google Generative AI</li>
-          <li>AWS Certified Solutions Architect – Associate</li>
+          <li><strong>Oracle Cloud Infrastructure 2025 Certified AI Foundations Associate</strong> (Aug 2025)</li>
           <li>AWS Certified DevOps Engineer – Professional</li>
+          <li>AWS Certified Solutions Architect – Associate</li>
+          <li>Google Generative AI Certification (Aug 2025)</li>
           <li>Microsoft Certified Professional (MCTS)</li>
         </ul>
       </article>
@@ -1349,13 +1509,13 @@
             saurabhkumar79@hotmail.com
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </a>
-          <a href="tel:+918106832241" class="btn btn-ghost">
+          <a href="tel:+919032826098" class="btn btn-ghost">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.08-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            +91 81068 32241
+            +91 90328 26098
           </a>
-          <a href="#" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
-          <a href="#" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
-          <a href="#" target="_blank" rel="noopener" class="btn btn-ghost">YouTube</a>
+          <a href="https://www.linkedin.com/in/saurabhk07" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
+          <a href="https://github.com/saurabh7879" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
+          <a href="https://www.youtube.com/@OfficialFrameGenAI" target="_blank" rel="noopener" class="btn btn-ghost">YouTube</a>
         </div>
       </div>
       <div class="contact-right">
@@ -1381,14 +1541,26 @@
   <div class="footer-inner">
     <div>
       <span class="logo-mark">SK</span>
-      <span>© <span id="yr">2026</span> Saurabh Kumar · Senior Software Engineer</span>
+      <span>© <span id="yr">2026</span> Saurabh Kumar · Senior .NET Architect & Cloud Engineer</span>
     </div>
     <div class="footer-links">
-      <a href="mailto:saurabhkumar79@hotmail.com">Email</a>
-      <a href="tel:+918106832241">+91 81068 32241</a>
-      <a href="#" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="#" target="_blank" rel="noopener">GitHub</a>
-      <a href="#" target="_blank" rel="noopener">YouTube</a>
+      <a href="tel:+919032826098" title="Call me">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.08-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span>+91 90328 26098</span>
+      </a>
+      <div class="footer-divider"></div>
+      <a href="https://www.linkedin.com/in/saurabhk07" target="_blank" rel="noopener" title="LinkedIn Profile">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        <span>LinkedIn</span>
+      </a>
+      <a href="https://github.com/saurabh7879" target="_blank" rel="noopener" title="GitHub Profile">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        <span>GitHub</span>
+      </a>
+      <a href="https://www.youtube.com/@OfficialFrameGenAI" target="_blank" rel="noopener" title="YouTube Channel">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+        <span>YouTube</span>
+      </a>
     </div>
   </div>
 </footer>
@@ -1410,7 +1582,7 @@
 
   // Scroll reveal
   const revealEls = document.querySelectorAll(
-    '.section-head, .about-text, .about-card, .exp-card, .skill-card, .proj-card, .contact-card'
+    '.section-head, .about-text, .about-card, .exp-card, .skill-card, .oss-card, .proj-card, .contact-card'
   );
   revealEls.forEach(el => el.classList.add('reveal'));
   const io = new IntersectionObserver(entries => {
@@ -1455,6 +1627,153 @@
 
   // Year
   document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Open Source Projects Data
+  const ossProjects = [
+    {
+      id: 'oss-001',
+      name: 'RAG Framework for .NET',
+      featured: true,
+      description: 'Comprehensive Retrieval-Augmented Generation framework for .NET applications. Includes vector database integration, semantic search, and LLM orchestration patterns.',
+      link: 'https://github.com/saurabh7879/rag-framework-dotnet',
+      role: 'Creator & Maintainer',
+      status: 'active',
+      stats: {
+        stars: 342,
+        language: 'C#',
+        contributors: 8,
+        commits: 234
+      },
+      tags: ['.NET Core', 'Generative AI', 'RAG', 'Azure OpenAI', 'Vector DB'],
+      highlights: ['LLM Orchestration', 'Semantic Search', 'Context Management']
+    },
+    {
+      id: 'oss-002',
+      name: '.NET Microservices Template',
+      featured: true,
+      description: 'Production-ready template for building scalable microservices with .NET Core. Includes Docker, Kubernetes, service mesh patterns, and CI/CD setup.',
+      link: 'https://github.com/saurabh7879/dotnet-microservices',
+      role: 'Creator & Maintainer',
+      status: 'active',
+      stats: {
+        stars: 256,
+        language: 'C#',
+        contributors: 12,
+        commits: 189
+      },
+      tags: ['.NET Core', 'Microservices', 'Docker', 'Kubernetes', 'CI/CD'],
+      highlights: ['Service Discovery', 'Circuit Breaker', 'Distributed Tracing']
+    },
+    {
+      id: 'oss-003',
+      name: 'Azure OpenAI Toolkit',
+      featured: false,
+      description: 'Prompt engineering toolkit and best practices for Azure OpenAI integration. Includes prompt templates, optimization utilities, and performance monitoring.',
+      link: 'https://github.com/saurabh7879/azure-openai-toolkit',
+      role: 'Creator',
+      status: 'maintained',
+      stats: {
+        stars: 187,
+        language: 'Python',
+        contributors: 5,
+        commits: 142
+      },
+      tags: ['Azure OpenAI', 'Prompt Engineering', 'Python', 'LLM'],
+      highlights: ['Prompt Optimization', 'Cost Analysis', 'Token Counter']
+    },
+    {
+      id: 'oss-004',
+      name: 'Entity Framework Performance Analyzer',
+      featured: false,
+      description: 'Tool for analyzing and optimizing Entity Framework Core queries. Identifies N+1 queries, suggests indexing strategies, and generates optimization reports.',
+      link: 'https://github.com/saurabh7879/ef-performance-analyzer',
+      role: 'Creator',
+      status: 'active',
+      stats: {
+        stars: 203,
+        language: 'C#',
+        contributors: 6,
+        commits: 156
+      },
+      tags: ['Entity Framework', '.NET Core', 'Database', 'Performance'],
+      highlights: ['Query Analysis', 'Index Suggestions', 'Performance Reports']
+    },
+    {
+      id: 'oss-005',
+      name: 'Contributed: OpenAI .NET SDK',
+      featured: false,
+      description: 'Contributed RAG module integration and streaming improvements to official OpenAI .NET SDK.',
+      link: 'https://github.com/openai/openai-dotnet',
+      role: 'Contributor',
+      status: 'active',
+      stats: {
+        stars: 2400,
+        language: 'C#',
+        contributors: 45,
+        commits: 2
+      },
+      tags: ['OpenAI', '.NET', 'RAG', 'Streaming'],
+      highlights: ['PR #124, #156: RAG Features', '2 Pull Requests Merged']
+    }
+  ];
+
+  // Render Open Source Projects
+  function renderOssProjects() {
+    const container = document.getElementById('ossContainer');
+    if (!container) return;
+
+    container.innerHTML = ossProjects.map(project => `
+      <article class="oss-card ${project.featured ? 'featured' : ''} fade-in">
+        <div class="oss-status ${project.status}"></div>
+
+        <div class="oss-header">
+          <div>
+            <h3>${project.name}</h3>
+            <div class="oss-meta">
+              <span class="oss-role">${project.role}</span>
+            </div>
+          </div>
+          <a href="${project.link}" target="_blank" rel="noopener" class="oss-link" title="View on GitHub">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+        </div>
+
+        <p class="oss-desc">${project.description}</p>
+
+        <div class="oss-badges">
+          <span class="oss-badge oss-badge-stars">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            ${project.stats.stars}
+          </span>
+          <span class="oss-badge oss-badge-language">${project.stats.language}</span>
+          <span class="oss-badge oss-badge-maintained">Well Maintained</span>
+        </div>
+
+        <div class="oss-tags">
+          ${project.tags.map(tag => `<span>${tag}</span>`).join('')}
+        </div>
+
+        <div class="oss-stats">
+          <div class="oss-stat">
+            <span class="oss-stat-value">${project.stats.commits}</span>
+            <span class="oss-stat-label">Commits</span>
+          </div>
+          <div class="oss-stat">
+            <span class="oss-stat-value">${project.stats.contributors}</span>
+            <span class="oss-stat-label">Contributors</span>
+          </div>
+        </div>
+
+        <a href="${project.link}" target="_blank" rel="noopener" class="oss-cta">
+          View on GitHub
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </article>
+    `).join('');
+  }
+
+  // Initialize open source section
+  renderOssProjects();
 
 })();
 </script>
