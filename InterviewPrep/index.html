@@ -348,12 +348,12 @@ select option{background:var(--surface-1);color:var(--ink)}
     </div>
     <form id="f-settings">
       <div class="fg">
-        <label>API Key</label>
+        <label>Euron API Key</label>
         <div class="irow">
-          <input id="s-key" type="password" placeholder="euri_…" autocomplete="off">
+          <input id="s-key" type="password" placeholder="Your Euron API key (e.g., euri_...)" autocomplete="off">
           <button type="button" class="btn btn-sm btn-ghost" id="btn-eye">Show</button>
         </div>
-        <p class="fhint">Saved in your browser only. Sent directly to Euron API — never stored elsewhere.</p>
+        <p class="fhint">Get your API key from <a href="https://api.euron.one" target="_blank" style="color:var(--accent)">api.euron.one</a>. Saved in browser only, never stored elsewhere.</p>
       </div>
       <div class="fg">
         <label>Your Resume <span class="hint">— used for resume bullet rewriting</span></label>
@@ -607,14 +607,29 @@ async function generateKit(){
 }
 
 async function ai(prompt){
-  const r=await fetch('https://api.euron.one/api/v1/euri/chat/completions',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':`Bearer ${cfg.apiKey}`},
-    body:JSON.stringify({model:'gpt-5.3-instant',messages:[{role:'user',content:prompt}],max_tokens:1400,temperature:0.72}),
-  });
-  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d?.error?.message||`API error ${r.status}`);}
-  const d=await r.json();
-  return d.choices[0].message.content.trim();
+  try{
+    const r=await fetch('https://api.euron.one/api/v1/euri/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${cfg.apiKey}`},
+      body:JSON.stringify({model:'gpt-5.3-instant',messages:[{role:'user',content:prompt}],max_tokens:1400,temperature:0.72}),
+    });
+    if(!r.ok){
+      const d=await r.json().catch(()=>({}));
+      const errMsg=d?.error?.message||d?.message||`API error ${r.status}`;
+      throw new Error(errMsg);
+    }
+    const d=await r.json();
+    if(!d.choices||!d.choices[0]){
+      throw new Error('Invalid API response format');
+    }
+    return d.choices[0].message.content.trim();
+  }catch(err){
+    console.error('AI API Error:',err);
+    if(err.message.includes('Failed to fetch')||err instanceof TypeError){
+      throw new Error('Network error: Unable to reach API. Check your internet connection or CORS settings.');
+    }
+    throw err;
+  }
 }
 
 // ── SETTINGS
