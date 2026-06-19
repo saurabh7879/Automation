@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API Test</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #1a1a1a; color: #fff; }
+    .test { margin: 20px 0; padding: 15px; background: #2a2a2a; border-radius: 8px; }
+    .success { color: #10b981; }
+    .error { color: #f87171; }
+    button { padding: 10px 20px; background: #5e6ad2; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #828fff; }
+    input { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 4px; border: 1px solid #444; background: #333; color: #fff; }
+    pre { background: #1a1a1a; padding: 10px; border-radius: 4px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>🔧 InterviewPrep API Diagnostics</h1>
+
+  <div class="test">
+    <h3>1. Test API Endpoint</h3>
+    <input type="password" id="apiKey" placeholder="Enter your Euron API key (euri_...)">
+    <button onclick="testAPI()">Test API Call</button>
+    <pre id="apiResult"></pre>
+  </div>
+
+  <div class="test">
+    <h3>2. Server Status</h3>
+    <button onclick="testServer()">Check Server</button>
+    <pre id="serverResult"></pre>
+  </div>
+
+  <script>
+    async function testAPI() {
+      const apiKey = document.getElementById('apiKey').value;
+      if (!apiKey) {
+        alert('Please enter your API key');
+        return;
+      }
+
+      const result = document.getElementById('apiResult');
+      result.textContent = 'Testing...';
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: 'Say "Hello from API"',
+            apiKey: apiKey
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          result.innerHTML = `<span class="success">✅ Success!</span>\n\n${JSON.stringify(data, null, 2)}`;
+        } else {
+          result.innerHTML = `<span class="error">❌ Error</span>\n\n${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        result.innerHTML = `<span class="error">❌ Network Error</span>\n\n${error.message}`;
+      }
+    }
+
+    async function testServer() {
+      const result = document.getElementById('serverResult');
+      result.textContent = 'Testing...';
+
+      try {
+        const response = await fetch('/InterviewPrep/index.html');
+        if (response.ok) {
+          result.innerHTML = `<span class="success">✅ Server is running</span>\n\nInterviewPrep page is accessible`;
+        } else {
+          result.innerHTML = `<span class="error">❌ Server returned ${response.status}</span>`;
+        }
+      } catch (error) {
+        result.innerHTML = `<span class="error">❌ Cannot reach server</span>\n\n${error.message}`;
+      }
+    }
+
+    // Auto-test on load
+    window.onload = () => {
+      testServer();
+    };
+  </script>
+</body>
+</html>
