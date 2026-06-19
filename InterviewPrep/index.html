@@ -608,26 +608,23 @@ async function generateKit(){
 
 async function ai(prompt){
   try{
-    const r=await fetch('https://api.euron.one/api/v1/euri/chat/completions',{
+    const r=await fetch('/api/chat',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${cfg.apiKey}`},
-      body:JSON.stringify({model:'gpt-5.3-instant',messages:[{role:'user',content:prompt}],max_tokens:1400,temperature:0.72}),
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:prompt,apiKey:cfg.apiKey}),
     });
     if(!r.ok){
       const d=await r.json().catch(()=>({}));
-      const errMsg=d?.error?.message||d?.message||`API error ${r.status}`;
+      const errMsg=d?.error||`API error ${r.status}`;
       throw new Error(errMsg);
     }
     const d=await r.json();
-    if(!d.choices||!d.choices[0]){
-      throw new Error('Invalid API response format');
+    if(!d.content){
+      throw new Error('Invalid API response');
     }
-    return d.choices[0].message.content.trim();
+    return d.content;
   }catch(err){
     console.error('AI API Error:',err);
-    if(err.message.includes('Failed to fetch')||err instanceof TypeError){
-      throw new Error('Network error: Unable to reach API. Check your internet connection or CORS settings.');
-    }
     throw err;
   }
 }
