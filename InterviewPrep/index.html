@@ -348,12 +348,12 @@ select option{background:var(--surface-1);color:var(--ink)}
     </div>
     <form id="f-settings">
       <div class="fg">
-        <label>OpenAI API Key</label>
+        <label>API Key</label>
         <div class="irow">
-          <input id="s-key" type="password" placeholder="sk-proj-…" autocomplete="off">
+          <input id="s-key" type="password" placeholder="euri_…" autocomplete="off">
           <button type="button" class="btn btn-sm btn-ghost" id="btn-eye">Show</button>
         </div>
-        <p class="fhint">Saved in your browser only. Sent directly to OpenAI — never stored elsewhere.</p>
+        <p class="fhint">Saved in your browser only. Sent directly to Euron API — never stored elsewhere.</p>
       </div>
       <div class="fg">
         <label>Your Resume <span class="hint">— used for resume bullet rewriting</span></label>
@@ -575,7 +575,7 @@ function renderKit(j){
 async function generateKit(){
   const j=jobs.find(x=>x.id===activeId);if(!j)return;
   if(!cfg.apiKey){
-    toast('Add your OpenAI key in ⚙ Settings first','#f59e0b');
+    toast('Add your API key in ⚙ Settings first','#f59e0b');
     close();setTimeout(openSettings,120);return;
   }
   $('kit').innerHTML=`
@@ -607,12 +607,12 @@ async function generateKit(){
 }
 
 async function ai(prompt){
-  const r=await fetch('https://api.openai.com/v1/chat/completions',{
+  const r=await fetch('https://api.euron.one/api/v1/euri/chat/completions',{
     method:'POST',
     headers:{'Content-Type':'application/json','Authorization':`Bearer ${cfg.apiKey}`},
-    body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:prompt}],max_tokens:1400,temperature:0.72}),
+    body:JSON.stringify({model:'gpt-5.3-instant',messages:[{role:'user',content:prompt}],max_tokens:1400,temperature:0.72}),
   });
-  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d?.error?.message||`OpenAI error ${r.status}`);}
+  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d?.error?.message||`API error ${r.status}`);}
   const d=await r.json();
   return d.choices[0].message.content.trim();
 }
@@ -643,7 +643,7 @@ if(!cfg.apiKey){
   setTimeout(()=>{
     const w=document.createElement('div');
     w.className='welcome';
-    w.innerHTML=`<strong style="color:var(--primary)">👋 Welcome, Saurabh!</strong><br>Click <strong>⚙ Settings</strong> to add your OpenAI key and resume to unlock the AI Generate Kit.`;
+    w.innerHTML=`<strong style="color:var(--primary)">👋 Welcome, Saurabh!</strong><br>Click <strong>⚙ Settings</strong> to add your API key and resume to unlock the AI Generate Kit.`;
     w.addEventListener('click',()=>{w.remove();openSettings();});
     document.body.appendChild(w);
     setTimeout(()=>w.remove(),9000);
