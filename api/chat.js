@@ -27,7 +27,7 @@ module.exports = async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4.1-nano',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 1400,
         temperature: 0.72,
@@ -35,9 +35,12 @@ module.exports = async function handler(req, res) {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const rawBody = await response.text().catch(() => '');
+      let errorData = {};
+      try { errorData = JSON.parse(rawBody); } catch (e) {}
+      console.error('Euron API error', response.status, rawBody);
       return res.status(response.status).json({
-        error: errorData?.error?.message || errorData?.message || `API error ${response.status}`,
+        error: errorData?.error?.message || errorData?.message || `API error ${response.status}: ${rawBody.slice(0, 200)}`,
       });
     }
 
