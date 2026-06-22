@@ -27,12 +27,12 @@ module.exports = async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gemini-2.5-flash',
+        model: 'gpt-4.1-mini',
         messages: [
           { role: 'system', content: 'You are a helpful assistant for job applicants.' },
           { role: 'user', content: prompt },
         ],
-        max_tokens: 1400,
+        max_tokens: 4000,
         temperature: 0.72,
       }),
     });
@@ -55,6 +55,7 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({
       content: data.choices[0].message.content.trim(),
+      usage: data.usage || null,
     });
   } catch (error) {
     console.error('Proxy error:', error);
