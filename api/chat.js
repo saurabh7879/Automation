@@ -27,8 +27,11 @@ module.exports = async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-nano',
-        messages: [{ role: 'user', content: prompt }],
+        model: 'gemini-2.5-flash',
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant for job applicants.' },
+          { role: 'user', content: prompt },
+        ],
         max_tokens: 1400,
         temperature: 0.72,
       }),

@@ -1,9 +1,7 @@
 {
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "^/Profile(/.*)?$",     "dest": "/Profile/profile.html" },
-    { "src": "^/WeatherChat(/.*)?$",    "dest": "/WeatherChat/index.html" },
-    { "src": "^/InterviewPrep(/.*)?$", "dest": "/InterviewPrep/index.html" },
-    { "src": ".*",                     "dest": "/404.html", "status": 404 }
+  "rewrites": [
+    { "source": "/Profile/:path*", "destination": "/Profile/profile.html" },
+    { "source": "/WeatherChat/:path*", "destination": "/WeatherChat/index.html" },
+    { "source": "/InterviewPrep/:path*", "destination": "/InterviewPrep/index.html" }
   ]
 }
