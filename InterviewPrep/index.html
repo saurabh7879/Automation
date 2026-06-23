@@ -38,6 +38,12 @@ input,textarea,select{font-family:inherit;color:var(--ink)}
   background:var(--surface-2);
   display:grid;place-items:center;font-size:17px;border:1px solid var(--hairline)}
 .nav-actions{display:flex;gap:8px;align-items:center}
+.tok-badge{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:99px;
+  background:var(--surface-2);border:1px solid var(--hairline);
+  font-size:12px;font-weight:600;color:var(--ink-subtle);cursor:pointer;
+  transition:all .2s;user-select:none;white-space:nowrap}
+.tok-badge:hover{border-color:var(--primary);color:var(--primary)}
+@media(max-width:600px){.tok-badge{display:none}}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;
@@ -217,6 +223,7 @@ select option{background:var(--surface-1);color:var(--ink)}
     Job Tracker
   </div>
   <div class="nav-actions">
+    <span class="tok-badge" id="tok-badge" title="Total AI tokens used (click to reset)">🪙 0 tokens</span>
     <button class="btn btn-ghost btn-sm" id="btn-settings">⚙ Settings</button>
     <button class="btn btn-primary btn-sm" id="btn-add">+ Add Job</button>
   </div>
@@ -348,12 +355,12 @@ select option{background:var(--surface-1);color:var(--ink)}
     </div>
     <form id="f-settings">
       <div class="fg">
-        <label>OpenAI API Key</label>
+        <label>Euron API Key</label>
         <div class="irow">
-          <input id="s-key" type="password" placeholder="sk-proj-…" autocomplete="off">
+          <input id="s-key" type="password" placeholder="Your Euron API key (e.g., euri_...)" autocomplete="off">
           <button type="button" class="btn btn-sm btn-ghost" id="btn-eye">Show</button>
         </div>
-        <p class="fhint">Saved in your browser only. Sent directly to OpenAI — never stored elsewhere.</p>
+        <p class="fhint">Get your API key from <a href="https://api.euron.one" target="_blank" style="color:var(--accent)">api.euron.one</a>. Saved in browser only, never stored elsewhere.</p>
       </div>
       <div class="fg">
         <label>Your Resume <span class="hint">— used for resume bullet rewriting</span></label>
@@ -380,6 +387,7 @@ const DB={
 };
 
 let jobs=DB.jobs(), cfg=DB.cfg(), activeId=null, activeTab='coverLetter';
+let tokensUsed=parseInt(localStorage.getItem('jt2_tokens')||'0',10)||0;
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -390,6 +398,15 @@ function toast(msg,color='var(--ok)'){
   const t=document.createElement('div');
   t.className='toast';t.style.background=color;t.textContent=msg;
   document.body.appendChild(t);setTimeout(()=>t.remove(),2800);
+}
+
+// ── TOKEN USAGE
+function updateTokenBadge(){
+  const b=$('tok-badge');if(b)b.textContent=`🪙 ${tokensUsed.toLocaleString()} tokens`;
+}
+function addTokens(n){
+  if(!n||n<0)return;
+  tokensUsed+=n;localStorage.setItem('jt2_tokens',String(tokensUsed));updateTokenBadge();
 }
 
 // ── RENDER BOARD
@@ -503,23 +520,32 @@ $('btn-del').addEventListener('click',()=>{
 // ── FORMAT Q&A PAIRS
 function formatQA(text){
   if(!text)return'';
-  const lines=text.split('\n').filter(l=>l.trim());
+  // Strip markdown emphasis (**bold**, *italic*) the model may add
+  const clean=String(text).replace(/\*\*/g,'').replace(/(^|[\s(])\*(?=\S)/g,'$1').replace(/(?<=\S)\*(?=[\s).,]|$)/g,'');
+  // Match question markers: Q1:, Q1., Question 1:, 1., 1)
+  const qRe=/^(?:Q(?:uestion)?\s*\d+|[0-9]+)\s*[:.)\-]\s*/i;
+  // Match answer markers: A:, A., A5:, Answer:, Draft A5:, →
+  const aRe=/^(?:(?:draft\s+)?A(?:nswer)?\s*\d*\s*[:.)\-]|→)\s*/i;
+  const lines=clean.split('\n').filter(l=>l.trim());
   let html='';let currentQ='';let currentA='';
+  const flush=()=>{ if(currentQ){html+=`<div class="qa-pair"><div class="qa-question">${esc(currentQ)}</div><div class="qa-answer">${esc(currentA||'—')}</div></div>`;} };
   lines.forEach(line=>{
-    const trimmed=line.trim();
-    if(trimmed.match(/^Q\d+:/i)){
-      if(currentQ&&currentA){html+=`<div class="qa-pair"><div class="qa-question">${esc(currentQ)}</div><div class="qa-answer">${esc(currentA)}</div></div>`;}
-      currentQ=trimmed.replace(/^Q\d+:\s*/i,'');currentA='';
-    }else if(trimmed.match(/^A:|^→/i)){
-      currentA=trimmed.replace(/^(?:A:|→)\s*/i,'');
-    }else if(currentQ&&!currentA&&trimmed){
+    // Drop leading list bullets the model may add (*, -, •)
+    const trimmed=line.trim().replace(/^[*\-•]\s+/,'');
+    if(qRe.test(trimmed)){
+      flush();
+      currentQ=trimmed.replace(qRe,'');currentA='';
+    }else if(aRe.test(trimmed)){
+      currentA=trimmed.replace(aRe,'');
+    }else if(currentQ&&!currentA){
       currentA=trimmed;
-    }else if(currentQ&&currentA&&trimmed){
+    }else if(currentQ&&currentA){
       currentA+=` ${trimmed}`;
     }
   });
-  if(currentQ&&currentA){html+=`<div class="qa-pair"><div class="qa-question">${esc(currentQ)}</div><div class="qa-answer">${esc(currentA)}</div></div>`;}
-  return html||'<p style="color:var(--ink-tertiary)">No Q&A content yet</p>';
+  flush();
+  // Fallback: if no Q/A structure was detected, show the raw text rather than nothing
+  return html||`<div class="qa-answer" style="border:none;padding:0;margin:0">${esc(clean).replace(/\n/g,'<br>')}</div>`;
 }
 
 // ── GENERATE KIT
@@ -575,7 +601,7 @@ function renderKit(j){
 async function generateKit(){
   const j=jobs.find(x=>x.id===activeId);if(!j)return;
   if(!cfg.apiKey){
-    toast('Add your OpenAI key in ⚙ Settings first','#f59e0b');
+    toast('Add your API key in ⚙ Settings first','#f59e0b');
     close();setTimeout(openSettings,120);return;
   }
   $('kit').innerHTML=`
@@ -585,16 +611,18 @@ async function generateKit(){
     </div>`;
   const resume=cfg.resume||'(No resume provided — add it in Settings for better results)';
   const ctx=`Job Title: ${j.title}\nCompany: ${j.company}\nJob Description:\n${j.description||'(not provided)'}`;
+  const tokensBefore=tokensUsed;
   try{
     const [cl,rb,iq,cb]=await Promise.all([
-      ai(`Write a concise, professional cover letter (2 short paragraphs max).\n\n${ctx}\n\nApplicant Resume:\n${resume}\n\nRequirements:\n- Paragraph 1: Strong hook showing enthusiasm and 1-2 relevant achievements\n- Paragraph 2: Why you're perfect for this role + key skills match\n- Sign off: Saurabh Kumar\n- Keep it under 200 words, ready to copy-paste and send\n- No flowery language, direct and impactful`),
-      ai(`You are a professional resume writer. Rewrite 5–6 of the applicant's most relevant bullet points for this specific role. Focus on achievements with metrics.\n\n${ctx}\n\nApplicant Resume:\n${resume}\n\nReturn ONLY the bullets, one per line, each starting with •. No intro text.`),
-      ai(`You are a senior interview coach preparing interview Q&A. Generate 4-5 most likely interview questions with FULL, conversational answers (as the applicant would naturally speak).\n\n${ctx}\n\nApplicant Resume:\n${resume}\n\nRequirements for EACH answer:\n- Sound conversational and human (not robotic)\n- Show genuine understanding of the skill/topic\n- Include a brief relevant example or achievement from resume\n- Demonstrate problem-solving approach or learning mindset\n- Keep to 3-4 sentences (natural speaking length)\n- Use "I" language, speak authentically\n\nFormat exactly:\nQ1: [Question]\nA: [Full conversational answer]\n\nQ2: [Question]\nA: [Full conversational answer]\n\n(and so on - 4-5 total)`),
+      ai(`Write a concise, professional cover letter (2 short paragraphs max).\n\n${ctx}\n\nApplicant Resume:\n${resume}\n\nRequirements:\n- Ground the letter in the Job Description above — mirror its key requirements, skills, and keywords\n- Paragraph 1: Strong hook showing enthusiasm and 1-2 relevant achievements that match the JD\n- Paragraph 2: Why you're perfect for this role + explicit match to the JD's required skills\n- Sign off: Saurabh Kumar\n- Keep it under 200 words, ready to copy-paste and send\n- No flowery language, direct and impactful`),
+      ai(`You are a professional resume writer. Rewrite 5–6 of the applicant's most relevant bullet points, tailored to the Job Description above. Each bullet MUST align with a specific requirement, skill, or keyword from the Job Description, and focus on achievements with metrics.\n\n${ctx}\n\nApplicant Resume:\n${resume}\n\nReturn ONLY the bullets, one per line, each starting with •. No intro text.`),
+      ai(`You are a senior interview coach preparing interview Q&A. Generate EXACTLY 7 most likely interview questions, each with a BRIEF answer (as the applicant would naturally speak).\n\n${ctx}\n\nApplicant Resume:\n${resume}\n\nThe questions MUST be derived directly from the Job Description above — target the specific skills, technologies, responsibilities, and requirements it mentions. Do NOT ask generic questions. Each answer should connect the applicant's resume experience to what this role needs.\n\nRequirements for EACH answer:\n- Sound conversational and human (not robotic)\n- Show genuine understanding of the skill/topic\n- Reference a relevant example or achievement from resume where useful\n- Keep it BRIEF: 2-3 sentences maximum\n- Use "I" language, speak authentically\n\nOutput plain text only (no markdown, no bold, no bullet symbols).\nUse this EXACT format, with a blank line between pairs:\nQ1: [Question]\nA: [Brief answer]\n\nQ2: [Question]\nA: [Brief answer]\n\n(continue through Q7 — exactly 7 pairs total)`),
       ai(`Write a concise company brief (under 400 words) for a job applicant preparing to interview.\n\nCompany: ${j.company}\n${j.url?'Job URL: '+j.url:''}\n${j.description?'Job context:\n'+j.description.slice(0,800):''}\n\nCover: what they do, key products, culture/values, size/stage, and 2–3 things to mention in the interview. Use short paragraphs.`),
     ]);
     j.kit={coverLetter:cl,resumeBullets:rb,interviewQuestions:iq,companyBrief:cb};
     DB.save(jobs);render();activeTab='coverLetter';renderKit(j);
-    toast('Kit ready ✓');
+    const kitTokens=tokensUsed-tokensBefore;
+    toast(kitTokens>0?`Kit ready ✓ · ${kitTokens.toLocaleString()} tokens`:'Kit ready ✓');
   }catch(err){
     $('kit').innerHTML=`
       <div class="kit-err">
@@ -607,14 +635,27 @@ async function generateKit(){
 }
 
 async function ai(prompt){
-  const r=await fetch('https://api.openai.com/v1/chat/completions',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':`Bearer ${cfg.apiKey}`},
-    body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:prompt}],max_tokens:1400,temperature:0.72}),
-  });
-  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d?.error?.message||`OpenAI error ${r.status}`);}
-  const d=await r.json();
-  return d.choices[0].message.content.trim();
+  try{
+    const r=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:prompt,apiKey:cfg.apiKey}),
+    });
+    if(!r.ok){
+      const d=await r.json().catch(()=>({}));
+      const errMsg=d?.error||`API error ${r.status}`;
+      throw new Error(errMsg);
+    }
+    const d=await r.json();
+    if(!d.content){
+      throw new Error('Invalid API response');
+    }
+    if(d.usage&&d.usage.total_tokens){addTokens(d.usage.total_tokens);}
+    return d.content;
+  }catch(err){
+    console.error('AI API Error:',err);
+    throw err;
+  }
 }
 
 // ── SETTINGS
@@ -636,6 +677,15 @@ $('btn-eye').addEventListener('click',()=>{
   b.textContent=i.type==='password'?'Show':'Hide';
 });
 
+// ── TOKEN BADGE: init + click to reset
+updateTokenBadge();
+$('tok-badge').addEventListener('click',()=>{
+  if(tokensUsed>0&&confirm('Reset the token usage counter to 0?')){
+    tokensUsed=0;localStorage.setItem('jt2_tokens','0');updateTokenBadge();
+    toast('Token counter reset');
+  }
+});
+
 // ── BOOT
 render();initDrag();
 
@@ -643,7 +693,7 @@ if(!cfg.apiKey){
   setTimeout(()=>{
     const w=document.createElement('div');
     w.className='welcome';
-    w.innerHTML=`<strong style="color:var(--primary)">👋 Welcome, Saurabh!</strong><br>Click <strong>⚙ Settings</strong> to add your OpenAI key and resume to unlock the AI Generate Kit.`;
+    w.innerHTML=`<strong style="color:var(--primary)">👋 Welcome, Saurabh!</strong><br>Click <strong>⚙ Settings</strong> to add your API key and resume to unlock the AI Generate Kit.`;
     w.addEventListener('click',()=>{w.remove();openSettings();});
     document.body.appendChild(w);
     setTimeout(()=>w.remove(),9000);

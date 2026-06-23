@@ -67,11 +67,15 @@ Copy the `id` field — your URN is `urn:li:person:{id}`
 
 ## Step 2 — Add Environment Variables in n8n
 
+For convenience you can create a `.env` file at the project root (do NOT commit this file). Example `.env` content:
+
 ```
 GEMINI_API_KEY=your_gemini_key
 LINKEDIN_ACCESS_TOKEN=your_linkedin_token
 LINKEDIN_PERSON_URN=urn:li:person:your_id
 ```
+
+Alternatively, set these variables directly in n8n credentials or your deployment environment. If you create a `.env` file, this project already ignores it via `.gitignore`.
 
 ---
 
