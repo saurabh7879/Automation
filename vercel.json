@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/Profile/:path*", "destination": "/Profile/profile.html" },
     { "source": "/WeatherChat/:path*", "destination": "/WeatherChat/index.html" },
-    { "source": "/InterviewPrep/:path*", "destination": "/InterviewPrep/index.html" }
+    { "source": "/InterviewPrep/:path*", "destination": "/InterviewPrep/index.html" },
+    { "source": "/JobPrep/:path*", "destination": "/JobPrep/index.html" }
   ]
 }

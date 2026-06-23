@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Interview Prep Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --primary:#0A66C2; --primary-hover:#004182;
+    --bg:#F3F6F8; --surface:#FFFFFF; --border:#E5E7EB;
+    --text:#111827; --muted:#6B7280;
+    --success:#057642; --warning:#B45309; --error:#B91C1C;
+    --radius:10px; --shadow:0 1px 2px rgba(16,24,40,.04);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--bg);color:var(--text);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+
+  /* ---------- Layout ---------- */
+  .app{display:grid;grid-template-columns:300px 1fr;height:100vh;overflow:hidden}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+  .brand{padding:18px 20px 14px;border-bottom:1px solid var(--border)}
+  .brand h1{font-size:18px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+  .brand p{font-size:12px;color:var(--muted);margin-top:3px}
+  .search{padding:12px 16px;border-bottom:1px solid var(--border)}
+  .search input{width:100%;height:40px;border:1px solid #D1D5DB;border-radius:999px;padding:0 14px;font-size:14px;font-family:inherit;outline:none;transition:border .12s,box-shadow .12s}
+  .search input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(10,102,194,.12)}
+  .nav{flex:1;overflow-y:auto;padding:10px 10px 30px}
+  .nav-group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:14px 10px 6px}
+  .topic-btn{width:100%;text-align:left;background:none;border:none;font-family:inherit;cursor:pointer;
+    display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;color:var(--text);font-size:14px;transition:background .1s}
+  .topic-btn:hover{background:#F3F6F8}
+  .topic-btn.active{background:rgba(10,102,194,.10);color:var(--primary-hover);font-weight:600}
+  .topic-btn .ic{width:18px;text-align:center;flex-shrink:0}
+  .topic-btn .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .topic-btn .cnt{font-size:11px;color:var(--muted);background:#F3F6F8;border:1px solid var(--border);border-radius:999px;padding:1px 8px;flex-shrink:0}
+  .topic-btn.active .cnt{background:#fff;border-color:rgba(10,102,194,.3);color:var(--primary)}
+
+  /* ---------- Main ---------- */
+  .main{overflow-y:auto;height:100vh}
+  .main-inner{max-width:1120px;margin:0 auto;padding:28px 36px 80px}
+  .topic-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  .topic-head h2{font-size:28px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+  .topic-head .sub{color:var(--muted);font-size:14px;margin-top:4px}
+  .pill{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px}
+  .pill.p0{background:#FEE2E2;color:#B91C1C}
+  .pill.p1{background:#FEF3C7;color:#B45309}
+  .pill.p2{background:#E0F2FE;color:#075985}
+  .pill.na{background:#F3F6F8;color:#6B7280}
+
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 8px}
+  .chip{font-size:13px;border:1px solid var(--border);background:var(--surface);color:var(--muted);
+    border-radius:999px;padding:5px 12px;cursor:pointer;font-family:inherit;transition:all .1s}
+  .chip:hover{border-color:var(--primary);color:var(--primary)}
+  .chip.active{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:600}
+  .meta-line{font-size:13px;color:var(--muted);margin-left:auto}
+
+  /* ---------- Question accordion ---------- */
+  .qlist{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+  .qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border .12s}
+  .qcard.open{border-color:rgba(10,102,194,.5)}
+  .qhead{display:flex;align-items:flex-start;gap:12px;padding:15px 18px;cursor:pointer;user-select:none}
+  .qhead:hover{background:#FAFBFC}
+  .qnum{font-size:12px;font-weight:700;color:#fff;background:var(--primary);min-width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .qcard.open .qnum{background:var(--primary-hover)}
+  .qtext{flex:1;font-size:15px;font-weight:600;color:var(--text);line-height:1.45}
+  .qbadges{display:flex;gap:6px;align-items:center;flex-shrink:0;margin-top:1px}
+  .badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
+  .d-easy{background:#ECFDF5;color:#057642}
+  .d-medium{background:#FFFBEB;color:#B45309}
+  .d-hard{background:#FEF2F2;color:#B91C1C}
+  .badge.cat{background:#F3F6F8;color:#6B7280;font-weight:500}
+  .chev{color:var(--muted);transition:transform .15s;flex-shrink:0;margin-top:3px}
+  .qcard.open .chev{transform:rotate(180deg);color:var(--primary)}
+
+  .qbody{display:none;border-top:1px solid var(--border);padding:6px 18px 20px;background:#FCFDFE}
+  .qcard.open .qbody{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+  .section{margin-top:18px}
+  .section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:7px;margin-bottom:8px}
+  .answer-body{font-size:15px;line-height:1.65;color:#1f2937}
+  .answer-body p{margin:0 0 10px}
+  .answer-body strong{color:var(--text);font-weight:600}
+  .answer-body code{background:#EEF2F6;border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#0b3d63}
+  .answer-body ul{margin:6px 0 10px;padding-left:20px}
+  .answer-body li{margin:3px 0}
+
+  .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:720px){.pc-grid{grid-template-columns:1fr}}
+  .pc-box{border:1px solid var(--border);border-radius:8px;padding:12px 14px;background:var(--surface)}
+  .pc-box.pros{border-left:3px solid var(--success)}
+  .pc-box.cons{border-left:3px solid var(--warning)}
+  .pc-box h4{font-size:13px;font-weight:700;margin-bottom:7px;display:flex;gap:6px;align-items:center}
+  .pc-box.pros h4{color:var(--success)}
+  .pc-box.cons h4{color:var(--warning)}
+  .pc-box ul{list-style:none}
+  .pc-box li{font-size:14px;padding:3px 0 3px 18px;position:relative;color:#374151}
+  .pc-box.pros li::before{content:"+";position:absolute;left:2px;color:var(--success);font-weight:700}
+  .pc-box.cons li::before{content:"-";position:absolute;left:3px;color:var(--warning);font-weight:700}
+
+  .usecase{background:#F0F7FF;border:1px solid #cfe3fa;border-left:3px solid var(--primary);border-radius:8px;padding:12px 14px;font-size:14px;color:#0b3d63;line-height:1.6}
+  .alts{background:var(--surface);border:1px dashed #c7d2e0;border-radius:8px;padding:12px 14px}
+  .alts ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .alts li{font-size:14px;color:#374151;padding-left:24px;position:relative}
+  .alts li::before{content:"Q";position:absolute;left:0;font-size:11px;font-weight:700;color:#fff;background:var(--muted);width:16px;height:16px;border-radius:5px;display:flex;align-items:center;justify-content:center;top:3px}
+
+  .soon{display:flex;align-items:center;gap:10px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:14px 16px;color:#92400e;font-size:14px;margin-top:10px}
+
+  /* ---------- Welcome ---------- */
+  .welcome{max-width:760px;margin:8vh auto 0;text-align:center;padding:0 24px}
+  .welcome .logo{font-size:46px}
+  .welcome h2{font-size:30px;font-weight:700;margin:14px 0 8px;letter-spacing:-.02em}
+  .welcome p{color:var(--muted);font-size:16px;max-width:560px;margin:0 auto}
+  .stats{display:flex;justify-content:center;gap:14px;margin-top:26px;flex-wrap:wrap}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 22px;min-width:120px}
+  .stat .n{font-size:26px;font-weight:700;color:var(--primary)}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+  .empty{text-align:center;color:var(--muted);padding:50px 0;font-size:15px}
+
+  .menu-toggle{display:none}
+  @media(max-width:860px){
+    .app{grid-template-columns:1fr}
+    .sidebar{position:fixed;z-index:40;width:290px;height:100vh;transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 16px rgba(0,0,0,.08)}
+    .sidebar.show{transform:none}
+    .menu-toggle{display:inline-flex;align-items:center;gap:7px;position:fixed;top:14px;left:14px;z-index:50;
+      background:var(--primary);color:#fff;border:none;border-radius:999px;padding:9px 16px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;box-shadow:var(--shadow)}
+    .main-inner{padding:64px 18px 80px}
+    .backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:35}
+    .backdrop.show{display:block}
+  }
+</style>
+</head>
+<body>
+<button class="menu-toggle" onclick="toggleNav()">&#9776; Topics</button>
+<div class="backdrop" id="backdrop" onclick="toggleNav()"></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <h1>&#127891; Interview Prep</h1>
+      <p>Your personal answer sheet</p>
+    </div>
+    <div class="search">
+      <input id="search" type="text" placeholder="&#128269;  Search questions..." autocomplete="off" />
+    </div>
+    <nav class="nav" id="nav"></nav>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="main-inner" id="content"></div>
+  </main>
+</div>
+
+<script src="questions.js"></script>
+<script src="answers.js"></script>
+<script>
+const TOPICS = window.QUESTIONS || [];
+const ANSWERS = window.ANSWERS || {};
+
+// Emoji per topic (best-effort match by keyword)
+function topicEmoji(name){
+  const n=name.toLowerCase();
+  const map=[['behav','\u{1F91D}'],['scrum','\u{1F3C3}'],['euron','✨'],['spring','\u{1F343}'],
+    ['copilot','\u{1F916}'],['aws','☁️'],['agentic','\u{1F9E0}'],['coding','\u{1F4BB}'],
+    ['docker','\u{1F433}'],['rag','\u{1F4DA}'],['kubernetes','☸️'],['llm','\u{1F4AC}'],
+    ['microservice','\u{1F517}'],['sql','\u{1F5C4}️'],['terraform','\u{1F3D7}️'],
+    ['design pattern','\u{1F9E9}'],['devops','\u{1F504}'],['monitor','\u{1F4CA}'],['asp.net','\u{1F310}'],
+    ['azure','\u{1F537}'],['c#','#️'],['databricks','\u{1F9F1}'],['pandas','\u{1F43C}'],
+    ['pyspark','⚡'],['react','⚛️'],['system design','\u{1F3DB}️'],['web api','\u{1F578}️']];
+  for(const [k,e] of map){ if(n.includes(k)) return e; }
+  return '\u{1F4D8}';
+}
+
+let state={topic:null, search:'', diff:'all'};
+
+function answeredCount(topic){
+  return topic.questions.filter(q=>ANSWERS[q.id]).length;
+}
+
+function renderNav(){
+  const nav=document.getElementById('nav');
+  const groups={'P0':[],'P1':[],'P2':[],'':[]};
+  TOPICS.forEach(t=>{(groups[t.priority]!==undefined?groups[t.priority]:groups['']).push(t)});
+  const labels={'P0':'\u{1F525} P0 — Highest priority','P1':'P1 — High priority','P2':'P2 — Medium','':'Other topics'};
+  let html='';
+  ['P0','P1','P2',''].forEach(p=>{
+    if(!groups[p].length) return;
+    html+=`<div class="nav-group-label">${labels[p]}</div>`;
+    groups[p].forEach(t=>{
+      const a=answeredCount(t);
+      html+=`<button class="topic-btn ${state.topic===t.slug?'active':''}" onclick="selectTopic('${t.slug}')">
+        <span class="ic">${topicEmoji(t.topic)}</span>
+        <span class="name">${esc(t.topic)}</span>
+        <span class="cnt">${a>0?a+'/':''}${t.count}</span>
+      </button>`;
+    });
+  });
+  nav.innerHTML=html;
+}
+
+function selectTopic(slug){
+  state.topic=slug; state.diff='all';
+  document.getElementById('search').value=''; state.search='';
+  renderNav(); renderMain();
+  document.getElementById('main').scrollTop=0;
+  if(window.innerWidth<=860) toggleNav(false);
+}
+
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// minimal inline markdown: **bold**, `code`, and - bullet lines
+function fmt(text){
+  if(!text) return '';
+  const lines=text.split('\n'); let html=''; let inList=false;
+  for(let raw of lines){
+    let line=raw.trim();
+    if(line.startsWith('- ')){
+      if(!inList){html+='<ul>';inList=true;}
+      html+='<li>'+inline(line.slice(2))+'</li>';
+    } else {
+      if(inList){html+='</ul>';inList=false;}
+      if(line) html+='<p>'+inline(line)+'</p>';
+    }
+  }
+  if(inList) html+='</ul>';
+  return html;
+}
+function inline(s){
+  return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/`(.+?)`/g,'<code>$1</code>');
+}
+
+function questionMatches(q,t){
+  if(state.diff!=='all' && (q.diff||'').toLowerCase()!==state.diff) return false;
+  if(state.search){
+    const s=state.search.toLowerCase();
+    return q.q.toLowerCase().includes(s) || (q.cat||'').toLowerCase().includes(s);
+  }
+  return true;
+}
+
+function renderMain(){
+  const c=document.getElementById('content');
+
+  // global search across all topics
+  if(state.search){ return renderSearch(c); }
+
+  if(!state.topic){ return renderWelcome(c); }
+  const t=TOPICS.find(x=>x.slug===state.topic);
+  if(!t){ return renderWelcome(c); }
+
+  const pillCls=t.priority?t.priority.toLowerCase():'na';
+  const a=answeredCount(t);
+  const diffs=['all','easy','medium','hard'];
+  let html=`
+    <div class="topic-head">
+      <div>
+        <h2>${topicEmoji(t.topic)} ${esc(t.topic)}</h2>
+        <div class="sub">${t.count} questions &middot; ${a} with answers ready</div>
+      </div>
+      <span class="pill ${pillCls}">${t.priority||'General'}</span>
+    </div>
+    <div class="toolbar">
+      ${diffs.map(d=>`<button class="chip ${state.diff===d?'active':''}" onclick="setDiff('${d}')">${d==='all'?'All levels':cap(d)}</button>`).join('')}
+      <span class="meta-line">Click any question to reveal the answer</span>
+    </div>
+    <div class="qlist">`;
+
+  const visible=t.questions.filter(q=>questionMatches(q,t));
+  if(!visible.length){ html+=`<div class="empty">No questions match this filter.</div>`; }
+  visible.forEach((q)=>{ html+=qcard(q); });
+  html+=`</div>`;
+  c.innerHTML=html;
+}
+
+function renderSearch(c){
+  const s=state.search.toLowerCase();
+  let results=[];
+  TOPICS.forEach(t=>t.questions.forEach(q=>{
+    if(q.q.toLowerCase().includes(s)||(q.cat||'').toLowerCase().includes(s)) results.push({q,t});
+  }));
+  let html=`<div class="topic-head"><div><h2>&#128269; Search</h2>
+    <div class="sub">${results.length} result${results.length!==1?'s':''} for "${esc(state.search)}"</div></div></div>
+    <div class="qlist">`;
+  if(!results.length) html+=`<div class="empty">No questions found. Try another keyword.</div>`;
+  results.slice(0,80).forEach(({q,t})=>{ html+=qcard(q,t.topic); });
+  if(results.length>80) html+=`<div class="empty">Showing first 80 results. Refine your search to narrow down.</div>`;
+  html+=`</div>`;
+  c.innerHTML=html;
+}
+
+function qcard(q,topicLabel){
+  const a=ANSWERS[q.id];
+  const dcls=(q.diff||'').toLowerCase();
+  const badges=[];
+  if(topicLabel) badges.push(`<span class="badge cat">${esc(topicLabel)}</span>`);
+  if(q.cat) badges.push(`<span class="badge cat">${esc(q.cat)}</span>`);
+  if(q.diff) badges.push(`<span class="badge d-${dcls}">${esc(q.diff)}</span>`);
+  let body;
+  if(a){
+    body=`
+      <div class="section">
+        <div class="section-title" style="color:var(--primary)">&#128161; Answer</div>
+        <div class="answer-body">${fmt(a.answer)}</div>
+      </div>
+      ${(a.pros||a.cons)?`<div class="section"><div class="pc-grid">
+        ${a.pros?`<div class="pc-box pros"><h4>&#9989; Pros</h4><ul>${a.pros.map(x=>`<li>${inline(x)}</li>`).join('')}</ul></div>`:''}
+        ${a.cons?`<div class="pc-box cons"><h4>&#9888;&#65039; Cons</h4><ul>${a.cons.map(x=>`<li>${inline(x)}</li>`).join('')}</ul></div>`:''}
+      </div></div>`:''}
+      ${a.useCase?`<div class="section"><div class="section-title" style="color:var(--primary)">&#127919; Use case scenario</div>
+        <div class="usecase">${fmt(a.useCase)}</div></div>`:''}
+      ${a.alts&&a.alts.length?`<div class="section"><div class="section-title" style="color:var(--muted)">&#128260; Asked another way (same answer)</div>
+        <div class="alts"><ul>${a.alts.map(x=>`<li>${inline(x)}</li>`).join('')}</ul></div></div>`:''}
+    `;
+  } else {
+    body=`<div class="soon">&#9203; <span>Answer is being written for this question. Check back soon &mdash; the question is already in your sheet.</span></div>`;
+  }
+  return `<div class="qcard" id="card-${q.id}">
+    <div class="qhead" onclick="toggleCard('${q.id}')">
+      <span class="qnum">${q.id.split('-').pop()}</span>
+      <span class="qtext">${esc(q.q)}</span>
+      <span class="qbadges">${badges.join('')}</span>
+      <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="qbody">${body}</div>
+  </div>`;
+}
+
+function toggleCard(id){
+  const el=document.getElementById('card-'+id);
+  if(el) el.classList.toggle('open');
+}
+function setDiff(d){ state.diff=d; renderMain(); }
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+function renderWelcome(c){
+  const totalQ=TOPICS.reduce((s,t)=>s+t.count,0);
+  const totalA=TOPICS.reduce((s,t)=>s+answeredCount(t),0);
+  c.innerHTML=`<div class="welcome">
+    <div class="logo">&#127891;</div>
+    <h2>Interview Preparation Sheet</h2>
+    <p>Pick a topic from the left to see its questions. Click any question to reveal a clear, human answer with pros &amp; cons, a real use-case, and other ways it might be asked.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">${TOPICS.length}</div><div class="l">Topics</div></div>
+      <div class="stat"><div class="n">${totalQ}</div><div class="l">Questions</div></div>
+      <div class="stat"><div class="n">${totalA}</div><div class="l">Answers ready</div></div>
+    </div>
+  </div>`;
+}
+
+function toggleNav(force){
+  const sb=document.getElementById('sidebar'), bd=document.getElementById('backdrop');
+  const show=force===undefined?!sb.classList.contains('show'):force;
+  sb.classList.toggle('show',show); bd.classList.toggle('show',show);
+}
+
+document.getElementById('search').addEventListener('input',e=>{
+  state.search=e.target.value.trim();
+  renderMain();
+});
+
+renderNav();
+renderWelcome(document.getElementById('content'));
+</script>
+</body>
+</html>
