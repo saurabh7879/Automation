@@ -84,7 +84,7 @@
     "bestPractices": [
       "Unsubscribe events / dispose to avoid leaks",
       "Avoid long-lived static references to large graphs",
-      "Keep allocations low in hot paths to cut Gen 0 churn"
+      "Reduce hot-path allocations to cut Gen 0 churn"
     ]
   },
   "csharp-11": {
