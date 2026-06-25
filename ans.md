@@ -52,13 +52,13 @@ Rules of thumb:
 **Tone & style**
 - Write as a senior engineer speaking in an interview, not a textbook author.
 - Be direct and confident. No filler ("Great question!", "In summary…").
-- Keep it simple and plain-English. Definitions are tight: 1 sentence ideally, 2 max.
+- Keep it simple and plain-English. The Definition is the one fuller part: 3–4 lines that fully cover the essence (what it is, how it returns/handles data, who consumes it, key built-ins). Every OTHER section stays tight.
 - Bullets (`keyPoints`, `advantages`, `disadvantages`, `bestPractices`) are SHORT phrases — aim for ≤ 8 words, not full sentences. Max 3 per list.
 - `how` ≤ 2 sentences (an arrow chain like "routing → binding → action → JSON" is ideal and memorable). `steps` ≤ 5 short steps. `realWorld` ≤ 2 sentences.
 
 **`pitch` + `definition` (shown together as one simple "Definition" block)**
 - `pitch`: ONE short, plain, opinionated opening line you'd say out loud (e.g. "X is my go-to for…").
-- `definition`: 1–2 simple sentences explaining what it is. Together they must read as one clear, jargon-light explanation.
+- `definition`: 3–4 lines that fully cover what it is — purpose, how it works/returns data, who consumes it, and the key built-ins. Together with the pitch it reads as one clear, jargon-light explanation.
 
 **`how`**: 2–4 sentences on the internal mechanism. Omit if you provide `steps` instead.
 
