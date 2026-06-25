@@ -1,0 +1,30 @@
+What is ASP.NET MVC?
+Explain the ASP.NET MVC Architecture.
+Explain the complete ASP.NET MVC Request Lifecycle.
+What is Routing in ASP.NET MVC?
+What are Areas in ASP.NET MVC, and why are they used?
+What is a Controller in ASP.NET MVC?
+Can Action Methods be overloaded in ASP.NET MVC? If yes, how?
+Explain all ActionResult types in ASP.NET MVC.
+What is the difference between ViewResult and PartialViewResult?
+What is the difference between View() and PartialView()?
+What are the different ways to send data from Controller to View?
+What are the different ways to pass data from View to Controller?
+What is Model Binding, and how does it work?
+What are HTML Helpers? Explain the different types.
+What is the difference between Strongly Typed View and Weakly Typed View?
+What are Filters in ASP.NET MVC?
+Explain Authorization Filter, Action Filter, Result Filter, Exception Filter, and Authentication Filter.
+How do you create a Custom Action Filter?
+What are Filter Overrides? Explain with an example.
+How do you intercept exceptions using Exception Filters?
+What are ViewData, ViewBag, TempData, and Session? What are their differences?
+What is the difference between Authentication and Authorization?
+What are Forms Authentication and Windows Authentication?
+What is Attribute Routing? How is it different from Conventional Routing?
+What are Layout Pages, Partial Views, and RenderBody() in ASP.NET MVC?
+What are Child Actions, and how are they used?
+How do you implement Validation in ASP.NET MVC using Data Annotations?
+How do you improve the performance of an ASP.NET MVC application?
+What are Bundling and Minification, and why are they used?
+Explain a real-time ASP.NET MVC project architecture and the design patterns you implemented.

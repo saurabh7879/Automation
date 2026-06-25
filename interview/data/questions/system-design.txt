@@ -1,0 +1,30 @@
+Design a URL Shortener (like TinyURL/Bitly).
+Design a Distributed Caching System (like Redis).
+Design a Chat Application (like WhatsApp).
+Design a Real-Time Notification System.
+Design a File Storage Service (like Google Drive/Dropbox).
+Design a Video Streaming Platform (like YouTube/Netflix).
+Design an Online Food Delivery System (like Swiggy/Zomato).
+Design a Ride-Sharing Application (like Uber/Ola).
+Design an E-Commerce Platform (like Amazon/Flipkart).
+Design a Payment Gateway System.
+Design a Hotel Booking System.
+Design an Online Ticket Booking System (Movie/Flight/Train).
+Design a Social Media Platform (like Facebook/X/Instagram).
+Design a News Feed System.
+Design a Rate Limiter for APIs.
+Design a Logging and Monitoring System.
+Design a Distributed Job Scheduler.
+Design a Search Autocomplete System.
+Design a Recommendation Engine (Products/Movies/Videos).
+Design a Microservices-Based Order Management System.
+Design an Authentication & Authorization System (JWT/OAuth2).
+Design an API Gateway.
+Design a Real-Time Inventory Management System.
+Design a High-Availability Web Application.
+Design a Multi-Tenant SaaS Application.
+Design a Distributed Queue System.
+Design a Notification Service supporting Email, SMS, and Push Notifications.
+Design a Banking Transaction System.
+Design a Distributed Session Management System.
+Design a Logging & Audit Trail System for Microservices.

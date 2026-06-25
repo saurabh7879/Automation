@@ -1,0 +1,30 @@
+What is Entity Framework (EF), and why is it used?
+What is the difference between Entity Framework 6 (EF6) and Entity Framework Core (EF Core)?
+What are the different versions of Entity Framework, and what features were introduced in each version?
+What are the different approaches in Entity Framework (Database First, Code First, and Model First)?
+What is Code First in Entity Framework, and how does it work?
+What are Code First Migrations, and how do they work?
+What is the __MigrationHistory (EF6) / __EFMigrationsHistory (EF Core) table?
+What is Automatic Migration, and why is it generally not recommended in production?
+How do you configure Entity Framework with ASP.NET Core?
+How do you integrate Entity Framework with ASP.NET Web API?
+What is the difference between LINQ and Entity Framework?
+How does LINQ to Entities differ from LINQ to Objects?
+What are POCO (Plain Old CLR Object) classes, and why are they used?
+What is a Proxy Object in Entity Framework, and what is its purpose?
+What are the Entity States in Entity Framework? Explain Detached, Added, Unchanged, Modified, and Deleted.
+What is DbContext, and what is its lifecycle?
+What is DbSet, and how is it different from ObjectSet?
+What is the difference between Eager Loading, Lazy Loading, and Explicit Loading?
+What are Navigation Properties, and how do they work?
+What are the different types of inheritance supported in Entity Framework (TPH, TPT, TPC)?
+How do you call a Stored Procedure from Entity Framework? Explain three different approaches.
+How do you execute raw SQL queries and commands in Entity Framework 6 and EF Core?
+How does Entity Framework support Transactions? Explain BeginTransaction, TransactionScope, and SaveChanges().
+What is SQL Injection, and how does Entity Framework help prevent it?
+How do you secure Entity Framework applications against SQL Injection attacks?
+How do you improve the performance of Entity Framework applications? Discuss Tracking vs No-Tracking, Compiled Queries, Split Queries, and Batch Operations.
+What is the N+1 Query Problem in Entity Framework, and how do you resolve it?
+How do you implement Dependency Injection and the Repository/Unit of Work patterns with Entity Framework?
+What are the common performance issues in Entity Framework, and how would you troubleshoot them?
+Describe a real-world Entity Framework application where you implemented migrations, transactions, loading strategies, stored procedures, performance optimization, and handled production issues.

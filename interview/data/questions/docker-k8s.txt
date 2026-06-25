@@ -1,0 +1,52 @@
+What is Docker, and why is it used?
+What is the difference between Virtual Machines and Docker Containers?
+What are the main components of Docker Architecture?
+What is a Docker Image?
+What is a Docker Container?
+What is the difference between a Docker Image and a Docker Container?
+What is a Dockerfile, and what are its common instructions?
+What is the difference between CMD and ENTRYPOINT in Docker?
+What is the difference between COPY and ADD in Docker?
+What is Docker Compose, and when would you use it?
+What are Docker Volumes, and why are they needed?
+What are Docker Networks, and what types are available?
+How do you optimize the size of a Docker Image?
+What are Multi-Stage Builds in Docker?
+How do you pass environment variables to a Docker Container?
+How do you debug a running Docker Container?
+What is Docker Registry? Explain Docker Hub and Private Registries.
+How do you secure Docker Containers?
+What are the best practices for writing a Dockerfile?
+Explain the process of Dockerizing an ASP.NET Core application.
+Kubernetes Interview Questions
+What is Kubernetes, and why is it used?
+What problems does Kubernetes solve?
+What are the main components of Kubernetes Architecture?
+What is the difference between a Node and a Cluster?
+What is a Pod in Kubernetes?
+What is the difference between a Pod and a Container?
+What is a Deployment in Kubernetes?
+What is a ReplicaSet, and why is it used?
+What is a Kubernetes Service? Explain ClusterIP, NodePort, and LoadBalancer.
+What is an Ingress, and why is it used?
+What are ConfigMaps and Secrets?
+What is a Namespace in Kubernetes?
+What is a StatefulSet, and when would you use it?
+What is a DaemonSet, and when is it required?
+What is a Job and a CronJob in Kubernetes?
+How does Auto Scaling work in Kubernetes (HPA/VPA)?
+How do you perform Rolling Updates and Rollbacks?
+How do you monitor and troubleshoot Kubernetes applications?
+How do you deploy a Microservices application to Kubernetes?
+Explain the complete Docker and Kubernetes deployment process for an ASP.NET Core Microservices application.
+Scenario-Based Questions
+Dockerize an ASP.NET Core Web API application.
+Deploy a Dockerized application to Kubernetes.
+How would you deploy multiple Microservices using Kubernetes?
+How would you expose a Microservice to external users?
+How would you store database connection strings securely in Kubernetes?
+How would you implement zero-downtime deployment using Kubernetes?
+How would you scale an application when traffic increases?
+How would you debug a Pod stuck in the CrashLoopBackOff state?
+How would you deploy updates without affecting existing users?
+Explain your production deployment architecture using Docker, Kubernetes, CI/CD, Load Balancer, Ingress, Monitoring, and Logging.

@@ -1,0 +1,40 @@
+What is Microservices Architecture?
+What is the difference between Monolithic and Microservices Architecture?
+When should you choose Microservices over a Monolithic application?
+What are the advantages and disadvantages of Microservices?
+What are the key principles of Microservices?
+How do Microservices communicate with each other?
+What is synchronous vs asynchronous communication in Microservices?
+What is an API Gateway, and why is it used?
+What is Service Discovery, and how does it work?
+What is the Database per Service pattern?
+Why should each Microservice have its own database?
+How do you maintain data consistency across multiple Microservices?
+What is the Saga Pattern? Explain Choreography vs Orchestration.
+What is Event-Driven Architecture in Microservices?
+What is Eventual Consistency?
+What is CQRS (Command Query Responsibility Segregation)?
+What is Event Sourcing?
+What is the Circuit Breaker Pattern? Why is it important?
+What is the Retry Pattern? How do you avoid retry storms?
+What is the Bulkhead Pattern?
+What is the Outbox Pattern? Why is it used?
+How do you handle distributed transactions in Microservices?
+How do you implement authentication and authorization in Microservices (JWT, OAuth2, OIDC)?
+How do you secure communication between Microservices?
+How do you perform centralized logging and monitoring in Microservices?
+How do you implement distributed tracing? (Correlation ID, Trace ID)
+How do you deploy Microservices using Docker and Kubernetes?
+How do you version APIs in a Microservices architecture?
+How do you test Microservices (Unit, Integration, Contract, End-to-End)?
+Explain a Microservices project you have worked on, including its architecture, challenges, and solutions.
+Design an Order Management Microservice.
+Design a Payment Microservice with failure handling.
+How would you handle a service failure during order placement?
+How would you implement inter-service communication using a message broker (e.g., RabbitMQ/Kafka)?
+How would you prevent duplicate message processing (Idempotency)?
+How would you scale a Microservice under heavy traffic?
+How would you implement distributed caching in Microservices?
+How would you ensure zero-downtime deployment?
+How would you migrate a Monolithic application to Microservices?
+Explain the complete request flow in a Microservices-based e-commerce application from login to order completion.

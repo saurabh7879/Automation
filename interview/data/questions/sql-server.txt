@@ -1,0 +1,30 @@
+What is RDBMS, and how is it different from DBMS?
+What are SQL Constraints? Explain all types with examples.
+What is Normalization? Explain 1NF, 2NF, 3NF, and BCNF.
+What are ACID properties? Explain each with a real-world example.
+What is a Transaction? Explain COMMIT, ROLLBACK, and SAVEPOINT.
+How do you handle exceptions in SQL Server? Explain the TRY...CATCH block.
+What are Dirty Read, Non-Repeatable Read, Phantom Read, and Repeatable Read?
+What are the different Transaction Isolation Levels in SQL Server?
+What is the difference between a Stored Procedure and a Function?
+How can a SQL Server Stored Procedure call a DLL or external code?
+What is the difference between a Temporary Table, Table Variable, and CTE?
+What are Triggers? Explain AFTER Trigger and INSTEAD OF Trigger.
+What is the difference between UNION, UNION ALL, and JOIN?
+What is the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, and CROSS JOIN?
+How does the MERGE statement work? What are its advantages and limitations?
+What are Window Functions? Explain ROW_NUMBER(), RANK(), DENSE_RANK(), LEAD(), and LAG().
+How do you find the Nth Highest Salary? Explain at least three different approaches.
+What is the difference between Clustered Index and Non-Clustered Index?
+How do you improve SQL Query Performance?
+What is an Execution Plan, and how do you use it to optimize queries?
+What is the difference between EXISTS and IN? When would you use each?
+What is the difference between WHERE and HAVING?
+What is the difference between DELETE, TRUNCATE, and DROP?
+What is the difference between CHAR, VARCHAR, and NVARCHAR?
+What are Views, Indexed Views, and Materialized Views? When would you use them?
+What are Cursors? Why should they generally be avoided, and what are the alternatives?
+What are SQL Server Locks, Blocking, and Deadlocks? How do you resolve them?
+What are Database Partitioning, Replication, Log Shipping, and Always On Availability Groups?
+How do you monitor SQL Server performance and troubleshoot slow-running queries in production?
+Describe a real-world SQL performance optimization or production issue you solved, including the approach and outcome.

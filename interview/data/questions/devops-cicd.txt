@@ -1,0 +1,51 @@
+What is DevOps, and what are its core principles?
+What is the difference between DevOps and Agile?
+What are the stages of the DevOps lifecycle?
+What is Continuous Integration (CI)?
+What is Continuous Delivery (CD)?
+What is the difference between Continuous Delivery and Continuous Deployment?
+What is a CI/CD Pipeline?
+What are the different stages in a CI/CD pipeline?
+How do you implement CI/CD for an ASP.NET Core application?
+What is Git, and what are the common Git workflows?
+What is the difference between Git Merge and Git Rebase?
+What is a Pull Request, and why is it important?
+What are Git Tags, and when are they used?
+What is GitHub Actions, and how does it work?
+What is Azure DevOps, and what services does it provide?
+What is Jenkins, and how does it compare with Azure DevOps?
+What is a Build Pipeline?
+What is a Release (Deployment) Pipeline?
+What is Infrastructure as Code (IaC)?
+What is Terraform, and why is it used?
+What are ARM Templates and Bicep?
+What is Docker, and why is it used?
+What is a Docker Image, and how is it different from a Container?
+What is Docker Compose?
+What is Kubernetes, and what problems does it solve?
+What are Pods, Deployments, ReplicaSets, and Services in Kubernetes?
+What is Helm, and why is it used?
+What is a Blue-Green Deployment?
+What is a Canary Deployment?
+What is a Rolling Deployment?
+What is Zero-Downtime Deployment, and how is it achieved?
+How do you manage application configuration across different environments?
+How do you securely manage secrets in a CI/CD pipeline?
+How do you implement automated testing in a CI/CD pipeline?
+How do you monitor applications after deployment?
+What are logs, metrics, and traces in DevOps monitoring?
+How do you perform rollback if a deployment fails?
+How do you optimize build and deployment times?
+How do you deploy Microservices using a CI/CD pipeline?
+Explain the complete CI/CD process of your project from code commit to production deployment.
+Scenario-Based Questions
+Design a CI/CD pipeline for an ASP.NET Core Microservices application.
+How would you deploy an application to multiple environments (Dev, QA, UAT, Production)?
+How would you implement automated rollback after a failed deployment?
+How would you deploy a Dockerized application to Kubernetes using Azure DevOps or GitHub Actions?
+How would you implement versioning in a CI/CD pipeline?
+How would you secure a production deployment pipeline?
+How would you deploy a database schema change without downtime?
+How would you monitor a production deployment and detect failures?
+How would you implement CI/CD for a Microservices architecture with multiple repositories?
+Explain the complete DevOps architecture of your project, including Git, Build, Test, Docker, Kubernetes, CI/CD, Monitoring, and Deployment.

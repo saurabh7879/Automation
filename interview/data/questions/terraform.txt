@@ -1,0 +1,15 @@
+What is Terraform, and why is it used?
+What is Infrastructure as Code (IaC), and how does Terraform implement it?
+What are Terraform Providers, Resources, and Modules?
+What is the Terraform State file (terraform.tfstate), and why is it important?
+What is the difference between terraform init, terraform plan, terraform apply, and terraform destroy?
+What are Input Variables, Output Variables, and Local Variables in Terraform?
+What is the difference between Local State and Remote State?
+What are Terraform Backends, and why are they used?
+What is State Locking, and why is it important in team environments?
+What are Terraform Workspaces, and how do you manage multiple environments (Dev, QA, UAT, Prod)?
+What are Meta-Arguments (count, for_each, depends_on, lifecycle) in Terraform?
+How do you securely manage secrets and sensitive data in Terraform?
+How do you integrate Terraform with CI/CD pipelines (Azure DevOps, GitHub Actions, Jenkins)?
+How do you provision cloud infrastructure (AWS/Azure) using reusable Terraform Modules?
+Explain a real-time Terraform project, including module structure, state management, remote backend, CI/CD integration, and deployment process.

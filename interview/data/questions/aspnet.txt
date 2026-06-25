@@ -1,0 +1,30 @@
+What is ASP.NET Web Forms?
+Explain the ASP.NET Web Forms Architecture.
+Explain the complete ASP.NET Request Lifecycle.
+Explain the ASP.NET Page Lifecycle and its events.
+What is the purpose of the Page Directive in ASP.NET?
+What is the difference between web.config and machine.config?
+What are the important sections available in the web.config file?
+What is the difference between Client Controls and Server Controls?
+What are HTML Controls and Web Server Controls?
+What is a User Control in ASP.NET?
+How do you create and use a User Control in ASP.NET?
+What is the difference between a User Control and a Custom Control?
+What are the different Validation Controls available in ASP.NET?
+What is the difference between Client-side Validation and Server-side Validation?
+What are the different State Management techniques in ASP.NET?
+What is ViewState, and how does it work?
+What is the difference between ViewState, Session, Application, Cookies, and Cache?
+What are Cookies, and what are their different types?
+What is the difference between Session State and ViewState?
+What is Authentication and Authorization in ASP.NET?
+What is the difference between Forms Authentication, Windows Authentication, and Passport Authentication?
+Explain Form-Based Authentication with the complete request flow.
+Explain Bearer Token (JWT) Authentication end-to-end.
+What are the ASP.NET Membership tables used for Authentication and Authorization?
+What are Themes and Skins in ASP.NET? How do you apply them?
+What is Caching in ASP.NET?
+Explain the different types of Caching in ASP.NET.
+How do you improve the performance of an ASP.NET Web Forms application?
+What are PostBack, AutoPostBack, IsPostBack, and Cross-Page Posting?
+Explain a real-time ASP.NET Web Forms application architecture and the performance optimizations you implemented.

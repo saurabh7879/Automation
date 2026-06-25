@@ -1,0 +1,20 @@
+Reverse the given string using 2 different ways without using any built-in methods.
+Sort the integer array {7,5,8,3,4,5,77,22,44} without using built-in sorting methods.
+Sort the string array {"tyt","yuy","asde","yuhg"} alphabetically.
+Reverse each word in the sentence "welcome to india" to get "emoclew ot aidni" using 3 different approaches.
+Count how many times each word is repeated in the string "hhg yiuyuy sfdafsal ashakj rwqtr".
+Find the sum of the first N Fibonacci numbers (0,1,1,2,3,5,8,13...).
+Count the total number of vowels in the string "yuy hghg wwewlk ewejsdbn kdhsd".
+How do you define and access a nested array like [1,[1,2,[1,2,3,[1,2,3,4]]]] in C#?
+Find duplicate elements in an integer array.
+Remove duplicate elements from an array without using Distinct().
+Find the largest and second largest numbers in an array.
+Find the smallest and second smallest numbers in an array.
+Check whether a given string is a palindrome.
+Check whether two strings are anagrams.
+Find the first non-repeating character in a string.
+Find the missing number in an integer array.
+Move all zeroes to the end of an array while maintaining the order of other elements.
+Merge two sorted arrays into a single sorted array without using built-in sorting methods.
+Rotate an array to the left or right by K positions.
+Flatten a nested collection (e.g., List<List<int>>) into a single collection with and without LINQ.

@@ -1,0 +1,20 @@
+What are Data Structures? Explain their types (Linear and Non-Linear).
+What is the difference between an Array and a Linked List?
+What are the different types of Linked Lists? (Singly, Doubly, Circular)
+Reverse a Linked List without using extra space.
+Detect a loop (cycle) in a Linked List.
+Find the middle node of a Linked List.
+What is a Stack? Explain its operations (Push, Pop, Peek).
+What is a Queue? Explain its operations (Enqueue, Dequeue, Peek).
+What is the difference between a Stack and a Queue?
+Implement a Stack using Queues and a Queue using Stacks.
+What is a Binary Tree? Explain its different types.
+What is the difference between a Binary Tree and a Binary Search Tree (BST)?
+Explain Tree Traversals: Preorder, Inorder, Postorder, and Level Order.
+Find the height (maximum depth) of a Binary Tree.
+Search, Insert, and Delete a node in a Binary Search Tree.
+What is a Heap? Explain Min Heap and Max Heap.
+What is a Hash Table (Dictionary)? How does hashing work?
+What are hash collisions? Explain collision resolution techniques.
+What is a Graph? Explain BFS (Breadth-First Search) and DFS (Depth-First Search).
+What is the time complexity (Big O) of common operations on Arrays, Linked Lists, Stacks, Queues, Hash Tables, Trees, and Graphs?

@@ -1,0 +1,35 @@
+What is LINQ, and what are its advantages in C#?
+What is the difference between LINQ to Objects, LINQ to SQL, LINQ to XML, and LINQ to Entities?
+What is the difference between Query Syntax and Method Syntax in LINQ?
+What is a Lambda Expression, and how does it work internally?
+What is the difference between IEnumerable and IQueryable? When should you use each?
+What is Deferred Execution and Immediate Execution in LINQ?
+What is the difference between Select() and SelectMany()?
+What is the difference between Where(), Find(), and FindAll()?
+What is the difference between First(), FirstOrDefault(), Single(), and SingleOrDefault()?
+What is the difference between Any(), All(), Count(), and LongCount()?
+What is the difference between OrderBy(), ThenBy(), OrderByDescending(), and Reverse()?
+What is the difference between Distinct(), GroupBy(), ToLookup(), and ToDictionary()?
+What is the difference between Join(), GroupJoin(), Zip(), and SelectMany()?
+What is the difference between Skip(), Take(), SkipWhile(), and TakeWhile()?
+What are Aggregate Functions in LINQ? Explain Sum(), Min(), Max(), Average(), and Aggregate().
+How do you perform Left Join, Right Join, Full Outer Join, and Cross Join using LINQ?
+How do you optimize LINQ queries for better performance? What are the common performance pitfalls?
+What are Expression Trees, and how are they different from Lambda Expressions?
+Why is IQueryable preferred over IEnumerable in Entity Framework? How does LINQ get translated into SQL?
+Describe a real-world scenario where you used LINQ and Lambda Expressions to solve a complex business problem and optimize performance.
+Explain the Where() operator with an example.
+What is the difference between Select() and SelectMany()?
+Explain the Join() operator. How does it work?
+What is GroupJoin()? How is it different from Join()?
+Explain the GroupBy() operator with a real-world example.
+What is the difference between OrderBy(), OrderByDescending(), ThenBy(), and ThenByDescending()?
+What is the difference between Distinct(), Union(), Intersect(), and Except()?
+Explain First(), FirstOrDefault(), Single(), and SingleOrDefault(). When would you use each?
+What is the difference between Any(), All(), and Contains()?
+Explain aggregation operators: Count(), Sum(), Average(), Min(), Max(), and Aggregate().
+How do Skip() and Take() work? How are they used for pagination?
+What is the difference between ToList(), ToArray(), ToDictionary(), and ToLookup()?
+What is deferred execution in LINQ? Which operators cause immediate execution?
+What is the difference between IEnumerable and IQueryable in LINQ?
+How do you implement a Left Outer Join in LINQ? Can LINQ perform Right Join and Full Outer Join?

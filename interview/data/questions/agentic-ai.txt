@@ -1,0 +1,41 @@
+What is Agentic AI?
+How is Agentic AI different from Generative AI?
+What is an AI Agent?
+What are the core components of an AI Agent?
+What is the difference between an AI Agent and a traditional chatbot?
+What is the difference between Single-Agent and Multi-Agent systems?
+What are the different types of AI Agents? (Reactive, Goal-Based, Utility-Based, Learning, Autonomous)
+What is an Agent Workflow?
+What is Agent Planning, and why is it important?
+What is Task Decomposition in Agentic AI?
+What is Reflection (Self-Critique) in AI Agents?
+What is Memory in AI Agents? Explain Short-Term vs Long-Term Memory.
+What is Tool Calling (Function Calling), and how does an AI Agent use tools?
+What is the Model Context Protocol (MCP), and why is it used?
+What is Retrieval-Augmented Generation (RAG), and how does it integrate with AI Agents?
+What is the difference between RAG and Agentic AI?
+What is a Vector Database, and why is it used in AI Agents?
+How do AI Agents make decisions and choose the next action?
+What is Human-in-the-Loop (HITL), and when is it required?
+How do you prevent AI Agents from hallucinating or taking unsafe actions?
+How do you secure AI Agents that interact with external APIs and enterprise systems?
+How do you implement authentication and authorization for AI Agents?
+How do you monitor and log AI Agent activities?
+How do you evaluate the performance and reliability of an AI Agent?
+How do you design a scalable Agentic AI architecture?
+How would you build an AI Agent using ASP.NET Core and Azure OpenAI/OpenAI?
+How would you orchestrate multiple AI Agents to complete a complex workflow?
+What frameworks have you used for building AI Agents? (Semantic Kernel, LangGraph, AutoGen, CrewAI, LangChain)
+Explain the architecture of an enterprise Agentic AI application from user request to final response.
+Explain a real-world Agentic AI project you have worked on, including architecture, tools, memory, RAG, orchestration, deployment, and monitoring.
+Bonus Scenario-Based Questions
+Design an AI agent that can read emails, summarize them, and create calendar events.
+Design a multi-agent system for customer support.
+How would you build an AI coding assistant that can generate, review, and test code?
+How would you implement approval workflows before an AI Agent executes critical actions?
+How would you enable an AI Agent to query SQL databases safely?
+How would you integrate an AI Agent with Microsoft Teams, Slack, or SharePoint?
+How would you handle failures when one agent in a multi-agent workflow cannot complete its task?
+How would you implement persistent memory for an AI Agent?
+How would you optimize latency and token usage in an Agentic AI system?
+Explain the end-to-end architecture of a production-ready Agentic AI platform, including LLMs, tools, memory, RAG, orchestration, observability, security, and deployment.

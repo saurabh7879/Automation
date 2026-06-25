@@ -1,0 +1,22 @@
+What is Agile, and how is it different from the Waterfall model?
+What is Scrum, and what are its core principles?
+What are the Scrum roles? (Product Owner, Scrum Master, Development Team)
+What are the different Scrum ceremonies? (Sprint Planning, Daily Scrum, Sprint Review, Sprint Retrospective, Backlog Refinement)
+What is a Sprint, and how do you decide its duration?
+What is the difference between Product Backlog and Sprint Backlog?
+What is the Definition of Done (DoD) and Definition of Ready (DoR)?
+What are User Stories, Epics, and Tasks? How do you write a good User Story?
+What is Story Point estimation, and how is Planning Poker used?
+What is Velocity, and how is it used for Sprint planning?
+How do you handle changing requirements during an active Sprint?
+What project management tools have you used? (Azure DevOps, Jira, Trello, GitHub Projects)
+How do you manage risks, dependencies, and blockers in a project?
+How do you prioritize work items in the Product Backlog? (MoSCoW, Business Value, WSJF, etc.)
+Explain the Agile/Scrum process followed in your current project, from requirement gathering to deployment and production support.
+Bonus Scenario-Based Questions
+What would you do if a Sprint goal is at risk of not being completed?
+How do you handle conflicts within the Scrum team?
+How do you estimate tasks when requirements are unclear?
+How do you handle production bugs during an active Sprint?
+Explain your role in Sprint Planning, Daily Stand-up, Sprint Review, and Retrospective.
+How do you coordinate with QA, DevOps, Product Owner, and Business Analysts during a Sprint?

@@ -1,0 +1,30 @@
+Given an integer array, find two numbers whose sum equals a given target.
+Reverse a singly linked list iteratively and recursively.
+Find the longest substring without repeating characters.
+Check whether a string containing (), {}, and [] is valid.
+Merge two sorted arrays into one sorted array.
+Find the maximum sum of a contiguous subarray.
+Find the first non-repeating character in a string.
+Rotate an array to the left or right by K positions.
+Find the duplicate number in an array containing N+1 integers.
+Find the missing number in an array containing numbers from 1 to N.
+Merge all overlapping intervals from a given list of intervals.
+Find the Kth largest element in an unsorted array.
+Return the Top K most frequent elements from an array.
+Group all anagrams from a list of strings.
+Find the maximum profit from buying and selling a stock only once.
+Implement an LRU (Least Recently Used) Cache with Get() and Put() operations.
+Count the number of islands in a 2D grid using DFS or BFS.
+Search for a target value in a rotated sorted array.
+Find the lowest common ancestor of two nodes in a binary tree.
+Given a binary tree, perform Preorder, Inorder, Postorder, and Level Order traversals.
+Implement a Min Stack that supports Push, Pop, Top, and GetMin in O(1).
+Find the longest consecutive sequence in an unsorted array.
+Find all triplets in an array whose sum is zero (3Sum).
+Calculate the amount of water trapped between bars after raining.
+Serialize and deserialize a binary tree.
+Detect a cycle in a linked list.
+Reverse nodes in a linked list in groups of K.
+Find the median of two sorted arrays.
+Implement a queue using two stacks.
+Implement a stack using two queues.

@@ -1,0 +1,50 @@
+What is AWS, and what are its core services?
+What is the difference between Regions, Availability Zones, and Edge Locations?
+What is Amazon EC2, and when would you use it?
+What are the different EC2 instance types?
+What is an Amazon Machine Image (AMI)?
+What is Auto Scaling, and how does it work?
+What is an Elastic Load Balancer (ELB), and what are its types?
+What is Amazon S3, and what are its storage classes?
+What is the difference between S3 Standard, IA, Glacier, and Deep Archive?
+What is Amazon EBS, and how is it different from S3?
+What is Amazon EFS, and when should you use it?
+What is Amazon RDS, and which databases does it support?
+What is Amazon DynamoDB, and how is it different from RDS?
+What is AWS Lambda, and what are its benefits?
+What is API Gateway, and how does it integrate with Lambda?
+What is Amazon ECS, and how is it different from EKS?
+What is Amazon EKS, and why would you use Kubernetes?
+What is AWS Fargate, and how does it differ from EC2?
+What is Amazon VPC, and what are its components?
+What is the difference between a Public Subnet and a Private Subnet?
+What is an Internet Gateway (IGW), and what is a NAT Gateway?
+What are Route Tables and Security Groups?
+What is the difference between Security Groups and Network ACLs?
+What is IAM, and how do Users, Groups, Roles, and Policies work?
+What is the principle of Least Privilege in AWS?
+What is AWS Secrets Manager, and how is it different from Parameter Store?
+What is Amazon CloudWatch, and how do you monitor applications?
+What is AWS CloudTrail, and how is it different from CloudWatch?
+What is AWS CloudFormation, and why is Infrastructure as Code (IaC) important?
+What is Terraform, and how does it compare with CloudFormation?
+What is Amazon SNS, and when should you use it?
+What is Amazon SQS, and what is the difference between Standard and FIFO queues?
+What is Amazon EventBridge, and how does it differ from SNS?
+What is AWS CodePipeline, and how do you implement CI/CD?
+What is AWS CodeBuild and CodeDeploy?
+How do you secure an application deployed on AWS?
+How do you design a highly available and fault-tolerant application in AWS?
+How do you migrate an on-premises application to AWS?
+How do you optimize costs in AWS?
+Explain the AWS architecture of a real project you have worked on, including services used, deployment, monitoring, scaling, and security.
+Design a highly available Web API on AWS.
+Design a serverless application using Lambda, API Gateway, and DynamoDB.
+How would you deploy a Microservices application on AWS?
+How would you handle high traffic using Auto Scaling and Load Balancers?
+How would you implement file upload and storage using Amazon S3?
+How would you secure communication between Microservices in AWS?
+How would you implement centralized logging and monitoring?
+How would you perform blue-green or rolling deployments on AWS?
+How would you back up and restore an RDS database?
+Explain the complete request flow of an ASP.NET Core application hosted on AWS from user request to database response.

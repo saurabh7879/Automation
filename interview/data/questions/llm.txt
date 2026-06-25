@@ -1,0 +1,26 @@
+What is a Large Language Model (LLM), and how does it work?
+What is the difference between a Traditional Machine Learning model and an LLM?
+What are Tokens, Tokenization, and Context Window?
+What is the Transformer Architecture, and why is it used in LLMs?
+What is the Attention Mechanism (Self-Attention) in Transformers?
+What is the difference between Pre-training and Fine-Tuning?
+What is the difference between Fine-Tuning and Retrieval-Augmented Generation (RAG)?
+What are Embeddings, and why are they important in LLM applications?
+What are Hallucinations in LLMs, and how can they be reduced?
+What is Prompt Engineering? Explain Zero-shot, One-shot, and Few-shot prompting.
+What is the difference between GPT, Claude, Gemini, Llama, and Mistral models?
+How do LLMs perform Function Calling (Tool Calling), and when is it used?
+What are the limitations and challenges of Large Language Models?
+How do you build and deploy an LLM-powered application using ASP.NET Core and Azure OpenAI/OpenAI?
+Explain the architecture of an LLM-based application, including user prompt, embeddings, vector database, RAG, LLM inference, and response generation.
+Bonus Scenario-Based Questions
+How would you reduce token usage and API cost in an LLM application?
+How would you prevent sensitive data from being sent to an LLM?
+How would you evaluate the quality and accuracy of LLM responses?
+How would you choose between GPT-4.1, GPT-5, Claude, Gemini, and Llama for a project?
+How would you implement conversation memory in an LLM application?
+How would you build an enterprise chatbot using an LLM and RAG?
+How would you stream LLM responses in an ASP.NET Core Web API?
+How would you handle rate limits and retries when calling LLM APIs?
+What is the role of vector databases in LLM applications?
+Explain an end-to-end LLM project you have worked on, including architecture, prompt design, RAG, deployment, monitoring, and security.

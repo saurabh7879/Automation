@@ -1,0 +1,30 @@
+What is a Design Pattern, and why is it important in software development?
+What are the three categories of Design Patterns? Explain Creational, Structural, and Behavioral patterns.
+What are the SOLID Principles? Explain each principle with real-world examples.
+What is the Repository Design Pattern? What problems does it solve?
+What is the Unit of Work Pattern, and how does it work with the Repository Pattern?
+What is the Singleton Design Pattern? How do you implement a thread-safe Singleton?
+What are the advantages and disadvantages of the Singleton Pattern?
+What is the Factory Design Pattern? When should it be used?
+What is the Factory Method Pattern? How is it different from the Simple Factory Pattern?
+What is the Abstract Factory Design Pattern? How is it different from the Factory Pattern?
+What is the Builder Design Pattern? When would you use it?
+What is the Prototype Design Pattern? Explain shallow copy and deep copy.
+What is the Dependency Injection (DI) Pattern? Why is it preferred over direct object creation?
+What is the Strategy Design Pattern? Explain with a real-world example.
+What is the Template Method Design Pattern? When should it be used?
+What is the Null Object Design Pattern? What problems does it solve?
+What is the Adapter Design Pattern? Explain with a practical use case.
+What is the Decorator Design Pattern? How is it different from Inheritance?
+What is the Facade Design Pattern? Where is it commonly used?
+What is the Observer Design Pattern? Explain the Publisher-Subscriber model.
+What is the Command Design Pattern? Give a real-world example.
+What is the Mediator Design Pattern? How does it reduce object coupling?
+What is the CQRS (Command Query Responsibility Segregation) Pattern? When should it be used?
+What is the difference between MVC, MVP, and MVVM architectural patterns?
+Explain the MVC Architecture. What are the responsibilities of Model, View, and Controller?
+Explain the MVVM Architecture. How is it different from MVC?
+What is the difference between Repository Pattern and DAO (Data Access Object) Pattern?
+How do SOLID Principles help implement Design Patterns effectively?
+Which Design Patterns have you used in your recent .NET projects, and why did you choose them?
+Describe a real-world application where you implemented multiple Design Patterns (such as Repository, Factory, Singleton, Strategy, and Dependency Injection). Explain the architecture, challenges, and benefits.

@@ -1,0 +1,31 @@
+What is Generative AI, and how is it different from traditional AI?
+What is a Large Language Model (LLM)?
+What is the difference between AI, Machine Learning, Deep Learning, and Generative AI?
+What are Tokens, Tokenization, and Context Window?
+What is Prompt Engineering, and what are the best practices for writing prompts?
+What is the difference between Zero-shot, One-shot, and Few-shot prompting?
+What is Retrieval-Augmented Generation (RAG), and why is it used?
+What is the difference between RAG and Fine-Tuning?
+What are Embeddings, and how are they used in semantic search?
+What are Vector Databases, and why are they required in RAG applications?
+What are Hallucinations in LLMs, and how can they be minimized?
+What is the difference between OpenAI GPT, Claude, Gemini, and Llama models?
+What is Function Calling (Tool Calling) in LLMs?
+How do AI Agents work, and how are they different from traditional chatbots?
+What is MCP (Model Context Protocol), and why is it used?
+How do you secure an LLM application and protect sensitive data?
+How do you evaluate the performance and quality of an LLM application?
+How would you build a RAG-based chatbot using C#, ASP.NET Core, Azure OpenAI/OpenAI, and a Vector Database?
+How do you deploy and scale a Generative AI application in production?
+Explain a real-world Generative AI project you have worked on, including architecture, prompt design, vector database, embeddings, model selection, and deployment.
+Bonus Scenario-Based Questions
+Design an AI-powered document search system using RAG.
+How would you build an enterprise chatbot that answers questions from PDF, Word, and SharePoint documents?
+How would you reduce hallucinations in a production AI application?
+Which vector database would you choose (Pinecone, Azure AI Search, Qdrant, Weaviate, pgvector) and why?
+How would you implement conversation memory in an AI assistant?
+How would you integrate ChatGPT or Azure OpenAI into an ASP.NET Core Web API?
+How would you stream AI responses to a web application?
+How would you optimize prompt cost and token usage?
+How would you secure API keys and user data in an AI application?
+Explain the complete architecture of a GenAI application from user query to LLM response.

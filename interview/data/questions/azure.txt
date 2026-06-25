@@ -1,0 +1,51 @@
+What is Microsoft Azure, and what are its core services?
+What is the difference between Azure Regions, Availability Zones, and Availability Sets?
+What is Azure Virtual Machine (VM), and when would you use it?
+What is Azure App Service, and how is it different from Virtual Machines?
+What is Azure Kubernetes Service (AKS), and why is it used?
+What is Azure Container Apps, and how does it differ from AKS?
+What is Azure Functions, and what are its benefits?
+What is Azure Logic Apps, and when should you use it?
+What is Azure Storage Account, and what storage types does it support?
+What is the difference between Blob Storage, File Storage, Queue Storage, and Table Storage?
+What is Azure SQL Database, and how is it different from SQL Server on a VM?
+What is Azure Cosmos DB, and what are its supported APIs?
+What is Azure Redis Cache, and when should you use it?
+What is Azure Virtual Network (VNet), and what are its components?
+What is the difference between a Public Subnet and a Private Subnet in Azure?
+What are Network Security Groups (NSGs), and how do they work?
+What is Azure Load Balancer, and what are its types?
+What is Azure Application Gateway, and how is it different from Azure Load Balancer?
+What is Azure Front Door, and when should it be used?
+What is Azure Traffic Manager, and how does it differ from Front Door?
+What is Microsoft Entra ID (formerly Azure Active Directory), and how does it work?
+What is the difference between Microsoft Entra ID and Active Directory Domain Services?
+What are Managed Identities, and why are they used?
+What is Azure Key Vault, and how do you securely manage secrets?
+What is Azure API Management (APIM), and why is it used?
+What is Azure Service Bus, and how is it different from Azure Queue Storage?
+What is Azure Event Grid, and when should you use it?
+What is Azure Event Hubs, and how is it different from Event Grid and Service Bus?
+What is Azure Monitor, and how does it help monitor applications?
+What is Application Insights, and how is it different from Azure Monitor?
+What is Azure Log Analytics?
+What is Azure DevOps, and what services does it provide?
+What is an Azure DevOps Pipeline, and how do you implement CI/CD?
+What is Azure Resource Manager (ARM), and what are ARM Templates?
+What is Bicep, and how does it compare with ARM Templates?
+What is Terraform, and how does it compare with ARM Templates and Bicep?
+How do you secure applications hosted in Azure?
+How do you design a highly available and scalable application in Azure?
+How do you migrate an on-premises .NET application to Azure?
+Explain the Azure architecture of a project you have worked on, including deployment, scaling, monitoring, and security.
+Scenario-Based Questions
+Design a highly available ASP.NET Core Web API on Azure.
+Design a serverless application using Azure Functions and Azure Storage.
+How would you deploy a Microservices application using AKS?
+How would you implement authentication using Microsoft Entra ID?
+How would you securely store connection strings and API keys in Azure?
+How would you implement centralized logging and monitoring for Microservices?
+How would you implement blue-green or rolling deployments in Azure?
+How would you implement file upload using Azure Blob Storage?
+How would you design a disaster recovery solution in Azure?
+Explain the complete request flow of an ASP.NET Core application hosted on Azure from client request to database response.
