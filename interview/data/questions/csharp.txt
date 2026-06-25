@@ -1,0 +1,50 @@
+What are CLR, CTS, and CLS? How do they work together?
+Explain the complete execution flow of a C# application from compilation to execution.
+How does the JIT Compiler work? Explain the different types of JIT compilation.
+What is the difference between Managed Code and Unmanaged Code?
+What are the major features introduced in modern C# versions (C# 8–13)?
+What is the difference between var, dynamic, and explicit typing?
+What is the difference between Value Types and Reference Types?
+What is the difference between Class, Struct, and Record?
+What are Boxing and Unboxing? Why are they expensive?
+Explain Garbage Collection, GC Generations (Gen 0, Gen 1, Gen 2), LOH, and Memory Leaks.
+Why is string immutable? Explain String Interning and StringBuilder.
+What is the difference between const, readonly, and static readonly?
+Explain all C# Access Modifiers with examples.
+What is the difference between ref, out, and in parameters?
+Explain the four pillars of OOP with real-world examples.
+What is the difference between Method Overloading, Method Overriding, and Method Hiding?
+What is Constructor Chaining? Explain the constructor execution sequence in inheritance.
+What is the difference between an Abstract Class and an Interface?
+What is Explicit Interface Implementation? When should you use it?
+What is the Diamond Problem, and how does C# resolve it?
+What are Static Variables, Static Methods, Static Constructors, and Static Classes?
+What is the difference between Fields, Properties, Auto-Implemented Properties, and Init-Only Properties?
+What is the difference between Arrays, Lists, LinkedLists, Dictionaries, HashTables, and HashSets?
+Explain IEnumerable, ICollection, IList, IQueryable, and IReadOnlyCollection. When should each be used?
+What are Generics? Explain Generic Classes, Generic Methods, and Generic Constraints.
+What is LINQ? Explain Deferred Execution and Immediate Execution.
+What is the difference between Select, SelectMany, Where, Any, Count, First, Single, FirstOrDefault, and SingleOrDefault?
+Why is IQueryable preferred over IEnumerable in Entity Framework?
+What are Delegates? Explain Multicast Delegates and Events.
+What is the difference between Delegates and Events?
+What are Lambda Expressions, Closures, Expression Trees, Func, Action, and Predicate?
+What are Extension Methods? Give real-world use cases.
+Explain Exception Handling in C#. What is the difference between throw and throw ex?
+What is the difference between Dispose, Finalize, IDisposable, and the using statement?
+Explain async and await internally. What happens when an await is encountered?
+What is the difference between Task, Thread, ValueTask, and ThreadPool?
+Explain ConfigureAwait(false), CancellationToken, Task.WhenAll(), and Task.WhenAny().
+What are Multithreading, Race Conditions, Deadlocks, and Thread Synchronization?
+What is the difference between lock, Monitor, Mutex, Semaphore, ReaderWriterLockSlim, and Interlocked?
+What is Reflection? How does Dependency Injection use Reflection internally?
+Explain Assemblies, Strong Naming, GAC, and Assembly Loading.
+What is the difference between FileStream, StreamReader, and StreamWriter? How would you process a 10GB file efficiently?
+What are Span<T>, Memory<T>, ref struct, Pattern Matching, and Switch Expressions?
+How do Dictionary<TKey,TValue> and HashSet<T> work internally? How are hash collisions resolved?
+How would you optimize C# code to reduce Garbage Collection pressure and improve performance?
+How would you investigate and fix a memory leak in a production .NET application?
+How would you diagnose and resolve an intermittent deadlock in a multithreaded application?
+How would you design a thread-safe, high-performance in-memory cache?
+How would you process millions of database records efficiently using C# while minimizing memory usage?
+Describe a high-scale production system you built using C#. Explain the architecture, concurrency model, performance optimizations, and challenges you solved.
