@@ -1,37 +1,30 @@
 {
   "web-api-1": {
-    "pitch": "ASP.NET Web API is my go-to for building HTTP APIs in .NET that send and receive JSON.",
-    "definition": "It is a .NET framework for building web APIs: it maps HTTP verbs like GET, POST, PUT and DELETE to methods and returns data (usually JSON), so browsers, mobile apps and other services can use it.",
-    "how": "A request first hits routing, which matches the URL and verb to a controller action. Model binding fills the action's parameters from the route, query and body; filters handle auth and other cross-cutting concerns; the action runs and returns an object; then content negotiation picks a formatter (JSON by default) to serialize the response. In ASP.NET Core this all runs on the middleware pipeline with built-in dependency injection.",
+    "pitch": "ASP.NET Web API is my go-to for building HTTP/JSON services in .NET.",
+    "definition": "A .NET framework that maps HTTP verbs (GET, POST, PUT, DELETE) to methods and returns JSON, so any client can use it.",
+    "how": "Routing matches URL + verb -> model binding fills params -> filters (auth) -> action runs -> formatter returns JSON. Runs on the middleware pipeline with built-in DI.",
     "code": {
       "language": "csharp",
-      "snippet": "[ApiController]\n[Route(\"api/products\")]\npublic class ProductsController : ControllerBase\n{\n    private readonly IProductService _svc;\n    public ProductsController(IProductService svc) => _svc = svc; // DI injects the service\n\n    [HttpGet(\"{id}\")]                         // GET api/products/5 maps to this action\n    public async Task<ActionResult<Product>> Get(int id)\n    {\n        var product = await _svc.FindAsync(id);\n        return product is null ? NotFound() : Ok(product); // 404 vs 200 + JSON automatically\n    }\n}",
-      "note": "The [HttpGet(\"{id}\")] attribute maps the verb and URL to the action; returning Ok/NotFound sets the HTTP status code and serializes JSON automatically."
+      "snippet": "[ApiController]\n[Route(\"api/products\")]\npublic class ProductsController : ControllerBase\n{\n    [HttpGet(\"{id}\")]                       // GET api/products/5\n    public ActionResult<Product> Get(int id) =>\n        _svc.Find(id) is { } p ? Ok(p) : NotFound();  // 200 + JSON, or 404\n}",
+      "note": "[HttpGet] maps verb + URL to the method; Ok/NotFound set the status and serialize JSON."
     },
-    "realWorld": "At a fintech I worked on, we exposed account and transaction data through an ASP.NET Core Web API consumed by both a React dashboard and an iOS app. Versioned endpoints (/v1/) plus JWT bearer auth let us serve both clients from one codebase, and moving a hot endpoint to async with response caching cut p95 latency by about 40% under load.",
-    "when": "When you need a stateless HTTP/JSON API consumed by browsers, mobile apps or other services - REST back ends, microservices and public APIs.",
-    "whenNot": "When you need server-rendered HTML pages (use MVC/Razor), real-time push (use SignalR), or non-HTTP transports and SOAP contracts (use gRPC or WCF).",
+    "realWorld": "At a fintech, one ASP.NET Core API served a React dashboard and an iOS app via versioned /v1 endpoints + JWT; async + caching cut p95 latency ~40%.",
+    "when": "REST back ends, microservices, SPA and mobile APIs.",
+    "whenNot": "Server-rendered HTML (MVC), real-time push (SignalR), non-HTTP/SOAP (gRPC/WCF).",
     "advantages": [
-      "Lightweight and REST-first: any client can call it with plain HTTP and JSON, no SDK required.",
-      "Built-in routing, model binding, validation and content negotiation cut boilerplate.",
-      "First-class dependency injection, middleware and testability in ASP.NET Core.",
-      "Cross-platform and high-performance on .NET 5+ (Kestrel), scales well because it is stateless."
+      "Lightweight REST, plain HTTP + JSON",
+      "Built-in routing, binding, validation",
+      "Cross-platform, fast, scales stateless"
     ],
     "disadvantages": [
-      "HTTP/REST only: not suited to non-HTTP transports or SOAP/WS-* requirements.",
-      "No built-in real-time push; you add SignalR or WebSockets separately.",
-      "REST can over- or under-fetch; complex graph queries may be better with GraphQL.",
-      "Statelessness pushes concerns like auth and caching onto every request."
-    ],
-    "followUps": [
-      "What is the difference between ASP.NET Web API and ASP.NET Core Web API?",
-      "Walk me through the Web API request lifecycle from URL to response.",
-      "How would you secure and version a public-facing Web API?"
+      "HTTP/REST only (no SOAP/TCP)",
+      "No built-in real-time push",
+      "REST can over/under-fetch"
     ],
     "similarQuestions": [],
     "diagram": {
       "title": "ASP.NET Web API request flow",
-      "mermaid": "flowchart LR\n  A[Client] -->|HTTP Request| B[Routing]\n  B --> C[Controller / Action]\n  C --> D[Business Logic]\n  D --> E[(Database)]\n  C -->|JSON Response| A"
+      "mermaid": "flowchart LR\n  A[Client] -->|HTTP| B[Routing]\n  B --> C[Controller / Action]\n  C --> D[(Database)]\n  C -->|JSON| A"
     }
   },
   "web-api-2": {

@@ -47,10 +47,14 @@ Rules of thumb:
 
 ### STEP 3 — Write the answer
 
+> **Keep it interview-sized.** The whole answer should fit on one screen and be easy to recall under pressure. Prefer short phrases over sentences. When in doubt, cut it.
+
 **Tone & style**
 - Write as a senior engineer speaking in an interview, not a textbook author.
 - Be direct and confident. No filler ("Great question!", "In summary…").
-- Keep it simple and plain-English. Definitions are tight: 1–2 sentences.
+- Keep it simple and plain-English. Definitions are tight: 1 sentence ideally, 2 max.
+- Bullets (`keyPoints`, `advantages`, `disadvantages`, `bestPractices`) are SHORT phrases — aim for ≤ 8 words, not full sentences. Max 3 per list.
+- `how` ≤ 2 sentences (an arrow chain like "routing → binding → action → JSON" is ideal and memorable). `steps` ≤ 5 short steps. `realWorld` ≤ 2 sentences.
 
 **`pitch` + `definition` (shown together as one simple "Definition" block)**
 - `pitch`: ONE short, plain, opinionated opening line you'd say out loud (e.g. "X is my go-to for…").
@@ -70,7 +74,7 @@ Rules of thumb:
 
 **`keyPoints`**: 3–6 crisp bullet facts. Use for lists (verbs, status codes, principles) and quick comparisons.
 
-**`advantages` / `disadvantages`**: max 4 each, 1 sentence each, specific (qualify "fast at what, vs what"). Provide BOTH or neither.
+**`advantages` / `disadvantages`**: max 3 each, short phrases (≤ 8 words), specific (qualify "fast at what, vs what"). Provide BOTH or neither.
 
 **`bestPractices`**: each item is a common real-world pitfall plus a 1-line fix.
 
