@@ -1,7 +1,7 @@
 {
   "web-api-1": {
-    "pitch": "ASP.NET Web API is my default whenever a .NET back end needs to talk to the outside world over HTTP. I've used it in production to serve React SPAs and mobile apps, and the clean verb-to-action mapping plus built-in JSON means I can ship a new endpoint in minutes, not hours.",
-    "definition": "ASP.NET Web API is a framework for building HTTP-based RESTful services on .NET that map HTTP verbs to controller actions and return data (usually JSON) for any client to consume.",
+    "pitch": "ASP.NET Web API is my go-to for building HTTP APIs in .NET that send and receive JSON.",
+    "definition": "It is a .NET framework for building web APIs: it maps HTTP verbs like GET, POST, PUT and DELETE to methods and returns data (usually JSON), so browsers, mobile apps and other services can use it.",
     "how": "A request first hits routing, which matches the URL and verb to a controller action. Model binding fills the action's parameters from the route, query and body; filters handle auth and other cross-cutting concerns; the action runs and returns an object; then content negotiation picks a formatter (JSON by default) to serialize the response. In ASP.NET Core this all runs on the middleware pipeline with built-in dependency injection.",
     "code": {
       "language": "csharp",
