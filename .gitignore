@@ -3,3 +3,6 @@ env_snippet.txt
 .env*
 
 .vercel
+
+# Separate Next.js app with its own git repo
+interview-prep/
