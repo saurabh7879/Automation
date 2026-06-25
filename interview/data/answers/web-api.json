@@ -1,0 +1,21 @@
+{
+  "web-api-1": {
+    "pitch": "In my experience, ASP.NET Web API is the backbone of any modern .NET service layer. At my previous role I used it to build REST APIs consumed by React SPAs and mobile clients — the clean HTTP verb mapping and built-in JSON serialization meant we could ship a new endpoint in minutes, not hours. It is my default choice any time a client needs to talk to a .NET backend over HTTP.",
+    "definition": "ASP.NET Web API is a framework for building HTTP-based RESTful services on top of the .NET platform. It maps HTTP verbs — GET, POST, PUT, PATCH, DELETE — directly to controller action methods, making it natural to design resource-oriented APIs. Unlike ASP.NET MVC, which renders HTML views for browsers, Web API returns raw data (JSON or XML) intended for programmatic consumption by any client. ASP.NET Core Web API is the modern, cross-platform successor running on .NET 5+ with improved performance and middleware pipeline.",
+    "advantages": [
+      "Full REST support — HTTP verbs map directly to actions, making API design intuitive and standard",
+      "Content negotiation — automatically returns JSON or XML based on the client's Accept header with no extra code",
+      "Lightweight and fast — no SOAP envelope, no complex WCF config, just plain HTTP",
+      "First-class DI, middleware, and filter pipeline integration in ASP.NET Core"
+    ],
+    "disadvantages": [
+      "Not suitable for real-time bidirectional communication — use SignalR or WebSockets for chat or live updates",
+      "No built-in support for reliable messaging, transactions, or advanced WS-* standards that WCF offers"
+    ],
+    "similarQuestions": [
+      "What is the difference between ASP.NET Web API and ASP.NET MVC?",
+      "When would you choose gRPC over ASP.NET Core Web API?"
+    ],
+    "diagram": null
+  }
+}

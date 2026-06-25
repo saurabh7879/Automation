@@ -1,0 +1,30 @@
+What is ASP.NET Web API, and why is it used?
+What is the difference between ASP.NET Web API, ASP.NET MVC, and ASP.NET Core Web API?
+What is the difference between ASP.NET Web API and WCF?
+When would you choose ASP.NET Web API over WCF?
+Explain the complete ASP.NET Web API Request Lifecycle.
+How does ASP.NET Web API route an HTTP request to the appropriate Controller and Action?
+What are HTTP Request Verbs (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS), and when should each be used?
+What are HTTP Status Codes? Explain the most commonly used status codes in REST APIs.
+What is REST, and what are the REST architectural principles?
+What is CORS (Cross-Origin Resource Sharing), and how does it work internally?
+How do you enable and configure CORS in ASP.NET Web API?
+What is Parameter Binding in ASP.NET Web API?
+What is Model Binding, and how is it different from Parameter Binding?
+What is Content Negotiation in ASP.NET Web API?
+What are Media-Type Formatters, and how do they work?
+What is the difference between JSON and XML formatters? How do you configure the default response format?
+What are Action Filters, Authorization Filters, Authentication Filters, and Exception Filters in Web API?
+What is the Authorize Attribute, and how does it work?
+What is Basic Authentication, and what are its limitations?
+Explain JWT (Bearer Token) Authentication end-to-end in ASP.NET Web API.
+What is OAuth 2.0, and how does it differ from JWT Authentication?
+What are the different ways to implement API Versioning? Which approach do you recommend and why?
+What is Exception Handling in ASP.NET Web API? How do you implement Global Exception Handling?
+What is the difference between Exception Filters and Global Exception Middleware?
+What is Dependency Injection in ASP.NET Web API, and why is it important?
+How do you secure an ASP.NET Web API against SQL Injection, XSS, CSRF, and other common vulnerabilities?
+How do you improve the performance of an ASP.NET Web API? Discuss Caching, Compression, Async Programming, and Response Optimization.
+How do you document and test ASP.NET Web APIs using Swagger/OpenAPI and Postman?
+How do you monitor, log, and troubleshoot production Web APIs? Explain logging frameworks and correlation IDs.
+Describe a real-world high-traffic ASP.NET Web API you designed. Explain the architecture, authentication, versioning, error handling, scalability, performance optimization, and deployment strategy.

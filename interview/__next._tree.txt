@@ -1,0 +1,3 @@
+:HL["/interview/_next/static/chunks/1qispz0r7i6n6.css","style"]
+:HL["/interview/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"afz0qMtU89RaI2jq5Lgh6"}
