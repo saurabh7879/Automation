@@ -16,7 +16,10 @@
       "What is the difference between ASP.NET Web API and ASP.NET MVC?",
       "When would you choose gRPC over ASP.NET Core Web API?"
     ],
-    "diagram": null,
+    "diagram": {
+      "title": "ASP.NET Web API request flow",
+      "mermaid": "flowchart LR\n  A[Client] -->|HTTP Request| B[Routing]\n  B --> C[Controller / Action]\n  C --> D[Business Logic]\n  D --> E[(Database)]\n  C -->|JSON Response| A"
+    },
     "why": "It is used because it gives a lightweight, standards-based way to expose application logic and data over HTTP, so any client (browsers, mobile apps, other services) can consume it regardless of platform or language. Teams pick it for its clean REST conventions, automatic content negotiation (JSON/XML), built-in model binding and validation, and tight integration with the .NET ecosystem such as dependency injection, middleware, and authentication. That cuts boilerplate and lets developers ship and evolve scalable, testable APIs quickly."
   }
 }
