@@ -1,1 +1,340 @@
-{}
+{
+  "csharp-1": {
+    "pitch": "CLR runs the code, CTS defines the types, CLS keeps languages compatible.",
+    "definition": "These are the three pillars of .NET's common runtime. The CLR (Common Language Runtime) is the virtual machine that executes managed code, handling JIT compilation, garbage collection and security. The CTS (Common Type System) defines how types are declared and used so all .NET languages share one type model. The CLS (Common Language Specification) is a subset of rules every language must follow so components written in C#, F# or VB can interoperate.",
+    "similarQuestions": [],
+    "diagram": null,
+    "keyPoints": [
+      "CLR: executes code, JIT + GC + security",
+      "CTS: common type rules across languages",
+      "CLS: subset for cross-language interop",
+      "Together they enable one runtime, many languages"
+    ]
+  },
+  "csharp-7": {
+    "pitch": "Value types hold the data; reference types hold a pointer to it.",
+    "definition": "Value types (int, struct, enum, bool) store their data directly and live on the stack or inline, so copying them copies the whole value. Reference types (class, string, array, delegate) store a reference to an object on the managed heap, so copying copies only the pointer and both variables share the same object. This difference drives how assignment, equality and method arguments behave.",
+    "similarQuestions": [],
+    "diagram": null,
+    "comparison": {
+      "altName": "Reference types",
+      "rows": [
+        {
+          "criterion": "Stores",
+          "this": "The actual data",
+          "alt": "A reference to data"
+        },
+        {
+          "criterion": "Lives on",
+          "this": "Stack / inline",
+          "alt": "Managed heap"
+        },
+        {
+          "criterion": "Copy gives",
+          "this": "A full copy",
+          "alt": "A shared reference"
+        },
+        {
+          "criterion": "Examples",
+          "this": "int, struct, enum",
+          "alt": "class, string, array"
+        }
+      ]
+    }
+  },
+  "csharp-8": {
+    "pitch": "Class = reference, Struct = value, Record = value-equality data type.",
+    "definition": "A class is a reference type for objects with identity and behaviour, allocated on the heap. A struct is a value type for small, immutable, short-lived data, copied by value and usually stack-allocated. A record (C# 9+) is a reference type (or record struct) built for immutable data, giving value-based equality, with-expressions and concise syntax. You pick based on size, mutability and whether you want reference or value semantics.",
+    "similarQuestions": [],
+    "diagram": null,
+    "keyPoints": [
+      "Class: reference type, identity + behaviour",
+      "Struct: value type, small immutable data",
+      "Record: value equality + immutability + with",
+      "Use struct for tiny data, record for DTOs"
+    ]
+  },
+  "csharp-9": {
+    "pitch": "Boxing wraps a value type in an object on the heap; unboxing unwraps it.",
+    "definition": "Boxing is the implicit conversion of a value type (like int) into an object reference, which allocates a box on the managed heap and copies the value into it. Unboxing is the reverse cast back to the value type. They are expensive because each boxing causes a heap allocation and later GC pressure, plus the copy cost, so hot paths that box in loops (e.g. via non-generic collections or object) can hurt performance.",
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int n = 42;\nobject boxed = n;        // boxing: heap allocation + copy\nint back = (int)boxed;   // unboxing: cast back + copy\n\n// Avoid: use generics so no boxing happens\nList<int> nums = new();  // no boxing, unlike ArrayList"
+    },
+    "keyPoints": [
+      "Boxing: value type -> object (heap alloc)",
+      "Unboxing: object -> value type (cast)",
+      "Costs: allocation, copy, GC pressure",
+      "Avoid with generics (List<T> not ArrayList)"
+    ]
+  },
+  "csharp-10": {
+    "pitch": "The GC automatically reclaims heap memory you no longer reference.",
+    "definition": "The .NET garbage collector automatically frees managed heap memory that is no longer reachable, so you rarely free memory by hand. It is generational: Gen 0 holds new short-lived objects and is collected often and cheaply, survivors are promoted to Gen 1 then Gen 2 (long-lived), and large objects (>= 85KB) go on the Large Object Heap which is collected with Gen 2. A 'memory leak' in .NET usually means objects stay reachable (e.g. static references, undisposed event handlers) so the GC never collects them.",
+    "similarQuestions": [],
+    "diagram": null,
+    "keyPoints": [
+      "Gen 0: new, short-lived, collected often",
+      "Gen 1: buffer between short and long lived",
+      "Gen 2 + LOH: long-lived / large objects",
+      "Leaks = still-reachable objects (statics, events)"
+    ],
+    "bestPractices": [
+      "Unsubscribe events / dispose to avoid leaks",
+      "Avoid long-lived static references to large graphs",
+      "Keep allocations low in hot paths to cut Gen 0 churn"
+    ]
+  },
+  "csharp-11": {
+    "pitch": "Strings are immutable; use StringBuilder for heavy concatenation.",
+    "definition": "A string in C# is immutable - every operation that 'changes' it actually creates a new string, which makes strings thread-safe and safe to share but means repeated concatenation allocates many objects. String interning stores one shared copy of identical literals in an intern pool so equal literals reference the same instance. For building strings in loops you use StringBuilder, which edits an internal buffer in place instead of allocating a new string each time.",
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var sb = new StringBuilder();\nfor (int i = 0; i < 1000; i++)\n    sb.Append(i);          // one buffer, no new string each loop\nstring result = sb.ToString();",
+      "note": "StringBuilder mutates a buffer; string += in a loop would allocate 1000 strings."
+    },
+    "keyPoints": [
+      "Immutable: edits create a new string",
+      "Immutability -> thread-safe, shareable",
+      "Interning: shared copy of equal literals",
+      "StringBuilder: in-place buffer for loops"
+    ]
+  },
+  "csharp-15": {
+    "pitch": "OOP rests on encapsulation, abstraction, inheritance and polymorphism.",
+    "definition": "The four pillars of object-oriented programming organise code around objects. Encapsulation hides internal state behind a public interface; abstraction exposes only the essential behaviour and hides the details; inheritance lets a type reuse and extend another; and polymorphism lets one interface behave differently across types (via overriding or interfaces). Together they make code modular, reusable and easy to extend.",
+    "similarQuestions": [],
+    "diagram": null,
+    "keyPoints": [
+      "Encapsulation: hide state behind methods/properties",
+      "Abstraction: expose essentials, hide details",
+      "Inheritance: reuse and extend a base type",
+      "Polymorphism: one interface, many behaviours"
+    ]
+  },
+  "csharp-18": {
+    "pitch": "Interface = a contract; abstract class = a shared base with state.",
+    "definition": "An interface defines a contract of members a type must implement, with no state and (historically) no implementation, and a class can implement many interfaces. An abstract class is a partially implemented base that can hold fields, constructors and shared logic, but a class can inherit only one. You choose an interface for capability and multiple inheritance, and an abstract class when you want to share state or default behaviour across related types.",
+    "similarQuestions": [],
+    "diagram": null,
+    "comparison": {
+      "altName": "Abstract class",
+      "rows": [
+        {
+          "criterion": "Holds state/fields",
+          "this": "No (contract)",
+          "alt": "Yes"
+        },
+        {
+          "criterion": "Multiple inheritance",
+          "this": "Yes (many)",
+          "alt": "No (one)"
+        },
+        {
+          "criterion": "Default code",
+          "this": "Default members (C# 8+)",
+          "alt": "Full shared logic"
+        },
+        {
+          "criterion": "Use for",
+          "this": "Capability / contract",
+          "alt": "Shared base + state"
+        }
+      ]
+    }
+  },
+  "csharp-25": {
+    "pitch": "Generics let you write type-safe code that works for any type.",
+    "definition": "Generics let you parameterize classes and methods by type, so one implementation works for many types without boxing or casting. They give compile-time type safety and better performance than using object, and constraints (where T : ...) restrict what T can be so you can call its members. List<T>, Dictionary<TKey,TValue> and Func<T> are all generic.",
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public T Max<T>(T a, T b) where T : IComparable<T>  // constraint enables CompareTo\n    => a.CompareTo(b) >= 0 ? a : b;\n\nint m = Max(3, 9);          // works for int...\nstring s = Max(\"a\", \"b\");   // ...and string, type-safe",
+      "note": "The where T : IComparable<T> constraint lets you call CompareTo on T."
+    },
+    "keyPoints": [
+      "One implementation, many types",
+      "Compile-time type safety, no casts",
+      "No boxing -> better performance",
+      "Constraints (where T:) enable member calls"
+    ]
+  },
+  "csharp-26": {
+    "pitch": "LINQ queries are lazy until you actually enumerate them.",
+    "definition": "LINQ uses deferred execution: building a query (Where, Select, etc.) does not run it - it only runs when you enumerate the result, e.g. in a foreach or via ToList/ToArray/Count/First. Immediate execution happens with those materializing operators that force evaluation right away. The pitfall is that a deferred query re-runs every time you enumerate it and reflects the latest source data, so capturing variables or expecting a snapshot can surprise you.",
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var q = numbers.Where(n => n > 5);  // deferred - nothing runs yet\nnumbers.Add(10);\nvar list = q.ToList();              // executes now, sees the added 10",
+      "note": "The query runs at ToList(), so it includes items added after it was defined."
+    },
+    "keyPoints": [
+      "Deferred: query runs when enumerated",
+      "Immediate: ToList/ToArray/Count/First",
+      "Deferred queries re-run on each enumeration",
+      "Materialize (ToList) to snapshot results"
+    ]
+  },
+  "csharp-28": {
+    "pitch": "IQueryable builds a DB query; IEnumerable filters in memory.",
+    "definition": "IEnumerable<T> executes LINQ in memory using delegates, so with Entity Framework it would pull rows into the app and then filter. IQueryable<T> builds an expression tree that the provider (EF) translates into SQL, so filtering, sorting and paging run in the database and only the needed rows come back. That is why IQueryable is preferred in EF - it avoids loading whole tables into memory.",
+    "similarQuestions": [],
+    "diagram": null,
+    "comparison": {
+      "altName": "IEnumerable",
+      "rows": [
+        {
+          "criterion": "Runs where",
+          "this": "Database (SQL)",
+          "alt": "In memory (app)"
+        },
+        {
+          "criterion": "Built from",
+          "this": "Expression trees",
+          "alt": "Delegates"
+        },
+        {
+          "criterion": "EF filtering",
+          "this": "Translated to SQL",
+          "alt": "After loading rows"
+        },
+        {
+          "criterion": "Best for",
+          "this": "Remote/DB queries",
+          "alt": "In-memory collections"
+        }
+      ]
+    }
+  },
+  "csharp-30": {
+    "pitch": "A delegate is a type-safe function pointer; an event wraps it safely.",
+    "definition": "A delegate is a type that references one or more methods with a matching signature, so you can pass methods around and invoke them. An event is a restricted wrapper over a delegate that exposes only subscribe (+=) and unsubscribe (-=) to the outside, so subscribers cannot invoke it or overwrite other subscribers. In short, events use delegates under the hood but enforce the publisher/subscriber pattern safely.",
+    "similarQuestions": [],
+    "diagram": null,
+    "comparison": {
+      "altName": "Event",
+      "rows": [
+        {
+          "criterion": "What it is",
+          "this": "Function reference",
+          "alt": "Wrapper over a delegate"
+        },
+        {
+          "criterion": "Outside code can",
+          "this": "Invoke + assign",
+          "alt": "Only += / -="
+        },
+        {
+          "criterion": "Invoke",
+          "this": "Anyone",
+          "alt": "Only the declaring class"
+        },
+        {
+          "criterion": "Use for",
+          "this": "Callbacks, strategies",
+          "alt": "Pub/sub notifications"
+        }
+      ]
+    }
+  },
+  "csharp-31": {
+    "pitch": "Lambdas are inline functions; closures capture their surrounding variables.",
+    "definition": "A lambda expression is a concise inline function (x => x * 2) you pass as a delegate. A closure is what happens when a lambda captures a variable from its enclosing scope - it captures the variable, not its value, which is the classic loop gotcha. Func, Action and Predicate are the built-in delegate types: Func<...,TResult> returns a value, Action<...> returns void, and Predicate<T> returns a bool.",
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Func<int,int> square = x => x * x;     // returns a value\nAction<string> log = s => Console.WriteLine(s); // returns void\nPredicate<int> isEven = n => n % 2 == 0;        // returns bool",
+      "note": "Func returns a result, Action returns void, Predicate returns a bool."
+    },
+    "keyPoints": [
+      "Lambda: concise inline function",
+      "Closure: captures the variable, not its value",
+      "Func<...,T>: returns a value",
+      "Action<...>: void; Predicate<T>: bool"
+    ]
+  },
+  "csharp-33": {
+    "pitch": "Use throw to preserve the stack trace; throw ex erases it.",
+    "definition": "C# exception handling uses try/catch/finally to detect, handle and clean up after errors, with finally always running for resource cleanup. Inside a catch, 'throw;' rethrows the current exception and preserves the original stack trace, while 'throw ex;' resets the stack trace to the rethrow point, hiding where the error really started. Best practice is to catch only what you can handle and rethrow with 'throw;' (or wrap in a new exception with the original as InnerException).",
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "try { Process(); }\ncatch (IOException ex)\n{\n    Log(ex);\n    throw;        // keeps original stack trace\n    // throw ex;  // BAD: resets stack trace\n}",
+      "note": "'throw;' preserves where the error originated; 'throw ex;' loses it."
+    },
+    "keyPoints": [
+      "try/catch/finally; finally always runs",
+      "throw; -> preserves original stack trace",
+      "throw ex; -> resets stack trace (avoid)",
+      "Catch only what you can handle"
+    ]
+  },
+  "csharp-34": {
+    "pitch": "IDisposable + using free unmanaged resources deterministically.",
+    "definition": "IDisposable defines a Dispose() method for releasing unmanaged resources (files, sockets, DB connections) deterministically, and a using statement calls Dispose automatically at the end of the block even on exceptions. Finalize (the destructor) is a safety net the GC calls non-deterministically if Dispose was missed, but it delays collection and should be avoided unless you hold unmanaged handles. The standard pattern is to implement IDisposable and rely on using rather than finalizers.",
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "using (var conn = new SqlConnection(cs)) // Dispose called automatically\n{\n    conn.Open();\n    // ... use conn ...\n}                                        // closed even if an exception throws",
+      "note": "using guarantees Dispose() runs at the end of the block, even on errors."
+    },
+    "keyPoints": [
+      "IDisposable.Dispose: deterministic cleanup",
+      "using: auto-Dispose, even on exceptions",
+      "Finalize: GC safety net, non-deterministic",
+      "Prefer using over finalizers"
+    ]
+  },
+  "csharp-35": {
+    "pitch": "await frees the thread while an operation runs, then resumes after it.",
+    "definition": "async/await is C#'s model for non-blocking asynchronous code. The compiler rewrites an async method into a state machine: when you await an incomplete Task, the method returns to its caller and the current thread is released instead of blocking, and when the awaited operation completes a continuation resumes the method where it left off. This lets a server handle many concurrent requests with few threads, which is why I/O-bound work should be async.",
+    "similarQuestions": [],
+    "diagram": null,
+    "steps": [
+      "Compiler turns the method into a state machine",
+      "await checks if the Task is already complete",
+      "If not, the method returns; the thread is freed",
+      "When the Task completes, a continuation is scheduled",
+      "Execution resumes after the await with the result"
+    ],
+    "code": {
+      "language": "csharp",
+      "snippet": "public async Task<string> GetAsync(string url)\n{\n    var resp = await _http.GetAsync(url); // thread freed while waiting\n    return await resp.Content.ReadAsStringAsync();\n}",
+      "note": "At each await the thread is released; the method resumes when the I/O completes."
+    }
+  },
+  "csharp-36": {
+    "pitch": "Tasks are high-level async work; Threads are raw OS threads.",
+    "definition": "A Thread is a dedicated OS thread you create and manage directly - powerful but heavy. The ThreadPool is a managed pool of reusable worker threads that avoids the cost of creating threads per work item. A Task is a high-level abstraction representing async work that usually runs on the ThreadPool and composes with async/await. ValueTask is a lighter-weight alternative to Task for hot paths that often complete synchronously, avoiding an allocation.",
+    "similarQuestions": [],
+    "diagram": null,
+    "keyPoints": [
+      "Thread: raw OS thread, heavy, manual",
+      "ThreadPool: reusable worker threads",
+      "Task: high-level async unit (uses pool)",
+      "ValueTask: low-alloc Task for hot paths"
+    ]
+  },
+  "csharp-39": {
+    "pitch": "Pick the lightest sync primitive that covers your sharing scenario.",
+    "definition": "These are .NET's thread-synchronization primitives, from lightest to heaviest. lock is syntactic sugar over Monitor for mutual exclusion within a process; Interlocked does atomic operations (increment, exchange) without a lock; Mutex is a heavier, OS-level lock that can work across processes; Semaphore/SemaphoreSlim limit how many threads enter a region at once; and ReaderWriterLockSlim allows many readers but one writer. You choose the lightest one that fits to minimize contention.",
+    "similarQuestions": [],
+    "diagram": null,
+    "keyPoints": [
+      "lock / Monitor: in-process mutual exclusion",
+      "Interlocked: lock-free atomic ops",
+      "Mutex: cross-process, OS-level (heavy)",
+      "Semaphore(Slim): limit concurrent entrants",
+      "ReaderWriterLockSlim: many readers, one writer"
+    ]
+  }
+}
