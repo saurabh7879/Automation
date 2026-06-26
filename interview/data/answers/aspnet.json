@@ -1,182 +1,250 @@
 {
   "aspnet-1": {
     "pitch": "ASP.NET Web Forms is the classic event-driven way to build .NET web pages.",
-    "definition": "ASP.NET Web Forms is a page-based, event-driven web framework where you build UI from server controls on .aspx pages and handle events (like Button_Click) in code-behind. It abstracts HTTP behind a stateful, drag-and-drop model using ViewState and postbacks so developers can build pages like desktop apps. It is part of the older .NET Framework stack; modern apps use ASP.NET Core MVC or Razor instead.",
+    "definition": "ASP.NET Web Forms is a page-based, event-driven web framework where you build UI from server controls on .aspx pages and handle events (like Button_Click) in code-behind. It abstracts HTTP behind a stateful, drag-and-drop model using ViewState and postbacks so developers build pages like desktop apps. It is part of the older .NET Framework stack; modern apps use ASP.NET Core MVC or Razor.",
+    "how": "Request hits the page -> control tree rebuilt -> ViewState restored -> events raised -> HTML rendered back.",
+    "when": "Maintaining legacy line-of-business intranet apps.",
+    "whenNot": "New apps - use ASP.NET Core MVC/Razor instead.",
+    "advantages": [
+      "Rapid drag-and-drop UI",
+      "Rich server controls",
+      "State handled for you"
+    ],
+    "disadvantages": [
+      "Heavy ViewState/page weight",
+      "Windows/.NET Framework only",
+      "Postback model dated"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Page-based, event-driven model",
-      ".aspx markup + code-behind events",
-      "Server controls + ViewState + postbacks",
-      "Legacy .NET Framework (not Core)"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "protected void btnSave_Click(object sender, EventArgs e)\n{\n    lblMsg.Text = \"Saved!\";   // event-driven, like a desktop app\n}"
+    }
   },
   "aspnet-2": {
     "pitch": "Web Forms layers server controls and ViewState over stateless HTTP.",
-    "definition": "The Web Forms architecture is built around pages and server controls. A request hits the ASP.NET runtime, which instantiates the page class, rebuilds the control tree, restores ViewState, raises page and control events, and renders HTML back. State is faked over stateless HTTP using ViewState (per-page) and Session (per-user), and the whole thing runs on the HTTP pipeline of modules and handlers.",
+    "definition": "The Web Forms architecture is built around pages and server controls. A request hits the ASP.NET runtime, which instantiates the page class, rebuilds the control tree, restores ViewState, raises page and control events, and renders HTML. State is faked over stateless HTTP using ViewState (per-page) and Session (per-user), and it runs on the HTTP pipeline of modules and handlers.",
+    "how": "Runtime builds the page + control tree -> restores ViewState -> runs events -> renders HTML, over modules/handlers.",
+    "when": "Understanding how legacy Web Forms apps behave.",
+    "whenNot": "Greenfield work where a modern stack is better.",
+    "advantages": [
+      "Familiar page/control model",
+      "State abstraction built in",
+      "Pipeline extension points"
+    ],
+    "disadvantages": [
+      "ViewState bloats pages",
+      "Tight server-control coupling",
+      "Hard to unit-test"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "Web Forms architecture",
-      "mermaid": "flowchart LR\n  A[Browser] -->|Request .aspx| B[ASP.NET Runtime]\n  B --> C[Page + Control Tree]\n  C --> D[ViewState + Events]\n  D --> E[Render HTML]\n  E --> A"
-    },
-    "keyPoints": [
-      "Pages + control tree + code-behind",
-      "ViewState restores control state per request",
-      "HTTP modules and handlers in the pipeline",
-      "Session/Application provide cross-request state"
-    ]
+      "mermaid": "flowchart LR\n  A[Browser] -->|.aspx| B[ASP.NET Runtime]\n  B --> C[Control Tree]\n  C --> D[ViewState + Events]\n  D --> E[Render HTML]\n  E --> A"
+    }
   },
   "aspnet-3": {
     "pitch": "A request flows through HTTP modules, a handler, then the page.",
-    "definition": "The ASP.NET request lifecycle is the sequence from the web server receiving a request to sending the response. IIS hands the request to the ASP.NET worker process, which runs the HttpApplication pipeline: HTTP modules fire events (BeginRequest, authentication, authorization), the right HTTP handler is selected (for .aspx, the Page handler), the page lifecycle runs, and the response is sent while EndRequest events fire.",
+    "definition": "The ASP.NET request lifecycle is the sequence from the web server receiving a request to sending the response. IIS hands it to the ASP.NET worker process, which runs the HttpApplication pipeline: HTTP modules fire events (BeginRequest, authentication, authorization), the right HTTP handler is selected (Page handler for .aspx), the page lifecycle runs, and the response is sent while EndRequest events fire.",
+    "how": "IIS -> ASP.NET worker -> HTTP modules -> handler selected -> page lifecycle -> response -> EndRequest.",
+    "when": "Knowing where to plug modules/auth into request handling.",
+    "whenNot": "It always applies - not a per-feature choice.",
+    "advantages": [
+      "Clear, extensible pipeline",
+      "Modules add cross-cutting logic",
+      "Handler maps request types"
+    ],
+    "disadvantages": [
+      "Many stages to learn",
+      "Module order matters",
+      "Wrong-stage logic misbehaves"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "ASP.NET request lifecycle",
       "mermaid": "flowchart LR\n  A[IIS] --> B[ASP.NET Worker]\n  B --> C[HTTP Modules]\n  C --> D[HTTP Handler]\n  D --> E[Page Lifecycle]\n  E --> F[Response]"
-    },
-    "steps": [
-      "IIS receives the request, hands it to ASP.NET",
-      "HttpApplication pipeline starts (BeginRequest)",
-      "HTTP modules run (auth, session, etc.)",
-      "Handler is selected (Page handler for .aspx)",
-      "Page lifecycle executes and renders HTML",
-      "Response sent; EndRequest events fire"
-    ]
+    }
   },
   "aspnet-4": {
     "pitch": "Each page runs Init -> Load -> events -> Render -> Unload every request.",
-    "definition": "The page lifecycle is the ordered set of events a Web Forms page raises on every request, used to initialize controls, restore state, handle events and render. The key events run in order: PreInit, Init, InitComplete, LoadViewState, LoadPostData, PreLoad, Load, control events (e.g. Button_Click), PreRender, SaveViewState, Render, and Unload. Knowing this order is essential because doing work in the wrong event breaks state or data binding.",
+    "definition": "The page lifecycle is the ordered set of events a Web Forms page raises on every request, used to initialize controls, restore state, handle events and render. Key events run in order: PreInit, Init, LoadViewState, LoadPostData, Load, control events (e.g. Button_Click), PreRender, SaveViewState, Render, Unload. Doing work in the wrong event breaks state or data binding.",
+    "how": "PreInit/Init create controls -> LoadViewState/PostData restore state -> Load -> events -> PreRender -> Render -> Unload.",
+    "when": "Placing init, binding and cleanup in the right event.",
+    "whenNot": "Binding data in the wrong event (breaks ViewState).",
+    "advantages": [
+      "Predictable event order",
+      "Hooks for every stage",
+      "State restore is automatic"
+    ],
+    "disadvantages": [
+      "Easy to use the wrong event",
+      "Subtle ViewState timing",
+      "Steep for beginners"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "steps": [
-      "PreInit / Init: create controls, set master/theme",
-      "LoadViewState + LoadPostData: restore state",
-      "Load: page and controls are ready",
-      "Control events fire (Button_Click etc.)",
-      "PreRender -> SaveViewState -> Render -> Unload"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "protected void Page_Load(object sender, EventArgs e)\n{\n    if (!IsPostBack) BindGrid();   // bind only on first load\n}"
+    }
   },
   "aspnet-5": {
     "pitch": "The Page directive configures page-level settings at the top of an .aspx.",
-    "definition": "The @Page directive is the line at the top of an .aspx file that defines page-specific attributes for the compiler and runtime - things like the code-behind file, the inherited page class, language, master page, caching, view state and error handling. It tells ASP.NET how to compile and behave for that page.",
+    "definition": "The @Page directive is the line at the top of an .aspx file that defines page-specific attributes for the compiler and runtime - the code-behind file, the inherited page class, language, master page, caching, view state and error handling. It tells ASP.NET how to compile and behave for that page.",
+    "how": "ASP.NET reads @Page attributes at compile time to wire the code-behind class, master page, language and options.",
+    "when": "Setting per-page options like master page or caching.",
+    "whenNot": "Configuring app-wide settings (use web.config instead).",
+    "advantages": [
+      "Per-page configuration",
+      "Wires code-behind class",
+      "Controls caching/ViewState"
+    ],
+    "disadvantages": [
+      "Only page-scoped",
+      "Misconfig breaks compile",
+      "Easy to overlook attributes"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "aspx",
-      "snippet": "<%@ Page Language=\"C#\" CodeBehind=\"Home.aspx.cs\"\n    Inherits=\"App.Home\" MasterPageFile=\"~/Site.Master\"\n    EnableViewState=\"true\" %>"
-    },
-    "keyPoints": [
-      "Sets CodeBehind/Inherits class",
-      "Language, MasterPageFile, Title",
-      "EnableViewState, OutputCache settings",
-      "Page-level configuration only"
-    ]
+      "snippet": "<%@ Page Language=\"C#\" CodeBehind=\"Home.aspx.cs\"\n    Inherits=\"App.Home\" MasterPageFile=\"~/Site.Master\" %>"
+    }
   },
   "aspnet-6": {
     "pitch": "machine.config is server-wide; web.config is per-application.",
-    "definition": "Both are XML configuration files, but they differ in scope. machine.config lives in the .NET framework folder and applies machine-wide defaults to every .NET app on the server. web.config sits in an application (and can be nested per folder) and overrides those defaults for just that app, holding connection strings, authentication, custom settings and more. web.config changes are app-scoped and take effect without touching the server.",
+    "definition": "Both are XML configuration files but differ in scope. machine.config lives in the .NET framework folder and applies machine-wide defaults to every .NET app on the server. web.config sits in an application (and can be nested per folder) and overrides those defaults for just that app - connection strings, authentication, custom settings. web.config changes are app-scoped and take effect without touching the server.",
+    "how": "Runtime reads machine.config defaults, then layers each web.config in the folder hierarchy on top.",
+    "when": "web.config for app settings; machine.config for server defaults.",
+    "whenNot": "Editing machine.config for one app's settings.",
+    "advantages": [
+      "web.config: app-scoped, safe",
+      "Nestable per folder",
+      "No server changes needed"
+    ],
+    "disadvantages": [
+      "machine.config affects all apps",
+      "Misedit breaks the server",
+      "Config inheritance confuses"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "web.config",
-      "rows": [
-        {
-          "criterion": "Scope",
-          "this": "machine.config: whole server",
-          "alt": "One application/folder"
-        },
-        {
-          "criterion": "Location",
-          "this": "Framework config folder",
-          "alt": "App root (nestable)"
-        },
-        {
-          "criterion": "Use",
-          "this": "Machine-wide defaults",
-          "alt": "App-specific overrides"
-        }
-      ]
+    "code": {
+      "language": "xml",
+      "snippet": "<connectionStrings>\n  <add name=\"Db\" connectionString=\"Server=.;Database=App;...\" />\n</connectionStrings>"
     }
   },
   "aspnet-7": {
     "pitch": "web.config groups settings into sections like connections, auth and app settings.",
     "definition": "web.config organizes configuration into well-known sections. Common ones are appSettings (key/value app settings), connectionStrings (database connections), system.web (authentication, authorization, sessionState, compilation, customErrors), system.webServer (IIS modules/handlers), and custom configuration sections. Each section controls a slice of app behaviour.",
+    "how": "ASP.NET maps each XML section to a config handler that exposes those settings to the runtime and your code.",
+    "when": "Configuring connections, auth, errors and app settings.",
+    "whenNot": "Storing large data or secrets in plain config.",
+    "advantages": [
+      "Central app configuration",
+      "Well-defined sections",
+      "Custom sections supported"
+    ],
+    "disadvantages": [
+      "Secrets need protection/encryption",
+      "Large config gets messy",
+      "Typos fail at runtime"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "appSettings: key/value app settings",
-      "connectionStrings: database connections",
-      "system.web: auth, session, compilation, errors",
-      "system.webServer: IIS modules/handlers",
-      "Custom config sections"
-    ]
+    "code": {
+      "language": "xml",
+      "snippet": "<appSettings><add key=\"ApiUrl\" value=\"https://api\" /></appSettings>\n<system.web><customErrors mode=\"On\" /></system.web>"
+    }
   },
   "aspnet-8": {
     "pitch": "Client controls render plain HTML; server controls run code on the server.",
-    "definition": "Client controls are plain HTML elements that the browser handles with no server-side object. Server controls (runat=\"server\") are .NET objects that ASP.NET tracks in the control tree, give you a server-side programming model with events, properties and ViewState, and render HTML at runtime. Server controls cost more (ViewState, server processing) but let you write event-driven code.",
+    "definition": "Client controls are plain HTML elements the browser handles with no server-side object. Server controls (runat=\"server\") are .NET objects ASP.NET tracks in the control tree, giving you a server-side programming model with events, properties and ViewState, and they render HTML at runtime. Server controls cost more (ViewState, processing) but let you write event-driven code.",
+    "how": "Server controls are instantiated server-side, hold ViewState and raise events; client controls are just markup.",
+    "when": "Server controls for interactive, stateful UI.",
+    "whenNot": "Static content where a server control is overkill.",
+    "advantages": [
+      "Server: events + state",
+      "Rich control model",
+      "Client: light, no overhead"
+    ],
+    "disadvantages": [
+      "Server controls add ViewState",
+      "More server processing",
+      "Less control over HTML"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Server controls",
-      "rows": [
-        {
-          "criterion": "Runs on",
-          "this": "Browser only",
-          "alt": "Server (runat=server)"
-        },
-        {
-          "criterion": "Events",
-          "this": "Client-side JS",
-          "alt": "Server-side events"
-        },
-        {
-          "criterion": "State",
-          "this": "None",
-          "alt": "ViewState tracked"
-        },
-        {
-          "criterion": "Cost",
-          "this": "Light",
-          "alt": "Heavier"
-        }
-      ]
+    "code": {
+      "language": "aspx",
+      "snippet": "<input type=\"text\" />                    <!-- client control -->\n<asp:TextBox runat=\"server\" ID=\"t\" />   <!-- server control -->"
     }
   },
   "aspnet-9": {
     "pitch": "HTML controls are lightweight; Web server controls are richer .NET objects.",
-    "definition": "HTML controls are HTML elements optionally marked runat=\"server\" to access them in code; they map closely to raw HTML and are lightweight. Web server controls (asp: tags like asp:TextBox, asp:GridView) are higher-level .NET controls with a rich object model, ViewState, events, adaptive rendering and data binding. You use Web server controls for richer functionality and HTML controls when you want minimal overhead.",
+    "definition": "HTML controls are HTML elements optionally marked runat=\"server\" to access them in code; they map closely to raw HTML and are lightweight. Web server controls (asp: tags like asp:TextBox, asp:GridView) are higher-level .NET controls with a rich object model, ViewState, events, adaptive rendering and data binding. Use Web server controls for richer functionality, HTML controls for minimal overhead.",
+    "how": "HTML controls wrap a tag thinly; web server controls add a full object model, ViewState and event plumbing.",
+    "when": "Web controls for rich, data-bound UI; HTML for simple needs.",
+    "whenNot": "Heavy web controls where a plain tag would do.",
+    "advantages": [
+      "Web controls: rich + bindable",
+      "Events and ViewState",
+      "HTML controls: lightweight"
+    ],
+    "disadvantages": [
+      "Web controls heavier",
+      "More rendered markup",
+      "Choice affects performance"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "HTML controls: thin wrappers over HTML tags",
-      "Web server controls: rich asp: controls",
-      "Web controls add ViewState, events, data binding",
-      "HTML controls are lighter weight"
-    ]
+    "code": {
+      "language": "aspx",
+      "snippet": "<asp:GridView runat=\"server\" ID=\"grid\" AutoGenerateColumns=\"true\" />"
+    }
   },
   "aspnet-10": {
     "pitch": "A User Control is a reusable chunk of UI you compose from other controls.",
     "definition": "A User Control (.ascx) is a reusable UI component you build by combining existing controls and code-behind, then drop into multiple pages - like a mini page without its own URL. It is ideal for repeated UI such as a header, menu or address block, and it shares the page's lifecycle when hosted.",
+    "how": "An .ascx composes controls + code-behind; when placed on a page it participates in that page's lifecycle.",
+    "when": "Repeated UI fragments across pages (header, menu).",
+    "whenNot": "One-off markup used on a single page.",
+    "advantages": [
+      "Reusable UI fragment",
+      "Composes existing controls",
+      "Has its own code-behind"
+    ],
+    "disadvantages": [
+      "Project-scoped reuse only",
+      "Shares page lifecycle quirks",
+      "Not a standalone page"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      ".ascx file: reusable UI fragment",
-      "Built from existing controls + code-behind",
-      "Hosted inside pages, no own URL",
-      "Great for headers, menus, repeated UI"
-    ]
+    "code": {
+      "language": "aspx",
+      "snippet": "<%@ Control Language=\"C#\" CodeBehind=\"Header.ascx.cs\" Inherits=\"App.Header\" %>"
+    }
   },
   "aspnet-11": {
     "pitch": "Build a .ascx, register it on the page, then drop in its tag.",
     "definition": "You create a User Control as an .ascx file with its own markup and code-behind, then reuse it by registering it on a page with the @Register directive and placing its tag where you want it. You can expose public properties on the control to configure it per use.",
+    "how": "Author .ascx + properties -> @Register on the page -> place the tag -> set properties per use.",
+    "when": "Reusing a configurable UI block across many pages.",
+    "whenNot": "Trivial markup not worth a control.",
+    "advantages": [
+      "Simple, declarative reuse",
+      "Configurable via properties",
+      "Drag-drop in the designer"
+    ],
+    "disadvantages": [
+      "Register on each page",
+      "Property plumbing needed",
+      "Limited cross-project reuse"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "steps": [
-      "Add a Web User Control (.ascx) with markup + code-behind",
-      "Expose public properties for configuration",
-      "On the page, add @Register with TagPrefix/TagName/Src",
-      "Place the control tag in the page markup"
-    ],
     "code": {
       "language": "aspx",
       "snippet": "<%@ Register Src=\"~/Header.ascx\" TagPrefix=\"uc\" TagName=\"Header\" %>\n<uc:Header runat=\"server\" Title=\"Home\" />"
@@ -184,316 +252,421 @@
   },
   "aspnet-12": {
     "pitch": "User Controls are page-scoped; Custom Controls are compiled, reusable assemblies.",
-    "definition": "Both create reusable UI, but differ in packaging and reuse. A User Control (.ascx) is simple to build by composing controls and is reused within one project. A Custom Control is a compiled class (inherits Control/WebControl) shipped in a DLL, reusable across projects, with full designer support and its own rendering - more work but more powerful and shareable.",
+    "definition": "Both create reusable UI but differ in packaging and reuse. A User Control (.ascx) is simple to build by composing controls and is reused within one project. A Custom Control is a compiled class (inherits Control/WebControl) shipped in a DLL, reusable across projects, with full designer support and its own rendering - more work but more powerful and shareable.",
+    "how": "User control = composed .ascx in the project; custom control = compiled class in a DLL rendering its own HTML.",
+    "when": "Custom control to share UI across projects; user control within one.",
+    "whenNot": "Building a custom control when a user control suffices.",
+    "advantages": [
+      "User control: quick reuse",
+      "Custom control: cross-project",
+      "Custom: full render control"
+    ],
+    "disadvantages": [
+      "Custom control is more work",
+      "User control limited to project",
+      "Designer support differs"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Custom Control",
-      "rows": [
-        {
-          "criterion": "Built as",
-          "this": ".ascx (composed)",
-          "alt": "Compiled class in DLL"
-        },
-        {
-          "criterion": "Reuse",
-          "this": "Within a project",
-          "alt": "Across projects"
-        },
-        {
-          "criterion": "Effort",
-          "this": "Low",
-          "alt": "Higher"
-        },
-        {
-          "criterion": "Designer/render",
-          "this": "Limited",
-          "alt": "Full control"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public class StarRating : WebControl   // custom control in a DLL\n{ protected override void Render(HtmlTextWriter w) { ... } }"
     }
   },
   "aspnet-13": {
     "pitch": "ASP.NET ships validation controls for common input checks.",
-    "definition": "Validation controls are server controls that validate user input declaratively, on the client and server. The main ones are RequiredFieldValidator (must have a value), RangeValidator (value within a range), CompareValidator (compare to a value/another control), RegularExpressionValidator (match a pattern), CustomValidator (your own logic), and ValidationSummary (lists all errors).",
+    "definition": "Validation controls are server controls that validate user input declaratively, on the client and server. The main ones are RequiredFieldValidator (must have a value), RangeValidator (value within a range), CompareValidator (compare to a value/control), RegularExpressionValidator (match a pattern), CustomValidator (your own logic), and ValidationSummary (lists all errors).",
+    "how": "Each validator is tied to an input and runs both client-side JS and a server-side check, reporting via Page.IsValid.",
+    "when": "Form input validation with minimal code.",
+    "whenNot": "Complex cross-field rules better done in code.",
+    "advantages": [
+      "Declarative, low-code",
+      "Client + server checks",
+      "Summary lists all errors"
+    ],
+    "disadvantages": [
+      "Web Forms-specific",
+      "Custom rules need CustomValidator",
+      "Client JS can be disabled"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "RequiredFieldValidator: not empty",
-      "RangeValidator: within a range",
-      "CompareValidator: compare values",
-      "RegularExpressionValidator: pattern match",
-      "CustomValidator + ValidationSummary"
-    ]
+    "code": {
+      "language": "aspx",
+      "snippet": "<asp:RequiredFieldValidator runat=\"server\" ControlToValidate=\"txtName\"\n    ErrorMessage=\"Required\" />"
+    }
   },
   "aspnet-14": {
     "pitch": "Client validation is fast UX; server validation is the real security check.",
     "definition": "Client-side validation runs in the browser with JavaScript for instant feedback without a round trip, but it can be bypassed. Server-side validation runs on the server after postback and is authoritative because the user cannot tamper with it. ASP.NET validators do both, but you must always treat server-side validation as the source of truth.",
+    "how": "Browser JS validates first for UX; the server re-validates on postback as the trusted check.",
+    "when": "Use both - client for UX, server for trust.",
+    "whenNot": "Trusting client validation alone for security.",
+    "advantages": [
+      "Client: instant feedback",
+      "Server: tamper-proof",
+      "Validators do both"
+    ],
+    "disadvantages": [
+      "Client can be bypassed",
+      "Server needs a round trip",
+      "Duplicated rules to maintain"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Server-side",
-      "rows": [
-        {
-          "criterion": "Runs",
-          "this": "Browser (JS)",
-          "alt": "Server, after postback"
-        },
-        {
-          "criterion": "Speed",
-          "this": "Instant, no round trip",
-          "alt": "Needs a round trip"
-        },
-        {
-          "criterion": "Trust",
-          "this": "Can be bypassed",
-          "alt": "Authoritative"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "if (!Page.IsValid) return;   // server-side authoritative check"
     }
   },
   "aspnet-15": {
     "pitch": "State management fakes memory over stateless HTTP, client- or server-side.",
-    "definition": "Because HTTP is stateless, ASP.NET offers several ways to persist data between requests. Client-side options keep data with the client: ViewState (per page), Cookies, Hidden fields, Query strings, and Control state. Server-side options keep data on the server: Session (per user), Application (app-wide), and Cache. You pick based on size, lifetime, security and scalability.",
+    "definition": "Because HTTP is stateless, ASP.NET offers several ways to persist data between requests. Client-side options keep data with the client: ViewState (per page), Cookies, Hidden fields, Query strings, Control state. Server-side options keep data on the server: Session (per user), Application (app-wide), Cache. You pick based on size, lifetime, security and scalability.",
+    "how": "Client options round-trip data with the request; server options store it keyed by user/app on the server.",
+    "when": "Carrying data across stateless requests.",
+    "whenNot": "Putting large/sensitive data in client-side state.",
+    "advantages": [
+      "Many scope/lifetime options",
+      "Client and server choices",
+      "Fits varied needs"
+    ],
+    "disadvantages": [
+      "Client state inflates payload",
+      "Server state limits scale",
+      "Security varies by option"
+    ],
     "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Client-side: ViewState, Cookies, Query string, Hidden",
-      "Server-side: Session, Application, Cache",
-      "ViewState: per page; Session: per user",
-      "Application/Cache: shared across users"
-    ]
+    "diagram": null
   },
   "aspnet-16": {
     "pitch": "ViewState persists control state in a hidden field across postbacks.",
     "definition": "ViewState is how Web Forms remembers control values across postbacks of the same page. The page serializes control state into a Base64-encoded, hashed hidden field (__VIEWSTATE) sent to the browser and posted back, then deserializes it to rebuild the control tree. It is per-page and client-side, so it adds page weight and should be disabled for controls that do not need it.",
+    "how": "Serialize control state -> Base64 __VIEWSTATE hidden field -> posted back -> deserialized to restore the tree.",
+    "when": "Keeping control values across postbacks of a page.",
+    "whenNot": "Large grids where ViewState bloats the page.",
+    "advantages": [
+      "Automatic control state",
+      "Survives postbacks",
+      "Signed against tampering"
+    ],
+    "disadvantages": [
+      "Adds page weight",
+      "Per-page only",
+      "Not secret by default"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "how": "Page serializes control state -> Base64-encoded into __VIEWSTATE hidden field -> posted back -> deserialized to restore controls. It is signed (and optionally encrypted) to resist tampering.",
-    "keyPoints": [
-      "Stored in __VIEWSTATE hidden field",
-      "Per-page, survives postbacks only",
-      "Adds page weight - disable when unused",
-      "Base64-encoded + hashed (not secret by default)"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "<asp:GridView runat=\"server\" EnableViewState=\"false\" /> // trim ViewState weight"
+    }
   },
   "aspnet-17": {
     "pitch": "Each state option differs by scope, location, size and lifetime.",
-    "definition": "These options persist data differently. ViewState is per-page on the client; Cookies are small per-user data on the client; Session is per-user data on the server; Application is shared by all users on the server; and Cache is shared server data with expiration and dependencies. You choose by who needs it, how long, how big and how secure it must be.",
+    "definition": "These options persist data differently. ViewState is per-page on the client; Cookies are small per-user data on the client; Session is per-user data on the server; Application is shared by all users on the server; and Cache is shared server data with expiration and dependencies. Choose by who needs it, how long, how big and how secure it must be.",
+    "how": "Match the data's scope/lifetime to the option: page/user/app, client/server, transient/expiring.",
+    "when": "Pick the smallest scope that holds the data you need.",
+    "whenNot": "Storing big or secret data in client state.",
+    "advantages": [
+      "Options for every scope",
+      "Cache supports expiry",
+      "Session per user"
+    ],
+    "disadvantages": [
+      "ViewState/Cookies inflate payload",
+      "Session/App use server memory",
+      "Misuse hurts scale"
+    ],
     "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "ViewState: per page, client",
-      "Session: per user, server",
-      "Application: all users, server",
-      "Cookies: small per-user, client",
-      "Cache: shared server data with expiry"
-    ]
+    "diagram": null
   },
   "aspnet-18": {
     "pitch": "Cookies store small key/value data in the browser, in memory or on disk.",
     "definition": "A cookie is a small piece of key/value data the server stores in the browser and the browser sends back on each request to the same site, commonly used for sessions, preferences and tracking. Persistent cookies are written to disk with an expiry and survive browser restarts; non-persistent (session) cookies live in memory and vanish when the browser closes.",
+    "how": "Server sets a Set-Cookie header -> browser stores it -> sends it back on each request to that site.",
+    "when": "Sessions, preferences, lightweight per-user state.",
+    "whenNot": "Storing sensitive or large data in cookies.",
+    "advantages": [
+      "Per-user, automatic round-trip",
+      "Persistent or session-scoped",
+      "Simple key/value"
+    ],
+    "disadvantages": [
+      "Small size limit",
+      "Sent every request",
+      "Security/privacy concerns"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Small key/value data in the browser",
-      "Sent back on each request to the site",
-      "Persistent: on disk, has an expiry",
-      "Session (non-persistent): in memory only"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "Response.Cookies[\"theme\"].Value = \"dark\";\nResponse.Cookies[\"theme\"].Expires = DateTime.Now.AddDays(30); // persistent"
+    }
   },
   "aspnet-19": {
     "pitch": "Session lives on the server per user; ViewState lives on the client per page.",
-    "definition": "Both persist data, but differ in scope and location. ViewState is stored in the page itself (a hidden field) and only survives postbacks of that one page. Session is stored on the server (memory, state server or SQL) keyed by a per-user id and survives across pages for the whole user session. Use ViewState for page control state, Session for user-wide data.",
+    "definition": "Both persist data but differ in scope and location. ViewState is stored in the page itself (a hidden field) and only survives postbacks of that one page. Session is stored on the server (memory, state server or SQL) keyed by a per-user id and survives across pages for the whole user session. Use ViewState for page control state, Session for user-wide data.",
+    "how": "ViewState round-trips in the page; Session stays server-side keyed by a cookie/session id across pages.",
+    "when": "ViewState for page state; Session for cross-page user data.",
+    "whenNot": "Putting big data in ViewState or per-page data in Session.",
+    "advantages": [
+      "ViewState: per-page, no server mem",
+      "Session: cross-page, server-side",
+      "Clear separation"
+    ],
+    "disadvantages": [
+      "ViewState bloats page",
+      "Session uses server memory",
+      "Session needs a store for web farms"
+    ],
     "similarQuestions": [],
-    "diagram": null,
-    "comparison": {
-      "altName": "ViewState",
-      "rows": [
-        {
-          "criterion": "Stored",
-          "this": "Session: server",
-          "alt": "Client (hidden field)"
-        },
-        {
-          "criterion": "Scope",
-          "this": "Whole user session",
-          "alt": "Single page postbacks"
-        },
-        {
-          "criterion": "Per",
-          "this": "User",
-          "alt": "Page"
-        }
-      ]
-    }
+    "diagram": null
   },
   "aspnet-20": {
     "pitch": "Authentication proves who you are; authorization decides what you can do.",
-    "definition": "Authentication is verifying a user's identity (login), while authorization is deciding whether that authenticated identity is allowed to access a resource or action. They run in order - authenticate first, then authorize - and ASP.NET handles them through configured providers, the [Authorize]/principal model and web.config rules.",
+    "definition": "Authentication is verifying a user's identity (login), while authorization is deciding whether that authenticated identity may access a resource or action. They run in order - authenticate first, then authorize - and ASP.NET handles them through configured providers, the principal model and web.config rules.",
+    "how": "Authenticate to set the user principal -> authorize checks roles/rules to allow or deny the request.",
+    "when": "Securing pages by identity and permissions.",
+    "whenNot": "Treating the two as one step.",
+    "advantages": [
+      "Clear security separation",
+      "Provider-based",
+      "Role/rule driven"
+    ],
+    "disadvantages": [
+      "Confusing the two is common",
+      "Misconfig over/under-restricts",
+      "Only as strong as login"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Authorization",
-      "rows": [
-        {
-          "criterion": "Answers",
-          "this": "Who are you?",
-          "alt": "What may you do?"
-        },
-        {
-          "criterion": "When",
-          "this": "First (login)",
-          "alt": "After authentication"
-        },
-        {
-          "criterion": "Result",
-          "this": "Identity established",
-          "alt": "Access allowed/denied"
-        }
-      ]
+    "code": {
+      "language": "xml",
+      "snippet": "<authorization>\n  <deny users=\"?\" />   <!-- block anonymous -->\n</authorization>"
     }
   },
   "aspnet-21": {
     "pitch": "Forms, Windows and Passport are three classic authentication modes.",
     "definition": "These are ASP.NET's traditional authentication options. Forms Authentication uses a custom login page and an encrypted auth cookie - ideal for internet apps. Windows Authentication uses the user's Windows/AD credentials via IIS - ideal for intranet apps. Passport Authentication was Microsoft's centralized single-sign-on service (now retired, replaced by modern identity providers).",
+    "how": "Forms: cookie after login. Windows: IIS passes the AD identity. Passport: external SSO (legacy).",
+    "when": "Forms for internet apps; Windows for domain intranets.",
+    "whenNot": "Passport (retired) or Windows for public internet users.",
+    "advantages": [
+      "Forms: works anywhere",
+      "Windows: SSO, no login page",
+      "Modes fit different networks"
+    ],
+    "disadvantages": [
+      "Passport is retired",
+      "Windows needs a domain",
+      "Forms needs a credential store"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Forms: custom login page + auth cookie (internet)",
-      "Windows: AD/Windows creds via IIS (intranet)",
-      "Passport: Microsoft SSO (retired)",
-      "Modern apps use OAuth/OpenID/JWT instead"
-    ]
+    "code": {
+      "language": "xml",
+      "snippet": "<authentication mode=\"Forms\">\n  <forms loginUrl=\"~/Login.aspx\" />\n</authentication>"
+    }
   },
   "aspnet-22": {
     "pitch": "Forms auth logs in, issues an encrypted cookie, then validates it each request.",
     "definition": "Forms-Based Authentication uses a login page plus an encrypted authentication ticket stored in a cookie. The user posts credentials, the app validates them and issues the cookie; on every later request the FormsAuthentication module reads and validates that cookie to set the user identity, and unauthenticated requests to protected pages are redirected to the login page.",
+    "how": "Login -> validate -> issue encrypted auth cookie -> each request the module validates it -> redirect if missing.",
+    "when": "Internet-facing apps with custom login.",
+    "whenNot": "Stateless APIs (use bearer tokens instead).",
+    "advantages": [
+      "Custom login page",
+      "Encrypted auth ticket",
+      "Auto-redirect to login"
+    ],
+    "disadvantages": [
+      "Cookie-based (CSRF care)",
+      "Needs HTTPS",
+      "Server validates each request"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "Forms authentication flow",
-      "mermaid": "flowchart LR\n  U[User] -->|Credentials| L[Login Page]\n  L -->|Valid| C[Auth Cookie]\n  U -->|Cookie| P[Protected Page]\n  P -->|Validate cookie| P"
-    },
-    "steps": [
-      "User requests a protected page",
-      "Unauthenticated -> redirected to login page",
-      "User submits credentials; app validates them",
-      "App issues an encrypted auth cookie (ticket)",
-      "Each later request validates the cookie -> identity set"
-    ]
+      "mermaid": "flowchart LR\n  U[User] -->|Credentials| L[Login Page]\n  L -->|Valid| C[Auth Cookie]\n  U -->|Cookie| P[Protected Page]\n  P -->|Validate| P"
+    }
   },
   "aspnet-23": {
     "pitch": "Log in once, get a signed JWT, send it as a Bearer token each call.",
     "definition": "Bearer (JWT) authentication issues a signed JSON Web Token after login; the client sends it in the Authorization: Bearer header on every request, and the server validates the signature, expiry and claims with no server-side session. It is stateless and ideal for APIs and SPAs, the trade-off being that tokens are hard to revoke before they expire.",
+    "how": "Login -> signed JWT -> client sends 'Bearer <token>' -> server validates signature/expiry/claims statelessly.",
+    "when": "APIs and SPAs needing stateless auth.",
+    "whenNot": "When you need instant token revocation.",
+    "advantages": [
+      "Stateless, no session",
+      "Self-contained claims",
+      "Cross-service friendly"
+    ],
+    "disadvantages": [
+      "Hard to revoke early",
+      "Token size overhead",
+      "Leak = access until expiry"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "JWT bearer flow",
       "mermaid": "flowchart LR\n  U[Client] -->|Login| A[Auth]\n  A -->|JWT| U\n  U -->|Bearer JWT| API[API]\n  API -->|Validate| API"
-    },
-    "steps": [
-      "User logs in with credentials",
-      "Server returns a signed JWT (with claims)",
-      "Client sends 'Authorization: Bearer <token>'",
-      "Server validates signature, expiry, claims",
-      "Valid -> request proceeds; invalid -> 401"
-    ]
+    }
   },
   "aspnet-24": {
     "pitch": "Membership uses a fixed set of aspnet_* tables for users and roles.",
-    "definition": "The ASP.NET Membership provider stores authentication and authorization data in a set of generated tables (created by aspnet_regsql). Key ones are aspnet_Users and aspnet_Membership (accounts, hashed passwords), aspnet_Roles and aspnet_UsersInRoles (role-based authorization), and aspnet_Applications and aspnet_Profile. They back the Membership and Role providers out of the box.",
+    "definition": "The ASP.NET Membership provider stores authentication and authorization data in generated tables (created by aspnet_regsql). Key ones are aspnet_Users and aspnet_Membership (accounts, hashed passwords), aspnet_Roles and aspnet_UsersInRoles (role-based authorization), and aspnet_Applications and aspnet_Profile. They back the Membership and Role providers out of the box.",
+    "how": "Providers read/write the aspnet_* tables to create users, hash passwords, assign roles and check access.",
+    "when": "Legacy apps using the built-in Membership system.",
+    "whenNot": "New apps - use ASP.NET Identity instead.",
+    "advantages": [
+      "Ready-made auth schema",
+      "Roles + profile support",
+      "Provider model"
+    ],
+    "disadvantages": [
+      "Legacy, superseded by Identity",
+      "Fixed schema",
+      "Less flexible than Identity"
+    ],
     "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "aspnet_Users / aspnet_Membership: accounts + passwords",
-      "aspnet_Roles / aspnet_UsersInRoles: roles",
-      "aspnet_Applications: app partitioning",
-      "aspnet_Profile: per-user profile data"
-    ]
+    "diagram": null
   },
   "aspnet-25": {
     "pitch": "Themes and Skins centralize control styling across a site.",
     "definition": "A Theme is a named folder under App_Themes containing skin files, CSS and images that define a consistent look. A Skin file (.skin) sets default property values for server controls (e.g. every asp:Button's BackColor). You apply a theme per page (Theme/StyleSheetTheme in @Page) or site-wide in web.config, so styling is consistent and easy to switch.",
+    "how": "ASP.NET applies the theme's skin defaults + CSS to controls at render time based on @Page/web.config settings.",
+    "when": "Consistent, switchable site-wide control styling.",
+    "whenNot": "Simple sites where plain CSS is enough.",
+    "advantages": [
+      "Centralized control styling",
+      "Site-wide or per-page",
+      "Easy theme switching"
+    ],
+    "disadvantages": [
+      "Web Forms-specific",
+      "Skins vs CSS overlap",
+      "Theme vs StyleSheetTheme nuance"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Theme: App_Themes folder (skins, CSS, images)",
-      ".skin file sets default control properties",
-      "Apply via @Page Theme= or web.config",
-      "StyleSheetTheme can be overridden; Theme cannot"
-    ]
+    "code": {
+      "language": "aspx",
+      "snippet": "<%@ Page Theme=\"Dark\" %>   <!-- applies App_Themes/Dark skins + CSS -->"
+    }
   },
   "aspnet-26": {
     "pitch": "Caching stores expensive results so later requests are served fast.",
     "definition": "Caching in ASP.NET stores the output or data of expensive operations in memory so subsequent requests reuse it instead of recomputing, cutting CPU, database load and latency. It can cache whole page output, fragments of a page, or arbitrary objects, with expiration and dependency rules to keep data fresh.",
+    "how": "First request computes + stores in cache -> later requests read the cached copy until it expires/invalidates.",
+    "when": "Hot, expensive, infrequently-changing content.",
+    "whenNot": "Highly dynamic or per-user data that must be fresh.",
+    "advantages": [
+      "Cuts CPU and DB load",
+      "Lower latency",
+      "Expiry + dependencies"
+    ],
+    "disadvantages": [
+      "Staleness risk",
+      "Memory pressure",
+      "Invalidation is tricky"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Stores expensive results in memory",
-      "Cuts CPU, DB load and latency",
-      "Supports expiry + dependencies",
-      "Caches pages, fragments or objects"
-    ]
+    "code": {
+      "language": "aspx",
+      "snippet": "<%@ OutputCache Duration=\"60\" VaryByParam=\"id\" %>"
+    }
   },
   "aspnet-27": {
     "pitch": "ASP.NET caches at page, fragment and data levels.",
     "definition": "There are three main caching types. Output caching stores the rendered HTML of a whole page (via @OutputCache) keyed by params/headers. Fragment (partial) caching caches just a user control's output within a dynamic page. Data caching stores arbitrary objects in the Cache API with expiration and dependencies. You combine them to cache the right granularity.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Output cache: whole rendered page",
-      "Fragment cache: a user control's output",
-      "Data cache: arbitrary objects (Cache API)",
-      "All support expiry + dependencies"
-    ]
-  },
-  "aspnet-28": {
-    "pitch": "Speed up Web Forms by trimming ViewState, caching and tuning data.",
-    "definition": "You improve a Web Forms app by reducing page weight and round trips and by caching. The big levers are disabling ViewState on controls that do not need it, using output/data caching, paging and tuning database queries, minimizing postbacks (use client-side where possible), bundling/minifying scripts and styles, and running in release mode with proper IIS settings.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Disable ViewState where not needed",
-      "Use output and data caching",
-      "Page data and tune DB queries",
-      "Minimize postbacks; bundle/minify assets",
-      "Run release mode; tune IIS"
+    "how": "Output caches whole pages; fragment caches a user control; data caching stores objects in the Cache API.",
+    "when": "Choosing the right cache granularity per content.",
+    "whenNot": "Caching truly dynamic per-request content.",
+    "advantages": [
+      "Page, fragment, data levels",
+      "Right granularity per need",
+      "All support expiry"
     ],
-    "bestPractices": [
-      "Turn off ViewState by default, enable per control",
-      "Cache hot pages/fragments with sensible expiry",
-      "Avoid heavy work in Page_Load on every postback"
-    ]
-  },
-  "aspnet-29": {
-    "pitch": "These terms describe how and when a page posts back to the server.",
-    "definition": "These all relate to postbacks - a page submitting back to itself. A PostBack is any submit of the page to the server. AutoPostBack makes a control (like a dropdown) post back immediately on change. IsPostBack is a page property you check in Page_Load to run init code only on the first load, not on every postback. Cross-Page Posting submits a page to a different target page instead of itself.",
+    "disadvantages": [
+      "Wrong level caches too much",
+      "Stale fragments",
+      "Combining adds complexity"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
-      "snippet": "protected void Page_Load(object sender, EventArgs e)\n{\n    if (!IsPostBack)        // run only on the first request\n        BindDropDown();\n}"
-    },
-    "keyPoints": [
-      "PostBack: page submits back to itself",
-      "AutoPostBack: control posts back on change",
-      "IsPostBack: true on postbacks, false on first load",
-      "Cross-Page Posting: submit to another page"
-    ]
+      "snippet": "Cache.Insert(\"key\", data, null, DateTime.Now.AddMinutes(10), Cache.NoSlidingExpiration);"
+    }
+  },
+  "aspnet-28": {
+    "pitch": "Speed up Web Forms by trimming ViewState, caching and tuning data.",
+    "definition": "You improve a Web Forms app by reducing page weight and round trips and by caching. The big levers are disabling ViewState on controls that do not need it, using output/data caching, paging and tuning database queries, minimizing postbacks (use client-side where possible), bundling/minifying scripts and styles, and running in release mode with proper IIS settings.",
+    "how": "Trim ViewState -> cache hot output/data -> page + tune queries -> fewer postbacks -> bundle assets -> release mode.",
+    "when": "Slow, heavy Web Forms pages under load.",
+    "whenNot": "Optimizing before measuring the real bottleneck.",
+    "advantages": [
+      "Less ViewState = lighter pages",
+      "Caching cuts work",
+      "Fewer postbacks/round trips"
+    ],
+    "disadvantages": [
+      "ViewState off can break state",
+      "Caching adds staleness",
+      "Legacy stack limits options"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "protected void Page_Load(object s, EventArgs e)\n{ if (!IsPostBack) BindOnce(); } // avoid rebinding each postback"
+    }
+  },
+  "aspnet-29": {
+    "pitch": "These terms describe how and when a page posts back to the server.",
+    "definition": "These all relate to postbacks - a page submitting back to itself. A PostBack is any submit of the page to the server. AutoPostBack makes a control (like a dropdown) post back immediately on change. IsPostBack is a page property you check in Page_Load to run init code only on the first load. Cross-Page Posting submits a page to a different target page instead of itself.",
+    "how": "Control submits -> PostBack -> page lifecycle re-runs; IsPostBack distinguishes first load from a postback.",
+    "when": "Controlling when/where a page submits.",
+    "whenNot": "AutoPostBack on every control (chatty round trips).",
+    "advantages": [
+      "IsPostBack avoids re-init",
+      "AutoPostBack = instant reaction",
+      "Cross-page posting routes data"
+    ],
+    "disadvantages": [
+      "Postbacks add round trips",
+      "AutoPostBack overuse is chatty",
+      "Lifecycle re-runs each time"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "if (!IsPostBack) BindDropDown();   // run only on the first request"
+    }
   },
   "aspnet-30": {
     "pitch": "Layered Web Forms app: UI, business, data, with caching and load balancing.",
-    "definition": "A real Web Forms app I would describe is an n-tier design: a presentation tier of .aspx pages and user controls, a business-logic layer, and a data-access layer over SQL Server, deployed on load-balanced IIS servers with a shared (out-of-process) session store. Performance came from output/data caching, disabling unnecessary ViewState, tuned indexed queries with paging, and bundling assets - which together cut page load times and database load substantially.",
+    "definition": "A real Web Forms app is an n-tier design: a presentation tier of .aspx pages and user controls, a business-logic layer, and a data-access layer over SQL Server, deployed on load-balanced IIS servers with a shared (out-of-process) session store. Performance came from output/data caching, disabling unnecessary ViewState, tuned indexed queries with paging, and bundling assets - cutting page load times and database load substantially.",
+    "how": "Browser -> load-balanced IIS (.aspx/UI) -> business layer -> data layer -> SQL Server, with shared session + caching.",
+    "when": "Scaling legacy Web Forms apps across a web farm.",
+    "whenNot": "New systems where a modern stack fits better.",
+    "advantages": [
+      "Clear n-tier separation",
+      "Scales via web farm + shared session",
+      "Caching boosts performance"
+    ],
+    "disadvantages": [
+      "Legacy stack constraints",
+      "ViewState/session tuning needed",
+      "Harder to test than MVC"
+    ],
     "similarQuestions": [],
     "diagram": {
-      "title": "Web Forms n-tier architecture",
-      "mermaid": "flowchart LR\n  B[Browsers] --> LB[Load Balancer]\n  LB --> W1[IIS Web Server]\n  LB --> W2[IIS Web Server]\n  W1 --> BL[Business Layer]\n  W2 --> BL\n  BL --> DAL[Data Access]\n  DAL --> DB[(SQL Server)]\n  W1 --> S[(Session Store)]\n  W2 --> S"
+      "title": "Web Forms n-tier",
+      "mermaid": "flowchart LR\n  B[Browsers] --> LB[Load Balancer]\n  LB --> W1[IIS]\n  LB --> W2[IIS]\n  W1 --> BL[Business Layer]\n  BL --> DAL[Data Access]\n  DAL --> DB[(SQL Server)]\n  W1 --> S[(Session Store)]\n  W2 --> S"
     },
-    "realWorld": "On a high-traffic portal, moving session out-of-process for the web farm and adding output caching plus query tuning cut average page time by ~50% and let it scale across servers.",
-    "keyPoints": [
-      "N-tier: UI (.aspx) -> business -> data layer",
-      "Load-balanced IIS + out-of-process session",
-      "Caching (output/data) for hot content",
-      "ViewState trimmed, queries indexed and paged"
-    ]
+    "realWorld": "On a high-traffic portal, moving session out-of-process for the web farm plus output caching and query tuning cut average page time ~50% and let it scale across servers."
   }
 }
