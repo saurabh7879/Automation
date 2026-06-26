@@ -2,479 +2,707 @@
   "mvc-1": {
     "pitch": "ASP.NET MVC is my pick for testable, clean server-rendered web apps in .NET.",
     "definition": "ASP.NET MVC is a web framework that splits an app into three roles: Models (data and business logic), Views (the UI/HTML), and Controllers (handle the request and choose a view). It gives full control over HTML and URLs, enforces separation of concerns and is easy to unit-test, and uses routing instead of physical pages. ASP.NET Core MVC is the modern, cross-platform version.",
-    "similarQuestions": [],
-    "diagram": null,
-    "when": "Server-rendered web apps needing clean structure and testability.",
-    "whenNot": "Pure JSON APIs (Web API), SPA-only front ends, real-time (SignalR).",
-    "keyPoints": [
-      "Model-View-Controller separation",
+    "how": "Routing maps URL -> controller -> action -> model binding -> action returns a result -> view engine renders HTML.",
+    "when": "Server-rendered web apps needing clean structure, SEO and testability.",
+    "whenNot": "Pure JSON APIs (Web API), SPA-only front ends, real-time apps (SignalR).",
+    "advantages": [
+      "Clean separation, easy to unit-test",
       "Full control over HTML and routes",
-      "Testable, clean architecture",
-      "Core MVC is cross-platform"
-    ]
+      "Cross-platform and fast on Core"
+    ],
+    "disadvantages": [
+      "More setup than Web Forms",
+      "Server-rendered, not SPA-native",
+      "Routing/conventions learning curve"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "ASP.NET MVC flow",
+      "mermaid": "flowchart LR\n  U[Browser] --> R[Routing]\n  R --> C[Controller]\n  C --> M[Model]\n  C --> V[View]\n  V --> U"
+    },
+    "code": {
+      "language": "csharp",
+      "snippet": "public class HomeController : Controller\n{\n    public ActionResult Index()       // GET /Home/Index\n    {\n        var model = _svc.GetData();\n        return View(model);            // renders Views/Home/Index.cshtml\n    }\n}",
+      "note": "The action returns View(model); the view engine renders the matching .cshtml."
+    },
+    "realWorld": "On a B2B portal we used MVC with thin controllers + a service layer; full HTML control and unit-tested controllers kept pages SEO-friendly and easy to evolve."
   },
   "mvc-2": {
     "pitch": "MVC separates concerns into Model, View and Controller layers.",
     "definition": "The MVC architecture organizes a web app into three cooperating parts. The Controller receives a request, works with the Model (data/business logic), and selects a View; the View renders HTML from the model; the Model holds the data and rules. Routing maps URLs to controllers, and the layers stay loosely coupled so each can be tested and changed independently.",
+    "how": "Request -> Controller -> Model (data) -> Controller picks a View -> View renders HTML.",
+    "when": "Any non-trivial web app wanting layered, testable structure.",
+    "whenNot": "Tiny pages or pure APIs where the three-layer split is overkill.",
+    "advantages": [
+      "Loose coupling, independent layers",
+      "Each layer is testable",
+      "Parallel team work by layer"
+    ],
+    "disadvantages": [
+      "More moving parts than a single page",
+      "Boilerplate for small apps",
+      "Discipline needed to keep layers clean"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "MVC architecture",
       "mermaid": "flowchart LR\n  U[Browser] --> C[Controller]\n  C --> M[Model]\n  C --> V[View]\n  V --> U"
-    },
-    "keyPoints": [
-      "Controller: handles request, picks view",
-      "Model: data + business logic",
-      "View: renders HTML from model",
-      "Routing maps URLs to controllers"
-    ]
+    }
   },
   "mvc-3": {
     "pitch": "An MVC request flows routing -> controller -> action -> result -> view.",
     "definition": "The MVC request lifecycle is the ordered path a request takes from URL to rendered HTML. Routing matches the URL to a controller and action; the controller is created (via DI); model binding fills the action parameters; filters run; the action executes and returns an ActionResult; and a view engine renders the view to HTML. It runs on the ASP.NET pipeline with filters as extension points.",
+    "how": "URL -> routing -> controller (DI) -> model binding -> filters -> action -> ActionResult -> view engine -> HTML.",
+    "when": "Understanding where to hook logic (filters, binding) in request handling.",
+    "whenNot": "Not a coding choice - it always applies to MVC requests.",
+    "advantages": [
+      "Clear, predictable pipeline",
+      "Filters give clean extension points",
+      "Easy to pinpoint failures"
+    ],
+    "disadvantages": [
+      "Many stages to learn",
+      "Wrong-stage logic breaks state",
+      "Heavy filters slow every request"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "MVC request lifecycle",
-      "mermaid": "flowchart LR\n  A[Request] --> B[Routing]\n  B --> C[Controller]\n  C --> D[Model Binding + Filters]\n  D --> E[Action -> ActionResult]\n  E --> F[View Engine]\n  F --> G[HTML Response]"
+      "mermaid": "flowchart LR\n  A[Request] --> B[Routing]\n  B --> C[Controller]\n  C --> D[Binding + Filters]\n  D --> E[Action -> Result]\n  E --> F[View Engine]\n  F --> G[HTML]"
     },
-    "steps": [
-      "Routing matches URL to controller + action",
-      "Controller is created (with DI)",
-      "Model binding fills action parameters",
-      "Filters run (auth, action)",
-      "Action executes, returns an ActionResult",
-      "View engine renders the view to HTML"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "[Authorize]                       // authorization filter runs first\npublic ActionResult Edit(int id)  // model binding fills id\n{\n    return View(_svc.Get(id));    // ActionResult -> view engine renders\n}"
+    }
   },
   "mvc-4": {
     "pitch": "Routing maps incoming URLs to controller actions, not physical files.",
     "definition": "Routing in MVC is the engine that matches a request URL to a controller and action method using route templates instead of physical pages. Conventional routing defines patterns centrally (e.g. {controller}/{action}/{id}); attribute routing puts the route on the action. It also generates outgoing URLs from route data, keeping links in sync with the route table.",
+    "how": "Incoming URL -> matched against route templates -> controller + action + route values; reverse for URL generation.",
+    "when": "Clean, SEO-friendly URLs decoupled from file structure.",
+    "whenNot": "Simple static sites where physical-file routing is enough.",
+    "advantages": [
+      "Clean, decoupled URLs",
+      "Central or per-action control",
+      "Two-way (also builds URLs)"
+    ],
+    "disadvantages": [
+      "Overlapping routes cause ambiguity",
+      "Complex templates get unreadable",
+      "Wrong verb/template -> confusing 404"
+    ],
     "similarQuestions": [],
-    "diagram": null,
+    "diagram": {
+      "title": "Routing",
+      "mermaid": "flowchart LR\n  U[URL] --> RT[Route Table]\n  RT --> C[Controller]\n  C --> Ac[Action]"
+    },
     "code": {
       "language": "csharp",
       "snippet": "routes.MapRoute(\n    name: \"Default\",\n    url: \"{controller}/{action}/{id}\",\n    defaults: new { controller = \"Home\", action = \"Index\", id = UrlParameter.Optional });"
-    },
-    "keyPoints": [
-      "Maps URL -> controller + action",
-      "Conventional (central) or attribute routes",
-      "Template tokens: {controller}/{action}/{id}",
-      "Also generates outgoing URLs"
-    ]
+    }
   },
   "mvc-5": {
     "pitch": "Areas partition a large MVC app into smaller functional modules.",
     "definition": "An Area is a way to divide a big MVC application into self-contained functional sections (e.g. Admin, Billing), each with its own controllers, views and routes under a folder. They keep large projects organized and let teams work on modules independently. You register area routes and reference them with the Area route value.",
+    "how": "Each area has its own controllers/views/routes folder; area route value selects which module handles the URL.",
+    "when": "Large apps with distinct modules or team boundaries.",
+    "whenNot": "Small apps - areas add structure you do not need.",
+    "advantages": [
+      "Organizes large codebases",
+      "Modules evolve independently",
+      "Clear team ownership"
+    ],
+    "disadvantages": [
+      "Overhead for small apps",
+      "Cross-area links need care",
+      "More routing config"
+    ],
     "similarQuestions": [],
-    "diagram": null,
-    "when": "Large apps with distinct functional modules or team boundaries.",
-    "keyPoints": [
-      "Partition app into modules (Admin, etc.)",
-      "Each area: own controllers/views/routes",
-      "Keeps large projects organized",
-      "Reference via the Area route value"
-    ]
+    "diagram": {
+      "title": "Areas",
+      "mermaid": "flowchart TD\n  App[MVC App] --> A1[Admin Area]\n  App --> A2[Billing Area]\n  App --> A3[Main]"
+    },
+    "code": {
+      "language": "csharp",
+      "snippet": "public class AdminAreaRegistration : AreaRegistration\n{\n    public override string AreaName => \"Admin\";\n    public override void RegisterArea(AreaRegistrationContext c)\n        => c.MapRoute(\"Admin_default\", \"Admin/{controller}/{action}/{id}\",\n             new { action = \"Index\", id = UrlParameter.Optional });\n}"
+    }
   },
   "mvc-6": {
     "pitch": "A Controller handles requests, runs logic and returns a result.",
     "definition": "A Controller is a class (deriving from Controller) whose public action methods handle incoming requests. An action takes bound parameters, coordinates with the model/services, and returns an ActionResult (a view, JSON, redirect, etc.). Controllers are the entry point for request handling and the natural seam for unit testing.",
+    "how": "Routing picks a controller + action -> action runs logic with injected services -> returns an ActionResult.",
+    "when": "Handling requests and orchestrating model/services for a response.",
+    "whenNot": "Putting business logic here - keep that in services.",
+    "advantages": [
+      "Single entry point per request",
+      "Easy to unit-test",
+      "Thin when logic lives in services"
+    ],
+    "disadvantages": [
+      "Becomes a 'fat controller' if misused",
+      "Too many responsibilities tempt you",
+      "Tight coupling if no service layer"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Class with public action methods",
-      "Action returns an ActionResult",
-      "Coordinates model/services",
-      "Main unit-testing seam"
-    ]
-  },
-  "mvc-7": {
-    "pitch": "Yes - action overloading needs different verbs or an action selector.",
-    "definition": "Action methods can be 'overloaded' but not by C# parameters alone, because MVC cannot tell which to call from a URL. You differentiate them by HTTP verb attributes ([HttpGet] vs [HttpPost]), by [ActionName] to give distinct action names, or by an [NonAction]/custom action-method selector. The classic case is a GET that shows a form and a POST that submits it.",
-    "similarQuestions": [],
-    "diagram": null,
-    "how": "Use [HttpGet]/[HttpPost] (or other verb attributes) so the same method name maps by verb, or [ActionName(\"X\")] to expose a different action name - pure C# overloads alone cause an ambiguous-action error.",
     "code": {
       "language": "csharp",
-      "snippet": "[HttpGet]  public ActionResult Edit(int id) { ... }   // show form\n[HttpPost] public ActionResult Edit(Product p) { ... } // submit"
+      "snippet": "public class ProductController : Controller\n{\n    public ActionResult Details(int id)\n        => View(_svc.Get(id));   // delegate logic to a service\n}"
+    }
+  },
+  "mvc-7": {
+    "pitch": "Yes - overload action methods by HTTP verb or a distinct action name.",
+    "definition": "Action methods can be 'overloaded' but not by C# parameters alone, because MVC cannot tell which to call from a URL. You differentiate them by HTTP verb attributes ([HttpGet] vs [HttpPost]), by [ActionName] to give distinct action names, or by a custom action-method selector. The classic case is a GET that shows a form and a POST that submits it.",
+    "how": "MVC selects the action by verb/selector; with same name + same verb it throws an ambiguous-action error.",
+    "when": "Show-form (GET) plus submit-form (POST) on one logical action.",
+    "whenNot": "Plain C# overloads with no verb/selector difference (ambiguous).",
+    "advantages": [
+      "Clean GET/POST pairs",
+      "Same name, different intent",
+      "Readable form workflows"
+    ],
+    "disadvantages": [
+      "Cannot overload by params alone",
+      "Ambiguous-action errors if misused",
+      "Selector logic adds complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "[HttpGet]  public ActionResult Edit(int id) { ... }   // show form\n[HttpPost] public ActionResult Edit(Product p) { ... } // submit",
+      "note": "Same name, distinguished by HTTP verb."
     }
   },
   "mvc-8": {
     "pitch": "ActionResult is the base type for everything an action can return.",
     "definition": "ActionResult is the abstract return type that lets an action return many response kinds. Common ones are ViewResult (a view), PartialViewResult (a partial), JsonResult (JSON), RedirectResult/RedirectToRouteResult (redirects), ContentResult (raw text), FileResult (a file), and HttpStatusCodeResult (a status). Helper methods like View(), Json(), Redirect() create them.",
+    "how": "Action returns an ActionResult subclass -> MVC calls ExecuteResult to write the right response.",
+    "when": "Returning different response shapes from actions cleanly.",
+    "whenNot": "Hard-coding Response writes instead of returning a result.",
+    "advantages": [
+      "One return type, many responses",
+      "Helper methods are concise",
+      "Testable - inspect the result"
+    ],
+    "disadvantages": [
+      "Many result types to learn",
+      "Wrong type returns wrong content-type",
+      "Easy to misuse Content vs Json"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "ViewResult / PartialViewResult: render views",
-      "JsonResult: JSON data",
-      "Redirect / RedirectToAction: redirects",
-      "Content / File / HttpStatusCode results"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public ActionResult Get(int id) =>\n    _svc.Find(id) is { } p ? View(p)         // ViewResult\n                           : (ActionResult)HttpNotFound(); // 404"
+    }
   },
   "mvc-9": {
     "pitch": "ViewResult renders a full view; PartialViewResult renders a fragment.",
     "definition": "Both render Razor, but ViewResult returns a complete view that normally includes the layout (full page), while PartialViewResult returns just a view fragment with no layout - used for AJAX updates or composing pieces of a page. You return them via View() and PartialView() respectively.",
+    "how": "View() -> ViewResult (applies layout); PartialView() -> PartialViewResult (no layout), written to the response.",
+    "when": "ViewResult for full pages; PartialViewResult for AJAX/partials.",
+    "whenNot": "Returning a full page to an AJAX call (sends the whole layout).",
+    "advantages": [
+      "Right granularity per response",
+      "Partials enable AJAX updates",
+      "Reuse fragments across pages"
+    ],
+    "disadvantages": [
+      "Mixing them up breaks layout",
+      "Partial without layout looks bare",
+      "Extra round trips if overused"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "PartialViewResult",
-      "rows": [
-        {
-          "criterion": "Renders",
-          "this": "Full view",
-          "alt": "View fragment"
-        },
-        {
-          "criterion": "Layout",
-          "this": "Applies layout",
-          "alt": "No layout"
-        },
-        {
-          "criterion": "Used for",
-          "this": "Full page",
-          "alt": "AJAX / composition"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public ActionResult Row(int id) => PartialView(\"_Row\", _svc.Get(id)); // no layout",
+      "note": "PartialView returns just the fragment for AJAX."
     }
   },
   "mvc-10": {
     "pitch": "View() returns a full page; PartialView() returns a layout-less fragment.",
     "definition": "These helper methods create the two view results. View() produces a ViewResult that renders a full view with its layout, for a complete page response. PartialView() produces a PartialViewResult that renders only the view's markup without a layout, ideal for returning HTML snippets to AJAX calls.",
+    "how": "View() wraps the view in the layout; PartialView() renders only the view markup.",
+    "when": "View() for whole pages; PartialView() for AJAX HTML snippets.",
+    "whenNot": "Using View() in AJAX handlers (duplicates the layout).",
+    "advantages": [
+      "Simple, expressive helpers",
+      "Partial is AJAX-friendly",
+      "Clear full vs fragment intent"
+    ],
+    "disadvantages": [
+      "Easy to pick the wrong one",
+      "Partial misuse breaks styling",
+      "Overuse adds round trips"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "PartialView()",
-      "rows": [
-        {
-          "criterion": "Returns",
-          "this": "ViewResult (full)",
-          "alt": "PartialViewResult"
-        },
-        {
-          "criterion": "Layout",
-          "this": "Yes",
-          "alt": "No"
-        },
-        {
-          "criterion": "Use",
-          "this": "Whole page",
-          "alt": "AJAX HTML snippet"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "return View(model);        // full page (with layout)\nreturn PartialView(model); // fragment (no layout)"
     }
   },
   "mvc-11": {
     "pitch": "Pass data to a view via a model, ViewBag, ViewData or TempData.",
     "definition": "There are several ways to move data from a controller to a view. The preferred way is a strongly-typed model passed to View(model). For loosely-typed extras you can use ViewData (a dictionary) or ViewBag (its dynamic wrapper), both valid for the current request only. TempData carries data across a single redirect.",
+    "how": "Controller sets model/ViewBag/ViewData/TempData -> view reads them during rendering.",
+    "when": "Strongly-typed model for main data; ViewBag for small extras.",
+    "whenNot": "Passing core data via ViewBag (no compile-time safety).",
+    "advantages": [
+      "Model is type-safe + IntelliSense",
+      "ViewBag handy for small extras",
+      "TempData survives a redirect"
+    ],
+    "disadvantages": [
+      "ViewBag/ViewData not type-checked",
+      "Overusing ViewBag gets messy",
+      "TempData relies on session"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Strongly-typed model (preferred)",
-      "ViewData: dictionary (current request)",
-      "ViewBag: dynamic wrapper over ViewData",
-      "TempData: survives one redirect"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "ViewBag.Title = \"Home\";          // small extra\nreturn View(model);              // strongly-typed main data"
+    }
   },
   "mvc-12": {
     "pitch": "Send data to the controller via form posts, route/query, or a bound model.",
     "definition": "Data flows from view to controller through the request. Form fields post into action parameters or a bound model; route values and query strings map to simple parameters; and AJAX can send JSON that binds to a model. Model binding wires all of these to your action's parameters automatically.",
+    "how": "Browser sends form/route/query/JSON -> model binding maps it to action parameters and model properties.",
+    "when": "Submitting user input or filters back to the server.",
+    "whenNot": "Manually parsing Request when model binding would do it.",
+    "advantages": [
+      "Automatic mapping to parameters",
+      "Works for forms, query, JSON",
+      "Validates into ModelState"
+    ],
+    "disadvantages": [
+      "Over-posting risk (mass assignment)",
+      "Name mismatches bind silently null",
+      "Type errors -> 400/empty"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Form post -> model / parameters",
-      "Route values and query string",
-      "AJAX JSON body -> bound model",
-      "Model binding wires it automatically"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "[HttpPost]\npublic ActionResult Save(Product p) { ... } // p bound from posted form fields"
+    }
   },
   "mvc-13": {
     "pitch": "Model binding maps request values to action parameters and models.",
     "definition": "Model binding is the process that automatically builds an action's parameters and complex model objects from request data - form fields, route values, query string and body - matching by name. It also runs validation into ModelState. So instead of reading Request manually, you declare a typed parameter and MVC fills it.",
+    "how": "Match incoming names (form/route/query/body) -> convert types -> populate object -> record errors in ModelState.",
+    "when": "Turning raw request data into typed action parameters.",
+    "whenNot": "Binding untrusted fields onto entities (over-posting).",
+    "advantages": [
+      "No manual request parsing",
+      "Strongly-typed parameters",
+      "Integrated validation"
+    ],
+    "disadvantages": [
+      "Over-posting security risk",
+      "Silent nulls on name mismatch",
+      "Complex graphs bind partially"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "how": "MVC matches incoming names (form/route/query/body) to action parameters and model properties, converts types, populates the object, and records errors in ModelState.",
     "code": {
       "language": "csharp",
-      "snippet": "[HttpPost]\npublic ActionResult Save(Product p) // p is built from posted fields\n{\n    if (!ModelState.IsValid) return View(p);\n    ...\n}"
+      "snippet": "[HttpPost]\npublic ActionResult Save(Product p) // built from posted fields\n{\n    if (!ModelState.IsValid) return View(p);\n    _svc.Save(p); return RedirectToAction(\"Index\");\n}"
     }
   },
   "mvc-14": {
     "pitch": "HTML Helpers generate HTML markup from C# in Razor views.",
     "definition": "HTML Helpers are methods that emit HTML elements from Razor, keeping views consistent and model-aware. Standard helpers (Html.TextBox, Html.ActionLink) take string names; strongly-typed helpers (Html.TextBoxFor, Html.LabelFor) bind to model properties via lambdas for compile-time safety; and you can write custom helpers for reusable markup.",
+    "how": "Helper method runs in Razor -> returns an HTML string bound to model/route data -> written into the page.",
+    "when": "Generating form fields/links bound to the model.",
+    "whenNot": "Hand-writing raw HTML that you could bind type-safely.",
+    "advantages": [
+      "Model-aware, consistent markup",
+      "Strongly-typed = compile-safe",
+      "Custom helpers reduce repetition"
+    ],
+    "disadvantages": [
+      "Extra abstraction over HTML",
+      "Less control than raw markup",
+      "String helpers lose type safety"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
       "snippet": "@Html.TextBoxFor(m => m.Email)   // strongly typed, compile-safe\n@Html.ActionLink(\"Home\", \"Index\")"
-    },
-    "keyPoints": [
-      "Standard helpers: Html.TextBox, ActionLink",
-      "Strongly-typed: Html.TextBoxFor(m => m.X)",
-      "Custom helpers for reusable markup",
-      "Keep views consistent and model-aware"
-    ]
+    }
   },
   "mvc-15": {
     "pitch": "Strongly-typed views bind to a model; weakly-typed use ViewBag/ViewData.",
     "definition": "A strongly-typed view declares @model SomeType and accesses data through Model with IntelliSense and compile-time checking. A weakly-typed view has no model and reads data from ViewBag/ViewData, which is dynamic and only checked at runtime. Strongly-typed is preferred for safety and tooling.",
+    "how": "@model T binds the view to a type -> Model.X is compile-checked; ViewBag.X is resolved dynamically at runtime.",
+    "when": "Almost always - prefer strongly-typed views.",
+    "whenNot": "Passing core data via ViewBag in a complex view.",
+    "advantages": [
+      "Compile-time safety",
+      "IntelliSense in the view",
+      "Refactor-friendly"
+    ],
+    "disadvantages": [
+      "Needs a view model class",
+      "Slightly more upfront code",
+      "ViewBag tempting for quick hacks"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Weakly-typed",
-      "rows": [
-        {
-          "criterion": "Data via",
-          "this": "@model + Model",
-          "alt": "ViewBag / ViewData"
-        },
-        {
-          "criterion": "Checking",
-          "this": "Compile-time",
-          "alt": "Runtime only"
-        },
-        {
-          "criterion": "Tooling",
-          "this": "IntelliSense",
-          "alt": "None"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "@model UserVm                 // strongly typed\n<p>@Model.Email</p>          // compile-checked"
     }
   },
   "mvc-16": {
     "pitch": "Filters inject cross-cutting logic around action execution.",
     "definition": "Filters are attributes that run code at defined points in the MVC pipeline so you do not repeat cross-cutting concerns in every action. The types are authentication, authorization, action (before/after the action), result (before/after the result), and exception filters. They apply globally, per controller, or per action.",
+    "how": "Pipeline fires filters in order (auth -> action -> result -> exception) around the action and its result.",
+    "when": "Auth, logging, caching, error handling across many actions.",
+    "whenNot": "One-off logic that belongs inside a single action.",
+    "advantages": [
+      "DRY cross-cutting concerns",
+      "Scope: global/controller/action",
+      "Cleaner action methods"
+    ],
+    "disadvantages": [
+      "Filter order can confuse",
+      "Heavy filters hit every request",
+      "Hidden logic away from the action"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Run cross-cutting logic in the pipeline",
-      "Types: auth, action, result, exception",
-      "Apply globally / controller / action",
-      "Avoid repeating concerns in actions"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "[Authorize]            // authorization filter\n[OutputCache(Duration=60)]  // result/caching filter\npublic ActionResult Index() => View();"
+    }
   },
   "mvc-17": {
     "pitch": "Each filter type runs at a specific stage of the request.",
     "definition": "MVC has five filter kinds that fire in order. Authentication filters establish identity; authorization filters decide if the request may proceed; action filters run just before and after the action method; result filters run before and after the action result executes (e.g. around view rendering); and exception filters handle unhandled errors and produce a response.",
+    "how": "Order: Authentication -> Authorization -> Action (before/after) -> Result (before/after) -> Exception on error.",
+    "when": "Choosing the right hook for a cross-cutting concern.",
+    "whenNot": "Putting authorization logic in an action filter, etc.",
+    "advantages": [
+      "Precise stage per concern",
+      "Composable around actions",
+      "Built-in base attributes"
+    ],
+    "disadvantages": [
+      "Five types to remember",
+      "Wrong type = wrong timing",
+      "Ordering subtleties"
+    ],
     "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Authentication: establish identity",
-      "Authorization: allow/deny request",
-      "Action: before/after the action",
-      "Result: around result execution",
-      "Exception: handle unhandled errors"
-    ]
+    "diagram": {
+      "title": "Filter order",
+      "mermaid": "flowchart LR\n  Auth[Authentication] --> Authz[Authorization]\n  Authz --> Act[Action]\n  Act --> Res[Result]\n  Res --> Exc[Exception]"
+    }
   },
   "mvc-18": {
-    "pitch": "Create a custom filter by implementing a filter interface or base.",
+    "pitch": "Create a custom filter by deriving from ActionFilterAttribute.",
     "definition": "You create a custom action filter by deriving from ActionFilterAttribute (or implementing IActionFilter) and overriding OnActionExecuting / OnActionExecuted to run code before and after the action. Register it by decorating an action/controller or adding it to the global filter collection.",
+    "how": "Override OnActionExecuting/Executed -> add logic -> apply via attribute or register globally.",
+    "when": "Reusable before/after logic like logging or timing.",
+    "whenNot": "Logic that needs data only one action has.",
+    "advantages": [
+      "Reusable across actions",
+      "Clean before/after hooks",
+      "Global or targeted scope"
+    ],
+    "disadvantages": [
+      "Runs on every covered action",
+      "Shared state needs care",
+      "Can hide important behaviour"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "steps": [
-      "Derive from ActionFilterAttribute",
-      "Override OnActionExecuting / OnActionExecuted",
-      "Add your cross-cutting logic",
-      "Apply via attribute or global filters"
-    ],
     "code": {
       "language": "csharp",
-      "snippet": "public class LogFilter : ActionFilterAttribute\n{\n    public override void OnActionExecuting(ActionExecutingContext c)\n        => Log($\"Calling {c.ActionDescriptor.ActionName}\"); // runs before the action\n}"
+      "snippet": "public class LogFilter : ActionFilterAttribute\n{\n    public override void OnActionExecuting(ActionExecutingContext c)\n        => Log($\"Calling {c.ActionDescriptor.ActionName}\"); // before the action\n}",
+      "note": "Override the hook, then apply [LogFilter] or add it to global filters."
     }
   },
   "mvc-19": {
     "pitch": "Filter overrides exclude a specific filter type from a global filter.",
     "definition": "Filter overrides let a controller or action opt out of a globally-registered filter of a given type. By applying an override attribute (e.g. OverrideAuthorization, OverrideActionFilters), that scope ignores global filters of that category - useful when one action needs different behaviour, like an anonymous endpoint in an otherwise-secured app.",
+    "how": "Override attribute on an action/controller tells MVC to skip global filters of that category there.",
+    "when": "An exception to a global filter (e.g. a public action).",
+    "whenNot": "As a substitute for proper, scoped filters.",
+    "advantages": [
+      "Targeted exceptions to globals",
+      "No need to drop global filters",
+      "Per-action flexibility"
+    ],
+    "disadvantages": [
+      "Easy to forget they exist",
+      "Can weaken global security",
+      "Adds reasoning overhead"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
-      "snippet": "[OverrideAuthorization]   // ignore global authorization filters here\n[AllowAnonymous]\npublic ActionResult PublicPage() { ... }"
-    },
-    "keyPoints": [
-      "Opt out of a global filter type",
-      "Override attributes per controller/action",
-      "Common: OverrideAuthorization",
-      "Use for exceptions to a global rule"
-    ]
+      "snippet": "[OverrideAuthorization]   // ignore global authorization here\n[AllowAnonymous]\npublic ActionResult PublicPage() => View();"
+    }
   },
   "mvc-20": {
     "pitch": "Exception filters catch unhandled errors and return a friendly result.",
     "definition": "Exception filters intercept unhandled exceptions thrown during action or result execution and let you log them and return a result (like an error view) instead of a yellow screen. You implement IExceptionFilter / HandleErrorAttribute, set ExceptionHandled, and provide the response. They are the MVC-layer way to centralize error handling.",
+    "how": "Unhandled exception -> OnException fires -> log -> set Result to an error view -> mark ExceptionHandled = true.",
+    "when": "Centralizing MVC error handling and friendly error pages.",
+    "whenNot": "Errors outside MVC (use middleware/global handler).",
+    "advantages": [
+      "Centralized error handling",
+      "Friendly error responses",
+      "Keeps actions clean"
+    ],
+    "disadvantages": [
+      "Misses non-MVC errors",
+      "Can swallow real bugs",
+      "Must avoid leaking stack traces"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "how": "On an unhandled exception, OnException fires with the error context; you log it, set filterContext.Result to an error view, and mark ExceptionHandled = true.",
     "code": {
       "language": "csharp",
-      "snippet": "public class ErrorFilter : HandleErrorAttribute\n{\n    public override void OnException(ExceptionContext c)\n    {\n        Log(c.Exception);\n        c.Result = new ViewResult { ViewName = \"Error\" };\n        c.ExceptionHandled = true;   // stop the error bubbling up\n    }\n}"
+      "snippet": "public class ErrorFilter : HandleErrorAttribute\n{\n    public override void OnException(ExceptionContext c)\n    {\n        Log(c.Exception);\n        c.Result = new ViewResult { ViewName = \"Error\" };\n        c.ExceptionHandled = true;   // stop it bubbling up\n    }\n}"
     }
   },
   "mvc-21": {
-    "pitch": "These four pass data with different scope and lifetime.",
+    "pitch": "ViewData, ViewBag, TempData and Session differ in scope and lifetime.",
     "definition": "All store data but differ in scope and lifetime. ViewData is a dictionary for the current request; ViewBag is its dynamic wrapper (same lifetime); TempData persists across one redirect (backed by session); and Session persists per user for the whole session. Use the shortest-lived one that fits.",
+    "how": "ViewData/ViewBag: current request; TempData: next request after a redirect; Session: whole user session.",
+    "when": "Pick the shortest scope that carries the data you need.",
+    "whenNot": "Storing large or long-lived data in ViewBag/TempData.",
+    "advantages": [
+      "Options for every lifetime",
+      "ViewBag is convenient",
+      "TempData bridges redirects"
+    ],
+    "disadvantages": [
+      "ViewBag/ViewData untyped",
+      "TempData/Session use server memory",
+      "Overuse hurts scalability"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "ViewData: dictionary, current request",
-      "ViewBag: dynamic wrapper over ViewData",
-      "TempData: survives one redirect",
-      "Session: per user, whole session"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "TempData[\"Msg\"] = \"Saved!\";        // survives one redirect\nreturn RedirectToAction(\"Index\");"
+    }
   },
   "mvc-22": {
     "pitch": "Authentication proves identity; authorization grants access.",
     "definition": "Authentication verifies who the user is (login), while authorization decides what that authenticated user is allowed to do. They run in order - authenticate first, authorize second - and MVC enforces them with the [Authorize] attribute, the user principal, and authentication middleware/providers.",
+    "how": "Authenticate (establish ClaimsPrincipal) -> authorize ([Authorize]/roles/policies decide access).",
+    "when": "Securing endpoints by identity and permissions.",
+    "whenNot": "Treating them as one step - they are distinct.",
+    "advantages": [
+      "Clear security separation",
+      "[Authorize] is declarative",
+      "Supports roles and policies"
+    ],
+    "disadvantages": [
+      "Confusing the two is common",
+      "Misconfig over/under-restricts",
+      "Only as strong as the login"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Authorization",
-      "rows": [
-        {
-          "criterion": "Answers",
-          "this": "Who are you?",
-          "alt": "What may you do?"
-        },
-        {
-          "criterion": "Order",
-          "this": "First",
-          "alt": "After authentication"
-        },
-        {
-          "criterion": "In MVC",
-          "this": "Login / principal",
-          "alt": "[Authorize] / roles"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "[Authorize(Roles = \"Admin\")]   // authenticated AND in Admin role\npublic ActionResult Delete(int id) { ... }"
     }
   },
   "mvc-23": {
     "pitch": "Forms auth uses a login page + cookie; Windows auth uses AD via IIS.",
     "definition": "These are two classic authentication modes. Forms Authentication presents a custom login page and issues an encrypted auth cookie validated on each request - suited to public internet apps. Windows Authentication relies on the user's Windows/Active Directory identity through IIS with no login page - suited to intranet apps inside a domain.",
+    "how": "Forms: validate credentials -> set encrypted cookie -> check it each request. Windows: IIS passes the AD identity.",
+    "when": "Forms for internet apps; Windows for domain intranets.",
+    "whenNot": "Windows auth for public internet users (no domain).",
+    "advantages": [
+      "Forms works anywhere (cookie)",
+      "Windows = no login page (SSO)",
+      "Both integrate with MVC"
+    ],
+    "disadvantages": [
+      "Forms needs a credential store",
+      "Windows needs a domain",
+      "Passport is retired"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Forms: login page + encrypted cookie (internet)",
-      "Windows: AD identity via IIS (intranet)",
-      "Forms needs a credential store",
-      "Windows needs a domain"
-    ]
+    "code": {
+      "language": "xml",
+      "snippet": "<authentication mode=\"Forms\">\n  <forms loginUrl=\"~/Account/Login\" timeout=\"30\" />\n</authentication>"
+    }
   },
   "mvc-24": {
     "pitch": "Attribute routing puts routes on actions; conventional defines them centrally.",
     "definition": "Both map URLs to actions but differ in where routes live. Conventional routing defines URL patterns centrally in route config; attribute routing places a [Route] attribute directly on the controller/action, which is clearer for RESTful, versioned or irregular URLs. Most apps mix both.",
+    "how": "Attribute: [Route] on the action defines its URL. Conventional: central templates match by pattern.",
+    "when": "Attribute for REST/versioned URLs; conventional for uniform patterns.",
+    "whenNot": "Hand-crafting every URL when one convention would do.",
+    "advantages": [
+      "Route sits next to the action",
+      "Great for REST/versioning",
+      "Mix with conventional freely"
+    ],
+    "disadvantages": [
+      "Routes scattered across files",
+      "Can conflict with conventional",
+      "Easy to duplicate patterns"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
-      "snippet": "[Route(\"products/{id:int}\")]   // attribute routing\npublic ActionResult Details(int id) { ... }"
-    },
-    "comparison": {
-      "altName": "Conventional routing",
-      "rows": [
-        {
-          "criterion": "Defined",
-          "this": "On the action ([Route])",
-          "alt": "Central route table"
-        },
-        {
-          "criterion": "Clarity",
-          "this": "URL next to action",
-          "alt": "One place, less granular"
-        },
-        {
-          "criterion": "Best for",
-          "this": "REST, versioned URLs",
-          "alt": "Uniform URL patterns"
-        }
-      ]
+      "snippet": "[Route(\"products/{id:int}\")]   // attribute routing\npublic ActionResult Details(int id) => View(_svc.Get(id));"
     }
   },
   "mvc-25": {
     "pitch": "Layouts, partials and RenderBody build reusable view structure.",
     "definition": "These compose Razor views. A Layout page is the shared shell (header, nav, footer) for many views. RenderBody() is the placeholder in the layout where each view's content is injected. A Partial View is a reusable view fragment (rendered with Html.Partial/RenderPartial) for repeated UI. Together they keep views DRY.",
+    "how": "View renders inside a layout; RenderBody() marks where its content goes; partials inject reusable fragments.",
+    "when": "Sharing a consistent shell and reusing UI fragments.",
+    "whenNot": "Duplicating header/footer markup across views.",
+    "advantages": [
+      "DRY, consistent page shell",
+      "Partials reuse UI",
+      "Optional sections via RenderSection"
+    ],
+    "disadvantages": [
+      "Indirection across files",
+      "Layout changes ripple widely",
+      "Partial data passing can confuse"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Layout: shared page shell",
-      "RenderBody(): injects view content",
-      "Partial View: reusable UI fragment",
-      "RenderSection() for optional regions"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "<!-- _Layout.cshtml -->\n<body>@RenderBody()</body>   <!-- each view injected here -->"
+    }
   },
   "mvc-26": {
     "pitch": "Child actions render a controller action inside a view.",
     "definition": "A Child Action is an action invoked from within a view (via Html.Action / RenderAction) to render a reusable, self-contained piece of UI that needs its own controller logic - like a cart summary or menu built from data. It runs the action and injects its partial output into the parent view. (In ASP.NET Core, view components replace child actions.)",
+    "how": "View calls Html.Action -> the child action runs its logic -> its partial output is injected into the page.",
+    "when": "Reusable widgets needing their own data/logic (menus, carts).",
+    "whenNot": "Simple static fragments (a plain partial is enough).",
+    "advantages": [
+      "Self-contained UI with logic",
+      "Reusable across pages",
+      "Encapsulates its own data fetch"
+    ],
+    "disadvantages": [
+      "Extra request overhead",
+      "Harder to test than partials",
+      "Replaced by View Components in Core"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
-      "snippet": "@Html.Action(\"CartSummary\", \"Cart\")   // runs the action, injects its partial"
-    },
-    "keyPoints": [
-      "Action called from a view (Html.Action)",
-      "Renders self-contained UI with its own logic",
-      "Marked [ChildActionOnly]",
-      "Core uses View Components instead"
-    ]
+      "snippet": "@Html.Action(\"CartSummary\", \"Cart\")   // runs the action, injects its partial",
+      "note": "[ChildActionOnly] on the action restricts it to in-view calls."
+    }
   },
   "mvc-27": {
     "pitch": "Data Annotations declare validation rules on model properties.",
     "definition": "You implement validation by decorating model properties with Data Annotation attributes ([Required], [StringLength], [Range], [RegularExpression], [EmailAddress]). MVC runs them during model binding into ModelState, you check ModelState.IsValid in the action, and validation helpers plus unobtrusive client scripts show messages in the view - so the same rules enforce on client and server.",
+    "how": "Annotate model -> binding validates into ModelState -> check IsValid -> client scripts mirror the same rules.",
+    "when": "Enforcing input rules consistently on client and server.",
+    "whenNot": "Trusting client validation alone (always check server-side).",
+    "advantages": [
+      "One rule, client + server",
+      "Declarative and readable",
+      "Integrated with ModelState"
+    ],
+    "disadvantages": [
+      "Complex rules need custom validators",
+      "Cross-field rules are awkward",
+      "Client scripts must be enabled"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "steps": [
-      "Annotate model properties ([Required], [Range], ...)",
-      "Model binding validates into ModelState",
-      "Check ModelState.IsValid in the action",
-      "Show errors with ValidationMessageFor in the view"
-    ],
     "code": {
       "language": "csharp",
-      "snippet": "public class User {\n    [Required, EmailAddress] public string Email { get; set; }\n    [Range(18, 99)] public int Age { get; set; }\n}"
+      "snippet": "public class User {\n    [Required, EmailAddress] public string Email { get; set; }\n    [Range(18, 99)]          public int Age { get; set; }\n}"
     }
   },
   "mvc-28": {
     "pitch": "Speed up MVC with caching, bundling, async and lean views.",
-    "definition": "You improve MVC performance by cutting work and payload: output/data caching for hot pages and data, bundling and minifying CSS/JS, async actions for I/O, returning lightweight view models (avoid over-fetching), enabling compression, and tuning database queries with paging and indexes. Run in release mode with precompiled views.",
+    "definition": "You improve an MVC app by cutting work and payload: output/data caching for hot pages and data, bundling and minifying CSS/JS, async actions for I/O, returning lightweight view models (avoid over-fetching), enabling compression, and tuning database queries with paging and indexes. Run in release mode with precompiled views.",
+    "how": "Cache hot output/data -> bundle+minify assets -> async I/O -> lean view models -> tuned, paged queries.",
+    "when": "Slow pages, heavy DB load, or large asset payloads.",
+    "whenNot": "Premature optimization before profiling the bottleneck.",
+    "advantages": [
+      "Caching cuts repeated work",
+      "Bundling/minify shrink payload",
+      "Async scales I/O-bound actions"
+    ],
+    "disadvantages": [
+      "Caching adds staleness",
+      "Async misuse can deadlock",
+      "Over-tuning hurts readability"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Output + data caching",
-      "Bundle and minify CSS/JS",
-      "Async actions for I/O",
-      "Lean view models, avoid over-fetch",
-      "Compression; tune DB queries"
-    ],
-    "bestPractices": [
-      "Cache hot pages/data with sensible expiry",
-      "Keep view models small and specific",
-      "Avoid N+1 queries; page large lists"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "[OutputCache(Duration = 60, VaryByParam = \"id\")] // cache rendered output\npublic ActionResult Details(int id) => View(_svc.Get(id));"
+    }
   },
   "mvc-29": {
     "pitch": "Bundling combines files; minification shrinks them for faster loads.",
     "definition": "Bundling and minification reduce the number and size of CSS/JS downloads. Bundling concatenates many files into one request to cut round trips; minification strips whitespace, comments and shortens names to shrink bytes. Together they speed page load, and MVC's BundleConfig handles them with cache-busting version hashes.",
+    "how": "BundleConfig groups files -> served as one minified request with a version hash for cache-busting.",
+    "when": "Production sites with many CSS/JS files.",
+    "whenNot": "Debugging - keep files unbundled for readable sources.",
+    "advantages": [
+      "Fewer requests (bundling)",
+      "Smaller files (minification)",
+      "Auto cache-busting hash"
+    ],
+    "disadvantages": [
+      "Harder to debug minified code",
+      "Misordered bundles break scripts",
+      "Build/config overhead"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Bundling: combine files, fewer requests",
-      "Minification: strip bytes (smaller files)",
-      "Faster page loads",
-      "BundleConfig + version hash cache-busting"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "bundles.Add(new ScriptBundle(\"~/bundles/app\")\n    .Include(\"~/Scripts/a.js\", \"~/Scripts/b.js\")); // one minified request"
+    }
   },
   "mvc-30": {
     "pitch": "Layered MVC app with repository, DI and clean separation.",
-    "definition": "A real MVC project I would describe is layered: controllers (thin) -> service layer (business logic) -> repository/unit-of-work over EF -> SQL Server, with DTO/view models mapping between layers and dependency injection wiring it together. Design patterns used include Repository and Unit of Work for data access, Dependency Injection for loose coupling, and the View Model pattern to keep views decoupled from entities; caching and bundling handle performance.",
+    "definition": "A real MVC project is layered: controllers (thin) -> service layer (business logic) -> repository/unit-of-work over EF -> SQL Server, with DTO/view models mapping between layers and dependency injection wiring it together. Patterns used include Repository and Unit of Work for data access, Dependency Injection for loose coupling, and the View Model pattern to keep views decoupled from entities; caching and bundling handle performance.",
+    "how": "Controller -> Service -> Repository/UoW -> EF -> SQL Server, with view models mapping and DI wiring it all.",
+    "when": "Maintainable, testable line-of-business web apps.",
+    "whenNot": "Tiny apps where layers and patterns are overkill.",
+    "advantages": [
+      "Testable, loosely coupled",
+      "Clear layer responsibilities",
+      "View models protect the domain"
+    ],
+    "disadvantages": [
+      "More upfront structure",
+      "Mapping boilerplate",
+      "Over-engineering risk for small apps"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "MVC layered architecture",
-      "mermaid": "flowchart LR\n  U[Browser] --> C[Controllers]\n  C --> S[Service Layer]\n  S --> R[Repository / UoW]\n  R --> DB[(SQL Server)]"
+      "mermaid": "flowchart LR\n  U[Browser] --> C[Controllers]\n  C --> S[Services]\n  S --> R[Repository/UoW]\n  R --> DB[(SQL Server)]"
     },
-    "realWorld": "On one MVC portal, introducing a service layer with repositories and DI made the codebase unit-testable and cut a tangle of fat controllers into thin, focused ones - speeding feature delivery.",
-    "keyPoints": [
-      "Thin controllers -> services -> repository -> EF",
-      "Repository + Unit of Work patterns",
-      "Dependency Injection throughout",
-      "View models / DTOs decouple views",
-      "Caching + bundling for performance"
-    ]
+    "realWorld": "On an MVC portal, adding a service layer with repositories and DI turned fat controllers into thin, unit-tested ones and sped up feature delivery."
   }
 }
