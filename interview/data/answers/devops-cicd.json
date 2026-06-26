@@ -1,1 +1,1008 @@
-{}
+{
+  "devops-cicd-1": {
+    "pitch": "DevOps unites dev and ops to ship software faster and more reliably.",
+    "definition": "DevOps is a culture and set of practices that unite software development (Dev) and IT operations (Ops) to shorten the delivery cycle and improve quality. Its core principles are collaboration, automation (CI/CD, IaC), continuous integration and delivery, continuous monitoring/feedback, and a shared responsibility for the whole lifecycle. The goal is fast, reliable, repeatable releases.",
+    "how": "Automate build/test/deploy + collaborate across dev and ops + monitor and feed back -> faster, safer releases.",
+    "when": "Teams wanting frequent, reliable software delivery.",
+    "whenNot": "Tiny one-off projects with no ongoing delivery.",
+    "advantages": [
+      "Faster, reliable releases",
+      "Automation reduces errors",
+      "Shared responsibility"
+    ],
+    "disadvantages": [
+      "Cultural change is hard",
+      "Tooling investment",
+      "Skills ramp-up"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-2": {
+    "pitch": "Agile is how you build software; DevOps is how you deliver and run it.",
+    "definition": "Agile is a development methodology focused on iterative, customer-driven delivery in short sprints. DevOps extends that philosophy across the whole lifecycle - including operations, deployment and monitoring - emphasizing automation and collaboration between dev and ops. Agile improves how features are built; DevOps improves how they're released and operated. They complement each other.",
+    "how": "Agile organizes iterative development; DevOps automates and integrates delivery + operations around it.",
+    "when": "Use both: Agile for building, DevOps for delivering.",
+    "whenNot": "Treating them as competing choices.",
+    "advantages": [
+      "Agile: iterative dev",
+      "DevOps: end-to-end delivery",
+      "Complementary"
+    ],
+    "disadvantages": [
+      "Often conflated",
+      "Different scopes",
+      "Both need buy-in"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-3": {
+    "pitch": "The DevOps lifecycle loops plan-code-build-test-release-deploy-operate-monitor.",
+    "definition": "The DevOps lifecycle is a continuous loop of stages: Plan, Code, Build, Test, Release, Deploy, Operate, and Monitor - often drawn as an infinite loop. Each stage feeds the next, and monitoring feedback flows back into planning, so improvements are continuous rather than one-off. Automation connects the stages into a smooth pipeline.",
+    "how": "Each stage automates into the next; monitoring feedback returns to planning, forming a continuous improvement loop.",
+    "when": "Structuring a continuous delivery process.",
+    "whenNot": "One-time deployments with no iteration.",
+    "advantages": [
+      "End-to-end coverage",
+      "Continuous feedback loop",
+      "Automatable stages"
+    ],
+    "disadvantages": [
+      "Requires tooling per stage",
+      "Cultural adoption",
+      "Loop discipline"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "DevOps lifecycle",
+      "mermaid": "flowchart LR\n  Plan --> Code --> Build --> Test --> Release --> Deploy --> Operate --> Monitor --> Plan"
+    }
+  },
+  "devops-cicd-4": {
+    "pitch": "CI merges and tests every code change automatically and often.",
+    "definition": "Continuous Integration is the practice of developers frequently merging code into a shared branch, where each merge automatically triggers a build and automated tests. Catching integration problems early - on every commit - keeps the main branch healthy and reduces painful big-bang merges. It needs a CI server (GitHub Actions, Azure Pipelines, Jenkins) and a solid test suite.",
+    "how": "On each push/PR, the CI server builds the code and runs tests -> fast pass/fail feedback to the developer.",
+    "when": "Any team with multiple contributors.",
+    "whenNot": "Solo throwaway scripts.",
+    "advantages": [
+      "Catches issues early",
+      "Healthy main branch",
+      "Fast feedback"
+    ],
+    "disadvantages": [
+      "Needs good test coverage",
+      "Flaky tests erode trust",
+      "CI infra to maintain"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-5": {
+    "pitch": "CD keeps software always in a deployable, release-ready state.",
+    "definition": "Continuous Delivery extends CI by automatically building, testing and preparing every change for release so the software is always in a deployable state; a human approves the final push to production. It makes releases low-risk and on-demand. (Continuous Deployment goes one step further and deploys automatically with no manual gate.)",
+    "how": "After CI passes, the pipeline packages + deploys to staging automatically; production release is a one-click approval.",
+    "when": "Frequent, low-risk releases with a human gate.",
+    "whenNot": "When every change should auto-deploy (use Continuous Deployment).",
+    "advantages": [
+      "Always release-ready",
+      "Low-risk, on-demand releases",
+      "Human approval gate"
+    ],
+    "disadvantages": [
+      "Needs strong automation",
+      "Approval step adds latency",
+      "Pipeline maintenance"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-6": {
+    "pitch": "Continuous Delivery needs a manual approval; Deployment is fully automatic.",
+    "definition": "Both automate the path to production, but differ at the last step. Continuous Delivery automatically prepares and stages every change but requires a manual approval to release to production. Continuous Deployment removes that gate - every change that passes the pipeline is automatically deployed to production. Deployment demands the highest confidence in tests and monitoring.",
+    "how": "Delivery: auto up to a manual release gate. Deployment: auto all the way to production, no gate.",
+    "when": "Deployment for mature pipelines; Delivery when you want control.",
+    "whenNot": "Auto-deploying without strong tests/monitoring.",
+    "advantages": [
+      "Delivery: controlled release",
+      "Deployment: fastest flow",
+      "Both fully automated up to prod"
+    ],
+    "disadvantages": [
+      "Deployment needs high confidence",
+      "Delivery gate adds delay",
+      "Risk if tests are weak"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-7": {
+    "pitch": "A CI/CD pipeline automates code from commit to production.",
+    "definition": "A CI/CD pipeline is an automated workflow that takes code from commit through build, test, packaging and deployment to one or more environments. Defined as code (YAML), it runs on every change, enforcing quality gates and producing repeatable, auditable releases. It's the backbone of DevOps automation.",
+    "how": "A commit triggers stages (build -> test -> package -> deploy) automatically, gated by checks at each step.",
+    "when": "Automating reliable, repeatable releases.",
+    "whenNot": "One-off manual deployments.",
+    "advantages": [
+      "Repeatable, auditable",
+      "Quality gates enforced",
+      "Fast, frequent releases"
+    ],
+    "disadvantages": [
+      "Initial setup effort",
+      "Pipeline-as-code upkeep",
+      "Flaky stages block flow"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "on: [push]\njobs:\n  build: { steps: [checkout, build, test] }\n  deploy: { needs: build, steps: [package, deploy] }"
+    }
+  },
+  "devops-cicd-8": {
+    "pitch": "Pipeline stages: build, test, package, deploy, verify.",
+    "definition": "A CI/CD pipeline typically has stages: Source (trigger on commit), Build (compile), Test (unit/integration), Code quality/security scan, Package (build artifact/Docker image), Deploy (to staging then production), and Post-deploy verification (smoke tests/monitoring). Each stage gates the next, so a failure stops the release early.",
+    "how": "Source -> Build -> Test -> Scan -> Package -> Deploy -> Verify, each gating the next stage.",
+    "when": "Designing a robust delivery pipeline.",
+    "whenNot": "Trivial apps where one script suffices.",
+    "advantages": [
+      "Clear gated stages",
+      "Early failure detection",
+      "Repeatable releases"
+    ],
+    "disadvantages": [
+      "More stages = more upkeep",
+      "Slow stages bottleneck",
+      "Gate tuning needed"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-9": {
+    "pitch": "CI/CD for ASP.NET Core: restore, build, test, publish, deploy.",
+    "definition": "You implement CI/CD for an ASP.NET Core app with a pipeline (GitHub Actions/Azure Pipelines) that on each push restores, builds and runs tests, then publishes the app (or builds a Docker image), and deploys to the target (App Service, container, or Kubernetes). Add environment-specific config, secrets from a secure store, and approval gates for production.",
+    "how": "On push: dotnet restore/build/test -> publish or docker build -> deploy to App Service/K8s with env config + secrets.",
+    "when": "Automating .NET app delivery.",
+    "whenNot": "Local-only tools/scripts.",
+    "advantages": [
+      "Automated .NET delivery",
+      "Tests gate releases",
+      "Container or App Service targets"
+    ],
+    "disadvantages": [
+      "Pipeline + secrets setup",
+      "Env config management",
+      "Build-time tuning"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "- run: dotnet test\n- run: dotnet publish -c Release -o out\n- uses: azure/webapps-deploy@v3"
+    }
+  },
+  "devops-cicd-10": {
+    "pitch": "Git is a distributed version control system with common branching workflows.",
+    "definition": "Git is a distributed version control system that tracks code changes, enabling branching, merging, history and collaboration - every clone has the full history. Common workflows include Git Flow (long-lived develop/release/feature branches), GitHub Flow (short-lived feature branches off main with PRs), and trunk-based development (small frequent merges to main). The workflow shapes how teams integrate.",
+    "how": "Commits form a history graph; branches diverge and merge; a workflow defines branch conventions for collaboration.",
+    "when": "Any code collaboration and version tracking.",
+    "whenNot": "Trivial single-file experiments.",
+    "advantages": [
+      "Full distributed history",
+      "Branching/merging",
+      "Workflow flexibility"
+    ],
+    "disadvantages": [
+      "Learning curve",
+      "Merge conflicts",
+      "Workflow discipline needed"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-11": {
+    "pitch": "Merge preserves history with a merge commit; rebase rewrites it linearly.",
+    "definition": "Both integrate changes from one branch into another. Git Merge creates a merge commit that joins the two histories, preserving the exact branch topology (non-destructive). Git Rebase replays your commits on top of the target branch, producing a linear history but rewriting commit hashes. Merge keeps history truthful; rebase keeps it clean - never rebase shared/public branches.",
+    "how": "Merge ties histories with a merge commit; rebase re-applies commits onto the target, creating a linear history.",
+    "when": "Rebase for a clean local history; merge for shared branches.",
+    "whenNot": "Rebasing commits others have already pulled.",
+    "advantages": [
+      "Merge: safe, true history",
+      "Rebase: clean linear history",
+      "Both integrate changes"
+    ],
+    "disadvantages": [
+      "Rebase rewrites hashes",
+      "Rebasing shared branches breaks others",
+      "Merge commits add noise"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "git merge feature       # merge commit\ngit rebase main         # linear history (local only)"
+    }
+  },
+  "devops-cicd-12": {
+    "pitch": "A Pull Request proposes changes for review before merging.",
+    "definition": "A Pull Request (PR) is a request to merge one branch into another, providing a place for code review, discussion, automated CI checks and approvals before the change lands. PRs are important because they enforce peer review and quality gates, share knowledge, and keep the main branch healthy. They're the collaboration unit on GitHub/GitLab/Azure Repos.",
+    "how": "Open a PR -> CI runs + reviewers comment/approve -> on green checks + approval, merge to the target branch.",
+    "when": "Reviewing and gating changes in a team.",
+    "whenNot": "Solo throwaway repos with no review.",
+    "advantages": [
+      "Enforces review",
+      "Runs CI checks",
+      "Knowledge sharing"
+    ],
+    "disadvantages": [
+      "Review can bottleneck",
+      "Process overhead for tiny changes",
+      "Stale PRs accumulate"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-13": {
+    "pitch": "Git tags mark specific commits, typically for releases.",
+    "definition": "Git Tags are named pointers to specific commits, used to mark important points in history - most commonly release versions (v1.2.0). Lightweight tags are just a name; annotated tags store metadata (author, date, message) and are recommended for releases. Tags don't move like branches, so they reliably reference a fixed version.",
+    "how": "Create a tag on a commit -> it permanently references that exact commit (e.g. for a release build).",
+    "when": "Marking releases and version milestones.",
+    "whenNot": "Day-to-day branching (use branches).",
+    "advantages": [
+      "Stable version markers",
+      "Annotated tags carry metadata",
+      "Drive release builds"
+    ],
+    "disadvantages": [
+      "Tags must be pushed explicitly",
+      "Lightweight vs annotated confusion",
+      "Not for ongoing work"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "git tag -a v1.2.0 -m \"Release 1.2.0\"\ngit push origin v1.2.0"
+    }
+  },
+  "devops-cicd-14": {
+    "pitch": "GitHub Actions runs CI/CD workflows from YAML in your repo.",
+    "definition": "GitHub Actions is GitHub's built-in CI/CD platform where you define workflows in YAML (.github/workflows) that run on events (push, PR, schedule). Each workflow has jobs of steps that run on hosted or self-hosted runners, using reusable 'actions' from the marketplace. It builds, tests and deploys code without leaving GitHub.",
+    "how": "An event triggers a workflow -> jobs run steps on runners -> reusable actions handle build/test/deploy.",
+    "when": "CI/CD for projects hosted on GitHub.",
+    "whenNot": "Non-GitHub repos (use their native CI).",
+    "advantages": [
+      "Native to GitHub",
+      "Marketplace of actions",
+      "Event-driven workflows"
+    ],
+    "disadvantages": [
+      "Runner minutes cost",
+      "YAML complexity grows",
+      "Secrets management care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "name: ci\non: [push]\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps: [{uses: actions/checkout@v4}, {run: dotnet test}]"
+    }
+  },
+  "devops-cicd-15": {
+    "pitch": "Azure DevOps is a suite for boards, repos, pipelines, artifacts and tests.",
+    "definition": "Azure DevOps is Microsoft's end-to-end DevOps platform offering Azure Boards (work tracking), Repos (Git hosting), Pipelines (CI/CD), Artifacts (package feeds), and Test Plans. It covers planning, source control, build/release automation and testing in one integrated suite, popular in .NET/enterprise environments.",
+    "how": "Use Boards to plan, Repos for code, Pipelines for CI/CD, Artifacts for packages, Test Plans for QA - all integrated.",
+    "when": "Enterprise/.NET teams wanting an all-in-one suite.",
+    "whenNot": "Small projects happy with GitHub alone.",
+    "advantages": [
+      "End-to-end DevOps suite",
+      "Strong .NET/enterprise fit",
+      "Integrated tooling"
+    ],
+    "disadvantages": [
+      "Heavier than GitHub Actions",
+      "Learning curve",
+      "Licensing for scale"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-16": {
+    "pitch": "Jenkins is a self-hosted, plugin-rich CI server; Azure DevOps is managed.",
+    "definition": "Jenkins is a popular open-source automation server for building CI/CD pipelines, extremely flexible via thousands of plugins but self-hosted (you run and maintain it). Azure DevOps Pipelines is a managed cloud (or server) offering integrated with the wider Azure DevOps suite. Jenkins offers maximum control/customization; Azure DevOps offers less maintenance and tighter integration.",
+    "how": "Jenkins: self-hosted, plugin-driven pipelines. Azure DevOps: managed pipelines integrated with the suite.",
+    "when": "Jenkins for control/on-prem; Azure DevOps for managed convenience.",
+    "whenNot": "Wanting zero infra ops (avoid self-hosted Jenkins).",
+    "advantages": [
+      "Jenkins: flexible, plugin-rich",
+      "Azure DevOps: managed + integrated",
+      "Both mature"
+    ],
+    "disadvantages": [
+      "Jenkins: you maintain it",
+      "Plugin sprawl/security",
+      "Azure DevOps: less customizable"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-17": {
+    "pitch": "A build pipeline compiles, tests and packages code into artifacts.",
+    "definition": "A Build (CI) pipeline is the part of CI/CD that takes source code and produces deployable artifacts: it restores dependencies, compiles, runs tests and code analysis, and packages the output (binaries, NuGet, Docker image), publishing it for the release pipeline. Its job is to verify and produce a trustworthy build on every change.",
+    "how": "On commit: restore -> compile -> test -> scan -> package + publish artifact for deployment.",
+    "when": "Validating and packaging each change.",
+    "whenNot": "Deploying without first building/testing.",
+    "advantages": [
+      "Verifies every change",
+      "Produces deployable artifact",
+      "Early failure detection"
+    ],
+    "disadvantages": [
+      "Slow builds bottleneck",
+      "Flaky tests block builds",
+      "Artifact storage"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-18": {
+    "pitch": "A release pipeline deploys built artifacts to environments with gates.",
+    "definition": "A Release (Deployment) pipeline takes the artifacts produced by the build pipeline and deploys them through environments (Dev -> QA -> Staging -> Production), applying environment-specific config, approval gates, and post-deploy checks. It separates 'build once' from 'deploy many', giving controlled, auditable promotions across stages.",
+    "how": "Take the build artifact -> deploy to each environment in order with config + approvals -> verify after each.",
+    "when": "Promoting a build through environments safely.",
+    "whenNot": "Trivial single-environment deploys.",
+    "advantages": [
+      "Build once, deploy many",
+      "Approval gates per stage",
+      "Auditable promotions"
+    ],
+    "disadvantages": [
+      "More pipeline config",
+      "Env parity needed",
+      "Gate approvals add latency"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-19": {
+    "pitch": "IaC provisions infrastructure with versioned, repeatable code.",
+    "definition": "Infrastructure as Code is managing and provisioning infrastructure (servers, networks, databases) through machine-readable definition files instead of manual setup. The code is versioned, reviewed and repeatable, so you can recreate identical environments reliably and track changes. Tools include Terraform, ARM/Bicep, CloudFormation and Pulumi.",
+    "how": "Declare desired infrastructure in code -> a tool applies it to the cloud, reconciling to that state idempotently.",
+    "when": "Reproducible, versioned environments.",
+    "whenNot": "One-off manual setups you'll never repeat.",
+    "advantages": [
+      "Repeatable, versioned infra",
+      "Reviewable changes",
+      "Disaster-recovery friendly"
+    ],
+    "disadvantages": [
+      "Learning curve",
+      "State management",
+      "Drift if changed manually"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "hcl",
+      "snippet": "resource \"azurerm_resource_group\" \"rg\" { name = \"app-rg\"; location = \"eastus\" }"
+    }
+  },
+  "devops-cicd-20": {
+    "pitch": "Terraform is a cloud-agnostic IaC tool using declarative HCL.",
+    "definition": "Terraform is an open-source Infrastructure-as-Code tool that provisions and manages infrastructure across many providers (Azure, AWS, GCP) using declarative HCL configuration. You describe the desired state; Terraform plans the changes and applies them, tracking real resources in a state file. Its cloud-agnostic, declarative model makes it a popular IaC standard.",
+    "how": "Write HCL -> terraform plan shows changes -> apply provisions them -> state file tracks managed resources.",
+    "when": "Multi-cloud or provider-agnostic infrastructure.",
+    "whenNot": "When a cloud-native tool (Bicep/CFN) is mandated.",
+    "advantages": [
+      "Cloud-agnostic",
+      "Declarative + plan preview",
+      "Large provider ecosystem"
+    ],
+    "disadvantages": [
+      "State file management",
+      "Drift handling",
+      "HCL learning curve"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "terraform plan\nterraform apply"
+    }
+  },
+  "devops-cicd-21": {
+    "pitch": "ARM templates and Bicep are Azure's native IaC languages.",
+    "definition": "ARM Templates are JSON files that declaratively define Azure resources for repeatable deployments - powerful but verbose. Bicep is a newer, cleaner domain-specific language that compiles to ARM, offering simpler syntax, modules and better tooling for the same capability. Both are Azure-native IaC; Bicep is the recommended modern choice over raw ARM JSON.",
+    "how": "Declare Azure resources in ARM JSON or Bicep -> deploy via Azure CLI/pipeline -> Azure provisions them.",
+    "when": "Azure-only infrastructure provisioning.",
+    "whenNot": "Multi-cloud needs (use Terraform).",
+    "advantages": [
+      "Azure-native",
+      "Bicep: cleaner than ARM",
+      "Repeatable deploys"
+    ],
+    "disadvantages": [
+      "Azure-only",
+      "ARM JSON verbose",
+      "Bicep newer ecosystem"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-22": {
+    "pitch": "Docker packages apps into portable containers for consistent runs.",
+    "definition": "Docker is a platform for packaging an application and its dependencies into a lightweight, isolated container that runs consistently across environments. In DevOps it standardizes the build artifact - the same image moves from CI through to production - eliminating environment drift and enabling fast, dense deployment on any host or orchestrator.",
+    "how": "Build an image from a Dockerfile in CI -> push to a registry -> run the same image in every environment.",
+    "when": "Consistent packaging across the pipeline.",
+    "whenNot": "Apps that can't be containerized cleanly.",
+    "advantages": [
+      "Consistent artifact",
+      "Portable across envs",
+      "Fast, dense deploys"
+    ],
+    "disadvantages": [
+      "Shares host kernel",
+      "State needs volumes",
+      "Image management"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-23": {
+    "pitch": "An image is the immutable template; a container is its running instance.",
+    "definition": "A Docker Image is an immutable, layered template containing an app and its dependencies, built from a Dockerfile and stored in a registry. A Container is a running, isolated instance created from an image, with its own writable layer. One image can spawn many containers - image is the blueprint, container is the live process.",
+    "how": "Image = read-only layers on disk; container = a running process with a writable layer over those layers.",
+    "when": "Understanding build artifact vs runtime.",
+    "whenNot": "Confusing the static image with a running container.",
+    "advantages": [
+      "Image: portable artifact",
+      "Container: live instance",
+      "One image, many containers"
+    ],
+    "disadvantages": [
+      "Easy to conflate",
+      "Rebuild image for changes",
+      "Containers are ephemeral"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-24": {
+    "pitch": "Docker Compose runs multi-container apps from one YAML file.",
+    "definition": "Docker Compose defines and runs multi-container applications via a single YAML file declaring services, networks and volumes, started together with one command. In DevOps it's used for local development and integration testing of multi-service stacks (app + DB + cache), giving a reproducible environment without full orchestration.",
+    "how": "Declare services in compose.yaml -> 'compose up' builds and starts the whole stack on a shared network.",
+    "when": "Local dev and integration testing of multi-service apps.",
+    "whenNot": "Production orchestration at scale (use Kubernetes).",
+    "advantages": [
+      "Whole stack in one file",
+      "Great for local/CI testing",
+      "Reproducible environments"
+    ],
+    "disadvantages": [
+      "Single-host focus",
+      "Not for large-scale prod",
+      "Limited orchestration"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-25": {
+    "pitch": "Kubernetes orchestrates containers - scaling, healing and networking them.",
+    "definition": "Kubernetes is a container orchestrator that automates deploying, scaling, self-healing and networking containers across a cluster. It solves running many containers in production: scheduling, auto-scaling, restarting failures, service discovery, load balancing, and zero-downtime rolling updates - all driven by declarative desired state that it continuously reconciles.",
+    "how": "Declare desired state -> the control plane schedules pods, scales, heals and load-balances to match it.",
+    "when": "Operating many containers reliably at scale.",
+    "whenNot": "A single container (orchestration is overkill).",
+    "advantages": [
+      "Auto-scaling + self-healing",
+      "Rolling updates",
+      "Service discovery/LB"
+    ],
+    "disadvantages": [
+      "Steep learning curve",
+      "Operational overhead",
+      "Cluster cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-26": {
+    "pitch": "Pods run containers; Deployments/ReplicaSets manage them; Services expose them.",
+    "definition": "These are core Kubernetes objects. A Pod is the smallest unit - one or more containers sharing network/storage. A ReplicaSet keeps a set number of identical pods running. A Deployment manages ReplicaSets to provide declarative updates, scaling and rollback for stateless apps. A Service gives pods a stable endpoint and load-balances traffic to them.",
+    "how": "Deployment -> manages a ReplicaSet -> maintains Pods; a Service load-balances a stable endpoint to those Pods.",
+    "when": "Running and exposing apps on Kubernetes.",
+    "whenNot": "Non-container workloads.",
+    "advantages": [
+      "Pod: smallest unit",
+      "Deployment: updates + scaling",
+      "Service: stable endpoint"
+    ],
+    "disadvantages": [
+      "Several objects to learn",
+      "YAML overhead",
+      "Networking nuances"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-27": {
+    "pitch": "Helm is the package manager for Kubernetes (charts).",
+    "definition": "Helm is a package manager for Kubernetes that bundles related manifests into reusable, parameterized 'charts'. Instead of applying many raw YAML files, you install/upgrade a chart with values per environment, get templating and versioned releases, and can roll back. It simplifies deploying complex apps and sharing standardized deployments.",
+    "how": "Package manifests as a templated chart -> helm install/upgrade with values -> versioned, rollback-able releases.",
+    "when": "Deploying complex/multi-service apps to K8s.",
+    "whenNot": "A single trivial manifest.",
+    "advantages": [
+      "Templated, reusable manifests",
+      "Per-env values",
+      "Versioned releases + rollback"
+    ],
+    "disadvantages": [
+      "Templating learning curve",
+      "Chart maintenance",
+      "Debugging rendered output"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "helm upgrade --install myapp ./chart -f values.prod.yaml"
+    }
+  },
+  "devops-cicd-28": {
+    "pitch": "Blue-green keeps two environments and switches traffic instantly.",
+    "definition": "Blue-Green Deployment runs two identical production environments - Blue (current) and Green (new version). You deploy and test the new version on Green, then switch all traffic from Blue to Green atomically (via load balancer/router). It gives instant cutover and instant rollback (switch back to Blue), at the cost of running two full environments.",
+    "how": "Deploy new version to Green -> test -> switch the router from Blue to Green -> keep Blue for instant rollback.",
+    "when": "Releases needing instant cutover and rollback.",
+    "whenNot": "Cost-sensitive setups (double infra).",
+    "advantages": [
+      "Instant switch + rollback",
+      "Test before cutover",
+      "No partial-state users"
+    ],
+    "disadvantages": [
+      "Double infrastructure cost",
+      "DB schema must support both",
+      "Stateful sync care"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Blue-green",
+      "mermaid": "flowchart LR\n  R[Router] --> Blue[Blue: v1]\n  R -.switch.-> Green[Green: v2]"
+    }
+  },
+  "devops-cicd-29": {
+    "pitch": "Canary releases shift a small slice of traffic to the new version first.",
+    "definition": "Canary Deployment rolls out a new version to a small subset of users/servers first, monitors metrics and errors, and gradually increases traffic if healthy - or rolls back if not. It limits the blast radius of a bad release by testing on real traffic incrementally. Often implemented via load-balancer weights, Kubernetes, or a service mesh.",
+    "how": "Route a small % of traffic to the new version -> watch metrics -> ramp up gradually or roll back.",
+    "when": "Risk-managed rollouts to real users.",
+    "whenNot": "When you can't split or monitor traffic.",
+    "advantages": [
+      "Limits blast radius",
+      "Tested on real traffic",
+      "Gradual, reversible"
+    ],
+    "disadvantages": [
+      "Needs traffic splitting + metrics",
+      "Slower full rollout",
+      "More tooling"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-30": {
+    "pitch": "Rolling deployment replaces instances gradually with zero downtime.",
+    "definition": "Rolling Deployment updates an application by gradually replacing old instances with new ones, a few at a time, while the rest keep serving traffic - the default Kubernetes strategy. Health checks ensure new instances are ready before old ones are removed, giving zero downtime without needing duplicate environments.",
+    "how": "Spin up new instances -> health-check -> remove old ones in batches until all are updated.",
+    "when": "Standard zero-downtime updates of stateless apps.",
+    "whenNot": "Changes requiring atomic cutover (use blue-green).",
+    "advantages": [
+      "No downtime",
+      "No duplicate environment",
+      "Built into Kubernetes"
+    ],
+    "disadvantages": [
+      "Both versions run briefly",
+      "Needs backward compatibility",
+      "Slower than a switch"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-31": {
+    "pitch": "Zero-downtime deployment updates apps without interrupting users.",
+    "definition": "Zero-Downtime Deployment means releasing a new version without any service interruption to users. It's achieved with strategies like rolling, blue-green or canary deployments combined with health/readiness checks (only route to ready instances), backward-compatible changes, and careful database migrations. The key is that healthy capacity always serves traffic during the switch.",
+    "how": "Use rolling/blue-green/canary + readiness checks + backward-compatible changes so healthy instances always serve.",
+    "when": "User-facing services needing continuous availability.",
+    "whenNot": "Internal tools that tolerate brief downtime.",
+    "advantages": [
+      "No user disruption",
+      "Multiple strategies",
+      "Safe, reversible"
+    ],
+    "disadvantages": [
+      "Backward compatibility required",
+      "DB migration discipline",
+      "More release machinery"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-32": {
+    "pitch": "Manage env config externally with per-environment settings + variables.",
+    "definition": "You manage configuration across environments by externalizing it from the code/image and supplying environment-specific values - via appsettings.{Env}.json, environment variables, config services (Azure App Configuration), or Kubernetes ConfigMaps. The same artifact runs everywhere; only the injected config differs. Secrets go in a secure store, not plain config.",
+    "how": "Build one artifact -> inject env-specific config (files/vars/config service) per environment at deploy/run time.",
+    "when": "Apps deployed to multiple environments.",
+    "whenNot": "Hard-coding env values in the build.",
+    "advantages": [
+      "One artifact, many envs",
+      "12-factor config",
+      "Centralized config options"
+    ],
+    "disadvantages": [
+      "Config sprawl risk",
+      "Parity across envs",
+      "Secrets handled separately"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-33": {
+    "pitch": "Keep secrets out of code; inject them from a secure store at deploy time.",
+    "definition": "You manage secrets in CI/CD by never committing them to source and instead storing them in a secure secret store - GitHub/Azure pipeline secrets, Azure Key Vault, HashiCorp Vault, or Kubernetes Secrets - injected as masked environment variables or mounts at build/deploy time. Access is least-privilege and audited, and secrets are rotated regularly.",
+    "how": "Store secrets in a vault/pipeline secret -> inject masked at runtime -> least-privilege access + rotation.",
+    "when": "Any pipeline touching credentials/keys.",
+    "whenNot": "Putting secrets in code, logs, or images.",
+    "advantages": [
+      "Secrets never in code",
+      "Masked + audited",
+      "Vault integration + rotation"
+    ],
+    "disadvantages": [
+      "Store setup/maintenance",
+      "Accidental log leakage risk",
+      "Rotation effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-34": {
+    "pitch": "Run automated tests as gated pipeline stages.",
+    "definition": "You implement automated testing in CI/CD by running test suites as pipeline stages that gate progression: unit tests early (fast), then integration tests, then optionally end-to-end/smoke tests after deployment to staging. Failures stop the pipeline, and coverage/quality thresholds enforce standards - so only tested code reaches production.",
+    "how": "Pipeline runs unit -> integration -> e2e tests as gates; any failure halts the release.",
+    "when": "Ensuring quality on every change.",
+    "whenNot": "Relying on manual testing only.",
+    "advantages": [
+      "Quality gates per change",
+      "Fast feedback",
+      "Prevents regressions"
+    ],
+    "disadvantages": [
+      "Flaky tests block flow",
+      "Slow suites bottleneck",
+      "Maintenance of tests"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-35": {
+    "pitch": "Monitor post-deploy with metrics, logs, traces, health checks and alerts.",
+    "definition": "After deployment you monitor applications with metrics (latency, error rate, throughput, resource use), centralized logs, distributed traces, health/uptime checks, and alerts that page on anomalies. Dashboards (Grafana/App Insights) visualize health, and SLOs define acceptable thresholds. This catches problems early and verifies that a release is healthy.",
+    "how": "Collect metrics/logs/traces + health checks -> dashboards + alerts on thresholds -> detect and respond to issues.",
+    "when": "Operating any production service.",
+    "whenNot": "Fire-and-forget deployments.",
+    "advantages": [
+      "Early problem detection",
+      "Verifies release health",
+      "Data-driven response"
+    ],
+    "disadvantages": [
+      "Observability stack to run",
+      "Alert tuning (noise)",
+      "Cost of telemetry"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-36": {
+    "pitch": "Logs, metrics and traces are the three pillars of observability.",
+    "definition": "These are observability's three pillars. Logs are timestamped event records (what happened). Metrics are numeric measurements over time (how much/how fast - latency, error rate, CPU). Traces follow a single request across services to show where time/errors occur. Together they let you detect, diagnose and understand system behaviour.",
+    "how": "Logs record events, metrics quantify behaviour over time, traces stitch one request's path across services.",
+    "when": "Diagnosing and understanding production systems.",
+    "whenNot": "Trivial apps with no operational concerns.",
+    "advantages": [
+      "Logs: detailed events",
+      "Metrics: trends + alerts",
+      "Traces: cross-service latency"
+    ],
+    "disadvantages": [
+      "Volume/cost to manage",
+      "Correlating the three",
+      "Instrumentation effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-37": {
+    "pitch": "Roll back by redeploying the last good version (or switching traffic).",
+    "definition": "If a deployment fails you roll back to the previous known-good version. Mechanisms include redeploying the prior artifact/image, kubectl rollout undo, switching traffic back in blue-green, or reverting a Helm release. Automated rollback can trigger on failed health checks/metrics. Keeping deployments versioned and backward-compatible makes rollback safe and fast.",
+    "how": "Detect failure (health/metrics) -> redeploy the previous version or switch traffic back -> verify recovery.",
+    "when": "Recovering quickly from a bad release.",
+    "whenNot": "Forward-only changes that can't be reverted (DB).",
+    "advantages": [
+      "Fast recovery",
+      "Versioned artifacts enable it",
+      "Can be automated"
+    ],
+    "disadvantages": [
+      "DB changes complicate rollback",
+      "Needs backward compatibility",
+      "State drift risk"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "kubectl rollout undo deployment/web   # revert to previous version"
+    }
+  },
+  "devops-cicd-38": {
+    "pitch": "Speed up builds/deploys with caching, parallelism and smaller artifacts.",
+    "definition": "You optimize build and deployment times by caching dependencies and Docker layers, running tests/jobs in parallel, building only what changed (incremental/monorepo affected builds), using smaller images (multi-stage), and scaling runners. Faster pipelines mean quicker feedback and more frequent, lower-risk releases.",
+    "how": "Cache deps/layers + parallelize jobs + build only changes + slim images -> shorter pipeline runtime.",
+    "when": "Slow pipelines bottlenecking delivery.",
+    "whenNot": "Already-fast pipelines (don't over-optimize).",
+    "advantages": [
+      "Faster feedback",
+      "Caching/parallelism wins",
+      "Smaller, quicker deploys"
+    ],
+    "disadvantages": [
+      "Cache invalidation issues",
+      "Parallelism complexity",
+      "Runner cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-39": {
+    "pitch": "Deploy microservices via per-service pipelines to a shared cluster.",
+    "definition": "You deploy microservices with CI/CD by giving each service its own pipeline that builds and tests it, produces a Docker image, and deploys it independently (often to Kubernetes via Helm), so services release on their own cadence. Shared concerns - registries, environments, secrets, monitoring - are standardized, and contract tests guard inter-service compatibility.",
+    "how": "Each service: build + test + image + deploy independently to the cluster; standardized infra + contract tests.",
+    "when": "Independently deployable microservices.",
+    "whenNot": "A monolith (one pipeline suffices).",
+    "advantages": [
+      "Independent service releases",
+      "Per-service pipelines",
+      "Standardized infra"
+    ],
+    "disadvantages": [
+      "Many pipelines to manage",
+      "Cross-service compatibility",
+      "Coordination overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-40": {
+    "pitch": "Commit triggers build/test, image push, then gated deploy to prod.",
+    "definition": "The complete CI/CD flow: a developer commits to a feature branch and opens a PR; CI builds, runs tests and scans; on merge to main, the pipeline builds a Docker image and pushes it to a registry; CD deploys to Dev/QA automatically and to Production after approval, using rolling/canary strategy with health checks; monitoring verifies the release, with automated rollback on failure.",
+    "how": "Commit/PR -> CI build+test -> merge -> image to registry -> auto deploy to lower envs -> approved prod deploy -> monitor.",
+    "when": "Describing a real end-to-end pipeline.",
+    "whenNot": "Trivial manual deployments.",
+    "advantages": [
+      "Fully automated path",
+      "Gated, auditable releases",
+      "Monitored + rollback-able"
+    ],
+    "disadvantages": [
+      "Significant setup",
+      "Pipeline maintenance",
+      "Requires test/monitoring maturity"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "CI/CD flow",
+      "mermaid": "flowchart LR\n  Commit --> CI[Build+Test]\n  CI --> Img[Image -> Registry]\n  Img --> Dev[Deploy Dev/QA]\n  Dev --> Prod[Approve -> Prod]\n  Prod --> Mon[Monitor]"
+    }
+  },
+  "devops-cicd-41": {
+    "pitch": "Design per-service pipelines building images and deploying via Helm to K8s.",
+    "definition": "Designing a CI/CD pipeline for ASP.NET Core microservices: each service repo (or path) has a pipeline that restores, builds, tests and scans, builds a multi-stage Docker image, and pushes it to a registry; CD deploys via Helm to Kubernetes across Dev/QA/Prod with environment values, secrets from Key Vault, rolling/canary strategy, health probes, and monitoring. Contract tests protect inter-service APIs.",
+    "how": "Per service: build+test -> Docker image -> registry -> Helm deploy to K8s per env with config/secrets + probes + monitoring.",
+    "when": "Productionizing .NET microservices delivery.",
+    "whenNot": "A single small service (simpler pipeline).",
+    "advantages": [
+      "Independent service delivery",
+      "Helm-templated K8s deploys",
+      "Gated, monitored releases"
+    ],
+    "disadvantages": [
+      "Complex multi-pipeline setup",
+      "Helm/K8s expertise",
+      "Cross-service testing"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Microservices CI/CD",
+      "mermaid": "flowchart LR\n  Repo --> CI[Build/Test/Scan]\n  CI --> Img[Image -> Registry]\n  Img --> Helm[Helm Deploy]\n  Helm --> K8s[Kubernetes]"
+    }
+  },
+  "devops-cicd-42": {
+    "pitch": "Promote one build through Dev/QA/UAT/Prod with per-env config + gates.",
+    "definition": "To deploy to multiple environments you build the artifact once and promote it through Dev -> QA -> UAT -> Production, applying environment-specific configuration and secrets at each stage, with automated deploys to lower environments and manual approval gates before UAT/Production. Each environment mirrors production as closely as possible, and the same artifact ensures consistency.",
+    "how": "Build once -> deploy to Dev (auto) -> QA -> UAT (approval) -> Prod (approval), injecting per-env config each time.",
+    "when": "Controlled promotion across environments.",
+    "whenNot": "Single-environment apps.",
+    "advantages": [
+      "Build once, deploy many",
+      "Approval gates per stage",
+      "Consistent artifact"
+    ],
+    "disadvantages": [
+      "Env parity effort",
+      "Config per environment",
+      "Approval latency"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-43": {
+    "pitch": "Automate rollback by triggering revert on failed health checks.",
+    "definition": "You implement automated rollback by having the pipeline (or orchestrator) watch post-deploy health checks and key metrics, and automatically revert to the previous version if they fail within a window. In Kubernetes this is kubectl rollout undo or a Helm rollback; progressive delivery tools (Argo Rollouts, Flagger) automate canary analysis and auto-rollback. Versioned, backward-compatible deploys make it safe.",
+    "how": "Deploy -> automated health/metric checks -> on failure, trigger rollout undo / Helm rollback to the last good version.",
+    "when": "Safe, fast recovery without manual intervention.",
+    "whenNot": "Irreversible forward-only changes.",
+    "advantages": [
+      "Hands-off recovery",
+      "Metric-driven rollback",
+      "Tooling (Argo/Flagger)"
+    ],
+    "disadvantages": [
+      "Needs reliable health signals",
+      "DB changes complicate it",
+      "Tuning thresholds"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-44": {
+    "pitch": "Deploy to K8s from Azure DevOps/GitHub Actions: build image, then apply.",
+    "definition": "To deploy a Dockerized app to Kubernetes via Azure DevOps or GitHub Actions: the pipeline builds and pushes the Docker image to a registry (ACR/Docker Hub), authenticates to the cluster (service connection/kubeconfig/OIDC), then applies manifests or runs helm upgrade to deploy, followed by a rollout status check. Secrets and env values come from the pipeline's secure store.",
+    "how": "Pipeline: docker build+push -> authenticate to cluster -> kubectl apply / helm upgrade -> verify rollout.",
+    "when": "Automated container deploys to K8s.",
+    "whenNot": "Manual kubectl from a laptop.",
+    "advantages": [
+      "Automated container deploys",
+      "Works with ADO or Actions",
+      "Verifiable rollout"
+    ],
+    "disadvantages": [
+      "Cluster auth setup",
+      "Registry + manifests",
+      "Pipeline/secrets config"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "- uses: azure/k8s-deploy@v5\n  with: { manifests: k8s/, images: myreg/app:${{ github.sha }} }"
+    }
+  },
+  "devops-cicd-45": {
+    "pitch": "Version artifacts with semantic versions and immutable image tags.",
+    "definition": "You implement versioning in CI/CD by tagging builds with meaningful versions - semantic versioning (MAJOR.MINOR.PATCH) plus a unique build/commit identifier - and using immutable image tags (commit SHA) so every deploy is traceable to exact code. Git tags mark releases, and the version flows through artifacts, images and deployment records for full traceability and easy rollback.",
+    "how": "Compute a version (semver + commit SHA) -> tag the artifact/image immutably -> deploy and record that version.",
+    "when": "Traceable, rollback-able releases.",
+    "whenNot": "Throwaway builds with no release history.",
+    "advantages": [
+      "Traceable deployments",
+      "Immutable image tags",
+      "Easy rollback to a version"
+    ],
+    "disadvantages": [
+      "Versioning scheme discipline",
+      "Tag management",
+      "Tooling to automate"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-46": {
+    "pitch": "Secure the pipeline with least privilege, secret stores and scanning.",
+    "definition": "You secure a production deployment pipeline with least-privilege credentials (scoped service principals/OIDC, no long-lived keys), secrets in a vault (never in code/logs), protected branches and required approvals, signed/scanned artifacts (SAST/dependency/image scanning), restricted production deploy permissions, and full audit logging. The pipeline itself is a high-value target, so it's hardened end to end.",
+    "how": "Least-privilege identity + vault secrets + protected branches/approvals + artifact scanning + audited prod access.",
+    "when": "Any pipeline that deploys to production.",
+    "whenNot": "Trusting an unsecured pipeline.",
+    "advantages": [
+      "Least-privilege access",
+      "Scanned, signed artifacts",
+      "Approvals + audit"
+    ],
+    "disadvantages": [
+      "Setup/maintenance effort",
+      "Friction from gates",
+      "Ongoing vulnerability mgmt"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-47": {
+    "pitch": "Deploy DB schema changes without downtime via backward-compatible steps.",
+    "definition": "You deploy a database schema change without downtime using the expand-contract (parallel change) pattern: first expand - add new columns/tables in a backward-compatible way and deploy code that works with both old and new schema; migrate/backfill data; then contract - remove the old schema once nothing uses it. Migrations are forward-only, additive first, and decoupled from breaking code changes.",
+    "how": "Expand (add new, keep old) -> deploy compatible code -> backfill -> contract (remove old) once unused.",
+    "when": "Schema changes on always-on databases.",
+    "whenNot": "Big destructive migrations during peak traffic.",
+    "advantages": [
+      "No downtime",
+      "Backward compatible steps",
+      "Safe, reversible stages"
+    ],
+    "disadvantages": [
+      "Multi-step, slower",
+      "Temporary dual schema",
+      "Backfill care"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-48": {
+    "pitch": "Monitor a deployment with health checks, metrics and automated alerts.",
+    "definition": "You monitor a production deployment and detect failures with readiness/health checks during rollout, real-time metrics (error rate, latency, saturation) compared against a baseline, log/trace inspection, smoke tests post-deploy, and alerts that fire (and can trigger rollback) on anomalies. Progressive delivery tools analyze canary metrics automatically. The aim is to catch a bad release in minutes, not from user complaints.",
+    "how": "During/after deploy: health checks + metric baselines + smoke tests -> alert (and auto-rollback) on regression.",
+    "when": "Verifying every production release.",
+    "whenNot": "Deploying blind with no telemetry.",
+    "advantages": [
+      "Fast failure detection",
+      "Metric-baseline comparison",
+      "Can trigger auto-rollback"
+    ],
+    "disadvantages": [
+      "Good baselines needed",
+      "Alert tuning",
+      "Telemetry cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-49": {
+    "pitch": "For multi-repo microservices, give each repo its own pipeline + shared standards.",
+    "definition": "For a microservices architecture with multiple repositories, each service repo has its own independent CI/CD pipeline (build, test, image, deploy), releasing on its own cadence. You standardize with shared/reusable pipeline templates, a common registry and deployment approach (Helm/GitOps), centralized secrets and monitoring, and contract tests to keep service APIs compatible. GitOps (Argo CD) can reconcile desired state across services.",
+    "how": "Each repo: independent pipeline -> image -> deploy; shared templates + registry + GitOps + contract tests unify it.",
+    "when": "Polyrepo microservices delivery.",
+    "whenNot": "A monorepo or single service.",
+    "advantages": [
+      "Independent per-repo delivery",
+      "Reusable pipeline templates",
+      "GitOps reconciliation"
+    ],
+    "disadvantages": [
+      "Many pipelines/repos",
+      "Cross-service compatibility",
+      "Standardization effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "devops-cicd-50": {
+    "pitch": "End-to-end DevOps: Git -> build/test -> Docker -> K8s via CI/CD, monitored.",
+    "definition": "A complete DevOps architecture: code lives in Git with PR review and branch protection; CI builds and tests on every change and produces a Docker image pushed to a registry; CD (Azure DevOps/GitHub Actions, often GitOps) deploys via Helm to Kubernetes across environments with rolling/canary strategy, config/secrets from a vault, and approval gates for production; Prometheus/Grafana and centralized logging/tracing provide monitoring, with automated rollback on failure. Everything is automated, versioned and observable.",
+    "how": "Git -> CI build/test -> Docker image -> registry -> CD/Helm to K8s per env -> monitoring + logging + rollback.",
+    "when": "A real production DevOps setup.",
+    "whenNot": "Small apps where this is over-engineering.",
+    "advantages": [
+      "Automated, versioned delivery",
+      "Scalable K8s deploys",
+      "Observable + rollback-able"
+    ],
+    "disadvantages": [
+      "High complexity",
+      "Many tools to operate",
+      "Strong DevOps maturity needed"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "DevOps architecture",
+      "mermaid": "flowchart LR\n  Git --> CI[Build/Test]\n  CI --> Img[Docker -> Registry]\n  Img --> CD[CD/Helm]\n  CD --> K8s[Kubernetes]\n  K8s --> Mon[Monitoring/Logging]"
+    },
+    "realWorld": "On a microservices platform, standardizing Git+Actions+Helm+K8s with Prometheus monitoring cut release lead time from days to under an hour with automated rollback on bad deploys."
+  }
+}
