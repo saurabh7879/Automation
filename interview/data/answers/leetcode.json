@@ -1,1 +1,692 @@
-{}
+{
+  "leetcode-1": {
+    "pitch": "Two Sum: use a hash map to find the complement in one pass.",
+    "definition": "Given an array and a target, return indices of two numbers that sum to the target. The optimal solution stores each seen value's index in a hash map and, for each number, checks if target - number was already seen. This is O(n) time and O(n) space, beating the O(n^2) brute-force double loop.",
+    "how": "For each x, check if (target - x) is in the map; if yes return both indices, else store x.",
+    "when": "Pattern: hash map for complement/lookup.",
+    "whenNot": "Brute force: nested loops are O(n^2).",
+    "advantages": [
+      "O(n) single pass",
+      "Hash map lookup",
+      "Handles unsorted input"
+    ],
+    "disadvantages": [
+      "O(n) extra space",
+      "Assumes one valid pair",
+      "Dup handling care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var seen = new Dictionary<int,int>();\nfor (int i=0;i<nums.Length;i++){\n  if (seen.TryGetValue(target-nums[i], out var j)) return new[]{j,i};\n  seen[nums[i]] = i;\n}"
+    }
+  },
+  "leetcode-2": {
+    "pitch": "Reverse a linked list by flipping pointers (iterative or recursive).",
+    "definition": "Reverse a singly linked list. Iteratively, walk the list with prev/cur/next pointers, flipping each node's next to prev - O(n) time, O(1) space. Recursively, reverse the rest then fix the current link - O(n) time but O(n) stack space. Iterative is usually preferred for space.",
+    "how": "Iterative: flip cur.Next to prev, advance. Recursive: reverse rest, then set head.Next.Next = head.",
+    "when": "Pattern: pointer manipulation.",
+    "whenNot": "Recursion risks stack overflow on long lists.",
+    "advantages": [
+      "Iterative: O(1) space",
+      "Two clean approaches",
+      "Classic pointer drill"
+    ],
+    "disadvantages": [
+      "Recursive uses O(n) stack",
+      "Pointer bugs easy",
+      "Mutates the list"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "ListNode? prev=null, cur=head;\nwhile(cur!=null){ var nx=cur.Next; cur.Next=prev; prev=cur; cur=nx; }\nreturn prev;"
+    }
+  },
+  "leetcode-3": {
+    "pitch": "Longest substring w/o repeats: sliding window with a last-seen map.",
+    "definition": "Find the length of the longest substring with all unique characters. A sliding window tracks the current substring; a map of each char's last index lets you jump the window's left edge past a repeat. It is O(n) time, O(min(n, charset)) space - far better than checking all substrings.",
+    "how": "Expand right; on a repeat inside the window, move left past the previous index; track the max length.",
+    "when": "Pattern: sliding window.",
+    "whenNot": "Brute force over all substrings is O(n^2)+.",
+    "advantages": [
+      "O(n) single pass",
+      "Window avoids rescan",
+      "Map gives O(1) jumps"
+    ],
+    "disadvantages": [
+      "Map space overhead",
+      "Index off-by-one care",
+      "Charset assumptions"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int l=0,max=0; var last=new Dictionary<char,int>();\nfor(int r=0;r<s.Length;r++){\n  if(last.TryGetValue(s[r],out var p)&&p>=l) l=p+1;\n  last[s[r]]=r; max=Math.Max(max,r-l+1);\n}"
+    }
+  },
+  "leetcode-4": {
+    "pitch": "Valid parentheses: use a stack to match brackets.",
+    "definition": "Check whether a string of (), {} and [] is balanced and properly nested. Push opening brackets onto a stack; on a closing bracket, pop and verify it matches the expected opener. The string is valid if every closer matches and the stack is empty at the end. O(n) time, O(n) space.",
+    "how": "Push openers; for each closer, pop and check it matches; valid if the stack ends empty.",
+    "when": "Pattern: stack for matching/nesting.",
+    "whenNot": "Counting brackets alone misses ordering.",
+    "advantages": [
+      "O(n) time",
+      "Stack handles nesting",
+      "Simple match logic"
+    ],
+    "disadvantages": [
+      "O(n) stack space",
+      "Map of pairs needed",
+      "Empty-stack edge cases"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var st=new Stack<char>(); var m=new Dictionary<char,char>{[')']='(',[']']='[',['}']='{'};\nforeach(var c in s){\n  if(m.ContainsKey(c)){ if(st.Count==0||st.Pop()!=m[c]) return false; }\n  else st.Push(c);\n}\nreturn st.Count==0;"
+    }
+  },
+  "leetcode-5": {
+    "pitch": "Merge two sorted arrays with a two-pointer merge.",
+    "definition": "Combine two already-sorted arrays into one sorted array. Use two pointers, one per array, repeatedly taking the smaller front element into the result; append any remainder. It is O(n+m) time. Merging from the end is the in-place variant used when one array has spare capacity.",
+    "how": "Compare the front of each array, take the smaller, advance that pointer; append leftovers.",
+    "when": "Pattern: two-pointer merge (merge sort step).",
+    "whenNot": "Concatenate-then-sort is O((n+m) log(n+m)).",
+    "advantages": [
+      "O(n+m) linear",
+      "No full re-sort",
+      "In-place variant exists"
+    ],
+    "disadvantages": [
+      "O(n+m) space (if not in-place)",
+      "Pointer bookkeeping",
+      "End-merge for in-place"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int i=0,j=0; var r=new List<int>();\nwhile(i<a.Length&&j<b.Length) r.Add(a[i]<=b[j]?a[i++]:b[j++]);\nwhile(i<a.Length) r.Add(a[i++]); while(j<b.Length) r.Add(b[j++]);"
+    }
+  },
+  "leetcode-6": {
+    "pitch": "Max subarray sum: Kadane's algorithm in one pass.",
+    "definition": "Find the maximum sum of a contiguous subarray (Maximum Subarray). Kadane's algorithm scans once, keeping the best sum ending at the current index (either extend the previous sum or start fresh) and the global best. It is O(n) time, O(1) space - far better than checking all subarrays.",
+    "how": "current = max(x, current + x); best = max(best, current) for each element.",
+    "when": "Pattern: dynamic programming (running optimum).",
+    "whenNot": "Brute force over all subarrays is O(n^2).",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "Single pass",
+      "Handles negatives"
+    ],
+    "disadvantages": [
+      "All-negative edge case",
+      "Indices need extra tracking",
+      "Non-obvious at first"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int cur=nums[0], best=nums[0];\nfor(int i=1;i<nums.Length;i++){ cur=Math.Max(nums[i],cur+nums[i]); best=Math.Max(best,cur);}\nreturn best;"
+    }
+  },
+  "leetcode-7": {
+    "pitch": "First unique char: count frequencies, then find the first with count 1.",
+    "definition": "Find the first non-repeating character in a string. Make one pass to count each character's frequency, then a second pass to return the index of the first character whose count is 1. O(n) time, O(1) space (fixed alphabet).",
+    "how": "Count chars in a map -> scan the string again -> return the first index with frequency 1.",
+    "when": "Pattern: frequency count.",
+    "whenNot": "Nested search per char is O(n^2).",
+    "advantages": [
+      "O(n) two passes",
+      "Fixed-size count array",
+      "Simple and clear"
+    ],
+    "disadvantages": [
+      "Needs two passes",
+      "Unicode sizing",
+      "Order matters (first)"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var f=new int[256]; foreach(var c in s) f[c]++;\nfor(int i=0;i<s.Length;i++) if(f[s[i]]==1) return i;\nreturn -1;"
+    }
+  },
+  "leetcode-8": {
+    "pitch": "Rotate array by K using the reverse trick in place.",
+    "definition": "Rotate an array right by K positions. The O(1)-space trick is to reverse the whole array, then reverse the first K elements and the remaining n-K elements. (For left rotation, adjust which parts you reverse.) It runs in O(n) time without extra arrays; remember to take K modulo n.",
+    "how": "Normalize k%=n -> reverse all -> reverse first k -> reverse rest.",
+    "when": "Pattern: in-place reversal.",
+    "whenNot": "Shifting one step K times is O(n*k).",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "No extra array",
+      "Elegant three-reverse"
+    ],
+    "disadvantages": [
+      "Must handle k % n",
+      "Reversal indices care",
+      "Left vs right direction"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "k%=n; Reverse(0,n-1); Reverse(0,k-1); Reverse(k,n-1); // right rotate by k"
+    }
+  },
+  "leetcode-9": {
+    "pitch": "Find the duplicate with Floyd's cycle detection (values as pointers).",
+    "definition": "Given N+1 integers in [1, N], find the one duplicate without modifying the array or using extra space. Treat each value as a 'next' pointer (index -> value) which forms a cycle because of the duplicate, then apply Floyd's tortoise-and-hare to find the cycle entry, which is the duplicate. O(n) time, O(1) space.",
+    "how": "Phase 1: slow/fast meet in the cycle. Phase 2: reset one pointer to start; advance both by 1 until they meet = duplicate.",
+    "when": "Pattern: cycle detection on implicit graph.",
+    "whenNot": "Sorting or a hash set uses extra time/space.",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "No array mutation",
+      "Clever pointer reuse"
+    ],
+    "disadvantages": [
+      "Non-obvious mapping",
+      "Values must be in range",
+      "Two-phase logic"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int slow=nums[0], fast=nums[0];\ndo{ slow=nums[slow]; fast=nums[nums[fast]]; } while(slow!=fast);\nslow=nums[0]; while(slow!=fast){ slow=nums[slow]; fast=nums[fast]; } return slow;"
+    }
+  },
+  "leetcode-10": {
+    "pitch": "Missing number: subtract the array sum from the expected sum.",
+    "definition": "Find the missing number in an array containing 0..N (or 1..N) with one absent. Compute the expected sum n*(n+1)/2 and subtract the actual array sum; the difference is the missing number. O(n) time, O(1) space. XOR of indices and values is an overflow-safe alternative.",
+    "how": "missing = n*(n+1)/2 - sum(array); or XOR all indices and values.",
+    "when": "Pattern: math/XOR invariant.",
+    "whenNot": "Sorting or a set is more time/space.",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "Single pass",
+      "XOR avoids overflow"
+    ],
+    "disadvantages": [
+      "Sum can overflow",
+      "Assumes exactly one missing",
+      "Range must be known"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int n=nums.Length, sum=n*(n+1)/2;\nforeach(var x in nums) sum-=x;\nreturn sum;   // the missing number"
+    }
+  },
+  "leetcode-11": {
+    "pitch": "Merge intervals: sort by start, then merge overlaps.",
+    "definition": "Merge all overlapping intervals. Sort intervals by start; iterate, and if the current interval overlaps the last merged one (start <= last.end), extend the last end, otherwise append it as new. O(n log n) for the sort, O(n) merge.",
+    "how": "Sort by start -> if current.start <= last.end, merge (extend end); else push current.",
+    "when": "Pattern: sort + merge.",
+    "whenNot": "Comparing all pairs is O(n^2).",
+    "advantages": [
+      "O(n log n) overall",
+      "Single merge pass",
+      "Handles nested overlaps"
+    ],
+    "disadvantages": [
+      "Sort dominates cost",
+      "Edge: touching intervals",
+      "Needs sorted input"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Array.Sort(iv,(a,b)=>a[0]-b[0]); var r=new List<int[]>();\nforeach(var x in iv){\n  if(r.Count>0&&x[0]<=r[^1][1]) r[^1][1]=Math.Max(r[^1][1],x[1]);\n  else r.Add(x);\n}"
+    }
+  },
+  "leetcode-12": {
+    "pitch": "Kth largest: use a min-heap of size K (or quickselect).",
+    "definition": "Find the Kth largest element in an unsorted array. Maintain a min-heap of size K: push elements and pop the smallest when size exceeds K; the heap's root is the answer - O(n log k) time. Quickselect gives average O(n) by partitioning around a pivot like quicksort but recursing into only one side.",
+    "how": "Heap: keep the K largest; root is the Kth largest. Quickselect: partition until the pivot lands at index n-k.",
+    "when": "Pattern: heap / quickselect (top-K).",
+    "whenNot": "Full sort is O(n log n) - more than needed.",
+    "advantages": [
+      "Heap: O(n log k)",
+      "Quickselect: avg O(n)",
+      "No full sort"
+    ],
+    "disadvantages": [
+      "Quickselect worst O(n^2)",
+      "Heap space O(k)",
+      "Pivot choice matters"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var h=new PriorityQueue<int,int>();\nforeach(var x in nums){ h.Enqueue(x,x); if(h.Count>k) h.Dequeue(); }\nreturn h.Peek();"
+    }
+  },
+  "leetcode-13": {
+    "pitch": "Top K frequent: count, then heap or bucket sort by frequency.",
+    "definition": "Return the K most frequent elements. Count frequencies in a map, then either keep a min-heap of size K by frequency (O(n log k)) or bucket-sort elements by frequency into buckets indexed 0..n and read the top K (O(n)). The bucket approach is optimal.",
+    "how": "Count frequencies -> heap of size K by freq, or place items in buckets[freq] and scan from the top.",
+    "when": "Pattern: frequency count + heap/bucket.",
+    "whenNot": "Sorting all by frequency is O(n log n).",
+    "advantages": [
+      "Bucket sort: O(n)",
+      "Heap: O(n log k)",
+      "Avoids full sort"
+    ],
+    "disadvantages": [
+      "Extra maps/buckets space",
+      "Tie handling",
+      "Two structures involved"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var freq=nums.GroupBy(x=>x).ToDictionary(g=>g.Key,g=>g.Count());\nreturn freq.OrderByDescending(p=>p.Value).Take(k).Select(p=>p.Key).ToArray();"
+    }
+  },
+  "leetcode-14": {
+    "pitch": "Group anagrams by a sorted-key (or char-count) signature.",
+    "definition": "Group strings that are anagrams of each other. Use a hash map keyed by a canonical signature of each word - the sorted characters, or a 26-letter count string - so anagrams share a key and collect into the same list. O(n * k log k) with sorted keys, or O(n * k) with counts (k = word length).",
+    "how": "For each word, compute a signature (sorted chars or count) -> append the word to map[signature].",
+    "when": "Pattern: hashing by canonical key.",
+    "whenNot": "Comparing every pair for anagram is O(n^2 k).",
+    "advantages": [
+      "Single pass grouping",
+      "Count key gives O(nk)",
+      "Hash map collects groups"
+    ],
+    "disadvantages": [
+      "Key computation cost",
+      "Memory for keys/groups",
+      "Unicode considerations"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var map=new Dictionary<string,List<string>>();\nforeach(var w in words){ var k=new string(w.OrderBy(c=>c).ToArray());\n  if(!map.ContainsKey(k)) map[k]=new(); map[k].Add(w); }"
+    }
+  },
+  "leetcode-15": {
+    "pitch": "Best time to buy/sell: track the min price and max profit in one pass.",
+    "definition": "Find the max profit from one buy and later sell. Scan once, tracking the minimum price seen so far and the best profit (current price minus min so far). O(n) time, O(1) space - no need to compare all pairs of days.",
+    "how": "min = min(min, price); profit = max(profit, price - min) at each step.",
+    "when": "Pattern: running minimum / one-pass DP.",
+    "whenNot": "Checking every buy/sell pair is O(n^2).",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "Single pass",
+      "Greedy-clean"
+    ],
+    "disadvantages": [
+      "Single transaction only",
+      "Negative-profit edge",
+      "Variants change logic"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int min=int.MaxValue, profit=0;\nforeach(var p in prices){ min=Math.Min(min,p); profit=Math.Max(profit,p-min); }\nreturn profit;"
+    }
+  },
+  "leetcode-16": {
+    "pitch": "LRU cache: hash map + doubly linked list for O(1) get/put.",
+    "definition": "Implement a Least-Recently-Used cache with O(1) Get and Put. Combine a hash map (key -> node) for O(1) lookup with a doubly linked list ordering nodes by recency: on access move the node to the front; on insert beyond capacity, evict the tail (least recent). .NET's LinkedList + Dictionary, or an ordered structure, implements this.",
+    "how": "Map finds the node O(1); on get/put move it to front; over capacity, remove the LRU tail node.",
+    "when": "Pattern: hash map + doubly linked list.",
+    "whenNot": "Scanning for the LRU item each time is O(n).",
+    "advantages": [
+      "O(1) get and put",
+      "Recency via linked list",
+      "Clean eviction"
+    ],
+    "disadvantages": [
+      "Two structures to sync",
+      "Pointer bookkeeping",
+      "Capacity edge cases"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "// Dictionary<key, LinkedListNode> + LinkedList<(key,val)>\n// get/put: move node to front; evict list.Last on overflow"
+    }
+  },
+  "leetcode-17": {
+    "pitch": "Number of islands: flood-fill connected land with DFS/BFS.",
+    "definition": "Count islands (groups of connected '1's) in a 2D grid. Scan every cell; when you hit unvisited land, increment the count and flood-fill (DFS or BFS) all connected land, marking it visited so it isn't recounted. O(rows*cols) time.",
+    "how": "For each land cell not visited: count++ and DFS/BFS to sink the whole connected island.",
+    "when": "Pattern: grid DFS/BFS (connected components).",
+    "whenNot": "Re-scanning without marking visited recounts cells.",
+    "advantages": [
+      "O(R*C) time",
+      "Simple flood fill",
+      "DFS or BFS both work"
+    ],
+    "disadvantages": [
+      "Recursion depth on big grids",
+      "Must mark visited",
+      "Diagonal rules vary"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "void Sink(int r,int c){ if(r<0||c<0||r>=R||c>=C||g[r][c]!='1')return;\n  g[r][c]='0'; Sink(r+1,c);Sink(r-1,c);Sink(r,c+1);Sink(r,c-1);}"
+    }
+  },
+  "leetcode-18": {
+    "pitch": "Search rotated sorted array with a modified binary search.",
+    "definition": "Search a target in a rotated sorted array in O(log n). Binary search, but at each step decide which half is sorted (compare nums[mid] to nums[low]); if the target lies within that sorted half's range, search it, otherwise search the other half. Half the array is always sorted, so binary search still applies.",
+    "how": "Find mid; the sorted half is where nums[low]<=nums[mid]; recurse into the half that can contain the target.",
+    "when": "Pattern: modified binary search.",
+    "whenNot": "Linear scan is O(n).",
+    "advantages": [
+      "O(log n) time",
+      "No need to un-rotate",
+      "Constant space"
+    ],
+    "disadvantages": [
+      "Sorted-half logic tricky",
+      "Duplicate values edge",
+      "Boundary care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "while(lo<=hi){ int m=(lo+hi)/2; if(nums[m]==t)return m;\n  if(nums[lo]<=nums[m]){ if(nums[lo]<=t&&t<nums[m]) hi=m-1; else lo=m+1; }\n  else { if(nums[m]<t&&t<=nums[hi]) lo=m+1; else hi=m-1; } }"
+    }
+  },
+  "leetcode-19": {
+    "pitch": "Lowest common ancestor: recurse and return where the two nodes split.",
+    "definition": "Find the LCA of two nodes in a binary tree. Recurse: if the current node is null or one of the targets, return it; recurse left and right; if both sides return non-null, the current node is the LCA (the split point); otherwise return whichever side found a target. O(n) time.",
+    "how": "Recurse left/right; the node where the two searches return from different sides is the LCA.",
+    "when": "Pattern: tree recursion / post-order.",
+    "whenNot": "Storing paths then comparing uses extra space.",
+    "advantages": [
+      "O(n) single traversal",
+      "O(1) extra (besides stack)",
+      "Works for any binary tree"
+    ],
+    "disadvantages": [
+      "Recursion stack depth",
+      "Assumes both nodes exist",
+      "BST has a simpler variant"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Node? Lca(Node? n,Node a,Node b){ if(n==null||n==a||n==b)return n;\n  var l=Lca(n.L,a,b); var r=Lca(n.R,a,b);\n  return l!=null&&r!=null ? n : (l ?? r); }"
+    }
+  },
+  "leetcode-20": {
+    "pitch": "Tree traversals: recursion for DFS orders, a queue for level order.",
+    "definition": "Perform preorder, inorder, postorder and level-order traversals of a binary tree. The first three are depth-first via recursion, differing only in when you visit the node relative to its subtrees. Level order is breadth-first using a queue, processing nodes level by level. Each is O(n).",
+    "how": "DFS recursion places Visit before/between/after subtree calls; level order dequeues nodes and enqueues children.",
+    "when": "Pattern: DFS recursion + BFS queue.",
+    "whenNot": "Manual stacks work but are more error-prone.",
+    "advantages": [
+      "O(n) each traversal",
+      "Inorder sorts a BST",
+      "Level order = BFS"
+    ],
+    "disadvantages": [
+      "Recursion stack depth",
+      "Order choice matters",
+      "Queue needed for BFS"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var q=new Queue<Node>(); q.Enqueue(root);\nwhile(q.Count>0){ var n=q.Dequeue(); Visit(n);\n  if(n.L!=null)q.Enqueue(n.L); if(n.R!=null)q.Enqueue(n.R); } // level order"
+    }
+  },
+  "leetcode-21": {
+    "pitch": "Min stack: push the running minimum alongside each value.",
+    "definition": "Implement a stack with O(1) Push, Pop, Top and GetMin. Keep a second stack (or store pairs) that records the minimum so far at each level; when you push, also push min(value, currentMin); GetMin reads the auxiliary stack's top. Every operation stays O(1).",
+    "how": "On push, store (value, min-so-far); GetMin returns the top min; pop both in sync.",
+    "when": "Pattern: auxiliary stack / augmented state.",
+    "whenNot": "Scanning for the min on each GetMin is O(n).",
+    "advantages": [
+      "O(1) all operations",
+      "Min always available",
+      "Simple augmentation"
+    ],
+    "disadvantages": [
+      "Extra space per element",
+      "Two stacks to sync",
+      "Duplicates of min care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "void Push(int x){ _s.Push(x); _min.Push(_min.Count==0?x:Math.Min(x,_min.Peek())); }\nint GetMin()=>_min.Peek();"
+    }
+  },
+  "leetcode-22": {
+    "pitch": "Longest consecutive sequence: use a hash set and start only at sequence heads.",
+    "definition": "Find the length of the longest run of consecutive integers in an unsorted array. Put all numbers in a hash set; for each number that is a sequence start (no num-1 in the set), count upward while num+1 exists. Each number is visited at most twice, giving O(n) time.",
+    "how": "Add all to a set -> for each n with no n-1, walk n+1,n+2... and track the longest streak.",
+    "when": "Pattern: hash set, start-of-sequence check.",
+    "whenNot": "Sorting is O(n log n) when O(n) is possible.",
+    "advantages": [
+      "O(n) time",
+      "No sorting needed",
+      "Set gives O(1) lookups"
+    ],
+    "disadvantages": [
+      "O(n) extra space",
+      "Start-check is key to O(n)",
+      "Duplicates in set"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var set=new HashSet<int>(nums); int best=0;\nforeach(var n in set){ if(set.Contains(n-1))continue;\n  int len=1; while(set.Contains(n+len)) len++; best=Math.Max(best,len); }"
+    }
+  },
+  "leetcode-23": {
+    "pitch": "3Sum: sort, then fix one number and two-pointer the rest.",
+    "definition": "Find all unique triplets that sum to zero. Sort the array; fix each number and use two pointers (left/right) on the remaining range to find pairs summing to its negation, skipping duplicates to keep triplets unique. O(n^2) time, far better than O(n^3) brute force.",
+    "how": "Sort -> for each i, move two pointers inward summing to -nums[i]; skip dups on all three.",
+    "when": "Pattern: sort + two pointers.",
+    "whenNot": "Triple nested loops are O(n^3).",
+    "advantages": [
+      "O(n^2) time",
+      "Two-pointer inner loop",
+      "Sorting enables dedup"
+    ],
+    "disadvantages": [
+      "O(n^2) is still heavy",
+      "Duplicate-skipping fiddly",
+      "Needs sorted input"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Array.Sort(nums);\nfor(int i=0;i<n-2;i++){ if(i>0&&nums[i]==nums[i-1])continue;\n  int l=i+1,r=n-1; while(l<r){ int s=nums[i]+nums[l]+nums[r];\n    if(s<0)l++; else if(s>0)r--; else { /* add, skip dups */ l++; r--; } } }"
+    }
+  },
+  "leetcode-24": {
+    "pitch": "Trapping rain water: two pointers tracking left/right max walls.",
+    "definition": "Compute water trapped between bars of varying heights. Use two pointers from both ends with leftMax/rightMax; water above a bar is bounded by the smaller of the tallest walls on each side. Move the pointer on the smaller side, adding (max - height). O(n) time, O(1) space - no per-bar scanning.",
+    "how": "Advance from the shorter side; water += sideMax - height; update that side's max.",
+    "when": "Pattern: two pointers + running max.",
+    "whenNot": "Computing max-left/max-right per bar is O(n) space or O(n^2) time.",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "Single pass",
+      "No extra arrays"
+    ],
+    "disadvantages": [
+      "Insight is non-obvious",
+      "Pointer logic care",
+      "Edge bars trap nothing"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int l=0,r=n-1,lm=0,rm=0,water=0;\nwhile(l<r){ if(h[l]<h[r]){ lm=Math.Max(lm,h[l]); water+=lm-h[l++]; }\n  else { rm=Math.Max(rm,h[r]); water+=rm-h[r--]; } }"
+    }
+  },
+  "leetcode-25": {
+    "pitch": "Serialize/deserialize a tree via pre-order with null markers.",
+    "definition": "Encode a binary tree to a string and rebuild it. Serialize with a pre-order DFS, writing each value and a marker (e.g. '#') for null children; deserialize by reading tokens in the same order, recursively building nodes and stopping at null markers. Both are O(n).",
+    "how": "Serialize: preorder write value or '#'. Deserialize: read tokens; '#' -> null, else node then build left/right.",
+    "when": "Pattern: DFS with null sentinels.",
+    "whenNot": "Storing only values without nulls loses structure.",
+    "advantages": [
+      "O(n) both ways",
+      "Reconstructs exact shape",
+      "Simple preorder scheme"
+    ],
+    "disadvantages": [
+      "Null markers add size",
+      "Token parsing care",
+      "Order must match"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "void Ser(Node? n,StringBuilder sb){ if(n==null){sb.Append(\"#,\");return;}\n  sb.Append(n.Val+\",\"); Ser(n.L,sb); Ser(n.R,sb); }"
+    }
+  },
+  "leetcode-26": {
+    "pitch": "Detect a linked-list cycle with slow/fast pointers.",
+    "definition": "Determine if a linked list has a cycle. Floyd's algorithm advances a slow pointer by one and a fast pointer by two; if they ever meet there is a cycle, and if fast reaches null there is none. O(n) time, O(1) space, no extra set.",
+    "how": "Move slow 1 and fast 2 steps; meeting means a cycle; fast hitting null means no cycle.",
+    "when": "Pattern: Floyd's two pointers.",
+    "whenNot": "A visited hash set works but uses O(n) space.",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "No extra storage",
+      "Standard technique"
+    ],
+    "disadvantages": [
+      "Finding entry needs more steps",
+      "Pointer null checks",
+      "Less intuitive than a set"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var s=head; var f=head;\nwhile(f?.Next!=null){ s=s.Next; f=f.Next.Next; if(s==f) return true; }\nreturn false;"
+    }
+  },
+  "leetcode-27": {
+    "pitch": "Reverse nodes in K-groups by reversing each chunk in place.",
+    "definition": "Reverse a linked list in groups of K nodes (leftover tail kept as-is). For each group, first check at least K nodes remain, reverse those K pointers, then connect the reversed group to the previously processed part and recurse/iterate on the rest. O(n) time, O(1) extra space (iterative).",
+    "how": "Count K ahead; if enough, reverse the K-block, link it to prior tail, continue from the next block.",
+    "when": "Pattern: linked-list reversal in segments.",
+    "whenNot": "When fewer than K remain, leave them unreversed.",
+    "advantages": [
+      "O(n) time",
+      "In-place pointer work",
+      "Handles partial tail"
+    ],
+    "disadvantages": [
+      "Pointer logic is intricate",
+      "Off-by-one on group size",
+      "Edge: list shorter than K"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "// check K nodes ahead -> reverse that block -> connect prevTail.Next to new head -> repeat"
+    }
+  },
+  "leetcode-28": {
+    "pitch": "Median of two sorted arrays via binary search on the partition.",
+    "definition": "Find the median of two sorted arrays in O(log(min(n,m))). Binary search a partition of the smaller array so that the combined left half has the right size and every left element <= every right element; the median comes from the boundary values. It is the classic hard binary-search problem.",
+    "how": "Binary search the cut in the smaller array so left.max <= right.min on both sides; median is at the boundary.",
+    "when": "Pattern: binary search on partition.",
+    "whenNot": "Merging both arrays is O(n+m).",
+    "advantages": [
+      "O(log(min(n,m)))",
+      "No full merge",
+      "Optimal complexity"
+    ],
+    "disadvantages": [
+      "Tricky boundary math",
+      "Many edge cases",
+      "Hard to get right"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "// binary search partition in the smaller array so:\n// maxLeftA <= minRightB && maxLeftB <= minRightA, then read the median"
+    }
+  },
+  "leetcode-29": {
+    "pitch": "Queue via two stacks: an in-stack and an out-stack.",
+    "definition": "Implement a FIFO queue using two LIFO stacks. Push onto an 'in' stack. To pop/peek, if the 'out' stack is empty, pour all elements from 'in' to 'out' (reversing order), then pop from 'out'. Each element is moved at most twice, giving amortized O(1) per operation.",
+    "how": "Enqueue -> push to in. Dequeue -> if out empty, move all in->out, then pop out.",
+    "when": "Pattern: two-stack amortization.",
+    "whenNot": "Reversing on every dequeue is O(n) each.",
+    "advantages": [
+      "Amortized O(1)",
+      "FIFO from LIFO",
+      "Simple two-stack trick"
+    ],
+    "disadvantages": [
+      "Single dequeue can be O(n)",
+      "Two stacks of space",
+      "Transfer logic"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "void Enq(int x)=>_in.Push(x);\nint Deq(){ if(_out.Count==0) while(_in.Count>0) _out.Push(_in.Pop()); return _out.Pop(); }"
+    }
+  },
+  "leetcode-30": {
+    "pitch": "Stack via two queues: make push (or pop) do the reordering.",
+    "definition": "Implement a LIFO stack using two FIFO queues. One approach makes push costly: enqueue the new element, then rotate all previous elements behind it so the newest is always at the front for O(1) pop. The other makes pop costly by moving elements between queues. Either way one operation is O(n), the other O(1).",
+    "how": "Push-costly: enqueue x, then move all earlier items behind it so front = newest.",
+    "when": "Pattern: two-queue simulation.",
+    "whenNot": "Production code should use a real stack.",
+    "advantages": [
+      "Shows ADT simulation",
+      "O(1) pop (push-costly)",
+      "Reinforces FIFO/LIFO"
+    ],
+    "disadvantages": [
+      "One op is O(n)",
+      "Two queues of space",
+      "Interview-only exercise"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "void Push(int x){ _q.Enqueue(x); for(int i=0;i<_q.Count-1;i++) _q.Enqueue(_q.Dequeue()); }\nint Pop()=>_q.Dequeue();"
+    }
+  }
+}

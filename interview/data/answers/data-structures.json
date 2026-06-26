@@ -1,1 +1,440 @@
-{}
+{
+  "data-structures-1": {
+    "pitch": "Data structures organize data so algorithms can use it efficiently.",
+    "definition": "A data structure is a way of organizing and storing data so operations like search, insert and delete are efficient. They split into Linear structures, where elements form a sequence (arrays, linked lists, stacks, queues), and Non-Linear structures, where elements connect in hierarchies or networks (trees, graphs, heaps). The right structure makes algorithms fast; the wrong one makes them slow.",
+    "how": "Choose a structure whose layout matches your access pattern (sequential, keyed, hierarchical) for efficient operations.",
+    "when": "Any program where data access performance matters.",
+    "whenNot": "Trivial fixed data where a variable suffices.",
+    "advantages": [
+      "Efficient operations",
+      "Linear vs non-linear options",
+      "Match structure to access"
+    ],
+    "disadvantages": [
+      "Wrong choice = slow code",
+      "Trade-offs per operation",
+      "Some are complex to implement"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "data-structures-2": {
+    "pitch": "Arrays give O(1) index access; linked lists give O(1) insert/remove.",
+    "definition": "An array stores elements in contiguous memory with a fixed size, giving O(1) access by index but O(n) inserts/deletes (shifting). A linked list stores elements in nodes linked by pointers, giving O(1) insert/remove at a known node but O(n) access by index and worse cache locality. Arrays favor indexing; linked lists favor frequent insertion/removal.",
+    "how": "Array: contiguous, index = address math. Linked list: nodes with next pointers traversed one by one.",
+    "when": "Array for indexing; linked list for frequent insert/remove.",
+    "whenNot": "Linked list when you need fast random access.",
+    "advantages": [
+      "Array: O(1) index, cache-friendly",
+      "List: O(1) splice",
+      "List grows without resize"
+    ],
+    "disadvantages": [
+      "Array: costly insert/resize",
+      "List: O(n) access",
+      "List: poor cache locality"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Array vs Linked List",
+      "mermaid": "flowchart LR\n  A[Array: contiguous cells]\n  L[Node->Node->Node (pointers)]"
+    }
+  },
+  "data-structures-3": {
+    "pitch": "Linked lists come in singly, doubly and circular forms.",
+    "definition": "Linked lists vary by how nodes link. A singly linked list has each node point to the next only - simple, one-directional. A doubly linked list has next and previous pointers, allowing backward traversal and O(1) removal of a known node. A circular linked list links the last node back to the first (singly or doubly), useful for round-robin iteration.",
+    "how": "Each variant changes the pointers: next only (singly), next+prev (doubly), or wrapping to head (circular).",
+    "when": "Doubly for two-way traversal; circular for round-robin.",
+    "whenNot": "Singly when you need backward traversal.",
+    "advantages": [
+      "Singly: minimal memory",
+      "Doubly: two-way + O(1) delete",
+      "Circular: continuous loop"
+    ],
+    "disadvantages": [
+      "Singly: no backward move",
+      "Doubly: extra pointer memory",
+      "Circular: infinite-loop risk"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "data-structures-4": {
+    "pitch": "Reverse a linked list by re-pointing each node to its predecessor.",
+    "definition": "To reverse a singly linked list in place (O(1) extra space) you walk the list once, keeping three pointers - previous, current and next - and flip each node's next pointer to point backward to previous. At the end, previous is the new head. It is O(n) time and O(1) space.",
+    "how": "Iterate: save next -> point current.next to prev -> advance prev and current; prev becomes the new head.",
+    "when": "Reversing order without extra memory.",
+    "whenNot": "When you must preserve the original list.",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "In-place",
+      "Simple three-pointer trick"
+    ],
+    "disadvantages": [
+      "Destroys original order",
+      "Pointer bugs easy",
+      "Recursive version uses stack"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "ListNode? prev = null, cur = head;\nwhile (cur != null) {\n  var next = cur.Next; cur.Next = prev; // flip\n  prev = cur; cur = next;\n}\nreturn prev;   // new head"
+    }
+  },
+  "data-structures-5": {
+    "pitch": "Detect a cycle with Floyd's slow/fast two-pointer technique.",
+    "definition": "To detect a loop in a linked list you use Floyd's cycle detection ('tortoise and hare'): move one pointer one step and another two steps per iteration. If they ever meet, there is a cycle; if the fast pointer reaches null, there is none. It runs in O(n) time with O(1) space - no extra set needed.",
+    "how": "Advance slow by 1 and fast by 2; if they meet there's a cycle; if fast hits null, there isn't.",
+    "when": "Cycle detection with constant space.",
+    "whenNot": "When you also need the cycle start without extra steps.",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "No extra storage",
+      "Classic, reliable"
+    ],
+    "disadvantages": [
+      "Less obvious than a hash set",
+      "Finding cycle start needs more",
+      "Pointer care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var slow = head; var fast = head;\nwhile (fast?.Next != null) {\n  slow = slow.Next; fast = fast.Next.Next;\n  if (slow == fast) return true;  // cycle\n}\nreturn false;"
+    }
+  },
+  "data-structures-6": {
+    "pitch": "Find the middle node with the slow/fast pointer trick.",
+    "definition": "To find the middle of a linked list in one pass you use two pointers: slow moves one step and fast moves two steps. When fast reaches the end, slow is at the middle. This is O(n) time and O(1) space and avoids first counting the length then re-traversing.",
+    "how": "Move slow by 1 and fast by 2; when fast hits the end, slow sits at the middle node.",
+    "when": "Getting the middle in a single pass.",
+    "whenNot": "When you already know the length cheaply.",
+    "advantages": [
+      "Single pass, O(1) space",
+      "No length precount",
+      "Elegant two-pointer"
+    ],
+    "disadvantages": [
+      "Even-length midpoint choice",
+      "Pointer null checks",
+      "Less obvious to readers"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var slow = head; var fast = head;\nwhile (fast?.Next != null) { slow = slow.Next; fast = fast.Next.Next; }\nreturn slow;   // middle"
+    }
+  },
+  "data-structures-7": {
+    "pitch": "A stack is LIFO: last in, first out.",
+    "definition": "A Stack is a linear structure following Last-In-First-Out order. Its operations are Push (add to the top), Pop (remove from the top), and Peek/Top (read the top without removing). All are O(1). Stacks model anything with nested or reversible order - call stacks, undo, expression evaluation, backtracking.",
+    "how": "Push adds to the top, Pop removes the top, Peek reads it - all at one end in O(1).",
+    "when": "Undo, recursion, parsing, backtracking.",
+    "whenNot": "FIFO needs (use a queue).",
+    "advantages": [
+      "O(1) push/pop/peek",
+      "Natural for nesting/undo",
+      "Simple to implement"
+    ],
+    "disadvantages": [
+      "Only top is accessible",
+      "No random access",
+      "Overflow if unbounded"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var s = new Stack<int>();\ns.Push(1); s.Push(2);\nint top = s.Pop();   // 2 (LIFO)"
+    }
+  },
+  "data-structures-8": {
+    "pitch": "A queue is FIFO: first in, first out.",
+    "definition": "A Queue is a linear structure following First-In-First-Out order. Its operations are Enqueue (add to the back), Dequeue (remove from the front), and Peek (read the front). All are O(1). Queues model ordered processing - task scheduling, buffering, BFS - where the earliest item is served first.",
+    "how": "Enqueue adds at the back, Dequeue removes from the front, Peek reads the front - O(1) each.",
+    "when": "Ordered processing, scheduling, BFS, buffering.",
+    "whenNot": "LIFO needs (use a stack).",
+    "advantages": [
+      "O(1) enqueue/dequeue",
+      "Fair, ordered processing",
+      "Basis for BFS/scheduling"
+    ],
+    "disadvantages": [
+      "Only ends accessible",
+      "No random access",
+      "Resizing if array-based"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var q = new Queue<int>();\nq.Enqueue(1); q.Enqueue(2);\nint front = q.Dequeue();   // 1 (FIFO)"
+    }
+  },
+  "data-structures-9": {
+    "pitch": "Stack is LIFO; queue is FIFO.",
+    "definition": "Both are linear structures, but a Stack serves the most recently added item first (LIFO) using push/pop at one end, while a Queue serves the earliest added item first (FIFO) using enqueue at the back and dequeue at the front. Choose a stack for reversal/nesting/backtracking and a queue for fair, in-order processing.",
+    "how": "Stack adds/removes at one end (LIFO); queue adds at one end and removes at the other (FIFO).",
+    "when": "Stack for undo/recursion; queue for scheduling/BFS.",
+    "whenNot": "Using one where the other's ordering is required.",
+    "advantages": [
+      "Stack: LIFO, nesting",
+      "Queue: FIFO, fairness",
+      "Both O(1) at ends"
+    ],
+    "disadvantages": [
+      "Neither allows random access",
+      "Wrong choice = wrong order",
+      "Ends-only access"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "data-structures-10": {
+    "pitch": "You can build a stack from queues and a queue from stacks.",
+    "definition": "These are classic interview exercises. To implement a Stack using queues, you keep the newest element at the front by rotating the queue on push (or making pop costly). To implement a Queue using stacks, you use two stacks - one for enqueue, one for dequeue - moving elements between them only when needed (amortized O(1)). They show how one ADT can simulate another.",
+    "how": "Stack-from-queues: rotate on push so newest is front. Queue-from-stacks: in-stack + out-stack, transfer on demand.",
+    "when": "Demonstrating ADT understanding in interviews.",
+    "whenNot": "Production code (use the native types directly).",
+    "advantages": [
+      "Shows ADT mastery",
+      "Amortized O(1) (queue via stacks)",
+      "Reinforces LIFO/FIFO"
+    ],
+    "disadvantages": [
+      "Slower than native types",
+      "Push or pop becomes O(n)",
+      "Only an exercise"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "// Queue via two stacks: push to _in; pop -> if _out empty, move all _in to _out, then pop _out"
+    }
+  },
+  "data-structures-11": {
+    "pitch": "A binary tree is a hierarchy where each node has up to two children.",
+    "definition": "A Binary Tree is a non-linear structure where each node has at most two children (left and right). Types include full (every node has 0 or 2 children), complete (filled level by level), perfect (all leaves at one level), balanced (height ~log n), and degenerate (looks like a list). Trees model hierarchy and enable efficient search when balanced.",
+    "how": "Nodes link to left/right children forming levels; traversals visit nodes in defined orders.",
+    "when": "Hierarchical data and ordered search (with BST).",
+    "whenNot": "Flat data with no hierarchy.",
+    "advantages": [
+      "Models hierarchy",
+      "Fast ops when balanced",
+      "Basis for BST/heap"
+    ],
+    "disadvantages": [
+      "Degenerates to O(n)",
+      "Pointer-based memory",
+      "Balancing adds complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Binary tree",
+      "mermaid": "flowchart TD\n  A[Root] --> B[Left]\n  A --> C[Right]\n  B --> D[L]\n  B --> E[R]"
+    }
+  },
+  "data-structures-12": {
+    "pitch": "A BST is an ordered binary tree enabling O(log n) search.",
+    "definition": "A Binary Tree only restricts each node to two children. A Binary Search Tree adds an ordering rule: every left descendant is less than the node and every right descendant is greater. That order lets you search, insert and delete in O(log n) time when balanced (O(n) if skewed). So a BST is a binary tree with a sortable invariant.",
+    "how": "BST keeps left < node < right, so each comparison halves the search space (when balanced).",
+    "when": "Ordered data needing fast lookups/range queries.",
+    "whenNot": "Unordered data or when a hash table fits better.",
+    "advantages": [
+      "Ordered traversal sorts data",
+      "O(log n) when balanced",
+      "Range queries"
+    ],
+    "disadvantages": [
+      "Skews to O(n)",
+      "Needs balancing (AVL/red-black)",
+      "Pointer overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "BST",
+      "mermaid": "flowchart TD\n  E[8] --> L[3]\n  E --> R[10]\n  L --> a[1]\n  L --> b[6]"
+    }
+  },
+  "data-structures-13": {
+    "pitch": "Tree traversals visit nodes in pre/in/post/level order.",
+    "definition": "Tree traversals define the order of visiting nodes. Preorder visits node-left-right (good for copying a tree). Inorder visits left-node-right (yields sorted order in a BST). Postorder visits left-right-node (good for deleting/freeing). Level Order visits breadth-first, level by level, using a queue. The first three are depth-first (recursion/stack); level order is breadth-first.",
+    "how": "DFS recursion orders the node relative to its subtrees (pre/in/post); level order uses a queue for BFS.",
+    "when": "Processing tree nodes in a needed order.",
+    "whenNot": "Flat structures with no hierarchy.",
+    "advantages": [
+      "Inorder = sorted (BST)",
+      "Pre/postorder for copy/delete",
+      "Level order = BFS"
+    ],
+    "disadvantages": [
+      "Recursion uses the call stack",
+      "Order choice matters",
+      "Level order needs a queue"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "void Inorder(Node? n){ if(n==null)return; Inorder(n.L); Visit(n); Inorder(n.R);} // sorted for BST"
+    }
+  },
+  "data-structures-14": {
+    "pitch": "Tree height is the longest path from root to a leaf.",
+    "definition": "The height (maximum depth) of a binary tree is the number of edges (or nodes, by convention) on the longest path from the root down to a leaf. You compute it recursively: the height of a node is 1 plus the maximum of its children's heights, with an empty subtree contributing 0/-1. It is O(n) time visiting every node.",
+    "how": "Recursively return 1 + max(height(left), height(right)); empty subtree returns 0.",
+    "when": "Checking balance or worst-case depth.",
+    "whenNot": "When you only need node count, not depth.",
+    "advantages": [
+      "Simple recursion",
+      "O(n) time",
+      "Reveals balance"
+    ],
+    "disadvantages": [
+      "Recursion stack on deep trees",
+      "Edge vs node convention",
+      "Visits all nodes"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int Height(Node? n) => n == null ? 0 : 1 + Math.Max(Height(n.L), Height(n.R));"
+    }
+  },
+  "data-structures-15": {
+    "pitch": "BST operations use the ordering to search, insert and delete.",
+    "definition": "In a BST, Search compares the target to the node and goes left or right, halving the search each step. Insert does the same to find the empty spot, then attaches the new node. Delete handles three cases: a leaf (remove it), one child (replace with the child), or two children (replace with the inorder successor/predecessor, then delete that). All are O(log n) when balanced.",
+    "how": "Use left<node<right to navigate; insert at the found empty slot; delete by case (leaf/one child/two children).",
+    "when": "Maintaining a sorted, searchable set.",
+    "whenNot": "Heavily unbalanced inputs (use a balanced tree).",
+    "advantages": [
+      "O(log n) when balanced",
+      "Keeps data sorted",
+      "Predictable structure"
+    ],
+    "disadvantages": [
+      "Delete is fiddly",
+      "Skews without balancing",
+      "Pointer bugs"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Node? Search(Node? n, int k) =>\n  n == null || n.Val == k ? n : Search(k < n.Val ? n.L : n.R, k);"
+    }
+  },
+  "data-structures-16": {
+    "pitch": "A heap is a tree where the root is the min or max.",
+    "definition": "A Heap is a complete binary tree satisfying the heap property: in a Min Heap every parent is <= its children (smallest at the root); in a Max Heap every parent is >= its children (largest at the root). It is usually stored in an array, giving O(1) peek of the min/max and O(log n) insert/extract. Heaps back priority queues and heap sort.",
+    "how": "Stored as an array; insert/extract bubble elements up/down to restore the parent-child order property.",
+    "when": "Priority queues, top-K, scheduling, heap sort.",
+    "whenNot": "When you need full sorting or arbitrary lookup.",
+    "advantages": [
+      "O(1) min/max peek",
+      "O(log n) insert/extract",
+      "Array-backed, compact"
+    ],
+    "disadvantages": [
+      "No O(1) arbitrary search",
+      "Not fully sorted",
+      "Sift logic to get right"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Min heap",
+      "mermaid": "flowchart TD\n  A[1] --> B[3]\n  A --> C[5]\n  B --> D[4]\n  B --> E[8]"
+    }
+  },
+  "data-structures-17": {
+    "pitch": "A hash table maps keys to buckets for O(1) average lookup.",
+    "definition": "A Hash Table (Dictionary) stores key-value pairs and gives average O(1) insert, lookup and delete by hashing. A hash function converts a key into a bucket index; the value is stored in that bucket. Good hashing spreads keys evenly so most operations touch one bucket. .NET's Dictionary<TKey,TValue> is a hash table.",
+    "how": "Hash the key -> index into a bucket array -> store/find the entry there (handling collisions in the bucket).",
+    "when": "Fast keyed lookup and uniqueness checks.",
+    "whenNot": "When you need ordering or range queries.",
+    "advantages": [
+      "Average O(1) operations",
+      "Flexible key types",
+      "Ubiquitous and fast"
+    ],
+    "disadvantages": [
+      "Worst case O(n) on bad hashes",
+      "Unordered",
+      "Memory overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var map = new Dictionary<string,int>();\nmap[\"a\"] = 1;\nint v = map[\"a\"];   // O(1) average"
+    }
+  },
+  "data-structures-18": {
+    "pitch": "Collisions are two keys hashing to one bucket; resolve via chaining or probing.",
+    "definition": "A hash collision happens when two different keys hash to the same bucket. Resolution techniques include separate chaining (each bucket holds a list/tree of entries, compared by equality) and open addressing (probe for the next free slot - linear, quadratic, or double hashing). Good hash functions and resizing keep collisions and chains short so operations stay near O(1).",
+    "how": "On collision, chaining appends to the bucket's list; open addressing probes alternative slots until a free one.",
+    "when": "Understanding/tuning hash-table performance.",
+    "whenNot": "When collisions are negligible (rare).",
+    "advantages": [
+      "Chaining: simple, flexible",
+      "Open addressing: cache-friendly",
+      "Resizing keeps chains short"
+    ],
+    "disadvantages": [
+      "Many collisions -> O(n)",
+      "Chaining uses extra memory",
+      "Probing clusters/deletes tricky"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "data-structures-19": {
+    "pitch": "A graph models connections; BFS explores by levels, DFS goes deep.",
+    "definition": "A Graph is a set of vertices connected by edges (directed/undirected, weighted/unweighted), modeling networks like maps, social graphs and dependencies. BFS (Breadth-First Search) explores neighbors level by level using a queue - good for shortest paths in unweighted graphs. DFS (Depth-First Search) explores as far as possible along a branch using recursion/stack - good for connectivity, cycles and topological sort.",
+    "how": "BFS uses a queue to expand outward by levels; DFS uses a stack/recursion to dive down each branch, marking visited.",
+    "when": "Modeling and searching networked/connected data.",
+    "whenNot": "Purely sequential or hierarchical data.",
+    "advantages": [
+      "Models any network",
+      "BFS: shortest unweighted path",
+      "DFS: connectivity/cycles"
+    ],
+    "disadvantages": [
+      "Can be memory-heavy",
+      "Needs visited tracking",
+      "Cycles complicate traversal"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Graph traversal",
+      "mermaid": "flowchart LR\n  A --> B\n  A --> C\n  B --> D\n  C --> D"
+    }
+  },
+  "data-structures-20": {
+    "pitch": "Each structure has distinct Big-O costs per operation.",
+    "definition": "Big-O summarizes worst/average operation costs. Array: O(1) index access, O(n) insert/search. Linked List: O(1) insert at a node, O(n) access/search. Stack/Queue: O(1) push/pop/enqueue/dequeue. Hash Table: O(1) average insert/search/delete (O(n) worst). Balanced BST/Tree: O(log n) search/insert/delete. Graph: O(V+E) for BFS/DFS traversal. Knowing these guides structure choice.",
+    "how": "Each structure's layout fixes its costs; pick the one whose cheap operations match your hot path.",
+    "when": "Choosing the right structure for performance.",
+    "whenNot": "Premature optimization without profiling.",
+    "advantages": [
+      "Array/Hash: O(1) access/lookup",
+      "Balanced tree: O(log n)",
+      "Stack/Queue: O(1) ends"
+    ],
+    "disadvantages": [
+      "Worst cases differ (hash O(n))",
+      "Trade-offs per operation",
+      "Constants matter too"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Big-O cheat",
+      "mermaid": "flowchart LR\n  Arr[Array: index O(1)]\n  Hash[Hash: avg O(1)]\n  Tree[Balanced tree: O(log n)]\n  Graph[BFS/DFS: O(V+E)]"
+    }
+  }
+}

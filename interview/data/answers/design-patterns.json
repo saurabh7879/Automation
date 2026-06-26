@@ -1,1 +1,658 @@
-{}
+{
+  "design-patterns-1": {
+    "pitch": "A design pattern is a proven, reusable solution to a common design problem.",
+    "definition": "A design pattern is a named, reusable solution to a recurring software design problem - not code you copy, but a template for how to structure classes and objects. Patterns capture the experience of expert designers, give teams a shared vocabulary, and lead to flexible, maintainable code. They were popularized by the Gang of Four.",
+    "how": "Recognize a recurring problem -> apply the matching pattern's structure -> get a flexible, well-understood design.",
+    "when": "Recurring design problems with known good solutions.",
+    "whenNot": "Forcing a pattern where simple code suffices.",
+    "advantages": [
+      "Proven, reusable solutions",
+      "Shared team vocabulary",
+      "More maintainable design"
+    ],
+    "disadvantages": [
+      "Over-engineering risk",
+      "Adds indirection",
+      "Misapplied patterns hurt"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "design-patterns-2": {
+    "pitch": "Patterns fall into creational, structural and behavioral groups.",
+    "definition": "The Gang of Four grouped patterns into three categories. Creational patterns deal with object creation (Singleton, Factory, Builder, Prototype). Structural patterns compose classes/objects into larger structures (Adapter, Decorator, Facade, Composite). Behavioral patterns handle communication and responsibilities between objects (Strategy, Observer, Command, Template Method). Each category targets a different design concern.",
+    "how": "Pick the category by your concern: creating objects, composing structures, or coordinating behaviour.",
+    "when": "Classifying which pattern fits a problem.",
+    "whenNot": "Memorizing categories without understanding intent.",
+    "advantages": [
+      "Creational: object creation",
+      "Structural: composition",
+      "Behavioral: interaction"
+    ],
+    "disadvantages": [
+      "Boundaries can blur",
+      "Category alone isn't enough",
+      "Many patterns to learn"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "design-patterns-3": {
+    "pitch": "SOLID is five principles for maintainable, flexible object-oriented code.",
+    "definition": "SOLID is five OO design principles. Single Responsibility: a class has one reason to change. Open/Closed: open for extension, closed for modification. Liskov Substitution: subtypes must be substitutable for their base. Interface Segregation: prefer small, focused interfaces. Dependency Inversion: depend on abstractions, not concretions. Together they reduce coupling and ease change.",
+    "how": "Apply each principle to shape classes/interfaces so the design stays decoupled and open to change.",
+    "when": "Designing maintainable OO systems.",
+    "whenNot": "Dogmatically over-applying to trivial code.",
+    "advantages": [
+      "Lower coupling",
+      "Easier to extend/test",
+      "Clearer responsibilities"
+    ],
+    "disadvantages": [
+      "Can over-abstract",
+      "More classes/interfaces",
+      "Judgment required"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public interface IEmailSender { void Send(Message m); } // ISP + DIP: depend on abstraction"
+    }
+  },
+  "design-patterns-4": {
+    "pitch": "Repository abstracts data access behind a collection-like interface.",
+    "definition": "The Repository pattern mediates between the domain and data-access layers, exposing a collection-like interface (Add, Get, Find, Remove) so the rest of the app queries domain objects without knowing about the database or ORM. It centralizes query logic, decouples business code from persistence, and makes data access mockable for tests.",
+    "how": "Define an IRepository<T> -> implement it over EF/ADO -> business code uses the interface, not the data layer.",
+    "when": "Decoupling business logic from persistence.",
+    "whenNot": "Thin CRUD over EF (DbContext is already a repository).",
+    "advantages": [
+      "Decouples from data layer",
+      "Centralized query logic",
+      "Easy to mock/test"
+    ],
+    "disadvantages": [
+      "Can be redundant over EF",
+      "Leaky if exposing IQueryable",
+      "Extra abstraction layer"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public interface IRepository<T> { Task<T?> GetAsync(int id); Task AddAsync(T e); }"
+    }
+  },
+  "design-patterns-5": {
+    "pitch": "Unit of Work tracks changes and commits them as one transaction.",
+    "definition": "The Unit of Work pattern maintains a list of changes across one or more repositories during a business transaction and commits them together (or rolls back) in a single SaveChanges/transaction. It works with Repository: repositories register changes, and the Unit of Work coordinates the atomic save. EF's DbContext already implements Unit of Work.",
+    "how": "Repositories record adds/updates/deletes -> Unit of Work commits all in one transaction (SaveChanges).",
+    "when": "Coordinating multiple repositories atomically.",
+    "whenNot": "Single-repo operations (the context handles it).",
+    "advantages": [
+      "Atomic multi-repo commit",
+      "Coordinates repositories",
+      "Built into EF DbContext"
+    ],
+    "disadvantages": [
+      "Redundant over EF",
+      "Extra abstraction",
+      "Easy to over-engineer"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public interface IUnitOfWork { IRepository<Order> Orders { get; } Task<int> SaveAsync(); }"
+    }
+  },
+  "design-patterns-6": {
+    "pitch": "Singleton ensures one instance with a global access point.",
+    "definition": "The Singleton pattern restricts a class to a single instance and provides global access to it. A thread-safe implementation in C# uses a static readonly field or Lazy<T> so the instance is created once, safely, even under concurrency. It is used for shared, stateless resources like configuration or logging - though it can hide dependencies and hinder testing.",
+    "how": "Private constructor + a static instance (Lazy<T>) ensures one thread-safe instance shared everywhere.",
+    "when": "One shared instance (config, logger, cache).",
+    "whenNot": "Mutable global state that hurts testability.",
+    "advantages": [
+      "One controlled instance",
+      "Global access",
+      "Lazy, thread-safe init"
+    ],
+    "disadvantages": [
+      "Hidden global dependency",
+      "Hard to unit-test",
+      "Mutable state risks"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public sealed class Config {\n  private static readonly Lazy<Config> _i = new(() => new Config());\n  public static Config Instance => _i.Value;   // thread-safe singleton\n  private Config() { }\n}"
+    }
+  },
+  "design-patterns-7": {
+    "pitch": "Singleton offers one shared instance but risks hidden global state.",
+    "definition": "The Singleton pattern's advantages are guaranteed single instance, global access, and lazy controlled initialization - good for shared resources. Its disadvantages are that it introduces global mutable state, hides dependencies (classes secretly depend on it), makes unit testing hard (can't easily substitute it), and can cause concurrency issues if mutable. Often DI with a singleton lifetime is preferred over a hand-rolled Singleton.",
+    "how": "It centralizes one instance, but that global access also couples code to it and complicates testing.",
+    "when": "Truly shared, stable, stateless resources.",
+    "whenNot": "When you need testability or multiple configs.",
+    "advantages": [
+      "Single controlled instance",
+      "Convenient global access",
+      "Lazy initialization"
+    ],
+    "disadvantages": [
+      "Global state + hidden coupling",
+      "Hard to test/mock",
+      "Concurrency risks if mutable"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "design-patterns-8": {
+    "pitch": "Factory centralizes object creation behind a method.",
+    "definition": "The Factory pattern encapsulates object creation so client code asks a factory for an object instead of using 'new' directly. It centralizes and hides construction logic, lets you return different concrete types behind a common interface, and decouples clients from concrete classes. Use it when creation is complex or the concrete type depends on input/config.",
+    "how": "Client calls factory.Create(type) -> factory decides the concrete class -> returns it via a common interface.",
+    "when": "When creation logic is complex or type varies.",
+    "whenNot": "Simple objects a plain constructor handles.",
+    "advantages": [
+      "Centralized creation",
+      "Decouples from concretes",
+      "Easy to add new types"
+    ],
+    "disadvantages": [
+      "Extra factory classes",
+      "Indirection",
+      "Overkill for simple types"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public static IShape Create(string kind) => kind switch {\n  \"circle\" => new Circle(), \"square\" => new Square(), _ => throw new() };"
+    }
+  },
+  "design-patterns-9": {
+    "pitch": "Factory Method lets subclasses decide which class to instantiate.",
+    "definition": "The Factory Method pattern defines a method (often abstract) for creating an object but lets subclasses override it to choose the concrete type, so the creation step is deferred to subclasses. A Simple Factory is just one class with a method/switch that returns types - not a true GoF pattern. Factory Method uses inheritance/polymorphism; Simple Factory uses a single decision point.",
+    "how": "Base class declares a CreateProduct() method -> each subclass overrides it to return its own concrete product.",
+    "when": "When subclasses should control which type is created.",
+    "whenNot": "When a single static factory method suffices.",
+    "advantages": [
+      "Polymorphic creation",
+      "Open to new subclasses",
+      "Decouples base from concretes"
+    ],
+    "disadvantages": [
+      "Needs a subclass per product",
+      "More classes",
+      "Heavier than Simple Factory"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "abstract class Dialog { protected abstract IButton CreateButton(); } // factory method"
+    }
+  },
+  "design-patterns-10": {
+    "pitch": "Abstract Factory creates families of related objects.",
+    "definition": "The Abstract Factory pattern provides an interface for creating families of related objects without specifying their concrete classes - e.g. a UI factory that creates matching Button, Checkbox and Menu for a given theme. The plain Factory creates one product; Abstract Factory creates a whole family of products that are designed to work together.",
+    "how": "An abstract factory exposes Create methods for each product; concrete factories produce a consistent family.",
+    "when": "Creating consistent families of related objects.",
+    "whenNot": "When you only create one product type.",
+    "advantages": [
+      "Consistent product families",
+      "Swap whole families easily",
+      "Decoupled from concretes"
+    ],
+    "disadvantages": [
+      "Many factory/product classes",
+      "Hard to add a new product",
+      "Complex for simple needs"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "interface IUIFactory { IButton Button(); ICheckbox Checkbox(); } // family of products"
+    }
+  },
+  "design-patterns-11": {
+    "pitch": "Builder constructs complex objects step by step.",
+    "definition": "The Builder pattern separates the construction of a complex object from its representation, building it step by step through a fluent interface and producing the final object at the end. It is ideal when an object has many optional parameters or assembly steps, avoiding telescoping constructors and making creation readable.",
+    "how": "Call builder methods to set parts step by step -> Build() assembles and returns the final immutable object.",
+    "when": "Objects with many optional parts or steps.",
+    "whenNot": "Simple objects with few parameters.",
+    "advantages": [
+      "Readable step-by-step creation",
+      "Avoids telescoping ctors",
+      "Can enforce invariants"
+    ],
+    "disadvantages": [
+      "Extra builder class",
+      "Verbose for simple objects",
+      "More code to maintain"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var pizza = new PizzaBuilder().Size(\"L\").AddCheese().AddOlives().Build();"
+    }
+  },
+  "design-patterns-12": {
+    "pitch": "Prototype clones existing objects instead of building new ones.",
+    "definition": "The Prototype pattern creates new objects by copying (cloning) an existing instance rather than constructing from scratch - useful when creation is expensive or you want a configured copy. A shallow copy duplicates the object but shares references to nested objects; a deep copy duplicates the whole object graph so nothing is shared. Choose deep copy when nested state must be independent.",
+    "how": "Clone a prototype instance -> shallow copy shares nested references, deep copy duplicates the whole graph.",
+    "when": "Cloning configured or costly-to-create objects.",
+    "whenNot": "Simple objects cheap to construct normally.",
+    "advantages": [
+      "Cheap cloning",
+      "Copies configured state",
+      "Avoids costly construction"
+    ],
+    "disadvantages": [
+      "Shallow copy aliasing bugs",
+      "Deep copy complexity",
+      "Cloning logic to maintain"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var copy = (Order)original.Clone();   // shallow: shares nested refs\n// deep copy must clone nested objects too"
+    }
+  },
+  "design-patterns-13": {
+    "pitch": "DI supplies dependencies from outside instead of newing them up.",
+    "definition": "The Dependency Injection pattern provides a class's dependencies from an external source (a container/constructor) instead of the class creating them with 'new'. It implements the Dependency Inversion principle: classes depend on abstractions injected at runtime. This gives loose coupling, swappable implementations, and easy testing with mocks - the backbone of modern .NET apps.",
+    "how": "Register abstraction->implementation -> the container injects dependencies via the constructor at runtime.",
+    "when": "Decoupling and testing any non-trivial class.",
+    "whenNot": "Tiny scripts where wiring adds no value.",
+    "advantages": [
+      "Loose coupling",
+      "Swappable, testable",
+      "Centralized wiring"
+    ],
+    "disadvantages": [
+      "Container indirection",
+      "Over-injection bloats ctors",
+      "Lifetime bugs if misused"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public OrderService(IRepository repo, ILogger log) { ... } // injected, not newed"
+    }
+  },
+  "design-patterns-14": {
+    "pitch": "Strategy swaps interchangeable algorithms behind an interface.",
+    "definition": "The Strategy pattern defines a family of interchangeable algorithms behind a common interface and lets the client choose one at runtime, so behaviour can vary without changing the client. Classic example: a checkout that accepts different payment or shipping strategies. It favors composition over inheritance and follows the Open/Closed principle.",
+    "how": "Define IStrategy with one method -> implement each algorithm -> inject/select the strategy at runtime.",
+    "when": "Multiple interchangeable algorithms/behaviours.",
+    "whenNot": "A single fixed algorithm that never varies.",
+    "advantages": [
+      "Swap algorithms at runtime",
+      "Open/Closed friendly",
+      "Avoids big conditionals"
+    ],
+    "disadvantages": [
+      "More classes",
+      "Client must know strategies",
+      "Overkill for one behaviour"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "interface IDiscount { decimal Apply(decimal x); }\nclass Checkout { public Checkout(IDiscount d) {...} } // strategy injected"
+    }
+  },
+  "design-patterns-15": {
+    "pitch": "Template Method defines an algorithm skeleton, deferring steps to subclasses.",
+    "definition": "The Template Method pattern defines the skeleton of an algorithm in a base method, fixing the overall structure while letting subclasses override specific steps without changing the sequence. It is used when several variants share the same overall process but differ in some steps - e.g. a data importer that parses, validates and saves, with the parse step varying per format.",
+    "how": "Base class implements the algorithm calling abstract step methods -> subclasses override only the varying steps.",
+    "when": "Shared process with a few varying steps.",
+    "whenNot": "When the whole algorithm varies (use Strategy).",
+    "advantages": [
+      "Reuses common structure",
+      "Subclasses vary steps only",
+      "Enforces the sequence"
+    ],
+    "disadvantages": [
+      "Inheritance-based (rigid)",
+      "Subclass per variant",
+      "Less flexible than Strategy"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "abstract class Importer {\n  public void Run() { Parse(); Validate(); Save(); } // template\n  protected abstract void Parse();\n}"
+    }
+  },
+  "design-patterns-16": {
+    "pitch": "Null Object replaces null with a do-nothing object.",
+    "definition": "The Null Object pattern provides an object with neutral (do-nothing) behaviour to represent the absence of a real object, instead of returning null. Clients can call it without null checks, simplifying code and avoiding NullReferenceExceptions. For example, a NullLogger that ignores all log calls.",
+    "how": "Implement the interface with a no-op object -> return it instead of null -> clients call it safely.",
+    "when": "Avoiding null checks for optional collaborators.",
+    "whenNot": "When absence must be explicitly handled differently.",
+    "advantages": [
+      "No null checks",
+      "Avoids NREs",
+      "Cleaner client code"
+    ],
+    "disadvantages": [
+      "Can hide real bugs",
+      "Extra class",
+      "Wrong if absence matters"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "class NullLogger : ILogger { public void Log(string m) { } } // does nothing"
+    }
+  },
+  "design-patterns-17": {
+    "pitch": "Adapter makes incompatible interfaces work together.",
+    "definition": "The Adapter pattern wraps an existing class with an incompatible interface in an adapter that exposes the interface the client expects, letting otherwise-incompatible classes work together. It is common when integrating third-party or legacy code whose API doesn't match yours - the adapter translates calls between the two.",
+    "how": "Adapter implements the target interface and internally delegates to the adaptee, translating the calls.",
+    "when": "Integrating legacy/third-party APIs.",
+    "whenNot": "When you can change the original interface directly.",
+    "advantages": [
+      "Reuses incompatible code",
+      "Decouples client from adaptee",
+      "Isolates third-party APIs"
+    ],
+    "disadvantages": [
+      "Extra wrapper class",
+      "Translation overhead",
+      "Can pile up adapters"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "class PayPalAdapter : IPayment { public PayPalAdapter(PayPalSdk sdk){...}\n  public void Pay(decimal a) => _sdk.SendPayment(a); }"
+    }
+  },
+  "design-patterns-18": {
+    "pitch": "Decorator adds behaviour to objects dynamically by wrapping them.",
+    "definition": "The Decorator pattern attaches additional responsibilities to an object dynamically by wrapping it in a decorator that implements the same interface and adds behaviour before/after delegating. Unlike inheritance (which adds behaviour at compile time to a class), decorators compose behaviour at runtime and can be stacked - e.g. wrapping a stream with buffering then compression.",
+    "how": "Decorator implements the same interface, holds the wrapped object, and adds behaviour around its calls.",
+    "when": "Adding optional, stackable behaviours at runtime.",
+    "whenNot": "When one fixed extension suffices (use inheritance).",
+    "advantages": [
+      "Runtime, composable behaviour",
+      "Stackable wrappers",
+      "Open/Closed friendly"
+    ],
+    "disadvantages": [
+      "Many small classes",
+      "Deep nesting hard to debug",
+      "Order can matter"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "IStream s = new CompressStream(new BufferStream(file)); // stacked decorators"
+    }
+  },
+  "design-patterns-19": {
+    "pitch": "Facade gives a simple interface over a complex subsystem.",
+    "definition": "The Facade pattern provides a single, simplified interface to a complex subsystem of classes, hiding its internals so clients use one easy entry point. It is common in libraries and service layers - e.g. an OrderFacade that coordinates inventory, payment and shipping behind one PlaceOrder method - reducing coupling between clients and subsystem details.",
+    "how": "The facade exposes high-level methods that orchestrate the underlying subsystem classes for the client.",
+    "when": "Simplifying access to a complex subsystem.",
+    "whenNot": "When clients legitimately need fine-grained access.",
+    "advantages": [
+      "Simple unified entry",
+      "Decouples clients from internals",
+      "Reduces complexity"
+    ],
+    "disadvantages": [
+      "Can become a god object",
+      "Hides useful flexibility",
+      "Another layer"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "class OrderFacade { public void Place(Order o){ _inv.Reserve(o); _pay.Charge(o); _ship.Send(o);} }"
+    }
+  },
+  "design-patterns-20": {
+    "pitch": "Observer notifies many subscribers when a subject changes (pub/sub).",
+    "definition": "The Observer pattern defines a one-to-many dependency where a subject maintains a list of observers and notifies them automatically when its state changes. This is the Publisher-Subscriber model: publishers raise events, subscribers react, with loose coupling between them. C# events/delegates and IObservable are built-in implementations.",
+    "how": "Observers subscribe to the subject -> on state change the subject notifies all -> each observer reacts.",
+    "when": "Reacting to state changes / event notifications.",
+    "whenNot": "Simple direct calls with one consumer.",
+    "advantages": [
+      "Loose coupling",
+      "One-to-many notifications",
+      "Easy to add subscribers"
+    ],
+    "disadvantages": [
+      "Notification order undefined",
+      "Memory leaks if not unsubscribed",
+      "Debugging event flow"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public event Action<Order> OrderPlaced;        // subject\nOrderPlaced?.Invoke(order);                     // notify observers"
+    }
+  },
+  "design-patterns-21": {
+    "pitch": "Command encapsulates a request as an object.",
+    "definition": "The Command pattern turns a request into a standalone object containing all information to perform it, decoupling the sender from the receiver. This enables queuing, logging, undo/redo, and parameterizing actions - e.g. menu items, buttons, or a task queue each holding a command. The invoker triggers Execute without knowing the concrete operation.",
+    "how": "Wrap an action in a command object with Execute() -> an invoker runs/queues it; optional Undo() reverses it.",
+    "when": "Undo/redo, queuing, or logging operations.",
+    "whenNot": "Simple direct method calls.",
+    "advantages": [
+      "Decouples sender/receiver",
+      "Enables undo/queue/log",
+      "Parameterize actions"
+    ],
+    "disadvantages": [
+      "A class per command",
+      "More indirection",
+      "Overkill for simple calls"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "interface ICommand { void Execute(); void Undo(); }\nclass DeleteCmd : ICommand { ... }"
+    }
+  },
+  "design-patterns-22": {
+    "pitch": "Mediator centralizes communication so objects don't reference each other.",
+    "definition": "The Mediator pattern introduces a mediator object that handles communication between a set of objects, so they interact through the mediator instead of referencing each other directly. This reduces the tangle of many-to-many dependencies into a hub-and-spoke, lowering coupling - e.g. a dialog mediator coordinating its controls, or MediatR routing requests to handlers.",
+    "how": "Components send messages to the mediator -> the mediator coordinates and dispatches to the right components.",
+    "when": "Many objects with complex mutual interactions.",
+    "whenNot": "A couple of objects with simple direct links.",
+    "advantages": [
+      "Reduces coupling",
+      "Centralizes interaction logic",
+      "Easier to change"
+    ],
+    "disadvantages": [
+      "Mediator can get complex",
+      "Becomes a hub bottleneck",
+      "Logic centralized in one place"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "// MediatR: request -> mediator -> handler\nawait _mediator.Send(new CreateOrderCommand(...));"
+    }
+  },
+  "design-patterns-23": {
+    "pitch": "CQRS separates write commands from read queries.",
+    "definition": "The CQRS pattern splits an application into a command side (handles writes/business logic) and a query side (optimized reads), often with separate models or data stores kept in sync via events. It lets reads and writes scale and be optimized independently, and pairs well with event sourcing - at the cost of added complexity and eventual consistency.",
+    "how": "Commands mutate the write model + emit events -> the query side serves read-optimized projections.",
+    "when": "Read-heavy systems with complex query needs.",
+    "whenNot": "Simple CRUD where one model suffices.",
+    "advantages": [
+      "Independent read/write scaling",
+      "Optimized read models",
+      "Pairs with event sourcing"
+    ],
+    "disadvantages": [
+      "More complexity",
+      "Eventual consistency",
+      "Two models to maintain"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "CQRS",
+      "mermaid": "flowchart LR\n  C[Command] --> W[Write Model]\n  W --> E[(Events)]\n  E --> R[Read Model]\n  Q[Query] --> R"
+    }
+  },
+  "design-patterns-24": {
+    "pitch": "MVC, MVP and MVVM separate UI from logic in different ways.",
+    "definition": "These UI architectural patterns separate concerns differently. MVC (Model-View-Controller): controller handles input, updates model, selects view. MVP (Model-View-Presenter): presenter contains UI logic and updates a passive view through an interface (good for testability). MVVM (Model-View-ViewModel): the view binds to a view model via data binding, common in WPF/XAML and modern front ends.",
+    "how": "MVC routes via a controller; MVP drives a passive view via a presenter; MVVM binds the view to a view model.",
+    "when": "Structuring UI apps for separation/testability.",
+    "whenNot": "Tiny UIs where the split adds overhead.",
+    "advantages": [
+      "MVC: web-friendly",
+      "MVP: testable presenter",
+      "MVVM: data binding"
+    ],
+    "disadvantages": [
+      "Boilerplate",
+      "Binding complexity (MVVM)",
+      "Choosing the right fit"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "design-patterns-25": {
+    "pitch": "MVC splits an app into Model, View and Controller.",
+    "definition": "MVC organizes a UI app into three roles. The Model holds data and business logic. The View renders the UI from the model. The Controller handles user input, updates the model, and selects which view to show. This separation keeps presentation, logic and data independent, making the app easier to test and maintain.",
+    "how": "Controller receives input -> updates the Model -> selects a View -> View renders from the Model.",
+    "when": "Web and UI apps wanting clean separation.",
+    "whenNot": "Trivial pages with no real logic.",
+    "advantages": [
+      "Clear separation of concerns",
+      "Testable controllers",
+      "Parallel team work"
+    ],
+    "disadvantages": [
+      "More structure/boilerplate",
+      "Overkill for tiny apps",
+      "Discipline to keep clean"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "MVC",
+      "mermaid": "flowchart LR\n  U[User] --> C[Controller]\n  C --> M[Model]\n  C --> V[View]\n  V --> U"
+    }
+  },
+  "design-patterns-26": {
+    "pitch": "MVVM binds the view to a view model via data binding.",
+    "definition": "MVVM organizes UI into Model (data/logic), View (UI/XAML), and ViewModel (exposes data and commands the view binds to). Two-way data binding keeps the view and view model in sync automatically, so the view stays declarative and the view model is testable without UI. Unlike MVC's controller routing requests, MVVM relies on binding and commands, and shines in WPF/Xamarin/Blazor.",
+    "how": "View binds to ViewModel properties/commands -> data binding syncs both ways -> Model holds the data/logic.",
+    "when": "Binding-rich UIs (WPF, MAUI, Blazor).",
+    "whenNot": "Server-rendered web (MVC fits better).",
+    "advantages": [
+      "Testable view models",
+      "Declarative binding",
+      "Clean UI separation"
+    ],
+    "disadvantages": [
+      "Binding can be complex",
+      "Debugging bindings",
+      "Boilerplate for commands"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "design-patterns-27": {
+    "pitch": "Repository works with domain objects; DAO maps to a data source/table.",
+    "definition": "Both abstract data access but at different levels. A DAO (Data Access Object) provides CRUD operations for a specific data source/table, focused on persistence mechanics. A Repository works at the domain level, acting like an in-memory collection of aggregates and often using DAOs/ORM underneath, expressing intent in domain terms. Repository is more domain-driven; DAO is more data-centric.",
+    "how": "DAO: per-table CRUD close to the DB. Repository: collection-like, domain-oriented, may use DAOs/ORM internally.",
+    "when": "Repository for DDD domains; DAO for simple data access.",
+    "whenNot": "Using both redundantly with an ORM.",
+    "advantages": [
+      "Repository: domain-focused",
+      "DAO: simple per-table CRUD",
+      "Both decouple persistence"
+    ],
+    "disadvantages": [
+      "Overlap with ORM",
+      "Extra layers",
+      "Easy to conflate the two"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "design-patterns-28": {
+    "pitch": "SOLID principles make patterns natural and effective.",
+    "definition": "SOLID and design patterns reinforce each other: patterns are concrete ways to satisfy SOLID. Dependency Inversion underpins DI and Strategy; Open/Closed is realized by Strategy, Decorator and Factory; Single Responsibility motivates splitting into focused classes patterns use; Interface Segregation shapes the small interfaces patterns depend on. Following SOLID makes patterns fit cleanly instead of being bolted on.",
+    "how": "Apply SOLID -> the resulting abstractions and seams are exactly where patterns plug in cleanly.",
+    "when": "Designing pattern-friendly, maintainable code.",
+    "whenNot": "Adding patterns to code that ignores SOLID.",
+    "advantages": [
+      "Patterns realize SOLID",
+      "Cleaner abstractions/seams",
+      "Less coupling"
+    ],
+    "disadvantages": [
+      "Both need judgment",
+      "Over-abstraction risk",
+      "Learning curve"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "design-patterns-29": {
+    "pitch": "In .NET I lean on DI, Repository/UoW, Factory, Strategy and Options.",
+    "definition": "In recent .NET projects I commonly use Dependency Injection (built into ASP.NET Core) for loose coupling and testability, Repository/Unit of Work over EF where a domain abstraction helps, Factory for creating provider-specific objects, Strategy for swappable algorithms (pricing, payment), Mediator (MediatR) for CQRS request handling, and the Options pattern for configuration. I choose each to reduce coupling and isolate change.",
+    "how": "Match each recurring need (creation, behaviour swap, data access, request routing) to the pattern that fits.",
+    "when": "Real .NET line-of-business apps.",
+    "whenNot": "Adding patterns where plain code is clearer.",
+    "advantages": [
+      "DI + Strategy for flexibility",
+      "Repository/UoW for data",
+      "Mediator for CQRS"
+    ],
+    "disadvantages": [
+      "Over-patterning risk",
+      "More indirection",
+      "Team must understand them"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "design-patterns-30": {
+    "pitch": "A real app combines Repository, Factory, Singleton, Strategy and DI.",
+    "definition": "A real system I would describe: an e-commerce backend using DI to wire everything, Repository + Unit of Work over EF for data access, a Factory to create payment-provider clients, Strategy for pluggable pricing/discount rules, and a Singleton (via DI) for a shared cache/config. The architecture is layered (controllers -> services -> repositories), and the patterns kept it loosely coupled, testable and open to new providers/rules. The challenge was avoiding over-engineering - applying patterns only where they earned their keep.",
+    "how": "DI wires layers -> Repository/UoW for data -> Factory builds providers -> Strategy varies rules -> Singleton shares cache.",
+    "when": "Maintainable, extensible enterprise apps.",
+    "whenNot": "Small apps where this is over-engineering.",
+    "advantages": [
+      "Loosely coupled + testable",
+      "Open to new providers/rules",
+      "Clear layered structure"
+    ],
+    "disadvantages": [
+      "Over-engineering risk",
+      "More classes/indirection",
+      "Onboarding learning curve"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Patterns in a layered app",
+      "mermaid": "flowchart LR\n  C[Controllers] --> S[Services]\n  S --> Strat[Strategy: rules]\n  S --> F[Factory: providers]\n  S --> R[Repository/UoW]\n  R --> DB[(DB)]"
+    },
+    "realWorld": "On an e-commerce backend, Strategy for discount rules plus a Factory for payment providers let us add new promotions and a new gateway with zero changes to the checkout flow."
+  }
+}
