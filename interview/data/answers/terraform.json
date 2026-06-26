@@ -1,1 +1,331 @@
-{}
+{
+  "terraform-1": {
+    "pitch": "Terraform is my go-to IaC tool for provisioning cloud infra as code.",
+    "definition": "Terraform is an open-source Infrastructure-as-Code tool by HashiCorp that provisions and manages infrastructure across many providers (Azure, AWS, GCP) using declarative HCL configuration. You describe the desired end state; Terraform figures out and applies the changes, tracking real resources in a state file. Its cloud-agnostic, declarative model makes it a de-facto IaC standard.",
+    "how": "Write HCL -> terraform plan shows the diff -> apply provisions/updates resources -> state tracks what it manages.",
+    "when": "Provisioning repeatable, multi-cloud infrastructure.",
+    "whenNot": "When a mandated cloud-native tool (Bicep/CFN) fits better.",
+    "advantages": [
+      "Cloud-agnostic",
+      "Declarative + plan preview",
+      "Huge provider ecosystem"
+    ],
+    "disadvantages": [
+      "State file to manage",
+      "Drift if changed manually",
+      "HCL learning curve"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "hcl",
+      "snippet": "terraform { required_providers { azurerm = { source = \"hashicorp/azurerm\" } } }\nprovider \"azurerm\" { features {} }"
+    }
+  },
+  "terraform-2": {
+    "pitch": "IaC manages infrastructure as versioned code; Terraform does it declaratively.",
+    "definition": "Infrastructure as Code is managing infrastructure through machine-readable definition files instead of manual setup, so environments are versioned, reviewed and repeatable. Terraform implements IaC declaratively: you define the desired state in HCL, and Terraform's engine compares it to the real-world state and makes only the changes needed (idempotent), recording everything in a state file.",
+    "how": "Declare desired state in HCL -> Terraform diffs it against state/reality -> applies the minimal changes idempotently.",
+    "when": "Reproducible, reviewable environments.",
+    "whenNot": "One-off manual setups you'll never repeat.",
+    "advantages": [
+      "Versioned, repeatable infra",
+      "Reviewable changes",
+      "Idempotent applies"
+    ],
+    "disadvantages": [
+      "State management overhead",
+      "Drift handling",
+      "Initial learning"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "terraform-3": {
+    "pitch": "Providers connect to platforms, resources are things, modules group them.",
+    "definition": "These are Terraform's core building blocks. A Provider is a plugin that talks to a platform's API (azurerm, aws, kubernetes). A Resource is a single piece of infrastructure managed by a provider (a VM, a storage account). A Module is a reusable, parameterized group of resources you can call multiple times - the unit of reuse and organization in Terraform.",
+    "how": "Providers expose resources; you declare resources; modules bundle resources into reusable, parameterized units.",
+    "when": "Structuring and reusing infrastructure code.",
+    "whenNot": "Tiny configs where a module adds no value.",
+    "advantages": [
+      "Provider: platform API",
+      "Resource: one infra object",
+      "Module: reusable group"
+    ],
+    "disadvantages": [
+      "Provider version pinning",
+      "Resource API quirks",
+      "Module abstraction effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "hcl",
+      "snippet": "resource \"azurerm_storage_account\" \"sa\" {\n  name = \"appstore\"; resource_group_name = azurerm_resource_group.rg.name\n}"
+    }
+  },
+  "terraform-4": {
+    "pitch": "The state file maps your config to real resources - it's critical.",
+    "definition": "The Terraform state file (terraform.tfstate) records the mapping between your configuration and the real infrastructure Terraform manages - resource IDs, attributes and dependencies. It's how Terraform knows what exists, computes diffs on plan, and updates/destroys the right resources. Losing or corrupting it means Terraform loses track of your infrastructure, so it must be stored and protected carefully.",
+    "how": "After apply, Terraform writes resource IDs/attributes to state -> uses it to diff config vs reality on the next run.",
+    "when": "Every Terraform-managed environment.",
+    "whenNot": "It's not optional - it always exists.",
+    "advantages": [
+      "Tracks managed resources",
+      "Enables accurate diffs",
+      "Stores dependencies"
+    ],
+    "disadvantages": [
+      "Sensitive data in state",
+      "Corruption is serious",
+      "Must be stored securely"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "terraform-5": {
+    "pitch": "init sets up, plan previews, apply provisions, destroy tears down.",
+    "definition": "These are Terraform's core commands. terraform init initializes the working directory - downloads providers and configures the backend. terraform plan shows a preview of what changes will be made (no changes applied). terraform apply executes the plan, creating/updating resources. terraform destroy removes all resources Terraform manages. The typical flow is init -> plan -> apply.",
+    "how": "init prepares plugins/backend -> plan diffs desired vs actual -> apply enacts it -> destroy removes everything.",
+    "when": "The standard Terraform workflow.",
+    "whenNot": "Running apply without reviewing the plan.",
+    "advantages": [
+      "Clear, safe workflow",
+      "plan previews changes",
+      "destroy cleans up"
+    ],
+    "disadvantages": [
+      "Apply without plan is risky",
+      "destroy is destructive",
+      "init needed after changes"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "terraform init\nterraform plan\nterraform apply\nterraform destroy"
+    }
+  },
+  "terraform-6": {
+    "pitch": "Input, output and local variables parameterize and share values.",
+    "definition": "Terraform has three variable kinds. Input variables (variable) parameterize a config/module so callers supply values (per environment). Output variables (output) expose values from a config/module to the caller or other modules (e.g. a created resource's id). Local values (locals) are named expressions for reuse within a config to avoid repetition. Together they make configs flexible and DRY.",
+    "how": "Inputs receive values from callers/tfvars; locals compute reusable expressions; outputs expose values upward.",
+    "when": "Parameterizing and composing Terraform code.",
+    "whenNot": "Hard-coding values that vary per environment.",
+    "advantages": [
+      "Inputs: parameterize",
+      "Outputs: expose values",
+      "Locals: DRY expressions"
+    ],
+    "disadvantages": [
+      "Variable sprawl",
+      "Type/validation care",
+      "Sensitive outputs leak risk"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "hcl",
+      "snippet": "variable \"location\" { default = \"eastus\" }\noutput \"rg_id\" { value = azurerm_resource_group.rg.id }"
+    }
+  },
+  "terraform-7": {
+    "pitch": "Local state is a file on disk; remote state is shared and locked.",
+    "definition": "Local State stores terraform.tfstate as a file on your machine - simple but unsuited to teams (no sharing, no locking, easy to lose). Remote State stores it in a shared backend (Azure Storage, S3, Terraform Cloud), so the whole team uses one source of truth, with locking and often encryption. Teams should always use remote state.",
+    "how": "Local: state file on disk. Remote: state in a shared backend with locking, accessed by everyone.",
+    "when": "Remote for teams/production; local only for quick tests.",
+    "whenNot": "Local state for shared/team infrastructure.",
+    "advantages": [
+      "Remote: shared single source",
+      "Locking + encryption",
+      "Survives machine loss"
+    ],
+    "disadvantages": [
+      "Local: no sharing/locking",
+      "Remote backend to set up",
+      "Backend access control"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "terraform-8": {
+    "pitch": "A backend defines where state is stored and how operations run.",
+    "definition": "A Terraform Backend determines where the state file is stored and how operations (plan/apply) execute. The default 'local' backend keeps state on disk; remote backends (azurerm, s3, Terraform Cloud) store state centrally with locking and encryption, enabling team collaboration. You configure the backend in the terraform block. Backends are key to safe, shared state.",
+    "how": "Configure a backend block -> Terraform reads/writes state there (locally or in a shared, locked remote store).",
+    "when": "Team/production state management.",
+    "whenNot": "Quick local experiments (default backend is fine).",
+    "advantages": [
+      "Centralized, locked state",
+      "Encryption at rest",
+      "Enables collaboration"
+    ],
+    "disadvantages": [
+      "Setup/permissions needed",
+      "Backend migration care",
+      "Access control critical"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "hcl",
+      "snippet": "terraform {\n  backend \"azurerm\" {\n    resource_group_name = \"tfstate\"; storage_account_name = \"tfstate123\"; key = \"prod.tfstate\"\n  }\n}"
+    }
+  },
+  "terraform-9": {
+    "pitch": "State locking prevents concurrent applies from corrupting state.",
+    "definition": "State Locking prevents two people (or pipeline runs) from modifying the same Terraform state at the same time, which could corrupt it or cause conflicting changes. Supported remote backends acquire a lock during write operations (plan/apply) and release it after, so others must wait. It's essential in team environments and automated pipelines.",
+    "how": "On apply, the backend acquires a lock on the state -> others block until it's released -> prevents concurrent writes.",
+    "when": "Any shared/automated Terraform usage.",
+    "whenNot": "Solo local use with no concurrency.",
+    "advantages": [
+      "Prevents state corruption",
+      "Serializes concurrent applies",
+      "Built into remote backends"
+    ],
+    "disadvantages": [
+      "Stuck locks need force-unlock",
+      "Backend must support it",
+      "Adds a wait"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "terraform-10": {
+    "pitch": "Workspaces give separate state per environment from one config.",
+    "definition": "Terraform Workspaces let one configuration maintain multiple separate state instances - e.g. dev, qa, prod - so you can manage several environments without duplicating code. You switch workspaces and Terraform uses a distinct state for each. For stronger isolation, many teams instead use separate directories/backends per environment with shared modules; workspaces suit lighter separation.",
+    "how": "Create/select a workspace -> Terraform keeps a separate state per workspace from the same config + variables.",
+    "when": "Lightweight multi-environment management.",
+    "whenNot": "When environments need strong isolation (use separate backends).",
+    "advantages": [
+      "Multiple envs, one config",
+      "Separate state per workspace",
+      "Quick to switch"
+    ],
+    "disadvantages": [
+      "Weaker isolation than separate backends",
+      "Easy to apply to the wrong env",
+      "Var management per env"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "terraform workspace new prod\nterraform workspace select prod"
+    }
+  },
+  "terraform-11": {
+    "pitch": "Meta-arguments control resource count, iteration, ordering and lifecycle.",
+    "definition": "Meta-arguments modify how Terraform handles any resource. count creates N copies (index-based). for_each creates instances from a map/set (key-based, more stable). depends_on forces an explicit dependency/ordering when Terraform can't infer it. lifecycle customizes behaviour (create_before_destroy, prevent_destroy, ignore_changes). They give fine control over resource creation and updates.",
+    "how": "Attach a meta-argument to a resource: count/for_each to multiply, depends_on to order, lifecycle to tune behaviour.",
+    "when": "Creating multiple/conditional resources or tuning updates.",
+    "whenNot": "Single static resources needing none of these.",
+    "advantages": [
+      "count/for_each: multiplicity",
+      "depends_on: explicit order",
+      "lifecycle: safe updates"
+    ],
+    "disadvantages": [
+      "count index churn on changes",
+      "for_each key discipline",
+      "lifecycle misuse hides changes"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "hcl",
+      "snippet": "resource \"azurerm_subnet\" \"s\" {\n  for_each = toset([\"web\",\"db\"])\n  name = each.key\n}"
+    }
+  },
+  "terraform-12": {
+    "pitch": "Keep secrets out of code; pull them from a vault and protect state.",
+    "definition": "You manage secrets in Terraform by never hard-coding them: source them from a secret store (Azure Key Vault, AWS Secrets Manager, Vault) via data sources or environment variables, mark variables/outputs sensitive so they're masked in output, and protect the state file (which stores resource attributes including secrets) with an encrypted, access-controlled remote backend. Use least-privilege credentials for Terraform itself.",
+    "how": "Pull secrets from a vault (data source/env) -> mark sensitive -> store state encrypted + access-controlled.",
+    "when": "Any Terraform handling credentials/keys.",
+    "whenNot": "Committing secrets to .tf files or git.",
+    "advantages": [
+      "Secrets from a vault",
+      "sensitive masks output",
+      "Encrypted, locked state"
+    ],
+    "disadvantages": [
+      "Secrets still land in state",
+      "Backend security critical",
+      "Setup effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "hcl",
+      "snippet": "data \"azurerm_key_vault_secret\" \"db\" { name = \"db-pass\"; key_vault_id = ... }"
+    }
+  },
+  "terraform-13": {
+    "pitch": "Run Terraform in CI/CD: init, plan on PR, apply on merge with approval.",
+    "definition": "You integrate Terraform with CI/CD by running it in pipeline stages: on a pull request, terraform init + plan posts the proposed changes for review; on merge, terraform apply (often behind a manual approval) provisions them. Use a remote backend with locking, store cloud credentials as pipeline secrets (or OIDC), and pin Terraform/provider versions for reproducibility.",
+    "how": "PR -> init + plan (review) -> merge -> apply (approval) with remote state + locking + secured credentials.",
+    "when": "Automating infrastructure changes safely.",
+    "whenNot": "Manual local applies for shared infra.",
+    "advantages": [
+      "Reviewed, audited infra changes",
+      "Locked remote state",
+      "Approval before apply"
+    ],
+    "disadvantages": [
+      "Pipeline/credential setup",
+      "Plan/apply drift between stages",
+      "Lock handling"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "- run: terraform init\n- run: terraform plan -out=tf.plan\n- run: terraform apply tf.plan   # after approval"
+    }
+  },
+  "terraform-14": {
+    "pitch": "Provision cloud infra with reusable, parameterized modules.",
+    "definition": "You provision AWS/Azure infrastructure with reusable Terraform modules by extracting common resource groups (a network, an AKS cluster, a database) into modules with input variables and outputs, then calling them from environment configs with different values. This gives DRY, consistent, versioned infrastructure - define once, reuse across environments and projects, with a module registry for sharing.",
+    "how": "Define a module (resources + inputs/outputs) -> call it per environment with different variables -> compose infra.",
+    "when": "Standardizing infra across envs/teams.",
+    "whenNot": "A single small resource not worth modularizing.",
+    "advantages": [
+      "DRY, consistent infra",
+      "Parameterized per env",
+      "Versioned + shareable"
+    ],
+    "disadvantages": [
+      "Module design effort",
+      "Versioning discipline",
+      "Over-abstraction risk"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "hcl",
+      "snippet": "module \"network\" {\n  source = \"./modules/network\"\n  cidr   = var.cidr\n}"
+    }
+  },
+  "terraform-15": {
+    "pitch": "A real Terraform project: modules + remote state + CI/CD per environment.",
+    "definition": "A real Terraform project I would describe: a repo organized into reusable modules (network, compute, database) and per-environment configs (dev/qa/uat/prod) that call them with different variables; state stored in a remote backend (Azure Storage/S3) with locking; secrets pulled from Key Vault and marked sensitive; and a CI/CD pipeline that runs init+plan on PRs and apply on merge behind approvals. This delivers consistent, reviewed, repeatable infrastructure across all environments.",
+    "how": "Modules + per-env configs -> remote locked state -> vault secrets -> CI/CD plan on PR, apply on merge.",
+    "when": "Managing multi-environment cloud infrastructure.",
+    "whenNot": "A throwaway single-resource setup.",
+    "advantages": [
+      "Reusable modules",
+      "Locked remote state",
+      "Reviewed CI/CD applies"
+    ],
+    "disadvantages": [
+      "Upfront structure effort",
+      "State/secret discipline",
+      "Requires IaC maturity"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Terraform project",
+      "mermaid": "flowchart LR\n  Cfg[Env configs] --> Mod[Reusable Modules]\n  Mod --> Cloud[(Cloud)]\n  Cfg --> State[(Remote State)]\n  CI[CI/CD] --> Cfg"
+    },
+    "realWorld": "On a multi-env Azure platform, refactoring into shared modules + remote state + pipeline plan/apply made spinning up a new environment a one-day, fully-reviewed task instead of a week of manual work."
+  }
+}
