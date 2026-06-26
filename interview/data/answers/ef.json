@@ -1,1 +1,667 @@
-{}
+{
+  "ef-1": {
+    "pitch": "EF is my ORM of choice to work with a database using C# objects, not SQL.",
+    "definition": "Entity Framework is Microsoft's object-relational mapper (ORM) for .NET. It maps database tables to C# entity classes and lets you query and save data with LINQ instead of hand-written SQL, while EF tracks changes and generates the SQL for you. It handles CRUD, relationships, migrations and transactions, cutting data-access boilerplate.",
+    "how": "Map entities to tables -> query via LINQ (translated to SQL) -> change tracker diffs entities -> SaveChanges emits SQL.",
+    "when": "Most CRUD-heavy .NET apps wanting productivity.",
+    "whenNot": "Ultra high-performance paths or complex hand-tuned SQL.",
+    "advantages": [
+      "No hand-written CRUD SQL",
+      "LINQ + change tracking",
+      "Migrations manage schema"
+    ],
+    "disadvantages": [
+      "Abstraction hides SQL cost",
+      "Slower than tuned ADO.NET",
+      "Complex queries leak abstraction"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var user = db.Users.First(u => u.Id == id); // LINQ -> SQL\nuser.Name = \"New\"; db.SaveChanges();          // EF generates UPDATE"
+    }
+  },
+  "ef-2": {
+    "pitch": "EF6 is the mature Framework ORM; EF Core is the modern cross-platform rewrite.",
+    "definition": "EF6 is the older, feature-rich ORM tied to .NET Framework (Windows). EF Core is a lightweight, cross-platform rewrite for .NET Core/5+ that is faster, supports more databases, and adds features like batching, split queries and better LINQ translation. EF Core is the path forward, though it took time to match some EF6 features.",
+    "how": "EF6 runs on .NET Framework; EF Core runs on .NET Core/5+ with a redesigned, modular provider model.",
+    "when": "EF Core for new apps; EF6 for legacy Framework apps.",
+    "whenNot": "Starting new projects on EF6.",
+    "advantages": [
+      "EF Core: cross-platform, faster",
+      "EF Core: batching, split queries",
+      "EF6: mature, feature-complete"
+    ],
+    "disadvantages": [
+      "EF6 Windows-only",
+      "Migrating EF6->Core needs work",
+      "Feature gaps in early Core"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "ef-3": {
+    "pitch": "EF evolved from EF6's maturity to EF Core's modern, fast versions.",
+    "definition": "Entity Framework has two lines. The EF6.x line on .NET Framework matured features like migrations and lazy loading. The EF Core line (Core 1-3, then EF Core 5/6/7/8 aligned with .NET) added cross-platform support, performance improvements, split/compiled queries, owned types, bulk operations and richer LINQ translation. Each EF Core release closed gaps and added capabilities.",
+    "how": "EF6 stabilized the Framework ORM; EF Core re-architected it and each .NET-aligned release adds features/perf.",
+    "when": "Knowing which features a target EF version supports.",
+    "whenNot": "Assuming an old version has modern features.",
+    "advantages": [
+      "EF6: stable, mature",
+      "EF Core: steady perf gains",
+      "Newer Core = more features"
+    ],
+    "disadvantages": [
+      "Version feature differences",
+      "Migration friction across lines",
+      "Some EF6 features arrived late"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "ef-4": {
+    "pitch": "EF offers Code First, Database First and (legacy) Model First.",
+    "definition": "These are EF's three modeling approaches. Code First: you write C# classes and EF creates/migrates the database from them - the modern default. Database First: you generate entity classes from an existing database. Model First (EF6, legacy): you draw an EDMX model and EF generates both DB and classes. Most teams use Code First today.",
+    "how": "Code First: classes -> migrations -> DB. Database First: existing DB -> scaffolded classes. Model First: EDMX -> both.",
+    "when": "Code First for greenfield; Database First for existing DBs.",
+    "whenNot": "Model First - it is legacy and avoided.",
+    "advantages": [
+      "Code First: full code control",
+      "Database First: reuse existing DB",
+      "Migrations track schema"
+    ],
+    "disadvantages": [
+      "Model First is dated (EDMX)",
+      "Database First scaffolding drift",
+      "Approach lock-in effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "ef-5": {
+    "pitch": "Code First builds the database from your C# classes and configuration.",
+    "definition": "Code First is the EF approach where you define entity classes and a DbContext in C#, optionally configure mappings with data annotations or the Fluent API, and EF creates and evolves the database schema from that model via migrations. The code is the source of truth for the schema.",
+    "how": "Define entities + DbContext -> EF infers the model (conventions + Fluent API) -> migrations create/update the DB.",
+    "when": "New apps where code drives the schema.",
+    "whenNot": "Locked-down existing databases you cannot change.",
+    "advantages": [
+      "Code is the single source",
+      "Versioned via migrations",
+      "Fluent API for fine control"
+    ],
+    "disadvantages": [
+      "Schema drift if DB edited manually",
+      "Migration discipline needed",
+      "Less ideal over legacy DBs"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public class AppDb : DbContext { public DbSet<User> Users => Set<User>(); }\n// dotnet ef migrations add Init && dotnet ef database update"
+    }
+  },
+  "ef-6": {
+    "pitch": "Migrations version your schema as incremental, reviewable code.",
+    "definition": "Code First Migrations are a way to evolve the database schema over time in step with your model. Each migration is a generated C# file with Up (apply) and Down (revert) methods describing schema changes; EF records which have run in a history table and applies pending ones. They make schema changes versioned, reviewable and repeatable across environments.",
+    "how": "Add migration -> EF diffs model vs snapshot -> generates Up/Down -> database update runs pending Up methods.",
+    "when": "Evolving a Code First schema across environments.",
+    "whenNot": "Databases managed entirely by DBAs/scripts.",
+    "advantages": [
+      "Versioned, reviewable schema",
+      "Repeatable across envs",
+      "Up/Down for rollback"
+    ],
+    "disadvantages": [
+      "Merge conflicts on migrations",
+      "Bad migrations hard to undo",
+      "Data migrations need care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "dotnet ef migrations add AddEmailIndex\ndotnet ef database update    # applies pending migrations"
+    }
+  },
+  "ef-7": {
+    "pitch": "The migrations history table records which migrations have been applied.",
+    "definition": "__MigrationHistory (EF6) / __EFMigrationsHistory (EF Core) is a table EF maintains in the database to track which migrations have already run. On database update, EF reads this table, applies only migrations not listed, then records them. It is how EF knows the database's current schema version and avoids re-running migrations.",
+    "how": "EF reads the history table -> compares to available migrations -> applies missing ones -> inserts their ids.",
+    "when": "Understanding/troubleshooting migration state.",
+    "whenNot": "Editing it by hand (corrupts migration state).",
+    "advantages": [
+      "Tracks applied migrations",
+      "Prevents re-running",
+      "Source of schema version"
+    ],
+    "disadvantages": [
+      "Manual edits cause drift",
+      "Out-of-sync across envs",
+      "Restores can mismatch"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "ef-8": {
+    "pitch": "Automatic migration applies model changes silently - risky in production.",
+    "definition": "Automatic Migration (EF6) lets EF apply model changes to the database without generating explicit migration files. It is discouraged in production because there is no reviewable script, no precise control over data-preserving changes, and it can cause unexpected or destructive schema changes. Explicit, code-reviewed migrations are safer.",
+    "how": "EF compares model to DB at startup and alters the schema automatically, with no per-change migration file.",
+    "when": "Quick prototypes/demos only.",
+    "whenNot": "Production - use explicit migrations instead.",
+    "advantages": [
+      "Zero-config for prototypes",
+      "Fast iteration",
+      "No migration files to manage"
+    ],
+    "disadvantages": [
+      "No reviewable script",
+      "Risk of data loss",
+      "Unpredictable in production"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "ef-9": {
+    "pitch": "Register DbContext in DI and point it at a connection string.",
+    "definition": "You configure EF Core in ASP.NET Core by registering the DbContext with the DI container via AddDbContext, supplying the database provider and connection string (usually from configuration). The context is then injected into services/controllers with a scoped lifetime that matches the request.",
+    "how": "AddDbContext<T>(provider + connection string) -> DI provides a scoped context per request -> inject where needed.",
+    "when": "Any ASP.NET Core app using EF Core.",
+    "whenNot": "Newing up a DbContext manually (bypasses DI/lifetime).",
+    "advantages": [
+      "DI-managed, scoped per request",
+      "Config-driven connection",
+      "Provider pluggable"
+    ],
+    "disadvantages": [
+      "Wrong lifetime causes bugs",
+      "Connection string secrets",
+      "Context misuse across threads"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "builder.Services.AddDbContext<AppDb>(o =>\n    o.UseSqlServer(builder.Configuration.GetConnectionString(\"Db\")));"
+    }
+  },
+  "ef-10": {
+    "pitch": "Inject the DbContext into Web API controllers/services via DI.",
+    "definition": "Integrating EF with ASP.NET Web API follows the same pattern: register the DbContext in DI, then inject it (or a repository/service over it) into controllers, and use async EF methods in actions to query and save. Keep the context scoped per request and avoid sharing it across requests or threads.",
+    "how": "Register DbContext -> inject into controller/service -> async LINQ queries + SaveChangesAsync per request.",
+    "when": "Web APIs persisting data with EF.",
+    "whenNot": "Storing a DbContext as a singleton/shared field.",
+    "advantages": [
+      "Clean DI integration",
+      "Async data access",
+      "Per-request context"
+    ],
+    "disadvantages": [
+      "Context not thread-safe",
+      "Leaks if lifetime wrong",
+      "N+1 if loading lazily"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "[HttpGet] public async Task<IActionResult> Get() =>\n    Ok(await _db.Products.AsNoTracking().ToListAsync());"
+    }
+  },
+  "ef-11": {
+    "pitch": "LINQ is the query language; EF is the ORM that runs it against a DB.",
+    "definition": "LINQ is a general query syntax over any data source. Entity Framework is an ORM that uses LINQ (LINQ to Entities) to query a database by translating those queries into SQL, plus it maps tables to classes, tracks changes and persists them. So LINQ is the querying tool; EF is the broader data-access framework that also handles mapping and saving.",
+    "how": "EF exposes DbSets as IQueryable; you write LINQ; EF translates it to SQL and materializes/tracks the results.",
+    "when": "LINQ to express queries; EF to map and persist data.",
+    "whenNot": "Confusing query syntax (LINQ) with the ORM (EF).",
+    "advantages": [
+      "LINQ: unified querying",
+      "EF: mapping + tracking + save",
+      "Together: productive data access"
+    ],
+    "disadvantages": [
+      "EF adds overhead vs raw SQL",
+      "Translation limits",
+      "Hidden query cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "ef-12": {
+    "pitch": "LINQ to Entities runs in SQL; LINQ to Objects runs in memory.",
+    "definition": "LINQ to Objects executes queries in memory over IEnumerable using delegates. LINQ to Entities executes over IQueryable: EF translates the expression tree into SQL that runs in the database, returning only matching rows. The difference is where execution happens and that LINQ to Entities supports only operations EF can translate to SQL.",
+    "how": "LINQ to Objects evaluates delegates locally; LINQ to Entities translates the expression tree to SQL at the DB.",
+    "when": "Entities for DB queries; Objects for in-memory data.",
+    "whenNot": "Calling C#-only methods in a LINQ to Entities query.",
+    "advantages": [
+      "Entities: DB-side filtering",
+      "Objects: full C# in predicates",
+      "Same operator syntax"
+    ],
+    "disadvantages": [
+      "Untranslatable C# fails in Entities",
+      "Accidental client-eval",
+      "Behavior differs subtly"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Users.Where(u => u.Age > 18)  // to Entities -> SQL\nlist.Where(u => u.Age > 18)      // to Objects -> memory"
+    }
+  },
+  "ef-13": {
+    "pitch": "POCOs are plain entity classes with no EF dependency.",
+    "definition": "A POCO (Plain Old CLR Object) is a simple class with properties and no inheritance from or dependency on EF types. EF maps POCOs to tables, which keeps your domain model clean, persistence-ignorant and easy to unit-test. EF works out the mapping by convention plus optional configuration.",
+    "how": "EF maps POCO properties to columns by convention/Fluent API and tracks them without the class knowing about EF.",
+    "when": "Clean, testable domain models.",
+    "whenNot": "When you need EF-specific base features in the entity.",
+    "advantages": [
+      "Persistence-ignorant model",
+      "Easy to unit-test",
+      "Decoupled from EF"
+    ],
+    "disadvantages": [
+      "Conventions can surprise",
+      "Some features need config",
+      "Mapping leaks for edge cases"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public class Product { public int Id { get; set; } public string Name { get; set; } } // POCO"
+    }
+  },
+  "ef-14": {
+    "pitch": "A proxy is an EF-generated subclass enabling lazy loading/tracking.",
+    "definition": "A proxy object is a dynamically generated subclass of your entity that EF creates at runtime to add behaviour - most commonly lazy loading (overriding virtual navigation properties to load related data on access) and change-tracking. Proxies require navigation properties to be virtual and the proxy/lazy-loading packages enabled.",
+    "how": "EF subclasses the entity, overriding virtual navigations to fetch related data (or detect changes) on first access.",
+    "when": "When you want lazy loading via virtual navigations.",
+    "whenNot": "Disconnected/serialized scenarios (proxies cause issues).",
+    "advantages": [
+      "Transparent lazy loading",
+      "Automatic change detection",
+      "No explicit load calls"
+    ],
+    "disadvantages": [
+      "Hidden DB calls (N+1)",
+      "Needs virtual properties",
+      "Serialization pitfalls"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public virtual ICollection<Order> Orders { get; set; } // virtual enables proxy lazy load"
+    }
+  },
+  "ef-15": {
+    "pitch": "Entity states tell EF what SQL to run on SaveChanges.",
+    "definition": "EF's change tracker assigns each tracked entity a state: Detached (not tracked), Added (insert on save), Unchanged (no action), Modified (update on save), Deleted (delete on save). SaveChanges inspects these states and generates the matching INSERT/UPDATE/DELETE statements. You can set states manually for disconnected scenarios.",
+    "how": "Tracker records each entity's state -> SaveChanges maps Added->INSERT, Modified->UPDATE, Deleted->DELETE.",
+    "when": "Understanding how EF decides what to persist.",
+    "whenNot": "Manually fighting the tracker when it would work.",
+    "advantages": [
+      "Drives correct SQL",
+      "Supports disconnected edits",
+      "Automatic on tracked entities"
+    ],
+    "disadvantages": [
+      "Wrong state = wrong SQL",
+      "Detached edits need care",
+      "Tracking overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Entry(user).State = EntityState.Modified; // mark for UPDATE (disconnected)"
+    }
+  },
+  "ef-16": {
+    "pitch": "DbContext is the unit-of-work session; keep it short-lived (per request).",
+    "definition": "DbContext is the main EF class representing a session with the database: it exposes DbSets, tracks entity changes, and saves them as a unit of work. Its lifecycle should be short - typically one per web request (scoped) - because it caches and tracks entities and is not thread-safe. Long-lived contexts leak memory and cause stale data.",
+    "how": "Open context -> query/track entities -> SaveChanges as one unit of work -> dispose; one scoped instance per request.",
+    "when": "Per-request or per-operation data access.",
+    "whenNot": "Sharing one context across requests/threads.",
+    "advantages": [
+      "Unit-of-work + tracking",
+      "Scoped per request",
+      "Batches saves"
+    ],
+    "disadvantages": [
+      "Not thread-safe",
+      "Long life = memory/stale data",
+      "Tracking adds overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "using var db = new AppDb();          // short-lived\ndb.Add(order); await db.SaveChangesAsync();"
+    }
+  },
+  "ef-17": {
+    "pitch": "DbSet<T> is EF Core's queryable table; ObjectSet is the older EF API.",
+    "definition": "DbSet<T> represents a table/collection of entities you query with LINQ and modify (Add/Remove); it is the DbContext-era API used by EF6's DbContext and EF Core. ObjectSet<T> is the older ObjectContext-based API from early EF. In practice you use DbSet today; ObjectSet is legacy.",
+    "how": "DbSet<T> is an IQueryable over a table plus Add/Remove; the tracker records changes for SaveChanges.",
+    "when": "All modern EF data access uses DbSet.",
+    "whenNot": "ObjectSet/ObjectContext - legacy, avoid.",
+    "advantages": [
+      "Queryable + modifiable set",
+      "Modern DbContext API",
+      "LINQ integration"
+    ],
+    "disadvantages": [
+      "ObjectSet is legacy",
+      "API differences across versions",
+      "Misuse causes tracking issues"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public DbSet<Product> Products => Set<Product>();\ndb.Products.Add(p);"
+    }
+  },
+  "ef-18": {
+    "pitch": "Eager, lazy and explicit loading differ in when related data loads.",
+    "definition": "These control loading of related entities. Eager loading fetches related data up front in the main query with Include. Lazy loading defers it until you access a navigation property (one query per access). Explicit loading loads related data on demand with an explicit call. Eager avoids N+1; lazy is convenient but risky; explicit is controlled.",
+    "how": "Eager: one query with Include. Lazy: query on navigation access. Explicit: query when you call Load.",
+    "when": "Eager for known related data; explicit for on-demand.",
+    "whenNot": "Lazy loading in loops (causes N+1).",
+    "advantages": [
+      "Eager avoids N+1",
+      "Lazy is convenient",
+      "Explicit is controlled"
+    ],
+    "disadvantages": [
+      "Lazy -> hidden N+1",
+      "Eager can over-fetch",
+      "Explicit is verbose"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Orders.Include(o => o.Items);             // eager\ndb.Entry(order).Collection(o => o.Items).Load(); // explicit"
+    }
+  },
+  "ef-19": {
+    "pitch": "Navigation properties model relationships between entities.",
+    "definition": "Navigation properties are entity properties that reference related entities - a single reference (one-to-one/many-to-one) or a collection (one-to-many/many-to-many). EF uses them, with foreign keys, to load related data (eager/lazy/explicit) and to understand relationships for the model and SQL joins.",
+    "how": "EF maps navigations to FKs/joins; accessing them loads related data per the chosen loading strategy.",
+    "when": "Modeling and traversing entity relationships.",
+    "whenNot": "Huge graphs where naive loading over-fetches.",
+    "advantages": [
+      "Object-graph traversal",
+      "Drives Include/joins",
+      "Models relationships clearly"
+    ],
+    "disadvantages": [
+      "Lazy navigations cause N+1",
+      "Cycles complicate serialization",
+      "Over-fetch if careless"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public int CustomerId { get; set; }\npublic Customer Customer { get; set; }       // navigation property"
+    }
+  },
+  "ef-20": {
+    "pitch": "EF maps inheritance via TPH, TPT or TPC strategies.",
+    "definition": "EF supports three inheritance mapping strategies. TPH (Table-Per-Hierarchy) stores the whole hierarchy in one table with a discriminator column - fast, default. TPT (Table-Per-Type) uses a table per class joined by keys - normalized but join-heavy. TPC (Table-Per-Concrete-type) uses one table per concrete class with no joins. You pick by normalization vs query performance.",
+    "how": "TPH: one table + discriminator. TPT: base + derived tables joined. TPC: separate table per concrete class.",
+    "when": "Mapping a class hierarchy to relational tables.",
+    "whenNot": "Deep hierarchies where TPT joins hurt performance.",
+    "advantages": [
+      "TPH: fast, simple (default)",
+      "TPT: normalized schema",
+      "TPC: no joins per type"
+    ],
+    "disadvantages": [
+      "TPH: sparse, nullable columns",
+      "TPT: join-heavy queries",
+      "TPC: no shared identity"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "EF inheritance mapping",
+      "mermaid": "flowchart TD\n  H[Hierarchy] --> TPH[TPH: one table + discriminator]\n  H --> TPT[TPT: table per type, joined]\n  H --> TPC[TPC: table per concrete type]"
+    }
+  },
+  "ef-21": {
+    "pitch": "Call stored procedures via FromSql, raw ADO, or mapped functions.",
+    "definition": "EF can call stored procedures three ways. In EF Core, FromSqlRaw/FromSqlInterpolated maps a procedure's result set to an entity; ExecuteSqlRaw runs non-query procedures. You can also drop to raw ADO.NET via the DbConnection for full control. In EF6 you could map procedures to entity CRUD or call them through the context. Always parameterize inputs.",
+    "how": "FromSql maps a proc's rows to entities; ExecuteSql runs commands; raw ADO gives full control - all parameterized.",
+    "when": "Reusing existing procs or complex set-based logic.",
+    "whenNot": "Trivial CRUD that LINQ handles cleanly.",
+    "advantages": [
+      "Reuse existing procs",
+      "Set-based performance",
+      "Multiple calling options"
+    ],
+    "disadvantages": [
+      "Loses LINQ composability",
+      "Result mapping constraints",
+      "DB-coupled logic"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Users.FromSqlRaw(\"EXEC GetActiveUsers @min\", new SqlParameter(\"min\", 18)).ToList();"
+    }
+  },
+  "ef-22": {
+    "pitch": "EF runs raw SQL via FromSql (queries) and ExecuteSql (commands).",
+    "definition": "When LINQ is not enough, EF lets you run raw SQL. For queries that return entities, EF Core uses FromSqlRaw/FromSqlInterpolated (EF6: Database.SqlQuery); for commands (insert/update/delete/DDL), ExecuteSqlRaw/ExecuteSqlInterpolated (EF6: Database.ExecuteSqlCommand). Use parameterized or interpolated forms to avoid SQL injection.",
+    "how": "FromSql materializes a SQL result into entities; ExecuteSql runs a non-query; parameters guard against injection.",
+    "when": "Complex queries or commands LINQ can't express.",
+    "whenNot": "Concatenating user input into the SQL string.",
+    "advantages": [
+      "Full SQL power when needed",
+      "Maps results to entities",
+      "Parameterized = safe"
+    ],
+    "disadvantages": [
+      "Bypasses LINQ safety",
+      "DB-specific SQL",
+      "Injection risk if concatenated"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Database.ExecuteSqlInterpolated($\"UPDATE Users SET Active=0 WHERE Id={id}\"); // parameterized"
+    }
+  },
+  "ef-23": {
+    "pitch": "EF wraps SaveChanges in a transaction; you can span more explicitly.",
+    "definition": "EF supports transactions at several levels. SaveChanges already wraps all its INSERT/UPDATE/DELETE in a single implicit transaction, so they all succeed or roll back together. For multiple SaveChanges or commands, BeginTransaction (DbContext.Database) gives an explicit transaction you commit/rollback. TransactionScope can span multiple contexts/connections (ambient transaction).",
+    "how": "SaveChanges = one implicit transaction; BeginTransaction wraps multiple operations; TransactionScope spans contexts.",
+    "when": "Atomic multi-step writes across operations.",
+    "whenNot": "Single SaveChanges (already atomic - no extra scope).",
+    "advantages": [
+      "SaveChanges is atomic",
+      "Explicit txn for multi-step",
+      "Scope spans contexts"
+    ],
+    "disadvantages": [
+      "Long transactions lock rows",
+      "Distributed txn complexity",
+      "Scope/connection pitfalls"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "using var tx = db.Database.BeginTransaction();\ntry { /* ...SaveChanges... */ tx.Commit(); } catch { tx.Rollback(); }"
+    }
+  },
+  "ef-24": {
+    "pitch": "EF prevents SQL injection by parameterizing LINQ-translated SQL.",
+    "definition": "SQL injection is when attacker-controlled input is concatenated into a SQL string and executed as code. EF helps prevent it because LINQ queries are translated to parameterized SQL - values become bound parameters, never inline code - so input cannot alter the query structure. The risk returns only if you build raw SQL by string concatenation.",
+    "how": "EF turns LINQ values into SQL parameters (@p0...), so user input is data, not executable SQL.",
+    "when": "All standard EF/LINQ data access (safe by default).",
+    "whenNot": "Concatenating input into FromSqlRaw/ExecuteSqlRaw.",
+    "advantages": [
+      "Auto-parameterized queries",
+      "Input treated as data",
+      "Safe by default"
+    ],
+    "disadvantages": [
+      "Raw SQL can reintroduce risk",
+      "Dynamic SQL needs care",
+      "False sense of safety"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Users.Where(u => u.Name == name); // -> WHERE Name = @p0 (parameterized)"
+    }
+  },
+  "ef-25": {
+    "pitch": "Stay safe by using LINQ/parameters and never concatenating input.",
+    "definition": "You secure EF apps against SQL injection by relying on EF's parameterized LINQ for queries, and when you must use raw SQL, always use parameterized or interpolated APIs (FromSqlInterpolated, SqlParameter) so input is bound as a parameter. Never build SQL by concatenating user input, validate inputs, and use least-privilege database accounts.",
+    "how": "Use LINQ or parameterized raw SQL -> input becomes bound parameters -> validate input + least-privilege DB user.",
+    "when": "Any EF app handling user input.",
+    "whenNot": "Building dynamic SQL with string concatenation.",
+    "advantages": [
+      "Parameterized everywhere",
+      "Validate + least privilege",
+      "Safe raw-SQL APIs"
+    ],
+    "disadvantages": [
+      "Raw concatenation breaks it",
+      "Dynamic SQL is risky",
+      "Must stay disciplined"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Users.FromSqlRaw(\"SELECT * FROM Users WHERE Name=@n\",\n    new SqlParameter(\"n\", name)); // parameter, not concatenation"
+    }
+  },
+  "ef-26": {
+    "pitch": "Speed up EF with no-tracking, compiled/split queries and batching.",
+    "definition": "You improve EF performance by cutting tracking and round trips. AsNoTracking skips change-tracking for read-only queries (faster, less memory). Compiled queries cache the translation for hot queries. Split queries avoid huge cartesian joins when including multiple collections. Batch operations (ExecuteUpdate/Delete, bulk libraries) reduce per-row round trips. Always profile the generated SQL.",
+    "how": "AsNoTracking for reads -> compiled queries cache translation -> split queries avoid join explosion -> batch writes.",
+    "when": "Read-heavy or high-throughput EF paths.",
+    "whenNot": "Micro-tuning before profiling the real cost.",
+    "advantages": [
+      "No-tracking: faster reads",
+      "Compiled queries cut overhead",
+      "Split queries avoid cartesian blowup"
+    ],
+    "disadvantages": [
+      "No-tracking can't save edits",
+      "Batching API limits",
+      "Profiling needed"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Orders.AsNoTracking().AsSplitQuery()\n  .Include(o => o.Items).Include(o => o.Tags).ToList();"
+    }
+  },
+  "ef-27": {
+    "pitch": "N+1 is one query per related item; fix it by eager-loading.",
+    "definition": "The N+1 problem is when EF runs one query to load a list of N parents, then one extra query per parent to load its related data (because of lazy loading or per-item access) - 1 + N queries. You fix it by eager loading the related data with Include (or projecting just what you need), turning N+1 queries into one or two.",
+    "how": "Lazy/per-item navigation access fires N extra queries; Include fetches related data in one query upfront.",
+    "when": "Loading parent + child collections together.",
+    "whenNot": "Per-row navigation access in a loop (the cause).",
+    "advantages": [
+      "Include collapses to 1-2 queries",
+      "Projection fetches only needed data",
+      "Big latency win"
+    ],
+    "disadvantages": [
+      "Easy to miss until slow",
+      "Lazy loading hides it",
+      "Over-Include can over-fetch"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "// BAD: foreach order { _ = order.Items; }  // N+1\ndb.Orders.Include(o => o.Items).ToList();  // GOOD: one query"
+    }
+  },
+  "ef-28": {
+    "pitch": "Wrap EF in repositories/UoW and inject the DbContext via DI.",
+    "definition": "You combine EF with DI and the Repository/Unit of Work patterns by registering the DbContext in DI (scoped) and exposing repositories that encapsulate queries for an entity, with the DbContext itself acting as the Unit of Work (SaveChanges commits all changes atomically). This decouples data access, eases testing with mocks, and centralizes query logic - though EF's DbContext is already a UoW, so thin repositories are best.",
+    "how": "DI provides a scoped DbContext -> repositories wrap queries -> SaveChanges (the UoW) commits all changes together.",
+    "when": "Larger apps wanting testable, decoupled data access.",
+    "whenNot": "Tiny apps where EF's DbContext suffices alone.",
+    "advantages": [
+      "Decoupled, testable queries",
+      "Centralized data logic",
+      "DbContext = built-in UoW"
+    ],
+    "disadvantages": [
+      "Repo over EF can be redundant",
+      "Over-abstraction risk",
+      "Leaky if exposing IQueryable"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public interface IRepo<T> { Task<T?> Get(int id); }\n// SaveChanges on the injected DbContext is the Unit of Work"
+    }
+  },
+  "ef-29": {
+    "pitch": "Diagnose EF perf by inspecting generated SQL and query patterns.",
+    "definition": "Common EF performance issues are N+1 queries, missing AsNoTracking on reads, over-fetching with broad Includes, client-side evaluation, cartesian explosion from multiple Includes, and missing indexes. You troubleshoot by logging the generated SQL, profiling slow queries, checking for N+1 and client-eval, and adding indexes, projections, no-tracking, or split queries as needed.",
+    "how": "Log the SQL EF generates -> find N+1/client-eval/over-fetch -> apply Include/projection/no-tracking/indexes.",
+    "when": "Investigating slow EF data access.",
+    "whenNot": "Guessing fixes without seeing the SQL.",
+    "advantages": [
+      "SQL logging reveals the cause",
+      "Targeted, measured fixes",
+      "Many built-in levers"
+    ],
+    "disadvantages": [
+      "Needs profiling effort",
+      "Abstraction hides cost",
+      "Fixes can interact"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "builder.Services.AddDbContext<AppDb>(o => o.LogTo(Console.WriteLine)); // see the SQL"
+    }
+  },
+  "ef-30": {
+    "pitch": "A real EF app ties together migrations, transactions, loading and tuning.",
+    "definition": "A real EF system I would describe: Code First with migrations managing the schema across environments, a service/repository layer over a scoped DbContext, eager loading (Include) and AsNoTracking on read paths to avoid N+1 and reduce memory, stored procedures for heavy set-based operations, explicit transactions for multi-step writes, and performance work (split/compiled queries, indexes). Production issues were usually N+1 and missing indexes, found via SQL logging.",
+    "how": "Migrations evolve schema -> repositories over scoped DbContext -> Include/AsNoTracking reads -> procs + transactions for writes.",
+    "when": "Production line-of-business apps on EF.",
+    "whenNot": "Throwaway scripts where this structure is overkill.",
+    "advantages": [
+      "Migrations keep schema in sync",
+      "Tuned reads avoid N+1",
+      "Transactions ensure atomicity"
+    ],
+    "disadvantages": [
+      "Requires discipline",
+      "Abstraction can hide cost",
+      "Perf tuning is ongoing"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "EF app architecture",
+      "mermaid": "flowchart LR\n  C[Controller] --> S[Service]\n  S --> R[Repository]\n  R --> Ctx[DbContext / UoW]\n  Ctx --> DB[(SQL Server)]"
+    },
+    "realWorld": "On an orders system, replacing lazy loading with Include + AsNoTracking and adding two indexes cut a key endpoint from ~2s to ~150ms, diagnosed by logging EF's SQL."
+  }
+}
