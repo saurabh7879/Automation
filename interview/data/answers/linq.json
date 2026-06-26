@@ -1,1 +1,807 @@
-{}
+{
+  "linq-1": {
+    "pitch": "LINQ lets me query collections, databases and XML with one C# syntax.",
+    "definition": "LINQ (Language-Integrated Query) is a set of C# features that let you query in-memory collections, databases, XML and more using a single, strongly-typed query syntax built into the language. It provides standard query operators (Where, Select, OrderBy, GroupBy) that work over any IEnumerable/IQueryable, with compile-time checking and IntelliSense.",
+    "how": "Operators build a query over a sequence -> a provider (objects/EF) executes or translates it when enumerated.",
+    "when": "Filtering, projecting and aggregating data in C#.",
+    "whenNot": "Hot loops where hand-written code is measurably faster.",
+    "advantages": [
+      "One syntax for many sources",
+      "Compile-time safety + IntelliSense",
+      "Concise, readable queries"
+    ],
+    "disadvantages": [
+      "Hidden cost (deferred/DB calls)",
+      "Can be slower than manual loops",
+      "Complex queries get cryptic"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var adults = people.Where(p => p.Age >= 18)\n                   .Select(p => p.Name);   // type-safe, readable"
+    }
+  },
+  "linq-2": {
+    "pitch": "LINQ flavors target different data sources with the same operators.",
+    "definition": "These are LINQ providers for different sources. LINQ to Objects queries in-memory collections (IEnumerable). LINQ to SQL and LINQ to Entities (EF) translate queries (IQueryable) into SQL against a database. LINQ to XML queries and builds XML documents. Same operators, different execution engines underneath.",
+    "how": "A provider implements the operators: Objects runs in memory; SQL/Entities translate to SQL; XML works over XDocument.",
+    "when": "Pick the provider matching your data source.",
+    "whenNot": "Mixing providers carelessly (e.g. client-eval of DB queries).",
+    "advantages": [
+      "Unified query model",
+      "Source-appropriate execution",
+      "Reuse operator knowledge"
+    ],
+    "disadvantages": [
+      "Provider feature gaps",
+      "Translation limits per provider",
+      "Easy to trigger client-eval"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "list.Where(...)          // LINQ to Objects (memory)\ndb.Users.Where(...)      // LINQ to Entities (SQL)\nxdoc.Descendants(\"a\")    // LINQ to XML"
+    }
+  },
+  "linq-3": {
+    "pitch": "Query syntax reads like SQL; method syntax chains operator calls.",
+    "definition": "These are two equivalent ways to write LINQ. Query syntax uses SQL-like keywords (from, where, select) and is readable for joins and groupings. Method (fluent) syntax chains extension methods with lambdas (Where().Select()) and exposes every operator, including ones with no query keyword (e.g. Skip/Take). The compiler converts query syntax into method calls.",
+    "how": "Compiler rewrites query syntax into the same method-syntax operator chain; both run identically.",
+    "when": "Query syntax for joins/groupings; method for everything else.",
+    "whenNot": "Forcing query syntax for operators it cannot express.",
+    "advantages": [
+      "Query: readable joins/groups",
+      "Method: full operator access",
+      "Identical performance"
+    ],
+    "disadvantages": [
+      "Two styles to know",
+      "Query syntax is limited",
+      "Mixing styles can confuse"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "from p in people where p.Age > 18 select p.Name;     // query\npeople.Where(p => p.Age > 18).Select(p => p.Name);    // method"
+    }
+  },
+  "linq-4": {
+    "pitch": "A lambda is an inline function; internally it becomes a delegate or expression.",
+    "definition": "A lambda expression is a concise anonymous function (x => x * 2) you pass to LINQ operators. Internally the compiler turns it into either a delegate (for LINQ to Objects, executed directly) or an expression tree (for IQueryable, inspected and translated to SQL). Captured variables are hoisted into a closure object.",
+    "how": "Compiler emits a delegate or an Expression<Func<>>; LINQ to Objects invokes it, IQueryable analyzes the tree.",
+    "when": "Predicates and projections in LINQ.",
+    "whenNot": "Heavy logic better placed in a named method.",
+    "advantages": [
+      "Concise inline logic",
+      "Delegate or expression tree",
+      "Closures capture context"
+    ],
+    "disadvantages": [
+      "Closure capture pitfalls",
+      "Expression trees limit C# features",
+      "Overuse hurts readability"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Func<int,bool> even = n => n % 2 == 0;            // delegate\nExpression<Func<int,bool>> e = n => n % 2 == 0;   // expression tree"
+    }
+  },
+  "linq-5": {
+    "pitch": "IEnumerable runs in memory; IQueryable builds a translatable query.",
+    "definition": "IEnumerable<T> executes LINQ in memory using delegates, so with a database it would load rows then filter. IQueryable<T> builds an expression tree a provider (EF) translates into SQL, so filtering and paging run in the database and only needed rows return. Use IQueryable for remote/DB sources, IEnumerable for in-memory data.",
+    "how": "IEnumerable: delegates evaluated locally. IQueryable: expression tree translated to the source's query (SQL).",
+    "when": "IQueryable for DB queries; IEnumerable for in-memory.",
+    "whenNot": "Calling AsEnumerable early on a DB query (loads all rows).",
+    "advantages": [
+      "IQueryable filters at the DB",
+      "Transfers only needed rows",
+      "IEnumerable simple for memory"
+    ],
+    "disadvantages": [
+      "Accidental client-eval is slow",
+      "Provider can't translate all C#",
+      "Mixing the two surprises"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Users.Where(u => u.Age > 18)   // IQueryable -> SQL WHERE\nlist.Where(u => u.Age > 18)       // IEnumerable -> in memory"
+    }
+  },
+  "linq-6": {
+    "pitch": "LINQ is lazy: queries run only when you enumerate them.",
+    "definition": "Deferred execution means building a query does not run it - it runs only when you iterate (foreach) or call a materializing operator (ToList, ToArray, Count, First). Immediate execution happens with those operators that force evaluation now. The pitfall is a deferred query re-runs each time you enumerate it and reflects the latest source data.",
+    "how": "Operators compose a pipeline; iteration pulls items through it; materializers force evaluation immediately.",
+    "when": "Deferred for composing; materialize to snapshot/reuse.",
+    "whenNot": "Re-enumerating an expensive deferred query repeatedly.",
+    "advantages": [
+      "Composable, lazy pipelines",
+      "Computes only what's used",
+      "Materialize to freeze results"
+    ],
+    "disadvantages": [
+      "Re-runs on each enumeration",
+      "Captured-variable surprises",
+      "Hidden repeated DB calls"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Deferred execution",
+      "mermaid": "flowchart LR\n  A[Build query] --> B[Compose operators]\n  B --> C[Enumerate / ToList]\n  C --> D[Execute now]"
+    },
+    "code": {
+      "language": "csharp",
+      "snippet": "var q = nums.Where(n => n > 5);  // nothing runs yet\nvar list = q.ToList();           // executes now (immediate)"
+    }
+  },
+  "linq-7": {
+    "pitch": "Select projects each item; SelectMany flattens nested sequences.",
+    "definition": "Select transforms each element into one result (a one-to-one projection). SelectMany projects each element to a sequence and flattens all of them into a single sequence (one-to-many), great for child collections. So Select gives a list of lists, SelectMany gives one combined list.",
+    "how": "Select maps item -> result; SelectMany maps item -> sequence, then concatenates all sequences.",
+    "when": "Select for simple maps; SelectMany to flatten children.",
+    "whenNot": "Using Select on nested lists when you want them flattened.",
+    "advantages": [
+      "Select: clean projections",
+      "SelectMany: flatten one-to-many",
+      "Both compose in LINQ"
+    ],
+    "disadvantages": [
+      "SelectMany confuses beginners",
+      "Wrong one nests/duplicates",
+      "Flatten can blow up size"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "orders.Select(o => o.Items);      // IEnumerable<List<Item>>\norders.SelectMany(o => o.Items);  // IEnumerable<Item> (flattened)"
+    }
+  },
+  "linq-8": {
+    "pitch": "Where filters lazily; Find/FindAll are eager List methods.",
+    "definition": "Where is a LINQ operator that filters any IEnumerable lazily and returns a deferred sequence. Find (List<T>) returns the first matching element immediately, or default if none. FindAll (List<T>) returns a new List of all matches immediately. Where works on any sequence and defers; Find/FindAll are List-specific and execute right away.",
+    "how": "Where returns a deferred query; Find/FindAll run immediately on a List and return an item/new List.",
+    "when": "Where for any source/composition; Find/FindAll on a List.",
+    "whenNot": "Using Find on non-List sources (not available).",
+    "advantages": [
+      "Where: lazy, any source",
+      "Find: quick first match",
+      "FindAll: eager filtered List"
+    ],
+    "disadvantages": [
+      "Find/FindAll List-only",
+      "Where re-runs if re-enumerated",
+      "Mixing styles confuses"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "list.Where(x => x > 5);     // deferred, any IEnumerable\nlist.Find(x => x > 5);      // first match now (List)\nlist.FindAll(x => x > 5);   // all matches now (List)"
+    }
+  },
+  "linq-9": {
+    "pitch": "First/Single differ by how they handle zero or many matches.",
+    "definition": "These return a single element. First returns the first match and throws if none; FirstOrDefault returns default instead of throwing. Single expects exactly one match and throws if zero or more than one; SingleOrDefault allows zero (returns default) but still throws on more than one. Use Single when uniqueness must be guaranteed.",
+    "how": "First takes the first; Single asserts exactly one; the OrDefault variants return default instead of throwing on empty.",
+    "when": "First for 'any match'; Single to assert uniqueness.",
+    "whenNot": "Single where duplicates are possible (it throws).",
+    "advantages": [
+      "Clear intent per method",
+      "OrDefault avoids exceptions",
+      "Single validates uniqueness"
+    ],
+    "disadvantages": [
+      "First on empty throws",
+      "Single throws on duplicates",
+      "Easy to pick the wrong one"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "users.First(u => u.Active);          // first or throws\nusers.SingleOrDefault(u => u.Id==id); // exactly one or null"
+    }
+  },
+  "linq-10": {
+    "pitch": "Any/All test conditions; Count/LongCount count matches.",
+    "definition": "Any returns true if any element matches (or the sequence is non-empty); All returns true if every element matches. Count returns the number of matches as an int; LongCount returns a long for very large sequences that exceed int range. Prefer Any() over Count() > 0 because Any stops at the first match.",
+    "how": "Any/All short-circuit on the first decisive element; Count/LongCount enumerate everything to total.",
+    "when": "Any for existence; Count/LongCount when you need a total.",
+    "whenNot": "Using Count() > 0 where Any() is cheaper.",
+    "advantages": [
+      "Any/All short-circuit",
+      "Count: exact totals",
+      "LongCount: huge sequences"
+    ],
+    "disadvantages": [
+      "Count enumerates all",
+      "All on empty returns true",
+      "Count()>0 wastes work"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "if (users.Any(u => u.Active)) ...   // stops at first match\nint n = users.Count(u => u.Active); // counts all"
+    }
+  },
+  "linq-11": {
+    "pitch": "OrderBy/ThenBy sort by keys; Reverse just flips order.",
+    "definition": "OrderBy sorts ascending by a key; OrderByDescending sorts descending. ThenBy / ThenByDescending add secondary sort keys applied after the primary. Reverse simply reverses the current order without any key. Chaining OrderBy then ThenBy gives multi-level, stable sorting.",
+    "how": "OrderBy establishes the primary ordering; ThenBy refines ties; Reverse flips the existing sequence order.",
+    "when": "Sorting by one or more keys; Reverse to flip.",
+    "whenNot": "Using multiple OrderBy calls (the last one wins).",
+    "advantages": [
+      "Multi-key stable sorting",
+      "Asc/desc per key",
+      "Reverse for simple flips"
+    ],
+    "disadvantages": [
+      "OrderBy after OrderBy resets",
+      "Sorting is O(n log n)",
+      "Reverse needs full buffer"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "people.OrderBy(p => p.Last)\n      .ThenBy(p => p.First);   // primary, then secondary key"
+    }
+  },
+  "linq-12": {
+    "pitch": "Distinct dedups; GroupBy/ToLookup group; ToDictionary keys uniquely.",
+    "definition": "Distinct removes duplicate elements. GroupBy groups elements by a key into a deferred sequence of groups. ToLookup is like GroupBy but executes immediately into a 1-to-many lookup. ToDictionary builds a key->single-value map and throws on duplicate keys. Use ToLookup for many-per-key, ToDictionary for unique keys.",
+    "how": "Distinct filters dups; GroupBy/ToLookup bucket by key (deferred vs immediate); ToDictionary maps unique key->value.",
+    "when": "Dedup, grouping, or building keyed lookups.",
+    "whenNot": "ToDictionary on data with duplicate keys (throws).",
+    "advantages": [
+      "Grouping + dedup operators",
+      "ToLookup: many per key",
+      "ToDictionary: fast unique lookup"
+    ],
+    "disadvantages": [
+      "ToDictionary throws on dup keys",
+      "GroupBy buffers data",
+      "Distinct needs equality/hash"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "items.GroupBy(i => i.Cat);              // deferred groups\nitems.ToLookup(i => i.Cat);             // immediate, many-per-key\nitems.ToDictionary(i => i.Id);          // unique key -> item"
+    }
+  },
+  "linq-13": {
+    "pitch": "Join matches pairs; GroupJoin nests; Zip pairs by position; SelectMany flattens.",
+    "definition": "Join performs an inner join on matching keys, producing flat pairs. GroupJoin joins but groups the right side per left element (like a left-join shape). Zip combines two sequences element-by-element by position. SelectMany flattens nested sequences and can also express joins via cross/where. Pick by the relationship you need.",
+    "how": "Join/GroupJoin match by key (flat vs grouped); Zip pairs by index; SelectMany flattens nested sequences.",
+    "when": "Join for inner joins; GroupJoin for left-join shape; Zip for paired data.",
+    "whenNot": "Zip on sequences of different lengths (truncates).",
+    "advantages": [
+      "Join: key-matched pairs",
+      "GroupJoin: grouped/left join",
+      "Zip: positional pairing"
+    ],
+    "disadvantages": [
+      "Zip truncates to shorter",
+      "GroupJoin shape confuses",
+      "Joins can be costly"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "orders.Join(users, o => o.UserId, u => u.Id, (o,u) => new { o, u }); // inner join"
+    }
+  },
+  "linq-14": {
+    "pitch": "Skip/Take slice by count; SkipWhile/TakeWhile slice by predicate.",
+    "definition": "Skip ignores the first N elements and Take returns the first N - together they implement paging. SkipWhile skips elements while a condition holds then yields the rest; TakeWhile yields elements while a condition holds then stops. The While variants are predicate-driven, not count-driven.",
+    "how": "Skip/Take cut by index; SkipWhile/TakeWhile cut at the first element where the predicate flips.",
+    "when": "Skip/Take for pagination; While variants for ordered cut-offs.",
+    "whenNot": "Paging without an OrderBy (unstable results).",
+    "advantages": [
+      "Skip/Take = easy paging",
+      "While variants = conditional",
+      "Composable with ordering"
+    ],
+    "disadvantages": [
+      "Paging needs ordering",
+      "SkipWhile stops at first false",
+      "Large Skip still scans (DB offset)"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "items.Skip(page * 20).Take(20);   // pagination\nitems.TakeWhile(x => x < 100);    // until first >= 100"
+    }
+  },
+  "linq-15": {
+    "pitch": "Aggregate functions reduce a sequence to a single value.",
+    "definition": "Aggregate operators collapse a sequence to one value. Sum/Min/Max/Average compute the obvious numeric aggregates. Aggregate is the general-purpose fold: it threads an accumulator through every element with a function you provide, so you can build custom aggregations (concatenation, running products).",
+    "how": "Each aggregate folds elements into one result; Aggregate applies your accumulator function across the sequence.",
+    "when": "Totals, extremes, averages, or custom reductions.",
+    "whenNot": "Aggregate where a built-in (Sum/Max) is clearer.",
+    "advantages": [
+      "Built-ins for common stats",
+      "Aggregate is fully general",
+      "Concise reductions"
+    ],
+    "disadvantages": [
+      "Aggregate is harder to read",
+      "Average/Sum on empty pitfalls",
+      "Custom folds easy to get wrong"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "orders.Sum(o => o.Total);\norders.Aggregate(0m, (acc, o) => acc + o.Total);  // custom fold"
+    }
+  },
+  "linq-16": {
+    "pitch": "LINQ does inner/left joins natively; right/full need a workaround.",
+    "definition": "LINQ has direct support for inner join (Join) and a left outer join via GroupJoin + SelectMany + DefaultIfEmpty. A cross join is just SelectMany (or a from-from with no join condition). Right join is done by swapping the operands of a left join, and full outer join is built by unioning a left and right join, since LINQ has no native full-outer operator.",
+    "how": "Left join = GroupJoin + DefaultIfEmpty; cross = SelectMany; right = swap left join; full = union left + right.",
+    "when": "Combining related sequences with various join shapes.",
+    "whenNot": "Expecting a built-in full-outer-join operator.",
+    "advantages": [
+      "Inner + left built-in",
+      "Cross via SelectMany",
+      "Full join by union"
+    ],
+    "disadvantages": [
+      "No native right/full join",
+      "Left-join syntax verbose",
+      "Joins can be expensive"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "from a in A\njoin b in B on a.Id equals b.AId into g\nfrom b in g.DefaultIfEmpty()      // LEFT OUTER JOIN\nselect new { a, b };"
+    }
+  },
+  "linq-17": {
+    "pitch": "Optimize LINQ by filtering early, avoiding client-eval and re-enumeration.",
+    "definition": "You optimize LINQ by reducing work and round trips: filter and project early (and at the DB via IQueryable), avoid materializing then re-querying, select only needed columns, use Any() instead of Count()>0, and avoid N+1 by eager-loading. The big pitfalls are accidental client-side evaluation and re-running deferred queries multiple times.",
+    "how": "Push Where/Select into IQueryable -> translate to SQL -> materialize once; avoid client-eval and N+1.",
+    "when": "Slow or chatty data queries.",
+    "whenNot": "Optimizing before measuring the actual hotspot.",
+    "advantages": [
+      "Filter/project at the source",
+      "Materialize once",
+      "Any() over Count()>0"
+    ],
+    "disadvantages": [
+      "Client-eval loads everything",
+      "N+1 from lazy loading",
+      "Re-enumeration repeats work"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Orders.Where(o => o.Total > 100)\n  .Select(o => o.Id).ToList();   // filter + project at the DB"
+    }
+  },
+  "linq-18": {
+    "pitch": "Expression trees represent a lambda as data the provider can read.",
+    "definition": "An expression tree is a data structure (Expression<Func<...>>) that represents code as a tree of nodes instead of compiled IL. A plain lambda compiles to a delegate you just call; an expression tree can be inspected and translated, which is how LINQ providers like EF turn your C# predicate into SQL. You can also build and compile them at runtime.",
+    "how": "Compiler emits Expression<Func<>> for IQueryable params; the provider walks the tree and translates it (e.g. to SQL).",
+    "when": "When a provider must translate or analyze your code.",
+    "whenNot": "In-memory loops where a delegate is simpler/faster.",
+    "advantages": [
+      "Code as inspectable data",
+      "Enables LINQ-to-SQL",
+      "Runtime build/compile"
+    ],
+    "disadvantages": [
+      "Cannot use all C# in them",
+      "Harder to write/debug",
+      "Compile cost if reused poorly"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Expression<Func<User,bool>> e = u => u.Age > 18; // tree, not a delegate\ndb.Users.Where(e);                                // EF translates to SQL"
+    }
+  },
+  "linq-19": {
+    "pitch": "IQueryable lets EF translate LINQ into SQL run by the database.",
+    "definition": "In EF, IQueryable is preferred because the query is an expression tree EF translates into SQL, so filtering, sorting and paging execute in the database and only matching rows return. EF's provider visits the expression tree, maps operators and members to SQL, and runs it when you enumerate. IEnumerable would instead pull rows into memory first.",
+    "how": "EF visits the IQueryable expression tree -> builds SQL -> executes on enumeration -> materializes only needed rows.",
+    "when": "All EF data access over large tables.",
+    "whenNot": "Switching to IEnumerable mid-query (forces client-eval).",
+    "advantages": [
+      "DB-side filtering/paging",
+      "Minimal data transfer",
+      "Composable into one SQL"
+    ],
+    "disadvantages": [
+      "Untranslatable C# fails/eval",
+      "Hidden SQL surprises",
+      "Debugging generated SQL"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Users.Where(u => u.Age > 18).OrderBy(u => u.Name).Take(20);\n// -> SELECT TOP 20 ... WHERE Age > 18 ORDER BY Name"
+    }
+  },
+  "linq-20": {
+    "pitch": "I use LINQ to turn messy data shaping into clear, optimized queries.",
+    "definition": "A real scenario: aggregating multi-source reporting data. I used LINQ and lambdas to join orders, customers and products in memory, group by region, compute per-group totals and top items, and project a lean DTO - replacing dozens of lines of manual loops. Pushing the heavy filtering to the database via IQueryable kept it fast.",
+    "how": "Compose Where/Join/GroupBy/Select -> push filters to the DB (IQueryable) -> project to a lean DTO -> materialize once.",
+    "when": "Complex data shaping and reporting.",
+    "whenNot": "Ultra-hot loops where manual code wins.",
+    "advantages": [
+      "Readable complex transforms",
+      "DB-side filtering for speed",
+      "Lean projected results"
+    ],
+    "disadvantages": [
+      "Hidden cost if misused",
+      "Client-eval traps",
+      "Hard-to-read mega-queries"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "realWorld": "On a sales dashboard, replacing nested loops with grouped LINQ over an IQueryable cut the report code by ~70% and the query time by half via DB-side filtering."
+  },
+  "linq-21": {
+    "pitch": "Where filters a sequence by a predicate.",
+    "definition": "Where is the LINQ filtering operator: it returns only the elements that satisfy a boolean predicate, lazily as a deferred sequence. It is the most common operator and composes with Select, OrderBy and others to build queries.",
+    "how": "Where wraps the source and yields only elements where the predicate returns true, on enumeration.",
+    "when": "Filtering any sequence to matching elements.",
+    "whenNot": "Filtering after loading everything when the DB could.",
+    "advantages": [
+      "Simple, composable filtering",
+      "Lazy/deferred",
+      "Works on any source"
+    ],
+    "disadvantages": [
+      "Re-runs if re-enumerated",
+      "Client-eval if misplaced",
+      "Multiple Where calls add overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var active = users.Where(u => u.IsActive);  // deferred filter"
+    }
+  },
+  "linq-22": {
+    "pitch": "Select projects each item; SelectMany flattens nested sequences.",
+    "definition": "Select transforms each element into one result (one-to-one). SelectMany projects each element to a sequence and flattens them into a single sequence (one-to-many), ideal for child collections. Select of nested lists gives a list of lists; SelectMany gives one combined list.",
+    "how": "Select maps each item to a value; SelectMany maps to a sequence then concatenates all of them.",
+    "when": "Select for maps; SelectMany to flatten children.",
+    "whenNot": "Select where you meant to flatten (nested result).",
+    "advantages": [
+      "Select: clean projection",
+      "SelectMany: flatten",
+      "Both compose"
+    ],
+    "disadvantages": [
+      "SelectMany trips beginners",
+      "Wrong choice nests data",
+      "Flatten can grow output"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "orders.SelectMany(o => o.Items);  // flatten all items into one sequence"
+    }
+  },
+  "linq-23": {
+    "pitch": "Join matches elements from two sequences by a shared key.",
+    "definition": "Join performs an inner join: it pairs each element of one sequence with elements of another that share a matching key, producing a flat result of the matched pairs. Non-matching elements are dropped. It mirrors a SQL INNER JOIN.",
+    "how": "Build a lookup on the inner key -> for each outer element, emit pairs whose keys match.",
+    "when": "Combining two related sequences on a key.",
+    "whenNot": "Needing unmatched rows (use GroupJoin/left join).",
+    "advantages": [
+      "Key-matched pairing",
+      "Maps to SQL inner join",
+      "Flat, projectable result"
+    ],
+    "disadvantages": [
+      "Drops unmatched rows",
+      "Key types must match",
+      "Large joins cost memory/time"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "orders.Join(users, o => o.UserId, u => u.Id,\n            (o, u) => new { o.Id, u.Name });   // inner join"
+    }
+  },
+  "linq-24": {
+    "pitch": "GroupJoin joins but groups the right side per left element.",
+    "definition": "GroupJoin joins two sequences but, instead of flat pairs, gives each left element together with the group of all matching right elements. That grouped shape is the basis for a left outer join (combine with DefaultIfEmpty). Plain Join produces flat matched pairs and drops unmatched left elements; GroupJoin keeps every left element with its (possibly empty) group.",
+    "how": "For each outer element, collect all matching inner elements into a group -> emit (outer, group).",
+    "when": "Hierarchical data or building a left outer join.",
+    "whenNot": "When you want simple flat inner-join pairs.",
+    "advantages": [
+      "Keeps every left element",
+      "Group of matches per element",
+      "Basis for left join"
+    ],
+    "disadvantages": [
+      "Grouped shape less intuitive",
+      "More memory than Join",
+      "Extra flatten step for left join"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "users.GroupJoin(orders, u => u.Id, o => o.UserId,\n                (u, os) => new { u.Name, Count = os.Count() });"
+    }
+  },
+  "linq-25": {
+    "pitch": "GroupBy buckets elements by a key into groups.",
+    "definition": "GroupBy organizes a sequence into groups keyed by a selector, each group being a sub-sequence of elements sharing that key - like SQL GROUP BY. You then aggregate or project per group. It is deferred and buffers data to form the groups.",
+    "how": "Hash each element by its key -> collect into per-key groups -> yield IGrouping<key, items> on enumeration.",
+    "when": "Aggregating or summarizing data by category.",
+    "whenNot": "Huge datasets where buffering all groups is costly.",
+    "advantages": [
+      "SQL-like grouping",
+      "Per-group aggregation",
+      "Composable with Select"
+    ],
+    "disadvantages": [
+      "Buffers to build groups",
+      "Deferred-execution gotchas",
+      "Key equality/hash matters"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "orders.GroupBy(o => o.Region)\n      .Select(g => new { g.Key, Total = g.Sum(o => o.Total) });"
+    }
+  },
+  "linq-26": {
+    "pitch": "OrderBy/ThenBy sort by primary and secondary keys, asc or desc.",
+    "definition": "OrderBy sorts ascending by a key and OrderByDescending descending; ThenBy and ThenByDescending add secondary keys applied to ties from the primary sort. Chaining them gives stable multi-level ordering. A second OrderBy would reset the sort, so use ThenBy for additional keys.",
+    "how": "OrderBy sets the primary key; ThenBy* breaks ties with further keys, producing a stable composite sort.",
+    "when": "Multi-column sorting (e.g. last name, then first).",
+    "whenNot": "Using a second OrderBy instead of ThenBy.",
+    "advantages": [
+      "Multi-key stable sort",
+      "Asc/desc per key",
+      "Readable ordering"
+    ],
+    "disadvantages": [
+      "O(n log n) cost",
+      "OrderBy-after-OrderBy resets",
+      "Needs full buffer to sort"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "people.OrderByDescending(p => p.Age).ThenBy(p => p.Name);"
+    }
+  },
+  "linq-27": {
+    "pitch": "Distinct dedups; Union/Intersect/Except are set operations.",
+    "definition": "These are set operators. Distinct removes duplicates from one sequence. Union combines two sequences and removes duplicates. Intersect returns elements present in both. Except returns elements in the first but not the second. All rely on element equality (Equals/GetHashCode) to compare.",
+    "how": "Each operator hashes elements to compare: Distinct on one set; Union/Intersect/Except across two sets.",
+    "when": "Combining or comparing sets of data.",
+    "whenNot": "On large sequences with costly equality.",
+    "advantages": [
+      "Clear set semantics",
+      "Dedup built in",
+      "Composable"
+    ],
+    "disadvantages": [
+      "Need correct Equals/GetHashCode",
+      "Buffers for hashing",
+      "Custom comparer for objects"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "a.Union(b);      // a + b, no dups\na.Intersect(b);  // in both\na.Except(b);     // in a, not b"
+    }
+  },
+  "linq-28": {
+    "pitch": "First/Single differ by how they handle zero or many matches.",
+    "definition": "First returns the first match and throws if none; FirstOrDefault returns default instead. Single expects exactly one match and throws on zero or more than one; SingleOrDefault allows zero (returns default) but throws on more than one. Use First for 'give me one', Single to assert uniqueness.",
+    "how": "First grabs the first; Single asserts one-and-only-one; OrDefault variants return default on empty.",
+    "when": "First for any match; Single for guaranteed-unique.",
+    "whenNot": "Single on data that can have duplicates.",
+    "advantages": [
+      "Intent-revealing methods",
+      "OrDefault avoids exceptions",
+      "Single validates uniqueness"
+    ],
+    "disadvantages": [
+      "First/Single throw on empty/dup",
+      "Misuse causes runtime errors",
+      "Subtle differences"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "users.FirstOrDefault(u => u.Id == id);   // first or null\nusers.Single(u => u.Id == id);           // exactly one or throws"
+    }
+  },
+  "linq-29": {
+    "pitch": "Any tests existence, All tests universality, Contains tests membership.",
+    "definition": "Any returns true if at least one element matches a predicate (or the sequence is non-empty); All returns true if every element matches; Contains returns true if a specific value exists in the sequence. Any/All take predicates; Contains takes a value and uses equality.",
+    "how": "Any/All short-circuit on the first decisive element; Contains scans for an equal value.",
+    "when": "Existence (Any), universality (All), membership (Contains).",
+    "whenNot": "Using Count()>0 where Any() suffices.",
+    "advantages": [
+      "Short-circuiting checks",
+      "Predicate or value tests",
+      "Readable boolean queries"
+    ],
+    "disadvantages": [
+      "All on empty returns true",
+      "Contains needs equality",
+      "Misreading the three"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "users.Any(u => u.Active);   // any match?\nids.Contains(5);            // value present?"
+    }
+  },
+  "linq-30": {
+    "pitch": "Aggregation operators reduce a sequence to one value.",
+    "definition": "Count returns how many elements; Sum totals numeric values; Average computes the mean; Min/Max return extremes; Aggregate is the general fold that threads a custom accumulator across elements. The first five cover common stats; Aggregate handles anything custom.",
+    "how": "Each operator folds the sequence into one result; Aggregate applies your function element by element.",
+    "when": "Totals, counts, extremes, or custom reductions.",
+    "whenNot": "Aggregate where Sum/Max would be clearer.",
+    "advantages": [
+      "Built-ins for common stats",
+      "Aggregate fully general",
+      "Concise reductions"
+    ],
+    "disadvantages": [
+      "Sum/Average on empty pitfalls",
+      "Aggregate harder to read",
+      "Overflow on large sums"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "orders.Sum(o => o.Total);\norders.Max(o => o.Total);\norders.Aggregate(0m, (a, o) => a + o.Total);"
+    }
+  },
+  "linq-31": {
+    "pitch": "Skip and Take slice a sequence - the basis of pagination.",
+    "definition": "Skip ignores the first N elements; Take returns the next N. Combined - Skip(page*size).Take(size) - they implement pagination over an ordered sequence. On a database via IQueryable they translate to OFFSET/FETCH, fetching only one page from the server.",
+    "how": "Skip advances past N elements; Take yields N; together they fetch one page (OFFSET/FETCH in SQL).",
+    "when": "Paging large result sets in UI or APIs.",
+    "whenNot": "Paging without a stable OrderBy.",
+    "advantages": [
+      "Simple pagination",
+      "Translates to SQL OFFSET",
+      "Composable with ordering"
+    ],
+    "disadvantages": [
+      "Needs deterministic ordering",
+      "Large OFFSET scans rows",
+      "Keyset paging better at scale"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Orders.OrderBy(o => o.Id)\n  .Skip(page * 20).Take(20);   // page of 20"
+    }
+  },
+  "linq-32": {
+    "pitch": "These materializers turn a query into a concrete collection.",
+    "definition": "These force immediate execution into a collection. ToList builds a List, ToArray builds an array - both ordered sequences. ToDictionary builds a key->single-value map (throws on duplicate keys). ToLookup builds a key->many-values lookup (allows duplicate keys). Choose by whether you need a list, fast keyed lookup, or grouped lookup.",
+    "how": "Each enumerates the query once and copies results into the target structure (List/array/dictionary/lookup).",
+    "when": "Snapshotting results or building keyed lookups.",
+    "whenNot": "ToDictionary on data with duplicate keys (throws).",
+    "advantages": [
+      "Snapshot a deferred query",
+      "Dictionary: O(1) lookup",
+      "Lookup: many per key"
+    ],
+    "disadvantages": [
+      "ToDictionary throws on dups",
+      "Buffers all results in memory",
+      "Loses deferred benefits"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var byId = users.ToDictionary(u => u.Id);    // unique key map\nvar byCat = items.ToLookup(i => i.Category);  // many per key"
+    }
+  },
+  "linq-33": {
+    "pitch": "LINQ defers execution; certain operators force it immediately.",
+    "definition": "Deferred execution means a query runs only when enumerated (foreach) or materialized. The operators that cause immediate execution are the ones that must consume the whole sequence: ToList, ToArray, ToDictionary, ToLookup, Count, Sum/Min/Max/Average, First/Single and their variants, and Any/All. Everything else (Where, Select, OrderBy) stays deferred.",
+    "how": "Composing operators builds a pipeline; a materializing/scalar operator (ToList, Count, First) executes it now.",
+    "when": "Knowing when your query actually hits the data.",
+    "whenNot": "Assuming a deferred query already ran.",
+    "advantages": [
+      "Compose lazily",
+      "Materialize on demand",
+      "Control when work happens"
+    ],
+    "disadvantages": [
+      "Re-runs if re-enumerated",
+      "Surprising timing of DB calls",
+      "Captured-variable gotchas"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var q = users.Where(u => u.Active); // deferred\nvar n = q.Count();                  // immediate (executes now)"
+    }
+  },
+  "linq-34": {
+    "pitch": "IEnumerable runs in memory; IQueryable builds a translatable query.",
+    "definition": "IEnumerable<T> executes LINQ in memory with delegates, so a database source would load rows then filter. IQueryable<T> builds an expression tree a provider (EF) translates to SQL, so work runs at the source and only needed rows return. Use IQueryable for remote/DB queries and IEnumerable for in-memory collections.",
+    "how": "IEnumerable: delegates run locally. IQueryable: expression tree translated and executed at the data source.",
+    "when": "IQueryable for DB; IEnumerable for in-memory data.",
+    "whenNot": "Forcing IEnumerable on a DB query (loads all rows).",
+    "advantages": [
+      "IQueryable filters at source",
+      "Minimal data transfer",
+      "IEnumerable simple in memory"
+    ],
+    "disadvantages": [
+      "Accidental client-eval",
+      "Provider translation limits",
+      "Mixing the two surprises"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "IQueryable<User> q = db.Users.Where(u => u.Age > 18); // -> SQL\nIEnumerable<User> m = list.Where(u => u.Age > 18);   // in memory"
+    }
+  },
+  "linq-35": {
+    "pitch": "LINQ does left joins via DefaultIfEmpty; right/full need workarounds.",
+    "definition": "You implement a left outer join in LINQ with GroupJoin + SelectMany + DefaultIfEmpty, so every left element appears even with no match (the right side becomes null/default). LINQ has no native right or full outer join: do a right join by swapping the operands of a left join, and a full outer join by unioning a left join and a right join.",
+    "how": "Left = GroupJoin + DefaultIfEmpty; right = swap operands; full = union(left, right) and dedup.",
+    "when": "Combining sequences while keeping unmatched rows.",
+    "whenNot": "Expecting native right/full outer join operators.",
+    "advantages": [
+      "Left join built from primitives",
+      "Right via operand swap",
+      "Full via union"
+    ],
+    "disadvantages": [
+      "No native right/full join",
+      "Verbose left-join syntax",
+      "Union step for full join"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "from a in A\njoin b in B on a.Id equals b.AId into g\nfrom b in g.DefaultIfEmpty()   // LEFT OUTER JOIN\nselect new { a, B = b };"
+    }
+  }
+}
