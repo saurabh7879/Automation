@@ -7,12 +7,18 @@
       "title": "URL shortener",
       "mermaid": "flowchart LR\n  U[User] --> LB[Load Balancer]\n  LB --> S[Shorten/Redirect Service]\n  S --> C[(Cache)]\n  S --> DB[(KV Store)]"
     },
-    "keyPoints": [
-      "Short key: base62 of an id or hash",
-      "KV store maps key -> long URL",
-      "Cache hot keys (read-heavy)",
-      "301/302 redirect on lookup",
-      "Optional: analytics, expiry, custom alias"
+    "how": "base62-encode an id (or hash the URL) -> store key->URL in a KV store -> cache hot keys -> 301/302 redirect on lookup.",
+    "when": "Short links, link analytics, QR targets at scale.",
+    "whenNot": "Tiny internal use where a DB id link suffices.",
+    "advantages": [
+      "Read-heavy, easy to cache",
+      "Simple KV scales horizontally",
+      "Cheap, low-latency redirects"
+    ],
+    "disadvantages": [
+      "Key collisions if hashing",
+      "Hot-key skew",
+      "Analytics adds write load"
     ]
   },
   "system-design-2": {
@@ -23,12 +29,18 @@
       "title": "Distributed cache",
       "mermaid": "flowchart LR\n  C[Client] --> R[Router]\n  R --> N1[Shard 1 + Replica]\n  R --> N2[Shard 2 + Replica]\n  R --> N3[Shard 3 + Replica]"
     },
-    "keyPoints": [
-      "In-memory KV for low latency",
-      "Consistent hashing shards keys across nodes",
-      "Replicas per shard for availability",
-      "Eviction (LRU/LFU) + TTL bound memory",
-      "Client-side or proxy routing"
+    "how": "Consistent hashing routes a key to a shard -> replica serves reads -> LRU/TTL evict -> async replication.",
+    "when": "Low-latency caching, sessions, leaderboards.",
+    "whenNot": "Durable system-of-record storage.",
+    "advantages": [
+      "Sub-millisecond reads",
+      "Scales by adding shards",
+      "Replicas give availability"
+    ],
+    "disadvantages": [
+      "Memory is volatile/expensive",
+      "Consistency vs availability trade-off",
+      "Rebalancing on resize"
     ]
   },
   "system-design-3": {
@@ -39,12 +51,18 @@
       "title": "Chat application",
       "mermaid": "flowchart LR\n  A[Client A] --> G[WebSocket Gateway]\n  G --> Q[Message Queue]\n  Q --> D[Delivery Service]\n  D --> DB[(Message Store)]\n  D --> B[Client B]"
     },
-    "keyPoints": [
-      "WebSocket gateways for live connections",
-      "Queue + delivery service decouple send",
-      "Per-conversation message store (sharded)",
-      "Online push vs offline store-and-forward",
-      "Delivery/read receipts, group fan-out"
+    "how": "Persistent WebSocket -> message queue -> delivery service writes store + pushes to online recipients (or stores offline).",
+    "when": "Real-time 1:1 and group messaging.",
+    "whenNot": "Simple request/response apps with no live updates.",
+    "advantages": [
+      "Real-time delivery",
+      "Scales by conversation shard",
+      "Offline store-and-forward"
+    ],
+    "disadvantages": [
+      "Connection state is heavy",
+      "Ordering/delivery guarantees hard",
+      "Group fan-out costly"
     ]
   },
   "system-design-4": {
@@ -55,12 +73,18 @@
       "title": "Real-time notifications",
       "mermaid": "flowchart LR\n  P[Producer] --> B[Pub/Sub Broker]\n  B --> F[Fan-out Service]\n  F --> WS[WebSocket Push]\n  F --> Q[Offline Queue]"
     },
-    "keyPoints": [
-      "Producers publish events to a broker",
-      "Pub/sub fans out to subscribers",
-      "WebSocket/push for online, queue for offline",
-      "Topic partitioning for scale",
-      "Idempotent, retried delivery"
+    "how": "Producers publish events -> pub/sub broker -> fan-out service -> WebSocket/push online, queue offline.",
+    "when": "Live alerts, activity feeds, real-time updates.",
+    "whenNot": "Batch/digest notifications with no urgency.",
+    "advantages": [
+      "Decouples producers/consumers",
+      "Scales by topic partition",
+      "Multi-channel delivery"
+    ],
+    "disadvantages": [
+      "Broker is a bottleneck if unscaled",
+      "Delivery retries add complexity",
+      "Online presence tracking needed"
     ]
   },
   "system-design-5": {
@@ -71,12 +95,18 @@
       "title": "File storage service",
       "mermaid": "flowchart LR\n  U[Client] --> API[API]\n  API --> M[(Metadata DB)]\n  API --> B[(Blob Storage)]\n  B --> CDN[CDN] --> U"
     },
-    "keyPoints": [
-      "Chunk files; dedup by content hash",
-      "Blob/object store for chunks",
-      "Metadata DB: files, versions, ACLs, chunk map",
-      "Delta sync + resumable uploads",
-      "CDN for fast downloads"
+    "how": "Chunk files, dedup by hash -> blob store for chunks + metadata DB -> delta sync -> CDN downloads.",
+    "when": "Cloud file storage and sync (Drive/Dropbox).",
+    "whenNot": "Small single-file uploads with no sync.",
+    "advantages": [
+      "Dedup + resumable uploads",
+      "Efficient delta sync",
+      "CDN-fast downloads"
+    ],
+    "disadvantages": [
+      "Chunk/metadata complexity",
+      "Conflict resolution on sync",
+      "Storage cost at scale"
     ]
   },
   "system-design-6": {
@@ -87,12 +117,18 @@
       "title": "Video streaming",
       "mermaid": "flowchart LR\n  U[Uploader] --> T[Transcoder]\n  T --> B[(Blob Storage)]\n  B --> CDN[CDN]\n  V[Viewer] --> CDN"
     },
-    "keyPoints": [
-      "Transcode to multiple bitrates (HLS/DASH)",
-      "Segment videos; store in blob storage",
-      "CDN edge delivery, adaptive bitrate",
-      "Metadata DB + search/recommendations",
-      "Async upload/transcode pipeline"
+    "how": "Transcode to multiple bitrates -> segment (HLS/DASH) -> blob store -> CDN edge with adaptive bitrate.",
+    "when": "Large-scale video on demand.",
+    "whenNot": "Low-volume video where a simple file serve works.",
+    "advantages": [
+      "CDN absorbs read traffic",
+      "Adaptive bitrate UX",
+      "Async transcode pipeline"
+    ],
+    "disadvantages": [
+      "Transcoding is costly",
+      "Storage for many renditions",
+      "Pipeline complexity"
     ]
   },
   "system-design-7": {
@@ -103,12 +139,18 @@
       "title": "Food delivery",
       "mermaid": "flowchart LR\n  C[Customer] --> O[Order Service]\n  O --> P[Payment]\n  O --> M[Matching/Dispatch]\n  M --> A[Delivery Agent]\n  A --> L[Location Stream] --> C"
     },
-    "keyPoints": [
-      "Catalog, cart/order, payment services",
-      "Geospatial index to find nearby agents",
-      "Dispatch/matching assigns delivery partner",
-      "Live location tracking to customer",
-      "Event-driven order state machine"
+    "how": "Order service -> payment -> matching/dispatch finds nearby agents (geo index) -> live location stream.",
+    "when": "On-demand delivery marketplaces.",
+    "whenNot": "Simple catalog/checkout with no delivery.",
+    "advantages": [
+      "Real-time matching/tracking",
+      "Event-driven order state",
+      "Scales per service"
+    ],
+    "disadvantages": [
+      "Geo matching latency",
+      "Many services to operate",
+      "Surge/peak load spikes"
     ]
   },
   "system-design-8": {
@@ -119,12 +161,18 @@
       "title": "Ride sharing",
       "mermaid": "flowchart LR\n  D[Drivers] --> G[Geo Index]\n  R[Rider] --> M[Matching Service]\n  M --> G\n  M --> T[Trip Service]\n  T --> P[Payment]"
     },
-    "keyPoints": [
-      "Drivers stream location to a geo index",
-      "Matching finds nearest available drivers",
-      "Surge pricing by supply/demand",
-      "Real-time trip + location channels",
-      "Payment and rating at trip end"
+    "how": "Drivers stream GPS to a geo index -> matching finds nearest -> surge pricing -> dispatch + trip channel.",
+    "when": "Ride-hailing and real-time dispatch.",
+    "whenNot": "Static booking with no live location.",
+    "advantages": [
+      "Low-latency geo matching",
+      "Surge balances supply/demand",
+      "Real-time trip updates"
+    ],
+    "disadvantages": [
+      "High-frequency location writes",
+      "Matching at scale is hard",
+      "Pricing fairness/complaints"
     ]
   },
   "system-design-9": {
@@ -135,12 +183,18 @@
       "title": "E-commerce platform",
       "mermaid": "flowchart LR\n  U[User] --> G[API Gateway]\n  G --> Cat[Catalog/Search]\n  G --> Cart[Cart]\n  G --> Ord[Order]\n  Ord --> Pay[Payment]\n  Ord --> Inv[Inventory]"
     },
-    "keyPoints": [
-      "Catalog + search (read-heavy, cached)",
-      "Cart, order, payment services",
-      "Inventory service guards stock",
-      "Event-driven fulfillment pipeline",
-      "Idempotent orders, consistent inventory"
+    "how": "Catalog/search (cached) -> cart -> order -> payment -> inventory; events drive fulfillment.",
+    "when": "Online retail at scale.",
+    "whenNot": "A tiny shop where a monolith suffices.",
+    "advantages": [
+      "Read path cache/CDN-heavy",
+      "Services scale independently",
+      "Event-driven fulfillment"
+    ],
+    "disadvantages": [
+      "Inventory consistency is hard",
+      "Many services to coordinate",
+      "Search infra cost"
     ]
   },
   "system-design-10": {
@@ -151,12 +205,18 @@
       "title": "Payment gateway",
       "mermaid": "flowchart LR\n  M[Merchant] --> G[Gateway]\n  G --> V[Tokenize/Validate]\n  V --> P[Processor/Bank]\n  G --> L[(Ledger)]\n  P --> W[Webhook] --> M"
     },
-    "keyPoints": [
-      "Tokenize cards (minimize PCI scope)",
-      "Idempotency keys prevent double charges",
-      "Immutable ledger of every transaction",
-      "Async results via webhooks",
-      "Retries, reconciliation, fraud checks"
+    "how": "Tokenize card -> idempotency key -> forward to processor/bank -> immutable ledger -> webhook result.",
+    "when": "Accepting payments securely.",
+    "whenNot": "Low-volume internal transfers without cards.",
+    "advantages": [
+      "Idempotency prevents double-charge",
+      "Ledger is auditable",
+      "Minimized PCI scope"
+    ],
+    "disadvantages": [
+      "PCI compliance burden",
+      "Async failure handling",
+      "Reconciliation complexity"
     ]
   },
   "system-design-11": {
@@ -167,12 +227,18 @@
       "title": "Hotel booking",
       "mermaid": "flowchart LR\n  U[User] --> S[Search/Availability]\n  S --> Inv[(Inventory)]\n  U --> B[Booking Service]\n  B --> Inv\n  B --> P[Payment]"
     },
-    "keyPoints": [
-      "Search/availability by date range (cached)",
-      "Reserve with a short lock to avoid double-book",
-      "Transactional inventory decrement",
-      "Payment + confirmation",
-      "Cancellations release inventory"
+    "how": "Availability search (cached) -> reserve room with a short lock -> payment -> confirm; cancel releases.",
+    "when": "Hotel/room inventory booking.",
+    "whenNot": "Free events with unlimited capacity.",
+    "advantages": [
+      "Prevents double-booking",
+      "Read-heavy availability cached",
+      "Transactional inventory"
+    ],
+    "disadvantages": [
+      "Locking/timeout tuning",
+      "Overbooking policy edge cases",
+      "Peak-season load"
     ]
   },
   "system-design-12": {
@@ -183,12 +249,18 @@
       "title": "Ticket booking",
       "mermaid": "flowchart LR\n  U[User] --> Seat[Seat Service]\n  Seat --> Lock[(Lock/Reservation)]\n  U --> Pay[Payment]\n  Pay --> Confirm[Confirm Booking]\n  Confirm --> DB[(Bookings)]"
     },
-    "keyPoints": [
-      "Seat map + showtime search (cached)",
-      "Temporary seat lock with timeout",
-      "Confirm on payment; release on timeout",
-      "Transactional seat inventory",
-      "Idempotent booking to avoid duplicates"
+    "how": "Seat map (cached) -> temporary seat lock with timeout -> payment confirms -> release on timeout.",
+    "when": "Movie/flight/train seat booking.",
+    "whenNot": "General-admission with no seat selection.",
+    "advantages": [
+      "Concurrency-safe seat holds",
+      "Idempotent bookings",
+      "Transactional inventory"
+    ],
+    "disadvantages": [
+      "High contention on popular seats",
+      "Lock timeout tuning",
+      "Flash-sale spikes"
     ]
   },
   "system-design-13": {
@@ -199,12 +271,18 @@
       "title": "Social media platform",
       "mermaid": "flowchart LR\n  U[User] --> G[API Gateway]\n  G --> Graph[Social Graph]\n  G --> Post[Post/Media]\n  Post --> CDN[CDN]\n  G --> Feed[Feed Service] --> Cache[(Feed Cache)]"
     },
-    "keyPoints": [
-      "Social graph (followers/friends)",
-      "Posts + media in blob storage + CDN",
-      "Feed via fan-out (write vs read)",
-      "Heavy caching, precomputed feeds",
-      "Hybrid fan-out for celebrity accounts"
+    "how": "Social graph + posts/media (CDN) -> feed via fan-out; cache + precompute; hybrid for celebrities.",
+    "when": "Large social networks.",
+    "whenNot": "Small communities with simple timelines.",
+    "advantages": [
+      "Heavy caching/precompute",
+      "Scales reads via CDN",
+      "Hybrid fan-out flexibility"
+    ],
+    "disadvantages": [
+      "Celebrity fan-out is costly",
+      "Feed ranking complexity",
+      "Storage at scale"
     ]
   },
   "system-design-14": {
@@ -212,31 +290,18 @@
     "definition": "Design a news feed. The central decision is fan-out on write (push each post into followers' feeds, fast reads, costly for big accounts) versus fan-out on read (assemble the feed at request time, cheap writes, slower reads). Most systems use a hybrid, rank posts by a relevance model, and cache assembled feeds.",
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Fan-out on read",
-      "rows": [
-        {
-          "criterion": "Write cost",
-          "this": "High (push to all)",
-          "alt": "Low"
-        },
-        {
-          "criterion": "Read cost",
-          "this": "Low (precomputed)",
-          "alt": "High (assemble)"
-        },
-        {
-          "criterion": "Best for",
-          "this": "Normal users",
-          "alt": "Celebrity accounts"
-        }
-      ]
-    },
-    "keyPoints": [
-      "Fan-out on write vs read (or hybrid)",
-      "Relevance ranking model",
-      "Cache assembled feeds",
-      "Pagination via cursors"
+    "how": "Fan-out on write (push) vs read (assemble); rank by relevance; cache assembled feeds.",
+    "when": "Personalized timelines/feeds.",
+    "whenNot": "Chronological lists with no ranking.",
+    "advantages": [
+      "Fast precomputed reads",
+      "Hybrid balances cost",
+      "Ranking improves engagement"
+    ],
+    "disadvantages": [
+      "Write fan-out expensive",
+      "Ranking model upkeep",
+      "Cache invalidation"
     ]
   },
   "system-design-15": {
@@ -247,12 +312,18 @@
       "title": "Rate limiter",
       "mermaid": "flowchart LR\n  C[Client] --> RL[Rate Limiter]\n  RL --> R[(Redis Counters)]\n  RL -->|under limit| API[API]\n  RL -->|over limit| X[429]"
     },
-    "keyPoints": [
-      "Token bucket or sliding window algorithm",
-      "Counters in Redis keyed by client/API",
-      "Works across instances (shared store)",
-      "Return 429 + Retry-After when exceeded",
-      "Per-user / per-API tiers"
+    "how": "Token bucket / sliding window counters in Redis keyed by client -> allow or 429 + Retry-After.",
+    "when": "Protecting APIs from abuse/overload.",
+    "whenNot": "Internal trusted callers with no limits.",
+    "advantages": [
+      "Shared store works across instances",
+      "Smooths bursts",
+      "Per-client/tier limits"
+    ],
+    "disadvantages": [
+      "Redis dependency/latency",
+      "Algorithm choice trade-offs",
+      "Distributed accuracy edge cases"
     ]
   },
   "system-design-16": {
@@ -263,12 +334,18 @@
       "title": "Logging & monitoring",
       "mermaid": "flowchart LR\n  A[Agents] --> Q[Ingestion Queue]\n  Q --> I[Index/Store]\n  I --> D[Dashboards]\n  I --> AL[Alerting] --> O[On-call]"
     },
-    "keyPoints": [
-      "Agents ship logs/metrics",
-      "Queue buffers ingestion spikes",
-      "Time-series / search index storage",
-      "Dashboards + alerting rules",
-      "Tiered retention for cost"
+    "how": "Agents -> ingestion queue -> time-series/search index -> dashboards + alerting; tiered retention.",
+    "when": "Centralized logs/metrics/alerts.",
+    "whenNot": "Tiny apps where local logs suffice.",
+    "advantages": [
+      "Absorbs spikes via queue",
+      "Searchable telemetry",
+      "Alerting catches issues early"
+    ],
+    "disadvantages": [
+      "Storage/retention cost",
+      "High ingest volume",
+      "Index scaling effort"
     ]
   },
   "system-design-17": {
@@ -279,12 +356,18 @@
       "title": "Distributed job scheduler",
       "mermaid": "flowchart LR\n  DB[(Job Store)] --> S[Scheduler Leader]\n  S --> Q[Job Queue]\n  Q --> W1[Worker]\n  Q --> W2[Worker]"
     },
-    "keyPoints": [
-      "Durable job store with next-run times",
-      "Leader election / partitioning avoids duplicates",
-      "Queue + workers execute due jobs",
-      "Retries + idempotency for failures",
-      "Track missed runs and history"
+    "how": "Durable job store + next-run times -> leader/partitioned scheduler -> queue -> workers with retries.",
+    "when": "Cron/at-scale background jobs.",
+    "whenNot": "A single cron on one box.",
+    "advantages": [
+      "No double-execution",
+      "Retries + idempotency",
+      "Tracks history/missed runs"
+    ],
+    "disadvantages": [
+      "Leader election complexity",
+      "Clock/timezone pitfalls",
+      "Backpressure under load"
     ]
   },
   "system-design-18": {
@@ -295,12 +378,18 @@
       "title": "Search autocomplete",
       "mermaid": "flowchart LR\n  U[User keystrokes] --> S[Suggest Service]\n  S --> T[Trie/Prefix Index]\n  S --> C[(Cache)]\n  Logs[Query Logs] --> B[Offline Builder] --> T"
     },
-    "keyPoints": [
-      "Trie / prefix index for matches",
-      "Rank by popularity + recency",
-      "In-memory + cache for low latency",
-      "Precompute top suggestions offline",
-      "Debounce + limit results client-side"
+    "how": "Trie/prefix index + popularity ranking -> in-memory + cache -> precompute from query logs.",
+    "when": "Type-ahead search suggestions.",
+    "whenNot": "Tiny fixed option lists.",
+    "advantages": [
+      "Sub-ms prefix matches",
+      "Popularity ranking",
+      "Precomputed, cacheable"
+    ],
+    "disadvantages": [
+      "Index memory footprint",
+      "Freshness vs cost",
+      "Personalization adds work"
     ]
   },
   "system-design-19": {
@@ -311,12 +400,18 @@
       "title": "Recommendation engine",
       "mermaid": "flowchart LR\n  E[Events] --> Train[Offline Training]\n  Train --> M[Model/Embeddings]\n  U[User] --> Serve[Ranking Service]\n  Serve --> M\n  Serve --> C[(Cache)]"
     },
-    "keyPoints": [
-      "Collaborative + content-based filtering",
-      "Offline training -> embeddings/model",
-      "Online candidate generation + ranking",
-      "Feedback loop improves the model",
-      "Per-user cached recommendations"
+    "how": "Offline training (collaborative + content) -> embeddings/model -> online candidate gen + ranking -> cache.",
+    "when": "Product/movie/content recommendations.",
+    "whenNot": "Catalogs too small to need ML.",
+    "advantages": [
+      "Personalized results",
+      "Offline + online split scales",
+      "Feedback loop improves it"
+    ],
+    "disadvantages": [
+      "Cold-start problem",
+      "Model/data pipeline upkeep",
+      "Serving latency budget"
     ]
   },
   "system-design-20": {
@@ -327,12 +422,18 @@
       "title": "Order management (microservices)",
       "mermaid": "flowchart LR\n  G[API Gateway] --> O[Order]\n  O --> P[Payment]\n  O --> I[Inventory]\n  O --> S[Shipping]\n  O --> E[(Event Bus)]"
     },
-    "keyPoints": [
-      "Order, payment, inventory, shipping services",
-      "Saga coordinates the distributed transaction",
-      "Compensating actions on failure",
-      "Event-driven, each service owns its data",
-      "API gateway in front"
+    "how": "Order/payment/inventory/shipping services -> saga coordinates -> compensations on failure; events.",
+    "when": "Distributed order workflows.",
+    "whenNot": "A simple single-DB checkout.",
+    "advantages": [
+      "Services scale/own data",
+      "Saga handles distributed txn",
+      "Loose coupling via events"
+    ],
+    "disadvantages": [
+      "Eventual consistency",
+      "Compensation logic complexity",
+      "Harder debugging/tracing"
     ]
   },
   "system-design-21": {
@@ -343,12 +444,18 @@
       "title": "Auth system",
       "mermaid": "flowchart LR\n  U[User] --> Auth[Auth Service]\n  Auth -->|JWT + Refresh| U\n  U -->|Bearer JWT| API[Resource Service]\n  API -->|Validate + RBAC| API"
     },
-    "keyPoints": [
-      "Identity service issues JWT access tokens",
-      "OAuth2 flows (auth code, client creds)",
-      "Stateless token validation at services",
-      "RBAC / policy-based authorization",
-      "Refresh tokens, revocation, short expiry"
+    "how": "Identity service issues JWT + refresh via OAuth2 -> services validate token statelessly -> RBAC.",
+    "when": "Auth/authz for APIs and apps.",
+    "whenNot": "A single app with trivial login.",
+    "advantages": [
+      "Stateless validation scales",
+      "Standard OAuth2 flows",
+      "RBAC/policies"
+    ],
+    "disadvantages": [
+      "Token revocation is hard",
+      "Refresh/rotation complexity",
+      "Misconfig = security holes"
     ]
   },
   "system-design-22": {
@@ -359,12 +466,18 @@
       "title": "API gateway",
       "mermaid": "flowchart LR\n  C[Clients] --> GW[API Gateway]\n  GW --> S1[Service A]\n  GW --> S2[Service B]\n  GW --> S3[Service C]"
     },
-    "keyPoints": [
-      "Single entry, routes to services",
-      "Centralizes auth, rate limiting, TLS",
-      "Request/response transform + aggregation",
-      "Caching and observability",
-      "Decouples clients from internal topology"
+    "how": "Single entry routes to services + centralizes auth, rate limit, TLS, transforms, aggregation.",
+    "when": "Microservice front door.",
+    "whenNot": "A monolith with one public surface.",
+    "advantages": [
+      "Centralized cross-cutting",
+      "Decouples clients from topology",
+      "Aggregates calls"
+    ],
+    "disadvantages": [
+      "Single point of failure (scale it)",
+      "Added hop/latency",
+      "Can become a bottleneck"
     ]
   },
   "system-design-23": {
@@ -375,12 +488,18 @@
       "title": "Real-time inventory",
       "mermaid": "flowchart LR\n  Src[Orders/Returns/Restock] --> E[(Event Stream)]\n  E --> Inv[Inventory Service]\n  Inv --> DB[(Stock Store)]\n  Inv --> Cache[(Availability Cache)]"
     },
-    "keyPoints": [
-      "Event-driven stock updates",
-      "Authoritative transactional store",
-      "Reservations prevent overselling",
-      "Cached read model for availability",
+    "how": "Event-driven stock changes -> transactional store -> reservations prevent oversell -> cached read model.",
+    "when": "Real-time stock across channels.",
+    "whenNot": "Static catalogs with ample stock.",
+    "advantages": [
+      "Prevents overselling",
+      "Fast cached availability",
       "Idempotent event processing"
+    ],
+    "disadvantages": [
+      "Decrement consistency hard",
+      "Event ordering issues",
+      "Reservation timeout tuning"
     ]
   },
   "system-design-24": {
@@ -391,12 +510,18 @@
       "title": "High availability",
       "mermaid": "flowchart LR\n  U[Users] --> LB[Load Balancer]\n  LB --> A1[App AZ-1]\n  LB --> A2[App AZ-2]\n  A1 --> DBp[(DB Primary)]\n  A2 --> DBr[(DB Replica)]\n  DBp -.failover.- DBr"
     },
-    "keyPoints": [
-      "Redundancy at every tier, multi-AZ",
-      "Load balancers + health checks",
-      "Replicated DB with automatic failover",
-      "Auto-scaling stateless app servers",
-      "Retries, backoff, graceful degradation"
+    "how": "Redundant tiers + LB + health checks; replicated DB with failover; auto-scaling; graceful degradation.",
+    "when": "Apps needing high uptime/SLA.",
+    "whenNot": "Internal tools tolerant of downtime.",
+    "advantages": [
+      "No single point of failure",
+      "Survives instance/AZ loss",
+      "Auto-scales to load"
+    ],
+    "disadvantages": [
+      "Higher infra cost",
+      "Operational complexity",
+      "Failover testing needed"
     ]
   },
   "system-design-25": {
@@ -404,31 +529,18 @@
     "definition": "Design a multi-tenant SaaS app where many customers share one system safely. The key choice is the isolation model: separate database per tenant (strong isolation, costlier), shared database with separate schemas, or a shared schema with a tenant_id (cheapest, most scalable). Every request carries tenant context, and you enforce isolation, per-tenant config and noisy-neighbor limits.",
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Shared DB + tenant_id",
-      "rows": [
-        {
-          "criterion": "Isolation",
-          "this": "DB-per-tenant: strong",
-          "alt": "Logical (row-level)"
-        },
-        {
-          "criterion": "Cost/scale",
-          "this": "Higher cost",
-          "alt": "Cheapest, most scalable"
-        },
-        {
-          "criterion": "Best for",
-          "this": "Few large/regulated tenants",
-          "alt": "Many small tenants"
-        }
-      ]
-    },
-    "keyPoints": [
-      "Isolation: DB-per-tenant vs shared schema",
-      "Tenant context on every request",
-      "Per-tenant config + limits (noisy neighbor)",
-      "Enforce data isolation rigorously"
+    "how": "Tenant context per request -> isolation model (DB-per-tenant vs shared schema) -> per-tenant config/limits.",
+    "when": "Multi-customer SaaS products.",
+    "whenNot": "Single-tenant internal apps.",
+    "advantages": [
+      "Shared infra, lower cost",
+      "Isolation model flexibility",
+      "Per-tenant limits"
+    ],
+    "disadvantages": [
+      "Isolation must be airtight",
+      "Noisy-neighbor risk",
+      "Migration/onboarding complexity"
     ]
   },
   "system-design-26": {
@@ -439,12 +551,18 @@
       "title": "Distributed queue",
       "mermaid": "flowchart LR\n  P[Producers] --> Br[Broker Partitions]\n  Br --> C1[Consumer Group A]\n  Br --> C2[Consumer Group B]"
     },
-    "keyPoints": [
-      "Partitioned, replicated message log",
-      "Producers append; consumers read by offset",
-      "Consumer groups for parallel processing",
-      "At-least-once delivery, durable",
-      "Ordering per partition key"
+    "how": "Producers append to partitioned, replicated logs -> consumer groups read by offset; at-least-once.",
+    "when": "Decoupling and buffering at scale.",
+    "whenNot": "Simple in-process method calls.",
+    "advantages": [
+      "Durable, replayable",
+      "Parallel consumers",
+      "Smooths load spikes"
+    ],
+    "disadvantages": [
+      "At-least-once = duplicates",
+      "Ordering only per partition",
+      "Operational overhead"
     ]
   },
   "system-design-27": {
@@ -455,12 +573,18 @@
       "title": "Notification service",
       "mermaid": "flowchart LR\n  App[App] --> API[Notification API]\n  API --> Q[Queue]\n  Q --> E[Email Adapter]\n  Q --> S[SMS Adapter]\n  Q --> Pu[Push Adapter]"
     },
-    "keyPoints": [
-      "One API, queue, channel adapters",
-      "Adapters: Email, SMS, Push providers",
-      "Templating + user channel preferences",
-      "Per-channel retries and rate limits",
-      "Queue absorbs spikes, isolates failures"
+    "how": "One API -> queue -> channel adapters (email/SMS/push) with templating, retries, prefs.",
+    "when": "Multi-channel user notifications.",
+    "whenNot": "A single hard-coded email path.",
+    "advantages": [
+      "One API, many channels",
+      "Queue isolates failures",
+      "Per-channel retries"
+    ],
+    "disadvantages": [
+      "Provider integration upkeep",
+      "Delivery guarantees vary",
+      "Template/preference complexity"
     ]
   },
   "system-design-28": {
@@ -471,12 +595,18 @@
       "title": "Banking transactions",
       "mermaid": "flowchart LR\n  U[User] --> T[Transaction Service]\n  T --> L[(Double-entry Ledger)]\n  T --> Acc[(Accounts DB)]\n  T --> E[(Event Stream)]"
     },
-    "keyPoints": [
-      "ACID transactions for money movement",
-      "Append-only double-entry ledger",
-      "Idempotency keys prevent double-spend",
-      "Strong consistency over availability",
-      "Async events for notifications/reporting"
+    "how": "ACID transactions + append-only double-entry ledger + idempotency keys; strong consistency.",
+    "when": "Money movement and balances.",
+    "whenNot": "Non-financial, eventually-consistent data.",
+    "advantages": [
+      "Balances always reconcile",
+      "No double-spend",
+      "Auditable ledger"
+    ],
+    "disadvantages": [
+      "Strong consistency limits scale",
+      "Complex correctness rules",
+      "Regulatory burden"
     ]
   },
   "system-design-29": {
@@ -484,31 +614,18 @@
     "definition": "Design session management across many app servers. Instead of relying on sticky sessions, you store session state in a fast shared store (Redis) keyed by a session id in a cookie/token, so any server can serve any request - enabling scale and failover. Alternatively, stateless JWTs carry session data client-side with revocation handled separately.",
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Sticky sessions",
-      "rows": [
-        {
-          "criterion": "State",
-          "this": "Central store (Redis)",
-          "alt": "On one server"
-        },
-        {
-          "criterion": "Failover",
-          "this": "Any server serves",
-          "alt": "Lost if server dies"
-        },
-        {
-          "criterion": "Scale",
-          "this": "Scales out cleanly",
-          "alt": "Uneven load"
-        }
-      ]
-    },
-    "keyPoints": [
-      "Central session store (Redis) by session id",
+    "how": "Central session store (Redis) by session id, or stateless JWT; any server serves any request.",
+    "when": "Sessions across a server fleet.",
+    "whenNot": "Single-server apps (sticky is fine).",
+    "advantages": [
       "Any server serves any request",
-      "Or stateless JWT (client-side state)",
-      "Expiry + revocation strategy"
+      "Survives server loss",
+      "Scales out cleanly"
+    ],
+    "disadvantages": [
+      "Store is a dependency",
+      "JWT revocation is hard",
+      "Extra lookup per request"
     ]
   },
   "system-design-30": {
@@ -519,12 +636,18 @@
       "title": "Audit trail",
       "mermaid": "flowchart LR\n  S1[Service A] --> Q[Audit Pipeline]\n  S2[Service B] --> Q\n  Q --> Store[(Append-only Store)]\n  Store --> Query[Compliance Query]"
     },
-    "keyPoints": [
-      "Append-only, immutable event store",
-      "Structured events: actor, action, time, correlation id",
-      "Correlation id links across services",
-      "Tamper-evident (hash chaining)",
-      "Compliance retention + query"
+    "how": "Each service emits structured audit events with a correlation id to an append-only, tamper-evident store.",
+    "when": "Compliance and security audit trails.",
+    "whenNot": "Apps with no audit/compliance need.",
+    "advantages": [
+      "Immutable, queryable trail",
+      "Correlation across services",
+      "Tamper-evident (hash chain)"
+    ],
+    "disadvantages": [
+      "Storage growth/retention cost",
+      "Strict write discipline",
+      "Privacy/PII handling"
     ]
   }
 }
