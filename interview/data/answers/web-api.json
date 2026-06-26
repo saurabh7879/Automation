@@ -1,21 +1,10 @@
 {
   "web-api-1": {
     "pitch": "ASP.NET Web API is my go-to for building HTTP/JSON services in .NET.",
-    "definition": "It is a .NET framework for building HTTP-based RESTful services. It maps HTTP verbs (GET, POST, PUT, PATCH, DELETE) directly to controller action methods and returns data (usually JSON) instead of HTML, so any client - browsers, mobile apps, or other services - can consume it over plain HTTP. It ships with built-in routing, model binding, validation and content negotiation, and ASP.NET Core Web API is the modern, cross-platform, high-performance version on .NET 5+.",
-    "similarQuestions": [],
-    "diagram": {
-      "title": "ASP.NET Web API request flow",
-      "mermaid": "flowchart LR\n  A[Client] -->|HTTP| B[Routing]\n  B --> C[Controller / Action]\n  C --> D[(Database)]\n  C -->|JSON| A"
-    },
-    "how": "Routing matches URL + verb -> model binding fills params -> filters (auth) -> action runs -> formatter returns JSON. Runs on the middleware pipeline with built-in DI.",
+    "definition": "ASP.NET Web API is a .NET framework for building HTTP-based RESTful services. It maps HTTP verbs (GET, POST, PUT, PATCH, DELETE) directly to controller action methods and returns data (usually JSON) instead of HTML, so any client - browsers, mobile apps, or other services - can consume it over plain HTTP. It ships with routing, model binding, validation and content negotiation; ASP.NET Core Web API is the modern, cross-platform version.",
+    "how": "Routing matches URL + verb -> model binding fills params -> filters (auth) -> action runs -> formatter returns JSON, on the middleware pipeline with DI.",
     "when": "REST back ends, microservices, SPA and mobile APIs.",
     "whenNot": "Server-rendered HTML (MVC), real-time push (SignalR), non-HTTP/SOAP (gRPC/WCF).",
-    "code": {
-      "language": "csharp",
-      "snippet": "[ApiController]\n[Route(\"api/products\")]\npublic class ProductsController : ControllerBase\n{\n    [HttpGet(\"{id}\")]                       // GET api/products/5\n    public ActionResult<Product> Get(int id) =>\n        _svc.Find(id) is { } p ? Ok(p) : NotFound();  // 200 + JSON, or 404\n}",
-      "note": "[HttpGet] maps verb + URL to the method; Ok/NotFound set the status and serialize JSON."
-    },
-    "realWorld": "At a fintech, one ASP.NET Core API served a React dashboard and an iOS app via versioned /v1 endpoints + JWT; async + caching cut p95 latency ~40%.",
     "advantages": [
       "Lightweight REST, plain HTTP + JSON",
       "Built-in routing, binding, validation",
@@ -25,522 +14,685 @@
       "HTTP/REST only (no SOAP/TCP)",
       "No built-in real-time push",
       "REST can over/under-fetch"
-    ]
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Web API request flow",
+      "mermaid": "flowchart LR\n  A[Client] -->|HTTP| B[Routing]\n  B --> C[Controller / Action]\n  C --> D[(Database)]\n  C -->|JSON| A"
+    },
+    "code": {
+      "language": "csharp",
+      "snippet": "[ApiController]\n[Route(\"api/products\")]\npublic class ProductsController : ControllerBase\n{\n    [HttpGet(\"{id}\")]                       // GET api/products/5\n    public ActionResult<Product> Get(int id) =>\n        _svc.Find(id) is { } p ? Ok(p) : NotFound();  // 200 + JSON, or 404\n}",
+      "note": "[HttpGet] maps verb + URL; Ok/NotFound set status and serialize JSON."
+    },
+    "realWorld": "At a fintech, one ASP.NET Core API served a React dashboard and an iOS app via versioned /v1 + JWT; async + caching cut p95 latency ~40%."
   },
   "web-api-2": {
-    "pitch": "These are three related ASP.NET stacks - data services, web pages, and the modern unified one.",
-    "definition": "ASP.NET Web API builds HTTP services that return data (JSON/XML); ASP.NET MVC builds web apps that render HTML views for browsers; both are .NET Framework only. ASP.NET Core Web API is the modern, cross-platform, high-performance successor that merges MVC and Web API into a single framework on .NET 5+. For any new work you use ASP.NET Core; the other two mainly matter for legacy apps.",
+    "pitch": "Web API = data services, MVC = HTML pages, Core = the modern unified one.",
+    "definition": "These are three related ASP.NET stacks. Web API builds HTTP services returning data (JSON/XML); MVC builds web apps rendering HTML views; both are .NET Framework only. ASP.NET Core Web API is the modern, cross-platform, high-performance successor that merges MVC and Web API into one framework on .NET 5+. For new work you use ASP.NET Core; the others matter mainly for legacy apps.",
+    "how": "Same controller model; Web API returns data via formatters, MVC returns views via a view engine, Core unifies both pipelines.",
+    "when": "Web API for data services; MVC for server HTML; Core for anything new.",
+    "whenNot": "Starting new projects on the legacy Framework stacks.",
+    "advantages": [
+      "Web API: REST/JSON services",
+      "MVC: server-rendered HTML",
+      "Core: cross-platform, faster, unified"
+    ],
+    "disadvantages": [
+      "Framework Web API/MVC are Windows-only",
+      "Slower than Core",
+      "Legacy migration effort"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "when": "Choose ASP.NET Core Web API for new APIs; MVC when the server renders pages.",
-    "keyPoints": [
-      "Web API: returns data (JSON) for REST",
-      "MVC: returns HTML views for browsers",
-      "Core: cross-platform, faster, unifies both",
-      "Use Core for all new development"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public class P : ControllerBase { public Product Get() => _svc.Get(); } // Web API: data\npublic class H : Controller       { public ActionResult Index() => View(); }  // MVC: HTML"
+    }
   },
   "web-api-3": {
     "pitch": "Web API is REST-first and lightweight; WCF is protocol-flexible but heavy.",
     "definition": "ASP.NET Web API is a lightweight framework for building RESTful services over HTTP using simple verbs and JSON. WCF is an older, heavier framework for services across many protocols (HTTP, TCP, named pipes, MSMQ) using SOAP, contracts and bindings. Web API suits the open web and mobile; WCF suits enterprise/intranet scenarios needing non-HTTP transports or WS-* standards.",
+    "how": "Web API speaks plain HTTP + JSON with minimal config; WCF wraps SOAP envelopes over configurable bindings/transports.",
+    "when": "Open, internet-facing REST APIs for diverse clients.",
+    "whenNot": "Needing TCP/MSMQ, SOAP/WS-*, or distributed transactions (use WCF).",
+    "advantages": [
+      "Simple, REST-first, JSON",
+      "Any client, no SDK needed",
+      "Minimal configuration"
+    ],
+    "disadvantages": [
+      "HTTP only",
+      "No SOAP/WS-* or transactions",
+      "No duplex/queued messaging"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "WCF",
-      "rows": [
-        {
-          "criterion": "Style",
-          "this": "REST / HTTP",
-          "alt": "SOAP / WS-*"
-        },
-        {
-          "criterion": "Transport",
-          "this": "HTTP only",
-          "alt": "HTTP, TCP, pipes, MSMQ"
-        },
-        {
-          "criterion": "Payload",
-          "this": "JSON (light)",
-          "alt": "XML/SOAP (verbose)"
-        },
-        {
-          "criterion": "Best for",
-          "this": "Web, mobile, microservices",
-          "alt": "Intranet, transactions, duplex"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "[HttpGet(\"{id}\")] public Product Get(int id) => _svc.Get(id); // Web API: just HTTP + JSON"
     }
   },
   "web-api-4": {
-    "pitch": "Pick Web API for open HTTP/REST; pick WCF only for advanced or non-HTTP needs.",
+    "pitch": "Pick Web API for open HTTP/REST; pick WCF only for advanced non-HTTP needs.",
     "definition": "The choice comes down to transport and client needs. ASP.NET Web API is the right call for HTTP/REST services consumed by browsers, mobile apps and other services, with plain JSON and minimal setup. WCF only wins when you specifically need non-HTTP transports (TCP, named pipes, MSMQ), SOAP/WS-* standards, or distributed transactions - otherwise Web API is simpler and more web-friendly.",
+    "how": "If clients are diverse and talk HTTP/JSON, Web API; if you need a specific binding/transport or SOAP contract, WCF.",
+    "when": "Public REST APIs, SPA/mobile back ends, microservices.",
+    "whenNot": "TCP/named pipes/MSMQ, SOAP/WS-*, or distributed transactions.",
+    "advantages": [
+      "Best for public REST APIs",
+      "Easy for non-.NET clients",
+      "Less configuration, faster to ship"
+    ],
+    "disadvantages": [
+      "No non-HTTP transports",
+      "No SOAP/WS-*",
+      "Duplex/callbacks not natural"
+    ],
     "similarQuestions": [],
-    "diagram": null,
-    "when": "Public REST APIs, SPA/mobile back ends, microservices, simple HTTP/JSON.",
-    "whenNot": "Need TCP/named pipes/MSMQ, SOAP/WS-*, or distributed transactions."
+    "diagram": null
   },
   "web-api-5": {
     "pitch": "The lifecycle is the ordered path a request takes from arrival to response.",
     "definition": "When a request arrives it flows through a fixed pipeline: hosting and middleware, then routing, controller and action selection, model binding, filters, the action method, result formatting, and finally the HTTP response. Each stage is an extension point, so cross-cutting concerns like auth, logging and error handling plug in cleanly. Knowing this order is what lets you debug exactly where a request succeeds or fails.",
+    "how": "Middleware -> routing -> action selection -> model binding -> filters -> action -> formatter -> HTTP response.",
+    "when": "Knowing where to hook auth, binding or error handling.",
+    "whenNot": "Not a coding choice - it always applies.",
+    "advantages": [
+      "Predictable, debuggable pipeline",
+      "Clear extension points",
+      "Cross-cutting plugs in cleanly"
+    ],
+    "disadvantages": [
+      "Many stages to learn",
+      "Misordered middleware/filters bug",
+      "Wrong-stage work hurts perf"
+    ],
     "similarQuestions": [],
     "diagram": {
-      "title": "Web API request lifecycle",
-      "mermaid": "flowchart LR\n  A[Request] --> B[Middleware]\n  B --> C[Routing]\n  C --> D[Action Select]\n  D --> E[Model Binding]\n  E --> F[Filters]\n  F --> G[Action]\n  G --> H[Formatter]\n  H --> I[Response]"
-    },
-    "steps": [
-      "Hosting and middleware receive the request",
-      "Routing matches URL + verb",
-      "Controller and action are selected",
-      "Model binding fills the parameters",
-      "Filters run (auth, action, exception)",
-      "Action executes and returns a result",
-      "Formatter serializes the HTTP response"
-    ]
+      "title": "Request lifecycle",
+      "mermaid": "flowchart LR\n  A[Request] --> B[Middleware]\n  B --> C[Routing]\n  C --> D[Model Binding]\n  D --> E[Filters]\n  E --> F[Action]\n  F --> G[Formatter]\n  G --> H[Response]"
+    }
   },
   "web-api-6": {
-    "pitch": "Routing maps a URL and verb to the right controller action.",
-    "definition": "Routing is the stage that decides which controller and action handle a request. It compares the incoming URL and HTTP verb against registered route templates - either attribute routes on the methods (e.g. [HttpGet(\"products/{id}\")]) or convention-based templates - then picks the matching action and extracts route values. If two routes match equally it errors as ambiguous; if none match it returns 404.",
+    "pitch": "Routing maps a URL and verb to a specific controller action.",
+    "definition": "Routing maps an incoming URL and HTTP verb to a controller and action, using attribute routes on the methods or convention-based templates. It compares the path and verb against registered templates (e.g. [HttpGet(\"products/{id}\")]), selects the matching action, and extracts route values. Ambiguous matches error; no match returns 404.",
+    "how": "Parse path + verb -> match a route template -> pick controller/action -> extract route values -> model binding.",
+    "when": "Designing clean, RESTful resource URLs.",
+    "whenNot": "When physical-file routing already suffices (rare for APIs).",
+    "advantages": [
+      "Clean, decoupled URLs",
+      "Attribute or convention routes",
+      "Route constraints and tokens"
+    ],
+    "disadvantages": [
+      "Overlapping routes -> ambiguity",
+      "Complex templates get unreadable",
+      "Wrong verb -> 404/405"
+    ],
     "similarQuestions": [],
     "diagram": {
-      "title": "Request routing",
-      "mermaid": "flowchart LR\n  A[URL + Verb] --> B[Match Template]\n  B --> C[Controller]\n  C --> D[Action]\n  D --> E[Bind Values]"
+      "title": "Routing",
+      "mermaid": "flowchart LR\n  A[URL + Verb] --> B[Match Template]\n  B --> C[Controller/Action]\n  C --> D[Bind Route Values]"
     },
-    "steps": [
-      "Read the request path and HTTP verb",
-      "Compare them to registered route templates",
-      "Select the matching controller and action",
-      "Extract route values (like id)",
-      "Hand off to model binding (or 404 if no match)"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "[HttpGet(\"products/{id:int}\")]   // matches GET products/5\npublic ActionResult<Product> Get(int id) => Ok(_svc.Get(id));"
+    }
   },
   "web-api-7": {
-    "pitch": "HTTP verbs express what a request intends to do to a resource.",
-    "definition": "HTTP verbs are the action words of REST: GET reads, POST creates, PUT replaces a whole resource, PATCH updates part of it, DELETE removes it, HEAD returns headers only, and OPTIONS reports the allowed methods. GET and PUT are idempotent and GET is safe, which helps caching and safe retries. Using the correct verb is what makes an API predictable and properly RESTful.",
+    "pitch": "HTTP verbs express the intent of a request on a resource.",
+    "definition": "HTTP verbs are the action words of REST: GET reads, POST creates, PUT replaces a resource fully, PATCH updates part of it, DELETE removes it, HEAD returns headers only, and OPTIONS reports allowed methods. GET and PUT are idempotent and GET is safe, which helps caching and safe retries. Using the correct verb makes an API predictable and properly RESTful.",
+    "how": "Client sends a verb -> server maps it to an action of the matching semantics (read/create/replace/update/delete).",
+    "when": "GET to fetch, POST to create, PUT/PATCH to update, DELETE to remove.",
+    "whenNot": "Using GET to mutate data (breaks caching and safety).",
+    "advantages": [
+      "Predictable, RESTful semantics",
+      "Safe/idempotent verbs aid caching",
+      "Self-describing API"
+    ],
+    "disadvantages": [
+      "Misuse breaks caching/retries",
+      "Old clients limited to GET/POST",
+      "PATCH semantics can be unclear"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "when": "GET to fetch, POST to create, PUT/PATCH to update, DELETE to remove.",
-    "keyPoints": [
-      "GET: read (safe, idempotent)",
-      "POST: create new resource",
-      "PUT: replace fully / PATCH: update part",
-      "DELETE: remove resource",
-      "HEAD: headers only / OPTIONS: allowed methods"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "[HttpPost] public IActionResult Create(Order o) => CreatedAtAction(...); // create\n[HttpDelete(\"{id}\")] public IActionResult Delete(int id) { ...; return NoContent(); }"
+    }
   },
   "web-api-8": {
     "pitch": "Status codes tell the client the outcome of a request.",
-    "definition": "HTTP status codes are three-digit numbers grouped by meaning: 2xx success, 3xx redirection, 4xx client error, 5xx server error. They let any client understand a result without custom logic and drive correct caching, retries and error handling. Returning the right code (not 200 for everything) is what keeps an API honest and easy to monitor.",
+    "definition": "HTTP status codes are three-digit numbers grouped by meaning: 2xx success, 3xx redirection, 4xx client error, 5xx server error. They let any client understand a result without custom logic and drive correct caching, retries and error handling. Returning the right code (not 200 for everything) keeps an API honest and easy to monitor.",
+    "how": "Server sets the status line per outcome -> client branches on the class (2xx ok, 4xx fix request, 5xx retry).",
+    "when": "Always - return the most accurate code for each outcome.",
+    "whenNot": "Returning 200 with an error body (hides failures).",
+    "advantages": [
+      "Standard, client-agnostic outcomes",
+      "Enables caching and retries",
+      "Self-documenting"
+    ],
+    "disadvantages": [
+      "Wrong codes mislead clients",
+      "200-for-all hides errors",
+      "Overusing generic 500s loses detail"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "2xx: 200 OK, 201 Created, 204 No Content",
-      "4xx: 400 Bad Request, 401/403, 404 Not Found",
-      "409 Conflict, 422 Unprocessable, 429 Too Many",
-      "5xx: 500 Server Error, 503 Unavailable"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "return found ? Ok(item)            // 200\n             : NotFound();         // 404\n// 201 Created, 400 BadRequest, 401, 409 Conflict, 429, 503..."
+    }
   },
   "web-api-9": {
     "pitch": "REST is a stateless, resource-based style for HTTP APIs.",
-    "definition": "REST (Representational State Transfer) is an architectural style for networked APIs where everything is a resource identified by a URL and manipulated with standard HTTP verbs and representations like JSON. Its principles are client-server separation, statelessness, cacheability, a uniform interface, a layered system, and resource-based design. These constraints are what make REST simple, scalable and widely interoperable.",
+    "definition": "REST (Representational State Transfer) is an architectural style for networked APIs where everything is a resource identified by a URL and manipulated with standard HTTP verbs and representations like JSON. Its principles are client-server separation, statelessness, cacheability, a uniform interface, a layered system, and resource-based design. These constraints make REST simple, scalable and interoperable.",
+    "how": "Client acts on resource URLs with verbs -> server returns representations + status; no client state kept on the server.",
+    "when": "Public, scalable HTTP APIs with diverse clients.",
+    "whenNot": "Real-time streaming or complex graph queries (use WS/GraphQL).",
+    "advantages": [
+      "Stateless - scales horizontally",
+      "Uniform, well-understood interface",
+      "Cacheable responses"
+    ],
+    "disadvantages": [
+      "Repeats context (auth) each call",
+      "Over/under-fetching",
+      "Awkward for non-CRUD actions"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "REST interaction",
       "mermaid": "flowchart LR\n  C[Client] -->|GET /products| S[Server]\n  S -->|200 + JSON| C\n  C -->|POST /products| S\n  S -->|201 Created| C"
-    },
-    "keyPoints": [
-      "Client-server separation",
-      "Stateless requests",
-      "Cacheable responses",
-      "Uniform interface (URLs + verbs)",
-      "Layered, resource-based design"
-    ],
-    "advantages": [
-      "Stateless - scales horizontally",
-      "Uniform, well-understood interface",
-      "Cacheable, good performance"
-    ],
-    "disadvantages": [
-      "Repeats context (auth) each call",
-      "Over/under-fetching is common",
-      "Awkward for non-CRUD actions"
-    ]
+    }
   },
   "web-api-10": {
     "pitch": "CORS is the browser rule that lets one origin safely call another.",
-    "definition": "CORS (Cross-Origin Resource Sharing) is a browser security mechanism that uses HTTP headers to let a server declare which other origins may call it, relaxing the same-origin policy in a controlled way. For non-simple requests the browser sends an OPTIONS preflight first; the server answers with Access-Control-Allow-* headers, and only then does the browser allow the real request. It is enforced by browsers, so it protects users - it is not a server-side firewall.",
+    "definition": "CORS (Cross-Origin Resource Sharing) is a browser security mechanism that uses HTTP headers to let a server declare which other origins may call it, relaxing the same-origin policy in a controlled way. For non-simple requests the browser sends an OPTIONS preflight first; the server answers with Access-Control-Allow-* headers, and only then does the browser allow the real request. It protects users - it is not a server-side firewall.",
+    "how": "Browser -> OPTIONS preflight -> server returns Allow-Origin/Methods/Headers -> if allowed, the real request proceeds.",
+    "when": "Letting a front-end on another domain call your API.",
+    "whenNot": "As a security boundary (only browsers enforce it).",
+    "advantages": [
+      "Controlled cross-origin access",
+      "Per-origin/method/header rules",
+      "Standard headers, no client code"
+    ],
+    "disadvantages": [
+      "Misconfig (allow all) exposes API",
+      "Preflight adds a round trip",
+      "Browser-only enforcement"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "CORS preflight",
       "mermaid": "flowchart LR\n  B[Browser] -->|OPTIONS| S[Server]\n  S -->|Allow-Origin/Methods| B\n  B -->|Actual request| S\n  S -->|Response| B"
-    },
-    "steps": [
-      "Browser app on origin A calls API on origin B",
-      "Browser sends an OPTIONS preflight",
-      "Server replies with Allow-Origin/Methods/Headers",
-      "If allowed, browser sends the real request",
-      "Otherwise the browser blocks the response"
-    ]
+    }
   },
   "web-api-11": {
     "pitch": "Enable CORS by registering a policy and applying it in the pipeline.",
     "definition": "In ASP.NET Core you enable CORS by registering a named policy with AddCors and applying it with UseCors in the middleware pipeline, specifying the allowed origins, methods and headers. The policy can be applied globally or per endpoint with [EnableCors]. Order matters - UseCors must sit before MapControllers, and AllowAnyOrigin cannot be combined with credentials.",
+    "how": "AddCors(policy) -> app.UseCors(\"name\") before endpoints -> browser preflights honor the policy headers.",
+    "when": "SPAs/mobile web clients calling your API cross-origin.",
+    "whenNot": "Setting AllowAnyOrigin with credentials (disallowed/unsafe).",
+    "advantages": [
+      "Central, named policies",
+      "Per-endpoint overrides",
+      "Configurable origins/methods/headers"
+    ],
+    "disadvantages": [
+      "UseCors order pitfalls",
+      "Too-broad policies weaken security",
+      "Credentials + any-origin invalid"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "steps": [
-      "Call builder.Services.AddCors with a named policy",
-      "Set WithOrigins(...).AllowAnyHeader().AllowAnyMethod()",
-      "Call app.UseCors(\"Name\") before MapControllers",
-      "Optionally apply [EnableCors(\"Name\")] per endpoint"
-    ],
     "code": {
       "language": "csharp",
-      "snippet": "builder.Services.AddCors(o => o.AddPolicy(\"Web\",\n    p => p.WithOrigins(\"https://app.com\")  // only this origin\n          .AllowAnyHeader().AllowAnyMethod()));\n\nvar app = builder.Build();\napp.UseCors(\"Web\");   // must come before MapControllers\napp.MapControllers();",
-      "note": "WithOrigins whitelists the front-end; UseCors must run before the endpoints."
+      "snippet": "builder.Services.AddCors(o => o.AddPolicy(\"Web\",\n    p => p.WithOrigins(\"https://app.com\").AllowAnyHeader().AllowAnyMethod()));\napp.UseCors(\"Web\");   // BEFORE MapControllers\napp.MapControllers();",
+      "note": "WithOrigins whitelists the SPA; UseCors must precede the endpoints."
     }
   },
   "web-api-12": {
     "pitch": "Parameter binding fills action parameters from the request.",
     "definition": "Parameter binding is how Web API populates an action method's parameters from the incoming request. By default simple types (int, string) bind from the route or query string, while complex types bind from the request body. You can override the source with attributes like [FromQuery], [FromRoute], [FromBody] or [FromHeader], and only one [FromBody] parameter is allowed per action.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Simple types bind from route/query",
-      "Complex types bind from the body",
-      "[From*] attributes override the source",
-      "Only one [FromBody] per action"
-    ]
-  },
-  "web-api-13": {
-    "pitch": "Model binding builds objects; parameter binding is the wider concept.",
-    "definition": "Model binding is the process that builds complex objects from multiple request sources - body, route, query, form, headers - and validates them into ModelState. Parameter binding is the broader umbrella that also covers mapping simple scalar values to parameters. In short, model binding is the complex-type part of parameter binding, and [From*] attributes let you control the source for both.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Parameter binding: fills all parameters (umbrella)",
-      "Model binding: builds complex objects",
-      "Model binding validates into ModelState",
-      "[From*] attributes control the source"
-    ]
-  },
-  "web-api-14": {
-    "pitch": "Content negotiation picks the response format the client asked for.",
-    "definition": "Content negotiation is the process where the API and client agree on a response format such as JSON or XML, based on the request's Accept header and the formatters the server supports. The server selects the best matching formatter, serializes the result and sets the Content-Type; if nothing matches it returns 406 Not Acceptable. This lets a single endpoint serve multiple media types.",
-    "similarQuestions": [],
-    "diagram": null,
-    "steps": [
-      "Client sends an Accept header",
-      "Server checks its media-type formatters",
-      "Best-matching formatter is chosen",
-      "It serializes the response and sets Content-Type",
-      "No match returns 406 Not Acceptable"
-    ]
-  },
-  "web-api-15": {
-    "pitch": "Formatters serialize objects out and deserialize the body in.",
-    "definition": "Media-type formatters are the components that turn a .NET object into a wire format (like JSON) on the way out and parse the request body into a .NET object on the way in. Content negotiation picks the output formatter from the Accept header, while the Content-Type picks the input formatter. They are pluggable, so you can register custom formatters for new media types in MVC options.",
-    "similarQuestions": [],
-    "diagram": null,
-    "how": "Request: the formatter matching Content-Type reads the body into an object. Response: content negotiation picks a formatter for the Accept header, which serializes the result and sets Content-Type."
-  },
-  "web-api-16": {
-    "pitch": "JSON is the light default; XML is verbose but enterprise-friendly.",
-    "definition": "JSON and XML formatters serialize responses into those formats. JSON is compact, fast and native to JavaScript clients, so it is the default in ASP.NET Core; XML is more verbose but supports schemas and namespaces and is still used by some enterprise clients. You can support both and let content negotiation choose, and you set the default via formatter configuration or [Produces].",
-    "similarQuestions": [],
-    "diagram": null,
-    "how": "JSON is default; add XML with AddControllers().AddXmlSerializerFormatters(). Force a format with [Produces(\"application/json\")]; otherwise content negotiation and formatter order decide.",
-    "comparison": {
-      "altName": "XML",
-      "rows": [
-        {
-          "criterion": "Size",
-          "this": "Compact",
-          "alt": "Verbose"
-        },
-        {
-          "criterion": "Speed",
-          "this": "Fast to parse",
-          "alt": "Slower"
-        },
-        {
-          "criterion": "Schema",
-          "this": "Loose",
-          "alt": "Strong (XSD)"
-        },
-        {
-          "criterion": "Default",
-          "this": "Yes (Core)",
-          "alt": "Opt-in"
-        }
-      ]
-    }
-  },
-  "web-api-17": {
-    "pitch": "Filters run code at set points to handle cross-cutting concerns.",
-    "definition": "Filters let you run logic at specific points in the pipeline without repeating it in every action. Authentication filters establish who the caller is, authorization filters decide whether they may proceed, action filters run before/after the action (logging, validation), and exception filters catch unhandled errors and shape the response. They can be applied globally, per controller, or per action.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Authentication: who is the caller",
-      "Authorization: may they proceed",
-      "Action: before/after the action",
-      "Exception: handle unhandled errors"
-    ]
-  },
-  "web-api-18": {
-    "pitch": "[Authorize] requires an authenticated (or role/policy) user.",
-    "definition": "The [Authorize] attribute marks a controller or action as requiring an authenticated user before it runs, and can additionally demand roles or policies. It checks the ClaimsPrincipal set by authentication: plain [Authorize] needs any authenticated user, while [Authorize(Roles=\"Admin\")] or [Authorize(Policy=\"...\")] add finer checks. Failing returns 401 (not authenticated) or 403 (not allowed); [AllowAnonymous] opens specific endpoints.",
+    "how": "Match request parts to parameters: simple types from route/query, complex from body; [From*] overrides the source.",
+    "when": "Reading typed inputs from the URL and body.",
+    "whenNot": "Binding untrusted fields onto entities (over-posting).",
+    "advantages": [
+      "Automatic typed inputs",
+      "Clear default sources",
+      "[From*] for control"
+    ],
+    "disadvantages": [
+      "Surprising default sources",
+      "One [FromBody] per action",
+      "Type mismatch -> null/400"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
-      "snippet": "[Authorize(Roles = \"Admin\")]   // must be authenticated AND in Admin role\n[HttpDelete(\"{id}\")]\npublic IActionResult Delete(int id) { ... }\n\n[AllowAnonymous]               // overrides Authorize for this one\n[HttpGet(\"public\")]\npublic IActionResult Public() { ... }",
-      "note": "[Authorize] gates the endpoint by identity/role; [AllowAnonymous] re-opens it."
+      "snippet": "[HttpGet] public IActionResult Search([FromQuery] string q, [FromQuery] int page) { ... }"
+    }
+  },
+  "web-api-13": {
+    "pitch": "Model binding builds objects; parameter binding is the wider concept.",
+    "definition": "Model binding is the process that builds complex objects from multiple request sources - body, route, query, form, headers - and validates them into ModelState. Parameter binding is the broader umbrella that also covers mapping simple scalar values. In short, model binding is the complex-type part of parameter binding, and [From*] attributes control the source for both.",
+    "how": "Value providers (route/query/form/body) feed model binding -> types convert -> object populated -> ModelState filled.",
+    "when": "Turning request data into validated typed models.",
+    "whenNot": "Binding hidden/extra fields you did not intend (over-posting).",
+    "advantages": [
+      "Strongly-typed models",
+      "Integrated validation",
+      "Multiple sources via [From*]"
+    ],
+    "disadvantages": [
+      "Over-posting risk",
+      "Partial binds confuse",
+      "Misconfigured sources -> nulls"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "[HttpPost] public IActionResult Save([FromBody] Product p)\n    => ModelState.IsValid ? Ok() : BadRequest(ModelState);"
+    }
+  },
+  "web-api-14": {
+    "pitch": "Content negotiation picks the response format the client asked for.",
+    "definition": "Content negotiation is the process where the API and client agree on a response format such as JSON or XML, based on the request's Accept header and the formatters the server supports. The server selects the best matching formatter, serializes the result and sets the Content-Type; if nothing matches it returns 406 Not Acceptable. This lets a single endpoint serve multiple media types.",
+    "how": "Read Accept header -> pick the best matching output formatter -> serialize + set Content-Type (or 406).",
+    "when": "Serving multiple media types from one endpoint.",
+    "whenNot": "When you only ever return JSON (negotiation adds little).",
+    "advantages": [
+      "One endpoint, many formats",
+      "Standards-based (Accept header)",
+      "Clients choose representation"
+    ],
+    "disadvantages": [
+      "More formats to test",
+      "Odd Accept -> 406",
+      "Format-specific bugs hide"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "[Produces(\"application/json\", \"application/xml\")]\n[HttpGet] public Product Get(int id) => _svc.Get(id);"
+    }
+  },
+  "web-api-15": {
+    "pitch": "Formatters serialize objects out and deserialize the body in.",
+    "definition": "Media-type formatters are the components that turn a .NET object into a wire format (like JSON) on the way out and parse the request body into a .NET object on the way in. Content negotiation picks the output formatter from the Accept header, while the Content-Type picks the input formatter. They are pluggable, so you can register custom formatters for new media types.",
+    "how": "Request: Content-Type picks input formatter to read the body. Response: Accept picks output formatter to serialize.",
+    "when": "Supporting custom or extra media types (e.g. CSV).",
+    "whenNot": "When default JSON serialization already covers your needs.",
+    "advantages": [
+      "Pluggable serialization",
+      "Separates wire format from controllers",
+      "Reused across all actions"
+    ],
+    "disadvantages": [
+      "Custom formatters handle edge cases",
+      "Order affects selection",
+      "Serialization can be a hotspot"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "builder.Services.AddControllers(o => o.OutputFormatters.Add(new CsvOutputFormatter()));"
+    }
+  },
+  "web-api-16": {
+    "pitch": "JSON is the light default; XML is verbose but enterprise-friendly.",
+    "definition": "JSON and XML formatters serialize responses into those formats. JSON is compact, fast and native to JavaScript clients, so it is the default in ASP.NET Core; XML is more verbose but supports schemas and namespaces and is still used by some enterprise clients. You can support both and let content negotiation choose, and you set the default via formatter configuration or [Produces].",
+    "how": "Default JSON; add XML with AddXmlSerializerFormatters(); content negotiation + formatter order decide the response.",
+    "when": "JSON for web/mobile; add XML for legacy enterprise clients.",
+    "whenNot": "Supporting XML you do not need (extra surface/bytes).",
+    "advantages": [
+      "JSON: compact, fast, native",
+      "XML: schemas/namespaces",
+      "Support both via negotiation"
+    ],
+    "disadvantages": [
+      "XML larger and slower",
+      "Two formats double testing",
+      "Inconsistent settings break clients"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "builder.Services.AddControllers()\n    .AddXmlSerializerFormatters();      // enable XML alongside JSON"
+    }
+  },
+  "web-api-17": {
+    "pitch": "Filters run code at set points to handle cross-cutting concerns.",
+    "definition": "Filters let you run logic at specific points in the pipeline without repeating it in every action. Authentication filters establish who the caller is, authorization filters decide whether they may proceed, action filters run before/after the action, exception filters catch unhandled errors and shape the response, and result filters wrap result execution. They apply globally, per controller, or per action.",
+    "how": "Pipeline fires filters in order (auth -> authz -> action -> result, exception on error) around the action.",
+    "when": "Auth, logging, validation, error shaping across actions.",
+    "whenNot": "One-off logic specific to a single action.",
+    "advantages": [
+      "DRY cross-cutting concerns",
+      "Stage-specific hooks",
+      "Global/controller/action scope"
+    ],
+    "disadvantages": [
+      "Order/scope confusion",
+      "Heavy filters hit every request",
+      "Hides logic from the action"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "[Authorize][TypeFilter(typeof(LogFilter))]\npublic IActionResult Get() => Ok();"
+    }
+  },
+  "web-api-18": {
+    "pitch": "[Authorize] requires an authenticated (or role/policy) user.",
+    "definition": "The [Authorize] attribute marks a controller or action as requiring an authenticated user before it runs, and can additionally demand roles or policies. It checks the ClaimsPrincipal set by authentication: plain [Authorize] needs any authenticated user, while [Authorize(Roles=...)] or [Authorize(Policy=...)] add finer checks. Failing returns 401 or 403; [AllowAnonymous] opens specific endpoints.",
+    "how": "Authentication sets the ClaimsPrincipal -> [Authorize] checks identity/roles/policy -> pass or 401/403.",
+    "when": "Protecting endpoints by identity, role or policy.",
+    "whenNot": "Public endpoints (use [AllowAnonymous]).",
+    "advantages": [
+      "Declarative endpoint security",
+      "Roles and policies supported",
+      "[AllowAnonymous] for exceptions"
+    ],
+    "disadvantages": [
+      "Forgetting it leaves it open",
+      "Policy misconfig over/under-restricts",
+      "Only as strong as auth"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "[Authorize(Roles = \"Admin\")]   // authenticated + Admin role\n[HttpDelete(\"{id}\")] public IActionResult Delete(int id) { ... }"
     }
   },
   "web-api-19": {
     "pitch": "Basic Auth sends Base64 username:password on every request.",
-    "definition": "Basic Authentication is the simplest HTTP auth scheme: the client sends the username and password, Base64-encoded, in the Authorization header on every request. It is trivial to implement and universally supported, but Base64 is encoding, not encryption, so the credentials are only safe over HTTPS and there is no expiry or revocation without changing the password. It is fine for quick internal tools, not for public APIs.",
-    "similarQuestions": [],
-    "diagram": null,
+    "definition": "Basic Authentication is the simplest HTTP auth scheme: the client sends the username and password, Base64-encoded, in the Authorization header on every request. It is trivial to implement and universally supported, but Base64 is encoding, not encryption, so credentials are only safe over HTTPS and there is no expiry or revocation without changing the password. It is fine for quick internal tools, not for public APIs.",
+    "how": "Client sends 'Authorization: Basic base64(user:pass)' each request -> server decodes and validates credentials.",
+    "when": "Quick internal tools or service-to-service over HTTPS.",
+    "whenNot": "Public or browser-facing APIs (use tokens/OAuth).",
     "advantages": [
       "Dead simple to implement",
-      "Supported by every client/tool",
-      "Good for internal tools/testing"
+      "Supported everywhere",
+      "Good for internal tools"
     ],
     "disadvantages": [
       "Credentials sent every request",
-      "Base64 is not encryption (use HTTPS)",
+      "Base64 is not encryption",
       "No expiry or revocation"
-    ]
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var raw = Encoding.UTF8.GetString(Convert.FromBase64String(token)); // \"user:pass\"\n// MUST be over HTTPS",
+      "note": "Base64 is reversible - only safe on TLS."
+    }
   },
   "web-api-20": {
     "pitch": "JWT auth issues a signed token the client sends on each call.",
     "definition": "JWT bearer authentication issues a signed JSON Web Token after the user logs in; the client then sends it in the Authorization: Bearer header on every request, and the API validates the signature, expiry and claims without storing any session. Because the token is self-contained and stateless, it scales well and works across services - the trade-off is that tokens cannot easily be revoked before they expire.",
+    "how": "Login -> server returns signed JWT -> client sends 'Bearer <token>' -> API validates signature/expiry/claims.",
+    "when": "Stateless auth for APIs, SPAs and microservices.",
+    "whenNot": "When you need instant revocation or server-side sessions.",
+    "advantages": [
+      "Stateless - no session store",
+      "Self-contained claims",
+      "Works across services/domains"
+    ],
+    "disadvantages": [
+      "Hard to revoke before expiry",
+      "Large tokens add overhead",
+      "Leaked token valid until expiry"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "JWT flow",
       "mermaid": "flowchart LR\n  U[Client] -->|Login| A[Auth Server]\n  A -->|Signed JWT| U\n  U -->|Bearer JWT| P[API]\n  P -->|Validate| P\n  P -->|200 + data| U"
     },
-    "steps": [
-      "Client logs in with credentials",
-      "Auth server returns a signed JWT",
-      "Client sends it as 'Bearer <token>'",
-      "API validates signature, expiry, claims",
-      "Valid -> proceed; invalid -> 401"
-    ],
-    "advantages": [
-      "Stateless - no session store",
-      "Self-contained claims (identity/roles)",
-      "Works across services and domains"
-    ],
-    "disadvantages": [
-      "Hard to revoke before expiry",
-      "Large tokens add overhead",
-      "Leaked token works until expiry"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "builder.Services.AddAuthentication(\"Bearer\")\n    .AddJwtBearer(o => o.TokenValidationParameters = new() { /* issuer, key, lifetime */ });"
+    }
   },
   "web-api-21": {
     "pitch": "OAuth is the protocol to get a token; JWT is the token's format.",
     "definition": "OAuth 2.0 is an authorization framework that defines how a client obtains an access token from an authorization server through flows like authorization code or client credentials. JWT is simply a compact, signed token format. They are complementary, not competing: OAuth answers 'how do I get and use a token', and that access token is very often a JWT.",
+    "how": "OAuth flow -> authorization server issues an access token (often a JWT) -> client calls the API with it.",
+    "when": "Delegated access / third-party login at scale.",
+    "whenNot": "A tiny single app where a plain signed JWT suffices.",
+    "advantages": [
+      "Standard delegated authorization",
+      "Separates auth server from API",
+      "Third-party login, no password sharing"
+    ],
+    "disadvantages": [
+      "Flows are more complex",
+      "Needs an authorization server",
+      "Misimplemented flows are risky"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "JWT",
-      "rows": [
-        {
-          "criterion": "What it is",
-          "this": "Auth protocol/flow",
-          "alt": "Token format"
-        },
-        {
-          "criterion": "Answers",
-          "this": "How to obtain a token",
-          "alt": "What the token looks like"
-        },
-        {
-          "criterion": "Needs",
-          "this": "Authorization server",
-          "alt": "A signing key"
-        },
-        {
-          "criterion": "Relation",
-          "this": "Often issues a JWT",
-          "alt": "Carried by OAuth"
-        }
-      ]
+    "code": {
+      "language": "text",
+      "snippet": "OAuth: client --(authorization code)--> Auth Server --(access token = JWT)--> client --> API"
     }
   },
   "web-api-22": {
     "pitch": "Versioning lets an API change without breaking existing clients.",
-    "definition": "API versioning lets you evolve an API without breaking the clients you do not control. The common approaches are URL path (/v1/), query string (?api-version=1), header, and media-type versioning. I recommend URL-path versioning because it is explicit, easy to test, cache and document, and clients can see exactly which version they call; header or media-type versioning is a fine alternative when URLs must stay clean.",
+    "definition": "API versioning lets you evolve an API without breaking the clients you do not control. The common approaches are URL path (/v1/), query string (?api-version=1), header, and media-type versioning. I recommend URL-path versioning because it is explicit, easy to test, cache and document; header or media-type versioning is a fine alternative when URLs must stay clean.",
+    "how": "Route the request to the right version's controller/action by URL, query, header or media type; deprecate old ones.",
+    "when": "Public/long-lived APIs with clients you do not control.",
+    "whenNot": "Internal APIs you can update in lockstep with clients.",
+    "advantages": [
+      "Clients upgrade on their schedule",
+      "Graceful deprecation",
+      "Tooling (Asp.Versioning)"
+    ],
+    "disadvantages": [
+      "Multiple live versions to maintain",
+      "Inconsistency confuses consumers",
+      "Header versions less discoverable"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "why": "Public APIs have clients you do not control, so a breaking change without a new version breaks them; versioning lets clients upgrade on their own schedule.",
-    "keyPoints": [
-      "URL path: /v1/products (explicit)",
-      "Query string: ?api-version=1.0",
-      "Header: custom/Accept header",
-      "Media-type: version in content type"
-    ],
-    "bestPractices": [
-      "Prefer URL-path versioning - explicit and cacheable",
-      "Never break a published version",
-      "Deprecate old versions with a clear timeline"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "[ApiVersion(\"1.0\")]\n[Route(\"api/v{version:apiVersion}/products\")]\npublic class ProductsV1Controller : ControllerBase { ... }"
+    }
   },
   "web-api-23": {
     "pitch": "Global handling turns any error into one consistent response.",
     "definition": "Exception handling converts errors into proper HTTP responses, and global exception handling does it in one place so every unhandled error returns a consistent, safe payload. You add exception-handling middleware (or UseExceptionHandler / IExceptionHandler) early in the pipeline; it catches the error, logs it with context, maps it to a status code, and returns a standard ProblemDetails body without leaking internals.",
+    "how": "Middleware wraps the pipeline -> catches unhandled exception -> log -> map to status -> return ProblemDetails.",
+    "when": "Consistent, safe error responses across the whole API.",
+    "whenNot": "Swallowing specific recoverable errors you should handle.",
+    "advantages": [
+      "Consistent error shape",
+      "One place to log/format",
+      "Hides internal details"
+    ],
+    "disadvantages": [
+      "Catch-all can mask errors",
+      "Bad handlers leak stack traces",
+      "Swallowing hides bugs"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "steps": [
-      "Add exception middleware early in the pipeline",
-      "It catches any unhandled exception",
-      "Log it with context and a correlation id",
-      "Map it to a status code (400/404/500)",
-      "Return ProblemDetails without leaking internals"
-    ],
     "code": {
       "language": "csharp",
-      "snippet": "app.UseExceptionHandler(eh => eh.Run(async ctx =>\n{\n    ctx.Response.StatusCode = 500;          // one place for all errors\n    await ctx.Response.WriteAsJsonAsync(\n        new { error = \"Something went wrong\" }); // safe, no stack trace\n}));",
-      "note": "One middleware catches every unhandled error and returns a safe JSON body."
+      "snippet": "app.UseExceptionHandler(eh => eh.Run(async ctx => {\n    ctx.Response.StatusCode = 500;\n    await ctx.Response.WriteAsJsonAsync(new { error = \"Unexpected error\" }); // safe body\n}));"
     }
   },
   "web-api-24": {
     "pitch": "Filters catch MVC errors; middleware catches everything.",
     "definition": "Exception filters handle errors thrown inside the MVC/controller layer and have access to the action context, so they are good for controller-specific handling. Global exception middleware sits earlier in the pipeline and catches errors from anywhere, including other middleware. They are often combined: filters for fine-grained cases, middleware as the catch-all backstop.",
+    "how": "Action error -> exception filter (action-aware) may handle; anything else -> exception middleware (pipeline-wide).",
+    "when": "Filters for controller-specific handling; middleware as backstop.",
+    "whenNot": "Relying only on filters (they miss non-MVC errors).",
+    "advantages": [
+      "Filter: action-aware handling",
+      "Middleware: true catch-all",
+      "Combine for full coverage"
+    ],
+    "disadvantages": [
+      "Filters miss non-MVC errors",
+      "Two layers can double-log",
+      "Ordering matters"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Global Middleware",
-      "rows": [
-        {
-          "criterion": "Scope",
-          "this": "MVC/controller only",
-          "alt": "Whole pipeline"
-        },
-        {
-          "criterion": "Context",
-          "this": "Action-aware",
-          "alt": "Request-level"
-        },
-        {
-          "criterion": "Catches non-MVC errors",
-          "this": "No",
-          "alt": "Yes"
-        },
-        {
-          "criterion": "Use as",
-          "this": "Fine-grained handling",
-          "alt": "Catch-all backstop"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "app.UseExceptionHandler(\"/error\");          // pipeline-wide backstop\n// + [TypeFilter(typeof(ApiExceptionFilter))] for controller-specific cases"
     }
   },
   "web-api-25": {
     "pitch": "DI hands a class its dependencies instead of newing them up.",
-    "definition": "Dependency Injection is a pattern where a class receives its dependencies from an external container instead of constructing them itself, and ASP.NET Core has DI built in and uses it everywhere. You register services with a lifetime (singleton, scoped, transient) and the framework injects them through constructors. This gives loose coupling, easy testing with mocks, and managed object lifetimes - it is the backbone of clean ASP.NET Core apps.",
-    "similarQuestions": [],
-    "diagram": null,
-    "why": "It removes hard-coded 'new' calls, so you can swap real vs mock implementations, test in isolation, and let the framework manage lifetimes.",
-    "code": {
-      "language": "csharp",
-      "snippet": "builder.Services.AddScoped<IProductService, ProductService>(); // register once\n\npublic class ProductsController(IProductService svc) // injected by the container\n{\n    // use svc - no \"new\", easy to mock in tests\n}",
-      "note": "Register the interface once; the container injects it wherever it is needed."
-    },
+    "definition": "Dependency Injection is a pattern where a class receives its dependencies from an external container instead of constructing them, and ASP.NET Core has DI built in and uses it throughout. You register services with a lifetime (singleton, scoped, transient) and the framework injects them through constructors. This gives loose coupling, easy testing with mocks, and managed object lifetimes - the backbone of clean ASP.NET Core apps.",
+    "how": "Register interface -> implementation with a lifetime -> container injects it into constructors where needed.",
+    "when": "Wiring services, DbContexts, loggers and HttpClients cleanly.",
+    "whenNot": "Over-injecting tiny helpers that could be plain methods.",
     "advantages": [
-      "Loose coupling, testable code",
+      "Loose coupling, testable",
       "Framework manages lifetimes",
-      "Encourages single-responsibility classes"
+      "Single-responsibility classes"
     ],
     "disadvantages": [
       "Over-injection bloats constructors",
-      "Wrong lifetimes cause subtle bugs",
-      "Extra indirection to follow"
-    ]
+      "Wrong lifetimes cause bugs",
+      "Indirection to follow"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "builder.Services.AddScoped<IProductService, ProductService>();  // register\npublic ProductsController(IProductService svc) => _svc = svc;   // injected"
+    }
   },
   "web-api-26": {
     "pitch": "Secure an API with layered defenses on every endpoint.",
-    "definition": "You secure a Web API by applying layered defenses: parameterize all queries to stop SQL injection, validate and encode output plus set a CSP to stop XSS, and use anti-forgery tokens or bearer tokens with SameSite cookies to stop CSRF. On top of that, enforce HTTPS, authentication and authorization, rate limiting, least-privilege DB accounts, and keep dependencies patched. Security must be consistent on every endpoint, not bolted on.",
+    "definition": "You secure a Web API by applying layered defenses: parameterize all queries to stop SQL injection, validate and encode output plus set a CSP to stop XSS, and use anti-forgery tokens or bearer tokens with SameSite cookies to stop CSRF. On top of that, enforce HTTPS, authentication and authorization, rate limiting, least-privilege DB accounts, and keep dependencies patched. Security must be consistent on every endpoint.",
+    "how": "Parameterize SQL + validate/encode input + tokens/SameSite + HTTPS/authz + rate limit, on every endpoint.",
+    "when": "Every API, especially internet-facing ones.",
+    "whenNot": "Never skip it - 'internal only' is not a security model.",
+    "advantages": [
+      "Blocks SQLi/XSS/CSRF",
+      "Defense in depth",
+      "Least privilege limits blast radius"
+    ],
+    "disadvantages": [
+      "Must be applied consistently",
+      "Adds complexity",
+      "New attack vectors need review"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "SQLi: parameterized queries / EF Core",
-      "XSS: validate + encode output, set CSP",
-      "CSRF: anti-forgery tokens / SameSite",
-      "Always: HTTPS, authn/authz, rate limiting",
-      "Patch dependencies, least-privilege DB"
-    ],
-    "bestPractices": [
-      "Never concatenate user input into SQL",
-      "Treat all input as untrusted - validate it",
-      "Keep secrets out of code (use a vault)"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Query(\"SELECT * FROM Users WHERE Id=@id\", new { id }); // parameterized -> no SQLi"
+    }
   },
   "web-api-27": {
     "pitch": "Speed up an API by cutting work, payload and blocking.",
-    "definition": "You improve Web API performance by reducing repeated work, shrinking payloads, and freeing threads. The main levers are caching (response and data), response compression, asynchronous I/O with async/await, pagination and lean payloads, and query/connection optimization. The golden rule is to measure with profiling before optimizing, so you fix the real bottleneck rather than guessing.",
+    "definition": "You improve Web API performance by reducing repeated work, shrinking payloads, and freeing threads. The main levers are caching (response and data), response compression, asynchronous I/O with async/await, pagination and lean payloads, and query/connection optimization. The golden rule is to measure with profiling before optimizing, so you fix the real bottleneck.",
+    "how": "Cache hot data -> compress -> async I/O -> page + project -> tune queries; profile before optimizing.",
+    "when": "Slow endpoints, heavy DB load, large payloads.",
+    "whenNot": "Optimizing blindly before measuring the bottleneck.",
+    "advantages": [
+      "Caching cuts repeat work",
+      "Async scales concurrency",
+      "Compression/paging cut latency"
+    ],
+    "disadvantages": [
+      "Caching adds staleness",
+      "Async misuse can deadlock",
+      "Aggressive tuning hurts clarity"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Cache hot data + set cache headers",
-      "Enable response compression",
-      "Use async/await for I/O",
-      "Page, filter, project only needed fields",
-      "Add DB indexes, reuse pooled connections"
-    ],
-    "bestPractices": [
-      "Measure before optimizing - profile first",
-      "Cache with a clear invalidation strategy",
-      "Never block on async (no .Result/.Wait)"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public async Task<IActionResult> Get([FromQuery] int page) =>\n    Ok(await _db.Items.AsNoTracking().Skip(page*50).Take(50).ToListAsync()); // async + paged"
+    }
   },
   "web-api-28": {
     "pitch": "Swagger documents the API; Postman exercises it.",
     "definition": "You document and test Web APIs with Swagger/OpenAPI and Postman. Swashbuckle generates an OpenAPI spec and an interactive Swagger UI straight from your controllers and XML comments, so the docs stay current and clients can be generated. Postman lets you build, save and automate requests in collections, with environment variables and test scripts that can run in CI via Newman.",
+    "how": "Swashbuckle reflects controllers -> swagger.json + UI; Postman collections script requests and run in CI (Newman).",
+    "when": "Sharing live docs and automating API tests.",
+    "whenNot": "Exposing Swagger UI publicly in production unguarded.",
+    "advantages": [
+      "Always-current interactive docs",
+      "Client code generation",
+      "Postman: saved, automated tests"
+    ],
+    "disadvantages": [
+      "Docs only as good as annotations",
+      "Public Swagger can leak detail",
+      "Manual tests drift"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "steps": [
-      "Add Swashbuckle to generate swagger.json + UI",
-      "Annotate models, responses and XML comments",
-      "Build a Postman collection per API",
-      "Use env variables for base URLs and tokens",
-      "Run collections in CI with Newman"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "builder.Services.AddEndpointsApiExplorer();\nbuilder.Services.AddSwaggerGen();   // generates swagger.json + UI"
+    }
   },
   "web-api-29": {
     "pitch": "Observability = structured logs, metrics, and correlation IDs.",
-    "definition": "You monitor and troubleshoot production APIs with structured logging, centralized aggregation, metrics and health checks, and correlation IDs that tie all logs of a single request together across services. A logging framework (ILogger/Serilog) writes JSON to a sink like Seq, ELK or Application Insights; a correlation id flows through every log and downstream call; and distributed tracing follows a request end to end. This is what turns a vague 'it is slow' into a precise root cause.",
+    "definition": "You monitor and troubleshoot production APIs with structured logging, centralized aggregation, metrics and health checks, and correlation IDs that tie all logs of a single request together across services. A logging framework (ILogger/Serilog) writes JSON to a sink like Seq, ELK or Application Insights; a correlation id flows through every log and downstream call; and distributed tracing follows a request end to end.",
+    "how": "Emit structured logs + a correlation id per request -> aggregate centrally -> dashboards/alerts + distributed tracing.",
+    "when": "Any production API you must keep healthy.",
+    "whenNot": "Logging sensitive data or unbounded volume.",
+    "advantages": [
+      "Searchable structured logs",
+      "Correlation ids trace requests",
+      "Early alerts via metrics/health"
+    ],
+    "disadvantages": [
+      "Too much logging = noise/cost",
+      "Sensitive data risk",
+      "No correlation = painful tracing"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Structured JSON logs to a central sink",
-      "Correlation id per request, on every log",
-      "Health checks + metrics with alerts",
-      "Distributed tracing (OpenTelemetry)",
-      "Never log secrets; control log volume"
-    ],
-    "bestPractices": [
-      "Always attach a correlation id to logs",
-      "Log enough context, not sensitive data",
-      "Alert on error rate and latency, not just CPU"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "using (logger.BeginScope(new { CorrelationId = id }))   // attach to every log\n    logger.LogInformation(\"Handling {Path}\", ctx.Request.Path);"
+    }
   },
   "web-api-30": {
     "pitch": "Design it stateless, scalable, secured and automated end to end.",
-    "definition": "A high-traffic Web API is designed as stateless, horizontally scalable services behind a load balancer and API gateway, with token-based auth, URL versioning, centralized error handling, caching and async I/O, all shipped through an automated pipeline. Statelessness plus load balancing lets you scale out, caching and a CDN absorb read traffic, and CI/CD with health checks enables safe, frequent releases. The trade-off is more moving parts to operate and monitor.",
+    "definition": "A high-traffic Web API is designed as stateless, horizontally scalable services behind a load balancer and API gateway, with token-based auth, URL versioning, centralized error handling, caching and async I/O, all shipped through an automated pipeline. Statelessness plus load balancing lets you scale out, caching and a CDN absorb read traffic, and CI/CD with health checks enables safe, frequent releases. The trade-off is more moving parts to operate.",
+    "how": "Clients -> LB -> gateway (auth/rate limit) -> stateless services -> cache + DB; async throughout, CI/CD deploys.",
+    "when": "Public, high-scale APIs needing reliability and growth.",
+    "whenNot": "Small internal APIs where this is over-engineering.",
+    "advantages": [
+      "Scales out statelessly",
+      "Caching/CDN absorb reads",
+      "Safe, frequent CI/CD releases"
+    ],
+    "disadvantages": [
+      "Many moving parts",
+      "Distributed consistency is hard",
+      "Higher operational cost"
+    ],
     "similarQuestions": [],
     "diagram": {
-      "title": "High-traffic API architecture",
+      "title": "High-traffic API",
       "mermaid": "flowchart LR\n  C[Clients] --> LB[Load Balancer]\n  LB --> G[API Gateway / Auth]\n  G --> S1[API Instance]\n  G --> S2[API Instance]\n  S1 --> Cache[(Cache)]\n  S1 --> DB[(Database)]\n  S2 --> Cache\n  S2 --> DB"
     },
-    "keyPoints": [
-      "Stateless services behind LB + API gateway",
-      "JWT/OAuth bearer auth at the edge",
-      "URL-path versioning (/v1/)",
-      "Caching/CDN, async I/O, paging, tuned queries",
-      "Resilience: retries, rate limit, circuit breaker",
-      "CI/CD with health checks, blue-green/rolling"
-    ]
+    "realWorld": "For a high-traffic API, JWT at the gateway + Redis caching + async data access let the same fleet handle ~3x traffic with p95 well under target."
   }
 }
