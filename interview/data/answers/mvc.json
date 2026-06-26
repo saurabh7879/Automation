@@ -1,1 +1,33 @@
-{}
+{
+  "mvc-1": {
+    "pitch": "ASP.NET MVC is my pick for testable, clean server-rendered web apps in .NET.",
+    "definition": "ASP.NET MVC is a web framework that splits an app into three roles: Models (data and business logic), Views (the UI/HTML), and Controllers (handle the request and choose a view). It gives full control over HTML and URLs, enforces separation of concerns and is easy to unit-test, and uses routing instead of physical pages. ASP.NET Core MVC is the modern, cross-platform version.",
+    "keyPoints": [
+      "Model-View-Controller separation",
+      "Full control over HTML and routes",
+      "Testable, clean architecture",
+      "Core MVC is cross-platform"
+    ],
+    "when": "Server-rendered web apps needing clean structure and testability.",
+    "whenNot": "Pure JSON APIs (Web API), SPA-only front ends, real-time (SignalR).",
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "mvc-3": {
+    "pitch": "An MVC request flows routing -> controller -> action -> result -> view.",
+    "definition": "The MVC request lifecycle is the ordered path a request takes from URL to rendered HTML. Routing matches the URL to a controller and action; the controller is created (via DI); model binding fills the action parameters; filters run; the action executes and returns an ActionResult; and a view engine renders the view to HTML. It runs on the ASP.NET pipeline with filters as extension points.",
+    "steps": [
+      "Routing matches URL to controller + action",
+      "Controller is created (with DI)",
+      "Model binding fills action parameters",
+      "Filters run (auth, action)",
+      "Action executes, returns an ActionResult",
+      "View engine renders the view to HTML"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "MVC request lifecycle",
+      "mermaid": "flowchart LR\n  A[Request] --> B[Routing]\n  B --> C[Controller]\n  C --> D[Model Binding + Filters]\n  D --> E[Action -> ActionResult]\n  E --> F[View Engine]\n  F --> G[HTML Response]"
+    }
+  }
+}
