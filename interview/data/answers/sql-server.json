@@ -1,1 +1,649 @@
-{}
+{
+  "sql-server-1": {
+    "pitch": "An RDBMS is a DBMS that stores data in related tables with constraints.",
+    "definition": "A DBMS is any software that stores and manages data. An RDBMS (Relational DBMS) is a DBMS that organizes data into tables (relations) of rows and columns, enforces relationships via keys and constraints, and supports SQL and ACID transactions. SQL Server, Oracle and MySQL are RDBMSs; a plain file store or simple key-value DBMS is not relational.",
+    "how": "An RDBMS adds relational structure (tables, keys, constraints, SQL, ACID) on top of basic data management.",
+    "when": "Structured, related data needing integrity and SQL.",
+    "whenNot": "Unstructured or massive denormalized data (use NoSQL).",
+    "advantages": [
+      "Relationships + integrity",
+      "SQL querying",
+      "ACID transactions"
+    ],
+    "disadvantages": [
+      "Rigid schema",
+      "Scales vertically more easily",
+      "Overkill for simple stores"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "sql-server-2": {
+    "pitch": "Constraints enforce data rules at the database level.",
+    "definition": "SQL constraints are rules applied to columns/tables to guarantee data integrity. The main ones are PRIMARY KEY (unique row identity), FOREIGN KEY (referential integrity to another table), UNIQUE (no duplicate values), NOT NULL (value required), CHECK (value satisfies a condition), and DEFAULT (a fallback value). The engine rejects any data that violates them.",
+    "how": "On insert/update the engine validates each constraint and rejects rows that break a rule.",
+    "when": "Enforcing integrity rules close to the data.",
+    "whenNot": "Rules that change often or need app-level context.",
+    "advantages": [
+      "Guarantees data integrity",
+      "Centralized in the DB",
+      "Self-documents rules"
+    ],
+    "disadvantages": [
+      "Constraint violations need handling",
+      "Too many can slow writes",
+      "Hard to bypass legitimately"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "CREATE TABLE Users (\n  Id INT PRIMARY KEY,\n  Email NVARCHAR(200) UNIQUE NOT NULL,\n  Age INT CHECK (Age >= 18));"
+    }
+  },
+  "sql-server-3": {
+    "pitch": "Normalization removes redundancy by splitting data into related tables.",
+    "definition": "Normalization is the process of organizing columns and tables to minimize redundancy and dependency. 1NF removes repeating groups (atomic columns, a key). 2NF removes partial dependencies on part of a composite key. 3NF removes transitive dependencies (non-key depending on non-key). BCNF is a stricter 3NF where every determinant is a candidate key. Each form reduces anomalies.",
+    "how": "Each normal form removes a class of dependency, splitting data into more tables linked by keys.",
+    "when": "Transactional (OLTP) schemas needing integrity.",
+    "whenNot": "Read-heavy reporting where denormalization is faster.",
+    "advantages": [
+      "Less redundancy",
+      "Fewer update anomalies",
+      "Cleaner integrity"
+    ],
+    "disadvantages": [
+      "More joins on read",
+      "Can hurt query speed",
+      "Over-normalization complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "sql-server-4": {
+    "pitch": "ACID guarantees transactions are reliable and all-or-nothing.",
+    "definition": "ACID describes the guarantees of a reliable transaction. Atomicity: all steps succeed or none do. Consistency: the database moves from one valid state to another, honoring constraints. Isolation: concurrent transactions don't corrupt each other. Durability: once committed, changes survive crashes. Example: a bank transfer debits and credits atomically, or rolls back entirely.",
+    "how": "The engine logs changes and uses locks/versions so each transaction is atomic, isolated, consistent and durable.",
+    "when": "Any data where correctness under concurrency matters.",
+    "whenNot": "Eventually-consistent systems that trade ACID for scale.",
+    "advantages": [
+      "Reliable, all-or-nothing",
+      "Safe concurrency",
+      "Survives crashes"
+    ],
+    "disadvantages": [
+      "Isolation costs locking",
+      "Strong consistency limits scale",
+      "Overhead vs eventual consistency"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "sql-server-5": {
+    "pitch": "A transaction groups statements so they commit or roll back together.",
+    "definition": "A transaction is a unit of work that executes as a whole. COMMIT makes all its changes permanent; ROLLBACK undoes them on error; SAVEPOINT marks a point you can partially roll back to without abandoning the whole transaction. Together they give precise control over atomic, recoverable changes.",
+    "how": "BEGIN TRAN starts work -> SAVEPOINT marks checkpoints -> COMMIT persists or ROLLBACK undoes to a point/start.",
+    "when": "Multi-statement changes that must be atomic.",
+    "whenNot": "Single statements (already atomic).",
+    "advantages": [
+      "Atomic multi-step changes",
+      "ROLLBACK on failure",
+      "SAVEPOINT for partial undo"
+    ],
+    "disadvantages": [
+      "Long transactions hold locks",
+      "Deadlock risk",
+      "Misuse blocks others"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "BEGIN TRAN;\n  UPDATE Acct SET Bal -= 100 WHERE Id = 1;\n  SAVE TRAN s1;\n  UPDATE Acct SET Bal += 100 WHERE Id = 2;\nCOMMIT;  -- or ROLLBACK TRAN s1;"
+    }
+  },
+  "sql-server-6": {
+    "pitch": "TRY...CATCH handles runtime errors inside T-SQL.",
+    "definition": "SQL Server handles exceptions with a TRY...CATCH block: statements in TRY that throw an error transfer control to CATCH, where you can log, roll back the transaction, and re-raise. Inside CATCH, functions like ERROR_MESSAGE() and ERROR_NUMBER() give details. It is the structured way to manage failures in stored procedures.",
+    "how": "An error in TRY jumps to CATCH -> inspect ERROR_* functions -> ROLLBACK + log or THROW to re-raise.",
+    "when": "Robust stored procedures with transactions.",
+    "whenNot": "Simple scripts where errors should just stop.",
+    "advantages": [
+      "Structured error handling",
+      "Access to error details",
+      "Clean rollback path"
+    ],
+    "disadvantages": [
+      "Doesn't catch all errors (e.g. severe)",
+      "XACT_STATE care needed",
+      "Boilerplate per proc"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "BEGIN TRY\n  BEGIN TRAN; /* ... */ COMMIT;\nEND TRY\nBEGIN CATCH\n  IF @@TRANCOUNT > 0 ROLLBACK;\n  THROW;  -- re-raise with details\nEND CATCH"
+    }
+  },
+  "sql-server-7": {
+    "pitch": "These are concurrency anomalies isolation levels prevent.",
+    "definition": "These describe concurrency read phenomena. A Dirty Read reads uncommitted data that may roll back. A Non-Repeatable Read gets different values when re-reading a row another transaction updated. A Phantom Read sees new rows appear on re-running a range query. Repeatable Read is the isolation level that prevents dirty and non-repeatable reads (but not phantoms). Higher isolation prevents more of these.",
+    "how": "Lower isolation allows these anomalies; raising the isolation level adds locks/versions to prevent each one.",
+    "when": "Choosing isolation to balance correctness vs concurrency.",
+    "whenNot": "Ignoring them in money-sensitive concurrent updates.",
+    "advantages": [
+      "Explains concurrency risks",
+      "Maps to isolation levels",
+      "Guides correctness choices"
+    ],
+    "disadvantages": [
+      "Higher isolation = less concurrency",
+      "Phantoms need serializable",
+      "Subtle to reason about"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "sql-server-8": {
+    "pitch": "Isolation levels trade consistency against concurrency.",
+    "definition": "SQL Server's isolation levels, from least to most strict: READ UNCOMMITTED (allows dirty reads), READ COMMITTED (default, no dirty reads), REPEATABLE READ (rows you read stay stable), SERIALIZABLE (also prevents phantoms, fully isolated), and SNAPSHOT (row-versioned, readers don't block writers). Higher levels prevent more anomalies but reduce concurrency.",
+    "how": "Each level acquires more locks (or uses row versioning) to block more read anomalies at the cost of concurrency.",
+    "when": "Tuning correctness vs throughput per workload.",
+    "whenNot": "Always using SERIALIZABLE (kills concurrency).",
+    "advantages": [
+      "Control over anomalies",
+      "SNAPSHOT avoids blocking",
+      "Default fits most cases"
+    ],
+    "disadvantages": [
+      "Strict levels block more",
+      "SNAPSHOT uses tempdb versions",
+      "Wrong level = bugs or contention"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "SET TRANSACTION ISOLATION LEVEL SNAPSHOT; -- readers don't block writers"
+    }
+  },
+  "sql-server-9": {
+    "pitch": "Procedures perform actions; functions compute and return values.",
+    "definition": "A stored procedure is a precompiled routine that can perform actions (DML, transactions), return multiple result sets, and use output parameters. A function returns a single value or table and is meant to be used inside queries; it cannot perform side effects like modifying data or transactions. Use procedures for operations, functions for computations embedded in SQL.",
+    "how": "Procedures execute via EXEC and can change data; functions are called inline in SELECT and must be side-effect free.",
+    "when": "Procedures for operations; functions for reusable calculations.",
+    "whenNot": "Using a function where you need to modify data.",
+    "advantages": [
+      "Procedures: full actions",
+      "Functions: composable in queries",
+      "Both precompiled/reusable"
+    ],
+    "disadvantages": [
+      "Functions can't modify data",
+      "Scalar functions can be slow",
+      "Procedures not usable in SELECT"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "CREATE FUNCTION dbo.FullName(@f NVARCHAR(50), @l NVARCHAR(50))\nRETURNS NVARCHAR(101) AS BEGIN RETURN @f + ' ' + @l END;"
+    }
+  },
+  "sql-server-10": {
+    "pitch": "SQL Server can call external code via SQL CLR integration.",
+    "definition": "A stored procedure can call external/DLL code through SQL CLR integration: you write a .NET method, deploy its assembly into SQL Server, and expose it as a CLR stored procedure or function. It is used for logic awkward in T-SQL (complex string/math, calling APIs), but must be enabled and is sandboxed for security. Modern practice prefers doing such work in the app tier.",
+    "how": "Deploy a signed .NET assembly into SQL Server -> register a CLR proc/function -> T-SQL calls into the managed code.",
+    "when": "Complex logic T-SQL handles poorly.",
+    "whenNot": "Anything better done in the application layer.",
+    "advantages": [
+      "Run .NET inside SQL",
+      "Complex logic made easy",
+      "Reuse managed libraries"
+    ],
+    "disadvantages": [
+      "Security/permission risks",
+      "Deployment overhead",
+      "Better done app-side usually"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "sql-server-11": {
+    "pitch": "Temp tables, table variables and CTEs hold intermediate results differently.",
+    "definition": "These store interim data. A temporary table (#t) is a real table in tempdb with statistics and indexes, good for large sets. A table variable (@t) is lighter, scoped to a batch, with limited statistics - good for small sets. A CTE (Common Table Expression) is a named, inline query that exists only for the following statement, great for readability and recursion. Choose by size and scope.",
+    "how": "Temp table persists in tempdb with stats; table variable is in-memory-ish and scoped; CTE is inlined for one statement.",
+    "when": "Temp table for big sets; CTE for readable/recursive queries.",
+    "whenNot": "Table variables for large data (poor stats/plans).",
+    "advantages": [
+      "Temp table: stats + indexes",
+      "Table var: light, scoped",
+      "CTE: readable, recursive"
+    ],
+    "disadvantages": [
+      "Temp tables use tempdb",
+      "Table vars: bad plans on big data",
+      "CTE not reusable across statements"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "WITH Recent AS (\n  SELECT * FROM Orders WHERE Date > '2024-01-01')\nSELECT * FROM Recent WHERE Total > 100;"
+    }
+  },
+  "sql-server-12": {
+    "pitch": "Triggers auto-run logic on data changes.",
+    "definition": "A trigger is a special procedure that fires automatically in response to data events. An AFTER trigger runs after an INSERT/UPDATE/DELETE completes (e.g. for auditing). An INSTEAD OF trigger replaces the action with your own logic (e.g. to make a view updatable). They use the inserted/deleted pseudo-tables to see the change.",
+    "how": "DML event fires the trigger -> AFTER runs post-change, INSTEAD OF replaces it -> logic reads inserted/deleted tables.",
+    "when": "Auditing, enforcing complex rules, updatable views.",
+    "whenNot": "Heavy logic that hides behaviour and hurts performance.",
+    "advantages": [
+      "Automatic on data change",
+      "Auditing/enforcement",
+      "INSTEAD OF for views"
+    ],
+    "disadvantages": [
+      "Hidden side effects",
+      "Performance impact",
+      "Hard to debug"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "CREATE TRIGGER trg_Audit ON Users AFTER UPDATE AS\n  INSERT INTO Audit SELECT Id, GETDATE() FROM inserted;"
+    }
+  },
+  "sql-server-13": {
+    "pitch": "UNION stacks rows; JOIN combines columns; UNION ALL keeps duplicates.",
+    "definition": "UNION combines the rows of two result sets vertically and removes duplicates; UNION ALL does the same but keeps duplicates (faster). A JOIN combines tables horizontally by matching related columns, adding columns from both. So UNION/UNION ALL append rows with the same columns; JOIN merges columns across related rows.",
+    "how": "UNION(ALL) concatenates compatible result sets (rows); JOIN matches rows across tables to widen them (columns).",
+    "when": "UNION to append result sets; JOIN to relate tables.",
+    "whenNot": "UNION when you actually need a JOIN (or vice versa).",
+    "advantages": [
+      "UNION: combine result sets",
+      "UNION ALL: faster, keeps dups",
+      "JOIN: relate tables"
+    ],
+    "disadvantages": [
+      "UNION dedups (cost)",
+      "Column counts/types must match",
+      "Wrong choice = wrong data"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "SELECT Name FROM A UNION ALL SELECT Name FROM B;  -- rows\nSELECT o.Id, u.Name FROM Orders o JOIN Users u ON o.UserId=u.Id; -- columns"
+    }
+  },
+  "sql-server-14": {
+    "pitch": "Join types differ by which unmatched rows they keep.",
+    "definition": "These combine tables by key. INNER JOIN keeps only matching rows from both. LEFT JOIN keeps all left rows plus matches (nulls for no match); RIGHT JOIN keeps all right rows. FULL OUTER JOIN keeps all rows from both, matched where possible. CROSS JOIN returns the Cartesian product (every combination). You pick by which side's unmatched rows you need.",
+    "how": "The optimizer matches rows by the ON predicate; outer joins emit unmatched rows with NULLs; cross joins pair everything.",
+    "when": "Combining related tables with the right matching rule.",
+    "whenNot": "CROSS JOIN by accident (huge result).",
+    "advantages": [
+      "INNER: only matches",
+      "LEFT/RIGHT: keep one side",
+      "FULL: keep both sides"
+    ],
+    "disadvantages": [
+      "Outer joins add NULL handling",
+      "CROSS JOIN explodes rows",
+      "Missing ON -> cross join"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "SELECT u.Name, o.Id\nFROM Users u LEFT JOIN Orders o ON o.UserId = u.Id; -- all users"
+    }
+  },
+  "sql-server-15": {
+    "pitch": "MERGE upserts: insert, update or delete in one statement.",
+    "definition": "The MERGE statement synchronizes a target table with a source in a single statement: WHEN MATCHED updates/deletes, WHEN NOT MATCHED inserts. It is handy for upserts and ETL syncs, reducing multiple statements to one. Limitations: it has had concurrency/bug caveats, can be slower than targeted statements, and needs careful locking, so many teams prefer explicit insert/update.",
+    "how": "MERGE matches source to target on a key -> applies INSERT/UPDATE/DELETE per the WHEN clauses in one pass.",
+    "when": "Upserts and table synchronization/ETL.",
+    "whenNot": "High-concurrency hot paths (known MERGE caveats).",
+    "advantages": [
+      "One-statement upsert",
+      "Good for ETL sync",
+      "Insert/update/delete together"
+    ],
+    "disadvantages": [
+      "Historic concurrency bugs",
+      "Can be slower",
+      "Complex to get right"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "MERGE Target t USING Source s ON t.Id = s.Id\nWHEN MATCHED THEN UPDATE SET t.Val = s.Val\nWHEN NOT MATCHED THEN INSERT (Id, Val) VALUES (s.Id, s.Val);"
+    }
+  },
+  "sql-server-16": {
+    "pitch": "Window functions compute across a set of rows without collapsing them.",
+    "definition": "Window functions perform calculations over a window of rows related to the current row, keeping individual rows (unlike GROUP BY). ROW_NUMBER gives a unique sequential number; RANK and DENSE_RANK rank with/without gaps on ties; LEAD and LAG access following/preceding rows. They use OVER(PARTITION BY ... ORDER BY ...) to define the window.",
+    "how": "OVER() defines a partition + order; the function computes per row across that window without aggregating it away.",
+    "when": "Ranking, running totals, comparing to prior/next rows.",
+    "whenNot": "Simple aggregates where GROUP BY is enough.",
+    "advantages": [
+      "Per-row analytics",
+      "Ranking + offsets",
+      "No self-joins needed"
+    ],
+    "disadvantages": [
+      "Syntax learning curve",
+      "Can be memory-heavy",
+      "Ordering must be deterministic"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "SELECT Name, Salary,\n  ROW_NUMBER() OVER (PARTITION BY Dept ORDER BY Salary DESC) AS rn\nFROM Emp;"
+    }
+  },
+  "sql-server-17": {
+    "pitch": "Find the Nth highest salary via window functions, TOP, or a subquery.",
+    "definition": "There are several ways to get the Nth highest salary. The cleanest uses DENSE_RANK() in a window function and filters rank = N. You can also use a correlated subquery counting greater salaries, or TOP/OFFSET-FETCH with ordering. DENSE_RANK handles ties correctly, which is usually the intended behaviour.",
+    "how": "Rank salaries descending (DENSE_RANK) -> filter rank = N; or count distinct-greater salaries = N-1.",
+    "when": "Top-N analytics and reporting queries.",
+    "whenNot": "When ties handling is ambiguous (clarify first).",
+    "advantages": [
+      "DENSE_RANK handles ties",
+      "Multiple approaches",
+      "Clear, set-based"
+    ],
+    "disadvantages": [
+      "Ties change the answer",
+      "Correlated subquery slower",
+      "OFFSET differs on ties"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "SELECT Salary FROM (\n  SELECT Salary, DENSE_RANK() OVER (ORDER BY Salary DESC) r\n  FROM Emp) t WHERE r = @N;"
+    }
+  },
+  "sql-server-18": {
+    "pitch": "A clustered index orders the table; non-clustered is a separate lookup.",
+    "definition": "A clustered index defines the physical sort order of the table's rows - there can be only one, and the table data IS the index leaf. A non-clustered index is a separate structure with a copy of the key columns plus a pointer back to the row; you can have many. Clustered is best for range scans on the key; non-clustered for lookups on other columns.",
+    "how": "Clustered: data stored in key order. Non-clustered: a separate B-tree pointing to rows via the clustered key/RID.",
+    "when": "Clustered on the main access key; non-clustered on lookups.",
+    "whenNot": "Over-indexing (each index slows writes).",
+    "advantages": [
+      "Clustered: fast range scans",
+      "Non-clustered: many, flexible",
+      "Speeds lookups/sorts"
+    ],
+    "disadvantages": [
+      "One clustered index only",
+      "Indexes slow inserts/updates",
+      "Storage overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "CREATE CLUSTERED INDEX IX_Orders_Date ON Orders(OrderDate);\nCREATE NONCLUSTERED INDEX IX_Orders_User ON Orders(UserId);"
+    }
+  },
+  "sql-server-19": {
+    "pitch": "Speed up queries with indexes, sargable predicates and less data.",
+    "definition": "You improve SQL query performance by helping the optimizer do less work: add the right indexes (covering frequent queries), write sargable predicates (no functions on indexed columns), select only needed columns, filter and page early, avoid N+1 and cursors, keep statistics updated, and read the execution plan to find scans and missing indexes.",
+    "how": "Read the execution plan -> add covering indexes, make predicates sargable, reduce rows/columns -> re-measure.",
+    "when": "Slow queries and high DB load.",
+    "whenNot": "Adding indexes blindly without measuring.",
+    "advantages": [
+      "Indexes cut scans",
+      "Sargable predicates use indexes",
+      "Less data = faster"
+    ],
+    "disadvantages": [
+      "Indexes slow writes",
+      "Over-indexing wastes space",
+      "Needs plan analysis"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "-- sargable: uses an index on Created\nWHERE Created >= '2024-01-01'\n-- non-sargable: function blocks the index\n-- WHERE YEAR(Created) = 2024"
+    }
+  },
+  "sql-server-20": {
+    "pitch": "An execution plan shows how SQL Server runs a query - your tuning map.",
+    "definition": "An execution plan is the optimizer's step-by-step strategy for a query: which indexes/scans, join types, sorts and estimated/actual row counts. You read it to spot expensive operators - table/index scans, key lookups, sorts, and big estimated-vs-actual gaps - which point to missing indexes, bad statistics or non-sargable predicates. It is the primary tool for query tuning.",
+    "how": "The optimizer picks a plan by cost; the plan reveals operators and row estimates you analyze to find bottlenecks.",
+    "when": "Diagnosing why a specific query is slow.",
+    "whenNot": "Guessing at fixes without reading the plan.",
+    "advantages": [
+      "Reveals the real strategy",
+      "Pinpoints costly operators",
+      "Shows missing indexes"
+    ],
+    "disadvantages": [
+      "Estimates can mislead",
+      "Plans change with data/stats",
+      "Reading them takes skill"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "sql-server-21": {
+    "pitch": "EXISTS tests for matching rows; IN compares to a value list.",
+    "definition": "Both filter, but differ. IN checks whether a column equals any value in a list or subquery result. EXISTS checks whether a correlated subquery returns any row, short-circuiting on the first match. EXISTS is usually better for large/correlated subqueries and handles NULLs more predictably; IN is fine for small static lists. NOT IN with NULLs is a common gotcha.",
+    "how": "IN materializes/compares against the value set; EXISTS stops at the first matching row of a correlated subquery.",
+    "when": "EXISTS for correlated/large subqueries; IN for small lists.",
+    "whenNot": "NOT IN against a subquery that can contain NULLs.",
+    "advantages": [
+      "EXISTS short-circuits",
+      "IN: simple value lists",
+      "EXISTS NULL-safe"
+    ],
+    "disadvantages": [
+      "NOT IN + NULL = wrong results",
+      "IN on huge lists is slow",
+      "Plan differences subtle"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "SELECT * FROM Users u\nWHERE EXISTS (SELECT 1 FROM Orders o WHERE o.UserId = u.Id);"
+    }
+  },
+  "sql-server-22": {
+    "pitch": "WHERE filters rows before grouping; HAVING filters groups after.",
+    "definition": "WHERE filters individual rows before any aggregation/grouping and cannot use aggregate functions. HAVING filters the results of a GROUP BY after aggregation and can use aggregates (e.g. HAVING COUNT(*) > 5). So WHERE narrows the input rows; HAVING narrows the grouped output.",
+    "how": "Query order: WHERE filters rows -> GROUP BY aggregates -> HAVING filters groups -> SELECT.",
+    "when": "WHERE for row filters; HAVING for aggregate filters.",
+    "whenNot": "Putting an aggregate condition in WHERE (invalid).",
+    "advantages": [
+      "WHERE: pre-aggregation filter",
+      "HAVING: aggregate filter",
+      "Clear separation"
+    ],
+    "disadvantages": [
+      "Confusing the two",
+      "HAVING after grouping cost",
+      "Aggregates only in HAVING"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "SELECT Dept, COUNT(*) c FROM Emp\nWHERE Active = 1            -- rows\nGROUP BY Dept HAVING COUNT(*) > 5;  -- groups"
+    }
+  },
+  "sql-server-23": {
+    "pitch": "DELETE removes rows, TRUNCATE empties fast, DROP removes the table.",
+    "definition": "These remove data differently. DELETE removes rows (optionally with WHERE), is logged per row, fires triggers, and can roll back. TRUNCATE quickly removes all rows with minimal logging, resets identity, but no WHERE and fewer trigger semantics. DROP removes the entire table - structure and data. DELETE is row-level DML; TRUNCATE/DROP are DDL.",
+    "how": "DELETE logs and removes selected rows; TRUNCATE deallocates pages for all rows; DROP removes the table object.",
+    "when": "DELETE for selective removal; TRUNCATE to wipe a table fast.",
+    "whenNot": "TRUNCATE/DROP when you need a WHERE or referenced by FKs.",
+    "advantages": [
+      "DELETE: selective, rollback",
+      "TRUNCATE: fast, resets identity",
+      "DROP: removes structure"
+    ],
+    "disadvantages": [
+      "DELETE slow on many rows",
+      "TRUNCATE: no WHERE",
+      "DROP loses the table"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "DELETE FROM Logs WHERE Date < '2023-01-01';  -- selective\nTRUNCATE TABLE Staging;                       -- fast wipe"
+    }
+  },
+  "sql-server-24": {
+    "pitch": "CHAR is fixed, VARCHAR is variable, NVARCHAR is Unicode.",
+    "definition": "These store strings. CHAR(n) is fixed length, padded with spaces - good for constant-width codes. VARCHAR(n) is variable length, storing only what's used - good for varying ASCII text. NVARCHAR(n) is variable length but stores Unicode (2 bytes/char) - needed for international/multilingual text. Choose by length variability and whether you need Unicode.",
+    "how": "CHAR pads to n; VARCHAR stores actual length; NVARCHAR stores Unicode (double bytes) for any language.",
+    "when": "NVARCHAR for global text; VARCHAR for ASCII; CHAR for fixed codes.",
+    "whenNot": "NVARCHAR everywhere when ASCII suffices (wastes space).",
+    "advantages": [
+      "CHAR: fixed, fast compares",
+      "VARCHAR: space-efficient",
+      "NVARCHAR: full Unicode"
+    ],
+    "disadvantages": [
+      "CHAR wastes space if short",
+      "NVARCHAR uses 2x bytes",
+      "Mismatch causes conversions"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "sql-server-25": {
+    "pitch": "Views are saved queries; indexed/materialized views store results.",
+    "definition": "A View is a stored SELECT that behaves like a virtual table - it runs each time it's queried, no stored data. An Indexed View (SQL Server's materialized view) has a unique clustered index, so its results are physically stored and kept in sync, speeding heavy aggregations at write cost. 'Materialized view' is the general term (Oracle/Postgres) for precomputed, refreshable view results.",
+    "how": "A view re-runs its query each call; an indexed view persists results via a clustered index, updated on base changes.",
+    "when": "Views for abstraction; indexed views for heavy reads.",
+    "whenNot": "Indexed views on frequently-changing base tables.",
+    "advantages": [
+      "Views: abstraction/security",
+      "Indexed views: fast reads",
+      "Encapsulate complex SQL"
+    ],
+    "disadvantages": [
+      "Views add no speed alone",
+      "Indexed views slow writes",
+      "Strict requirements to index"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "CREATE VIEW vActiveUsers AS SELECT Id, Name FROM Users WHERE Active = 1;"
+    }
+  },
+  "sql-server-26": {
+    "pitch": "Cursors process rows one-by-one - slow; prefer set-based SQL.",
+    "definition": "A cursor lets you iterate over a result set row by row in T-SQL. They should generally be avoided because row-by-row processing (RBAR) is far slower than SQL's set-based operations and holds resources/locks longer. Alternatives are set-based statements (joins, updates from selects), window functions, and recursive CTEs, which let the engine optimize the whole operation.",
+    "how": "A cursor fetches and processes one row per loop iteration; set-based SQL processes all rows in one optimized operation.",
+    "when": "Rare cases needing strict per-row procedural logic.",
+    "whenNot": "Bulk operations expressible as set-based SQL.",
+    "advantages": [
+      "Procedural row control",
+      "Sometimes unavoidable",
+      "Familiar imperative style"
+    ],
+    "disadvantages": [
+      "Very slow (RBAR)",
+      "Holds locks/resources",
+      "Set-based is far better"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "sql-server-27": {
+    "pitch": "Locks coordinate access; blocking and deadlocks are contention problems.",
+    "definition": "SQL Server uses locks to coordinate concurrent access to data. Blocking happens when one transaction holds a lock another needs, forcing it to wait. A deadlock is when two transactions each hold a lock the other needs, so neither proceeds - SQL Server detects this and kills one as the victim. You resolve them by keeping transactions short, accessing objects in a consistent order, right-sizing isolation, and indexing to reduce lock footprint.",
+    "how": "Locks guard rows/pages; a held lock blocks others; a circular wait is a deadlock - the engine aborts one victim.",
+    "when": "Diagnosing concurrency stalls in production.",
+    "whenNot": "Ignoring them under high write concurrency.",
+    "advantages": [
+      "Locks ensure correctness",
+      "Deadlocks auto-detected",
+      "Tunable via design"
+    ],
+    "disadvantages": [
+      "Blocking hurts throughput",
+      "Deadlocks abort work",
+      "Hard to reproduce"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "sql-server-28": {
+    "pitch": "These are SQL Server's scaling and high-availability features.",
+    "definition": "These spread load and protect data. Partitioning splits a large table across filegroups by a key for manageability and query pruning. Replication copies data to other servers (for reporting/distribution). Log Shipping ships transaction-log backups to a warm standby. Always On Availability Groups give synchronous/asynchronous replicas with automatic failover for high availability and read-scale.",
+    "how": "Partitioning prunes data; replication/log shipping copy data elsewhere; Always On keeps synced replicas with failover.",
+    "when": "Scaling reads and ensuring high availability/DR.",
+    "whenNot": "Small single-server databases (overkill).",
+    "advantages": [
+      "Partitioning: manageability",
+      "Replication/log shipping: copies",
+      "Always On: HA + failover"
+    ],
+    "disadvantages": [
+      "Operational complexity",
+      "Cost/licensing",
+      "Failover testing needed"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "sql-server-29": {
+    "pitch": "Monitor SQL Server with DMVs, the plan cache and wait statistics.",
+    "definition": "You monitor and troubleshoot SQL Server using dynamic management views (DMVs) for active requests, expensive queries and wait stats, the Query Store to track plan regressions over time, execution plans for slow queries, and tools like Extended Events/Profiler. The workflow: find the top resource-consuming queries, examine their plans and waits, then fix with indexes, query rewrites or statistics updates.",
+    "how": "Capture top queries + waits (DMVs/Query Store) -> read plans -> identify scans/blocking -> fix indexes/queries.",
+    "when": "Production performance investigations.",
+    "whenNot": "Tuning without measuring queries and waits.",
+    "advantages": [
+      "DMVs/Query Store reveal hotspots",
+      "Wait stats show bottlenecks",
+      "Plan regressions tracked"
+    ],
+    "disadvantages": [
+      "Requires DBA skill",
+      "Lots of signals to read",
+      "Fixes need validation"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "sql",
+      "snippet": "SELECT TOP 10 total_worker_time, text\nFROM sys.dm_exec_query_stats\nCROSS APPLY sys.dm_exec_sql_text(sql_handle)\nORDER BY total_worker_time DESC;"
+    }
+  },
+  "sql-server-30": {
+    "pitch": "I tune by finding the costly query, reading its plan, then indexing/rewriting.",
+    "definition": "A real optimization I would describe: a slow report query doing table scans and a key lookup. Using the execution plan and DMVs I found a missing covering index and a non-sargable predicate (a function on a date column). Adding the covering index, rewriting the predicate to be sargable, and updating statistics turned a multi-second query into milliseconds, with no app changes.",
+    "how": "Find the slow query (DMVs) -> read its plan -> add covering index + sargable rewrite + update stats -> re-measure.",
+    "when": "Production query performance problems.",
+    "whenNot": "Throwing hardware at a query plan problem.",
+    "advantages": [
+      "Plan-driven, measured fix",
+      "Index + rewrite combo",
+      "Big latency improvement"
+    ],
+    "disadvantages": [
+      "Needs analysis skill",
+      "Indexes cost write speed",
+      "Root cause can be subtle"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "realWorld": "A reporting endpoint timed out at ~6s; a covering index plus making a date filter sargable cut it to ~80ms, confirmed via the execution plan and Query Store."
+  }
+}

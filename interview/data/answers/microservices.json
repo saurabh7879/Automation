@@ -1,1 +1,830 @@
-{}
+{
+  "microservices-1": {
+    "pitch": "Microservices split an app into small, independently deployable services.",
+    "definition": "Microservices Architecture structures an application as a suite of small, independent services, each owning a single business capability, its own data, and its own deployment. Services communicate over the network (HTTP/messaging) and can be built, scaled and released independently by different teams. It trades a simple monolith for autonomy and scalability at the cost of distributed-system complexity.",
+    "how": "Each service owns one capability + its data -> communicates via APIs/events -> deploys and scales independently.",
+    "when": "Large, evolving systems with many teams.",
+    "whenNot": "Small apps or early-stage startups (monolith first).",
+    "advantages": [
+      "Independent deploy/scale",
+      "Team autonomy",
+      "Tech flexibility per service"
+    ],
+    "disadvantages": [
+      "Distributed-system complexity",
+      "Network/latency overhead",
+      "Harder testing/debugging"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Microservices",
+      "mermaid": "flowchart LR\n  C[Clients] --> G[API Gateway]\n  G --> S1[Orders]\n  G --> S2[Payments]\n  G --> S3[Inventory]\n  S1 --> D1[(DB)]\n  S2 --> D2[(DB)]"
+    }
+  },
+  "microservices-2": {
+    "pitch": "Monolith = one deployable unit; microservices = many independent ones.",
+    "definition": "A monolith packages all functionality into a single deployable application sharing one database and process. Microservices split that into many small services, each independently deployable with its own data. The monolith is simpler to build and deploy initially; microservices add independent scaling, team autonomy and fault isolation at the cost of distributed complexity.",
+    "how": "Monolith: one codebase/DB/deploy. Microservices: many services, each with its own data and release cycle.",
+    "when": "Microservices for large scale; monolith for simplicity.",
+    "whenNot": "Jumping to microservices for a small app.",
+    "advantages": [
+      "Microservices: independent deploy/scale",
+      "Fault isolation",
+      "Monolith: simpler ops"
+    ],
+    "disadvantages": [
+      "Microservices: ops complexity",
+      "Monolith: scaling/coupling limits",
+      "Migration is costly"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Monolith vs Microservices",
+      "mermaid": "flowchart LR\n  M[Monolith: one app + one DB]\n  Mi[Microservices: many services + own DBs]"
+    }
+  },
+  "microservices-3": {
+    "pitch": "Choose microservices when scale, teams and independence outweigh complexity.",
+    "definition": "You choose microservices over a monolith when the system is large and complex, multiple teams need to work and deploy independently, parts have very different scaling or technology needs, and you can support the operational maturity (CI/CD, monitoring, containers). For small apps or early products, a modular monolith is usually the better first step.",
+    "how": "Weigh scale/team/independence benefits against distributed complexity; adopt when the benefits clearly win.",
+    "when": "Large systems, many teams, differing scale needs.",
+    "whenNot": "Small teams/apps lacking DevOps maturity.",
+    "advantages": [
+      "Independent team velocity",
+      "Targeted scaling",
+      "Fault isolation"
+    ],
+    "disadvantages": [
+      "High operational bar",
+      "Premature split hurts",
+      "Distributed complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-4": {
+    "pitch": "Microservices trade operational complexity for autonomy and scale.",
+    "definition": "The advantages of microservices are independent deployment and scaling, team autonomy, fault isolation, and freedom to use the right tech per service. The disadvantages are distributed-system complexity, network latency and partial failures, harder data consistency, more complex testing/monitoring, and operational overhead. The right choice depends on scale and organizational maturity.",
+    "how": "Decompose by capability to gain autonomy/scale, while accepting distributed-system and operational costs.",
+    "when": "When autonomy and scale justify the overhead.",
+    "whenNot": "When a monolith still meets needs simply.",
+    "advantages": [
+      "Independent deploy/scale",
+      "Fault isolation",
+      "Tech flexibility"
+    ],
+    "disadvantages": [
+      "Distributed complexity",
+      "Data consistency is hard",
+      "Ops/monitoring overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-5": {
+    "pitch": "Microservices follow single-responsibility, autonomy and decentralization.",
+    "definition": "Key principles: each service owns a single business capability (single responsibility); services are loosely coupled and independently deployable; each owns its own data (decentralized data); they're designed for failure (resilience); communication is via well-defined APIs/events; and infrastructure is automated (CI/CD, containers). These keep services autonomous and changeable.",
+    "how": "Bound services to capabilities, decentralize data, automate delivery, and design for failure and loose coupling.",
+    "when": "Guiding a sound microservices design.",
+    "whenNot": "Treating it as dogma for tiny systems.",
+    "advantages": [
+      "Autonomy + loose coupling",
+      "Decentralized data",
+      "Resilience by design"
+    ],
+    "disadvantages": [
+      "Discipline required",
+      "Easy to violate boundaries",
+      "Automation prerequisite"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-6": {
+    "pitch": "Services talk over the network via sync HTTP/gRPC or async messaging.",
+    "definition": "Microservices communicate over the network in two main styles. Synchronous request/response uses HTTP/REST or gRPC - the caller waits for a reply. Asynchronous messaging uses a broker (RabbitMQ/Kafka) where services publish and consume events without waiting. Sync is simple and immediate; async decouples services and improves resilience and scalability.",
+    "how": "Sync: caller -> HTTP/gRPC -> callee responds. Async: producer -> broker -> consumer processes later.",
+    "when": "Sync for immediate reads; async for decoupled workflows.",
+    "whenNot": "Chaining many sync calls (fragile, latency stacks).",
+    "advantages": [
+      "Sync: simple, immediate",
+      "Async: decoupled, resilient",
+      "Choose per interaction"
+    ],
+    "disadvantages": [
+      "Sync chains are fragile",
+      "Async adds eventual consistency",
+      "Broker is infrastructure"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Service communication",
+      "mermaid": "flowchart LR\n  A[Service A] -->|HTTP/gRPC| B[Service B]\n  A -->|publish| Q[Broker]\n  Q -->|consume| C[Service C]"
+    }
+  },
+  "microservices-7": {
+    "pitch": "Sync waits for a reply; async fires events and moves on.",
+    "definition": "Synchronous communication is request/response where the caller blocks until it gets a reply (HTTP/gRPC) - simple and immediate but couples services and stacks latency/failures. Asynchronous communication sends a message to a broker and continues without waiting; the consumer processes it later - more resilient and scalable but eventually consistent and harder to trace.",
+    "how": "Sync: blocking call awaits a response. Async: send-and-forget via a broker; consumer handles it independently.",
+    "when": "Sync for queries; async for commands/workflows/events.",
+    "whenNot": "Sync for long or unreliable downstream work.",
+    "advantages": [
+      "Sync: easy mental model",
+      "Async: resilient, scalable",
+      "Async smooths spikes"
+    ],
+    "disadvantages": [
+      "Sync couples + cascades failures",
+      "Async = eventual consistency",
+      "Async harder to trace"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-8": {
+    "pitch": "An API gateway is the single entry that routes and secures services.",
+    "definition": "An API Gateway is a single entry point in front of microservices that routes requests to the right service and centralizes cross-cutting concerns - authentication, rate limiting, TLS termination, request transformation, response aggregation and caching. It decouples clients from the internal service topology and simplifies the client experience.",
+    "how": "Client -> gateway authenticates/rate-limits/routes -> forwards to services -> optionally aggregates responses.",
+    "when": "Any microservices system with external clients.",
+    "whenNot": "A single service where a gateway adds needless hops.",
+    "advantages": [
+      "One secure entry point",
+      "Centralized cross-cutting",
+      "Hides internal topology"
+    ],
+    "disadvantages": [
+      "Single point of failure (scale it)",
+      "Extra hop/latency",
+      "Can become a bottleneck"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "API gateway",
+      "mermaid": "flowchart LR\n  C[Clients] --> G[API Gateway]\n  G --> S1[Service A]\n  G --> S2[Service B]\n  G --> S3[Service C]"
+    }
+  },
+  "microservices-9": {
+    "pitch": "Service discovery lets services find each other's dynamic locations.",
+    "definition": "Service Discovery is how services locate each other when instances come and go and IPs change. Services register their location in a registry (Consul, Eureka, Kubernetes DNS); callers query it (or a load balancer) to find healthy instances. Client-side discovery has the caller pick an instance; server-side has a load balancer/gateway do it.",
+    "how": "Instances register in a registry -> health checks prune dead ones -> callers resolve a healthy address dynamically.",
+    "when": "Dynamic environments where instances scale/move.",
+    "whenNot": "Static, fixed-host deployments.",
+    "advantages": [
+      "Finds instances dynamically",
+      "Health-aware routing",
+      "Enables elastic scaling"
+    ],
+    "disadvantages": [
+      "Registry is critical infra",
+      "Staleness risk",
+      "Added moving part"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Service discovery",
+      "mermaid": "flowchart LR\n  S[Service Instances] -->|register| R[Registry]\n  C[Caller] -->|lookup| R\n  R -->|healthy address| C"
+    }
+  },
+  "microservices-10": {
+    "pitch": "Database-per-service gives each service its own private datastore.",
+    "definition": "The Database per Service pattern means each microservice owns and exclusively accesses its own database, with no shared tables. Other services get that data only through the owning service's API or events. This preserves loose coupling and lets each service pick the best data store, at the cost of cross-service queries and consistency being harder.",
+    "how": "Each service has a private DB; others access it only via that service's API/events, never direct DB access.",
+    "when": "Microservices needing true autonomy.",
+    "whenNot": "When you need easy cross-entity joins/transactions.",
+    "advantages": [
+      "Loose coupling",
+      "Independent schema/tech",
+      "Clear ownership"
+    ],
+    "disadvantages": [
+      "No cross-service joins",
+      "Distributed consistency hard",
+      "Data duplication"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-11": {
+    "pitch": "Private databases keep services decoupled and independently changeable.",
+    "definition": "Each microservice should own its database so services stay loosely coupled: one service can change its schema, scale its store, or switch databases without affecting others, and there's no hidden coupling through a shared DB. The trade-off is that data shared across services must be exchanged via APIs/events and kept eventually consistent.",
+    "how": "A private DB removes shared-schema coupling; cross-service data flows through APIs/events instead of shared tables.",
+    "when": "Keeping services autonomous and evolvable.",
+    "whenNot": "When strong cross-service transactional integrity is essential.",
+    "advantages": [
+      "No shared-DB coupling",
+      "Independent schema evolution",
+      "Per-service store choice"
+    ],
+    "disadvantages": [
+      "Cross-service data via APIs/events",
+      "Eventual consistency",
+      "Some data duplication"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-12": {
+    "pitch": "You keep data consistent with events and eventual consistency, not 2PC.",
+    "definition": "Across services you can't use a single ACID transaction, so you maintain consistency with asynchronous events and the Saga pattern: each service updates its own data and publishes an event; others react and update theirs, reaching eventual consistency. The Outbox pattern ensures the DB change and the event publish happen atomically. Avoid distributed two-phase commit where possible.",
+    "how": "Each service commits locally + emits an event (via outbox) -> others react -> system converges (eventual consistency).",
+    "when": "Multi-service business workflows (orders, payments).",
+    "whenNot": "Strict immediate consistency needs (rethink boundaries).",
+    "advantages": [
+      "Scales without 2PC",
+      "Loose coupling preserved",
+      "Saga handles failures"
+    ],
+    "disadvantages": [
+      "Eventual, not immediate",
+      "Compensation logic needed",
+      "Harder to reason about"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-13": {
+    "pitch": "A Saga coordinates a multi-service transaction via local steps + compensation.",
+    "definition": "The Saga pattern manages a business transaction spanning multiple services as a sequence of local transactions, each publishing an event that triggers the next; if a step fails, compensating transactions undo prior steps. Choreography has services react to each other's events with no central coordinator (decoupled but harder to follow); Orchestration uses a central orchestrator that tells each service what to do (clear but a coordinator dependency).",
+    "how": "Each service does a local txn + event; on failure, compensations roll back. Choreography = events; orchestration = a coordinator.",
+    "when": "Distributed transactions across services.",
+    "whenNot": "Single-service operations (a local txn suffices).",
+    "advantages": [
+      "No distributed 2PC",
+      "Compensations handle failure",
+      "Two coordination styles"
+    ],
+    "disadvantages": [
+      "Compensation logic complex",
+      "Choreography hard to trace",
+      "Orchestrator is a dependency"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Saga",
+      "mermaid": "flowchart LR\n  O[Order] -->|event| P[Payment]\n  P -->|event| I[Inventory]\n  I -->|fail| C[Compensate prior steps]"
+    }
+  },
+  "microservices-14": {
+    "pitch": "Event-driven architecture has services react to events, not call each other.",
+    "definition": "Event-Driven Architecture (EDA) is a style where services communicate by producing and consuming events through a broker rather than direct calls. A service publishes an event when something happens; interested services subscribe and react. This decouples producers from consumers, improves scalability and resilience, and naturally supports async workflows and eventual consistency.",
+    "how": "A service emits an event to a broker -> subscribers consume and act independently -> no direct coupling.",
+    "when": "Decoupled, scalable, reactive workflows.",
+    "whenNot": "Simple request/response needs with immediate results.",
+    "advantages": [
+      "Loose coupling",
+      "Scalable + resilient",
+      "Easy to add consumers"
+    ],
+    "disadvantages": [
+      "Eventual consistency",
+      "Harder to trace flows",
+      "Broker is critical infra"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-15": {
+    "pitch": "Eventual consistency means data converges to correct over time.",
+    "definition": "Eventual consistency is a model where, after an update, replicas/services may briefly disagree but will converge to the same correct value once all events propagate. It's the trade-off you accept in distributed microservices to gain availability and scale, instead of strong (immediate) consistency. You design UX and logic to tolerate short windows of staleness.",
+    "how": "An update propagates asynchronously via events; for a short window reads may be stale, then all copies converge.",
+    "when": "Distributed systems prioritizing availability/scale.",
+    "whenNot": "Money/inventory needing immediate correctness.",
+    "advantages": [
+      "High availability + scale",
+      "Fits async/events",
+      "Resilient to partitions"
+    ],
+    "disadvantages": [
+      "Temporary staleness",
+      "Harder UX/logic",
+      "Conflict resolution needed"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-16": {
+    "pitch": "CQRS separates the write model from the read model.",
+    "definition": "CQRS (Command Query Responsibility Segregation) splits an application into a command side that handles writes/business logic and a query side optimized for reads, often with separate models or even separate data stores kept in sync via events. It lets you scale and optimize reads and writes independently, at the cost of more complexity and eventual consistency between the two sides.",
+    "how": "Commands mutate the write model + emit events -> projections build read-optimized models the query side serves.",
+    "when": "Read-heavy systems with complex queries vs writes.",
+    "whenNot": "Simple CRUD where one model is enough.",
+    "advantages": [
+      "Independent read/write scaling",
+      "Optimized read models",
+      "Pairs with event sourcing"
+    ],
+    "disadvantages": [
+      "More complexity",
+      "Eventual consistency",
+      "Two models to maintain"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "CQRS",
+      "mermaid": "flowchart LR\n  C[Command] --> W[Write Model] --> E[(Events)]\n  E --> P[Projection]\n  P --> R[Read Model]\n  Q[Query] --> R"
+    }
+  },
+  "microservices-17": {
+    "pitch": "Event sourcing stores state as an append-only log of events.",
+    "definition": "Event Sourcing persists all changes to state as an immutable, ordered sequence of events rather than just the current state. Current state is rebuilt by replaying events; you get a full audit trail, time-travel, and natural integration with event-driven systems and CQRS. The trade-offs are added complexity, eventual consistency, and the need to handle schema/versioning of events.",
+    "how": "Append each change as an event -> rebuild current state by replaying events -> project read models from the stream.",
+    "when": "Auditability, temporal queries, event-driven systems.",
+    "whenNot": "Simple CRUD where current-state storage suffices.",
+    "advantages": [
+      "Full audit + time-travel",
+      "Natural fit for events/CQRS",
+      "Rebuildable state"
+    ],
+    "disadvantages": [
+      "Higher complexity",
+      "Event versioning effort",
+      "Eventual consistency"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-18": {
+    "pitch": "A circuit breaker stops calling a failing service to prevent cascades.",
+    "definition": "The Circuit Breaker pattern protects a system from a failing dependency. Like an electrical breaker, it monitors calls; after too many failures it 'opens' and fails fast (returning a fallback) instead of hammering the broken service, then periodically 'half-opens' to test recovery. This prevents cascading failures and resource exhaustion from waiting on a dead service.",
+    "how": "Track failures -> open after a threshold (fail fast) -> half-open to probe -> close again when calls succeed.",
+    "when": "Calls to remote services that can fail/slow down.",
+    "whenNot": "Local, in-process calls that can't cascade.",
+    "advantages": [
+      "Prevents cascading failure",
+      "Fails fast with fallback",
+      "Auto-recovery probing"
+    ],
+    "disadvantages": [
+      "Tuning thresholds is tricky",
+      "Fallbacks need design",
+      "Adds a state machine"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Circuit breaker",
+      "mermaid": "flowchart LR\n  Closed -->|failures| Open\n  Open -->|timeout| HalfOpen\n  HalfOpen -->|success| Closed\n  HalfOpen -->|fail| Open"
+    }
+  },
+  "microservices-19": {
+    "pitch": "Retry re-attempts transient failures; backoff+jitter avoids storms.",
+    "definition": "The Retry pattern automatically re-attempts an operation that failed transiently (a brief network blip, a 503). To avoid retry storms - where many clients retry in sync and overwhelm a recovering service - you use exponential backoff (increasing delays), jitter (randomized delays), a capped retry count, and ideally a circuit breaker so you stop retrying a clearly-down service.",
+    "how": "On transient error, wait an exponentially increasing + randomized delay and retry, up to a cap; pair with a breaker.",
+    "when": "Transient, retryable failures over the network.",
+    "whenNot": "Non-idempotent operations or permanent errors.",
+    "advantages": [
+      "Recovers from blips",
+      "Backoff+jitter prevents storms",
+      "Improves resilience"
+    ],
+    "disadvantages": [
+      "Retrying non-idempotent = duplicates",
+      "Can amplify load",
+      "Adds latency"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Policy.Handle<HttpRequestException>()\n  .WaitAndRetryAsync(3, i => TimeSpan.FromSeconds(Math.Pow(2,i)) + Jitter()); // Polly"
+    }
+  },
+  "microservices-20": {
+    "pitch": "Bulkhead isolates resources so one failure can't sink the whole ship.",
+    "definition": "The Bulkhead pattern partitions resources (thread pools, connection pools, service instances) so a failure or overload in one part doesn't exhaust resources for the rest - named after a ship's watertight compartments. For example, giving each downstream dependency its own connection pool means a slow dependency can't starve calls to healthy ones.",
+    "how": "Isolate each dependency/workload into its own resource pool so saturation in one can't drain the others.",
+    "when": "Protecting critical paths from noisy dependencies.",
+    "whenNot": "Tiny systems with one shared, lightly-used pool.",
+    "advantages": [
+      "Contains failures",
+      "Protects healthy paths",
+      "Limits blast radius"
+    ],
+    "disadvantages": [
+      "More pools to size/manage",
+      "Underused capacity",
+      "Config complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-21": {
+    "pitch": "The Outbox pattern publishes events reliably with the DB change.",
+    "definition": "The Outbox pattern solves the dual-write problem: how to update the database and publish an event atomically. The service writes the event into an 'outbox' table in the same local transaction as the business change; a separate process (or CDC) reads the outbox and publishes to the broker, then marks it sent. This guarantees the event is published if and only if the data changed.",
+    "how": "Write business change + event row in one local txn -> a relay reads the outbox and publishes -> marks it sent.",
+    "when": "Reliably emitting events alongside DB writes.",
+    "whenNot": "Systems with no event publishing needs.",
+    "advantages": [
+      "Atomic data + event",
+      "No lost/ghost events",
+      "Works with any broker"
+    ],
+    "disadvantages": [
+      "Extra table + relay",
+      "Slight publish latency",
+      "At-least-once duplicates"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Outbox",
+      "mermaid": "flowchart LR\n  S[Service] -->|one txn| DB[(DB + Outbox)]\n  R[Relay/CDC] --> DB\n  R -->|publish| Q[Broker]"
+    }
+  },
+  "microservices-22": {
+    "pitch": "Handle distributed transactions with Sagas, not two-phase commit.",
+    "definition": "Because a single ACID transaction can't span services and databases, you handle distributed transactions with the Saga pattern: a sequence of local transactions coordinated by events (choreography) or an orchestrator, with compensating actions to undo completed steps on failure. The Outbox pattern makes each step's local commit and event atomic. Two-phase commit exists but is avoided for its locking and coupling.",
+    "how": "Break the transaction into local steps + events -> compensate on failure -> use outbox for atomic commit+publish.",
+    "when": "Business workflows spanning multiple services.",
+    "whenNot": "Operations that fit in a single service/DB.",
+    "advantages": [
+      "Scales without 2PC",
+      "Compensations handle failure",
+      "Loose coupling"
+    ],
+    "disadvantages": [
+      "Compensation complexity",
+      "Eventual consistency",
+      "Harder to reason about"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-23": {
+    "pitch": "Use JWT/OAuth2/OIDC with a central identity provider for auth.",
+    "definition": "Authentication and authorization in microservices use token-based identity. An identity provider (via OAuth2/OIDC) authenticates users and issues signed JWT access tokens; the API gateway validates tokens centrally, and each service also validates the token and enforces authorization (roles/scopes/policies) statelessly. OIDC adds the identity layer on top of OAuth2 for login.",
+    "how": "IdP issues JWT (OAuth2/OIDC) -> gateway + services validate the signature/claims -> enforce roles/scopes per request.",
+    "when": "Securing any multi-service system.",
+    "whenNot": "A single internal service with trivial auth.",
+    "advantages": [
+      "Stateless token validation",
+      "Central identity (OIDC)",
+      "Scales across services"
+    ],
+    "disadvantages": [
+      "Token revocation is hard",
+      "Key/rotation management",
+      "Misconfig = security holes"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-24": {
+    "pitch": "Secure service-to-service traffic with mTLS, tokens and network policy.",
+    "definition": "You secure inter-service communication with mutual TLS (mTLS) so both sides authenticate and traffic is encrypted, service identity (often via a service mesh issuing certificates), short-lived tokens/scopes for authorization between services, and network policies/zero-trust so only allowed services can talk. A service mesh (Istio/Linkerd) can provide mTLS and policy transparently.",
+    "how": "mTLS encrypts + authenticates both ends -> service identity/tokens authorize -> network policy limits who can call whom.",
+    "when": "Production microservices, especially regulated ones.",
+    "whenNot": "A single-service prototype on a trusted network.",
+    "advantages": [
+      "Encrypted, authenticated traffic",
+      "Zero-trust between services",
+      "Mesh automates it"
+    ],
+    "disadvantages": [
+      "Cert/mesh complexity",
+      "Performance overhead",
+      "Operational learning curve"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-25": {
+    "pitch": "Centralized logging aggregates all service logs into one searchable place.",
+    "definition": "In microservices, logs are scattered across many services and instances, so you centralize them: each service emits structured logs that a pipeline (Fluentd/Logstash) ships to a central store (ELK, Loki, or a cloud service), where you search and build dashboards and alerts. Combined with metrics and a correlation id, this gives one view across the whole system.",
+    "how": "Services emit structured logs -> shipper -> central index -> dashboards + alerts across all services.",
+    "when": "Any multi-service system needing observability.",
+    "whenNot": "A single service where local logs suffice.",
+    "advantages": [
+      "One searchable view",
+      "Cross-service correlation",
+      "Dashboards + alerting"
+    ],
+    "disadvantages": [
+      "Storage/ingest cost",
+      "Pipeline to operate",
+      "Log-volume management"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-26": {
+    "pitch": "Distributed tracing follows one request across services via trace/correlation IDs.",
+    "definition": "Distributed tracing tracks a single request as it flows through many services. A correlation/trace id is generated at the edge (or propagated in headers) and attached to every log and downstream call, while spans record each service's work and timing. Tools like OpenTelemetry/Jaeger/Zipkin stitch these into one end-to-end trace, so you can see exactly where latency or errors occur.",
+    "how": "Generate a trace id at the edge -> propagate it in headers -> each service logs spans -> a tracer assembles the trace.",
+    "when": "Diagnosing latency/errors across services.",
+    "whenNot": "A monolith with a single in-process call stack.",
+    "advantages": [
+      "End-to-end request view",
+      "Pinpoints latency/errors",
+      "Correlates logs across services"
+    ],
+    "disadvantages": [
+      "Instrumentation effort",
+      "Propagation must be consistent",
+      "Trace data volume"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Distributed tracing",
+      "mermaid": "flowchart LR\n  E[Edge: trace id] --> A[Service A span]\n  A --> B[Service B span]\n  B --> C[Service C span]"
+    }
+  },
+  "microservices-27": {
+    "pitch": "Containerize services with Docker, orchestrate with Kubernetes.",
+    "definition": "You deploy microservices by packaging each as a Docker image (consistent, portable units) and running them on Kubernetes, which schedules containers, scales them, restarts failed ones, does service discovery and load balancing, and enables rolling/zero-downtime deployments. CI/CD pipelines build images and apply manifests/Helm charts to the cluster.",
+    "how": "Build a Docker image per service -> push to a registry -> Kubernetes schedules, scales, heals and load-balances pods.",
+    "when": "Running many services reliably at scale.",
+    "whenNot": "A single small service (a container/VM may suffice).",
+    "advantages": [
+      "Consistent, portable units",
+      "Auto-scaling + self-healing",
+      "Rolling deploys"
+    ],
+    "disadvantages": [
+      "Kubernetes complexity",
+      "Steep learning curve",
+      "Cluster ops overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Deploy on K8s",
+      "mermaid": "flowchart LR\n  CI[CI/CD] --> Img[Docker Image]\n  Img --> K8s[Kubernetes]\n  K8s --> P1[Pod]\n  K8s --> P2[Pod]"
+    }
+  },
+  "microservices-28": {
+    "pitch": "Version APIs (URL/header/media-type) so services evolve independently.",
+    "definition": "In microservices you version APIs so a service can change without breaking its consumers, who deploy on their own schedule. Common approaches are URL path (/v1/), header, or media-type versioning. You support old and new versions during a deprecation window, communicate changes, and prefer backward-compatible (additive) changes to avoid versioning churn.",
+    "how": "Expose versioned endpoints -> run old + new in parallel -> deprecate gradually -> consumers migrate independently.",
+    "when": "Public or cross-team service APIs.",
+    "whenNot": "Internal APIs updated in lockstep with one consumer.",
+    "advantages": [
+      "Consumers upgrade independently",
+      "Graceful deprecation",
+      "Backward compatibility"
+    ],
+    "disadvantages": [
+      "Multiple versions to maintain",
+      "Versioning discipline",
+      "Testing across versions"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-29": {
+    "pitch": "Test microservices at unit, integration, contract and end-to-end levels.",
+    "definition": "Microservices testing forms a pyramid. Unit tests cover logic in isolation. Integration tests check a service with its database/dependencies. Contract tests (e.g. Pact) verify that a provider and consumer agree on the API shape without full integration. End-to-end tests exercise a full flow across services. You lean on the fast lower levels and use contract tests to catch breaking changes early.",
+    "how": "Many unit + integration tests per service, contract tests at boundaries, and a few end-to-end flows on top.",
+    "when": "Any microservices system to prevent regressions.",
+    "whenNot": "Relying only on slow, brittle end-to-end tests.",
+    "advantages": [
+      "Fast feedback (unit/integration)",
+      "Contract tests catch breaks",
+      "E2E validates flows"
+    ],
+    "disadvantages": [
+      "E2E is slow/brittle",
+      "Contract test setup",
+      "Test data/env management"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-30": {
+    "pitch": "A real microservices project balances autonomy, resilience and observability.",
+    "definition": "A microservices project I would describe: an e-commerce platform split into order, payment, inventory and notification services behind an API gateway, each with its own database, communicating via Kafka events with the Saga and Outbox patterns for consistency, JWT/OIDC auth, circuit breakers and retries for resilience, and centralized logging plus distributed tracing. Main challenges were data consistency (solved with sagas/outbox) and debugging across services (solved with correlation ids and tracing).",
+    "how": "Gateway -> capability services (own DBs) -> Kafka events + saga/outbox -> resilience patterns + tracing throughout.",
+    "when": "Large, multi-team commerce-style systems.",
+    "whenNot": "Small apps where a monolith is simpler.",
+    "advantages": [
+      "Independent scaling/teams",
+      "Resilient + observable",
+      "Event-driven consistency"
+    ],
+    "disadvantages": [
+      "Distributed complexity",
+      "Consistency is hard",
+      "Heavy ops/monitoring"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "E-commerce microservices",
+      "mermaid": "flowchart LR\n  C[Client] --> G[Gateway]\n  G --> O[Order]\n  O --> K[(Kafka)]\n  K --> P[Payment]\n  K --> I[Inventory]\n  K --> N[Notification]"
+    },
+    "realWorld": "On an e-commerce platform, adopting the outbox + saga patterns eliminated lost order/payment events, and adding correlation-id tracing cut cross-service debugging from hours to minutes."
+  },
+  "microservices-31": {
+    "pitch": "An Order service owns orders and orchestrates payment + inventory via events.",
+    "definition": "Designing an Order Management microservice: it owns the order lifecycle and its own database, exposes APIs to create/query orders, and coordinates a checkout saga - reserving inventory and charging payment via events, with compensations if a step fails. It uses the outbox pattern to publish order events reliably and emits state changes (Created, Paid, Shipped) for other services.",
+    "how": "Create order (Pending) -> emit events -> reserve inventory + charge payment (saga) -> mark Paid/Failed with compensation.",
+    "when": "The order domain of an e-commerce system.",
+    "whenNot": "A tiny shop where a monolith handles orders.",
+    "advantages": [
+      "Owns order lifecycle/data",
+      "Saga-coordinated checkout",
+      "Reliable events via outbox"
+    ],
+    "disadvantages": [
+      "Saga compensation complexity",
+      "Eventual consistency",
+      "Cross-service coordination"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Order service",
+      "mermaid": "flowchart LR\n  C[Client] --> O[Order Service]\n  O --> DB[(Order DB)]\n  O -->|events| I[Inventory]\n  O -->|events| P[Payment]"
+    }
+  },
+  "microservices-32": {
+    "pitch": "A Payment service charges idempotently and handles failures gracefully.",
+    "definition": "Designing a Payment microservice with failure handling: it owns payment records, calls external processors, and is built for failure - idempotency keys prevent double charges on retries, a circuit breaker and retries with backoff handle flaky processors, timeouts bound waits, and outcomes are emitted as events (PaymentSucceeded/Failed) so the order saga can proceed or compensate. Every state change is recorded for reconciliation.",
+    "how": "Receive charge (idempotency key) -> call processor with retry/breaker/timeout -> record + emit success/failure event.",
+    "when": "Handling payments reliably in a saga.",
+    "whenNot": "A demo with no real payment integration.",
+    "advantages": [
+      "Idempotent, no double-charge",
+      "Resilient to processor failures",
+      "Event-driven outcomes"
+    ],
+    "disadvantages": [
+      "External dependency risk",
+      "Reconciliation needed",
+      "Compensation on refunds"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Payment service",
+      "mermaid": "flowchart LR\n  O[Order] -->|charge + key| P[Payment]\n  P -->|retry/breaker| Ext[Processor]\n  P -->|event| O"
+    }
+  },
+  "microservices-33": {
+    "pitch": "On failure during order placement, compensate completed steps via the saga.",
+    "definition": "If a service fails during order placement, you rely on the saga's compensating transactions: e.g. if payment fails after inventory was reserved, the saga releases the reservation and marks the order failed; if a service is temporarily down, retries with backoff and a circuit breaker handle transient failures, and the outbox ensures events aren't lost. The order ends in a consistent state (completed or fully rolled back).",
+    "how": "Detect the failed step -> trigger compensations for prior steps -> retry transient failures -> settle order state.",
+    "when": "Multi-step order workflows across services.",
+    "whenNot": "Single-DB checkout (a local rollback suffices).",
+    "advantages": [
+      "Consistent end state",
+      "Compensations undo steps",
+      "Retries handle transient faults"
+    ],
+    "disadvantages": [
+      "Compensation logic complexity",
+      "Eventual consistency window",
+      "Testing failure paths"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-34": {
+    "pitch": "Use a broker (Kafka/RabbitMQ) for reliable async inter-service messaging.",
+    "definition": "You implement inter-service communication with a message broker by having producers publish messages/events to topics/queues and consumers subscribe and process them asynchronously. RabbitMQ (queues, routing, good for task distribution) or Kafka (partitioned, durable log, high-throughput event streaming) decouple services, buffer load, and enable retries/dead-letter handling. The outbox pattern ensures messages are published with the DB change.",
+    "how": "Producer -> publish to topic/queue -> broker persists -> consumer group processes -> ack/retry/dead-letter.",
+    "when": "Decoupled, resilient, high-throughput messaging.",
+    "whenNot": "Simple immediate request/response (use HTTP).",
+    "advantages": [
+      "Decouples services",
+      "Buffers spikes",
+      "Retries + dead-letter"
+    ],
+    "disadvantages": [
+      "Broker is critical infra",
+      "At-least-once duplicates",
+      "Eventual consistency"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "await producer.ProduceAsync(\"orders\", new Message { Value = json }); // Kafka publish"
+    }
+  },
+  "microservices-35": {
+    "pitch": "Prevent duplicate processing by making consumers idempotent.",
+    "definition": "Because brokers deliver at-least-once, the same message can arrive twice, so consumers must be idempotent - processing a duplicate has no extra effect. You achieve this by tracking processed message ids (a dedup table/cache) and skipping ones already handled, using natural idempotency keys, or upserts. This makes retries and redeliveries safe.",
+    "how": "Attach a unique message id -> consumer checks if already processed -> skip duplicates -> record the id on success.",
+    "when": "Any at-least-once messaging system.",
+    "whenNot": "Exactly-once transports (rare) or non-critical events.",
+    "advantages": [
+      "Safe retries/redeliveries",
+      "No double side-effects",
+      "Simple dedup store"
+    ],
+    "disadvantages": [
+      "Dedup store to maintain",
+      "Id must be reliable",
+      "Cleanup/expiry needed"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "if (await _processed.Contains(msg.Id)) return;   // skip duplicate\nHandle(msg); await _processed.Add(msg.Id);"
+    }
+  },
+  "microservices-36": {
+    "pitch": "Scale a service horizontally with more instances behind a load balancer.",
+    "definition": "You scale a microservice under heavy traffic by running more stateless instances behind a load balancer (horizontal scaling), ideally auto-scaled on CPU/queue depth via Kubernetes HPA. You add caching to cut load, use async messaging to absorb spikes, scale the database (read replicas, partitioning), and apply rate limiting/bulkheads to protect it. Statelessness is what makes scaling out clean.",
+    "how": "Run N stateless instances -> load balancer spreads traffic -> autoscale on metrics -> cache + async smooth load.",
+    "when": "Services hitting capacity under load.",
+    "whenNot": "Stateful services that can't scale out cleanly.",
+    "advantages": [
+      "Linear horizontal scaling",
+      "Autoscaling on demand",
+      "Cache/async reduce load"
+    ],
+    "disadvantages": [
+      "Needs statelessness",
+      "DB becomes the bottleneck",
+      "Cost grows with scale"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "microservices-37": {
+    "pitch": "Use a distributed cache (Redis) shared across service instances.",
+    "definition": "You implement distributed caching by putting a shared cache like Redis in front of slow data, so all instances of a service (and sometimes multiple services) read from one consistent cache instead of per-instance memory. You cache hot reads with TTLs, use patterns like cache-aside, and plan invalidation. It cuts database load and latency dramatically for read-heavy workloads.",
+    "how": "Service checks Redis -> on miss, load from DB and populate (cache-aside) -> serve from cache until TTL/invalidation.",
+    "when": "Read-heavy data shared across instances.",
+    "whenNot": "Highly volatile data that's costly to keep fresh.",
+    "advantages": [
+      "Cuts DB load + latency",
+      "Shared across instances",
+      "Scales reads"
+    ],
+    "disadvantages": [
+      "Cache invalidation is hard",
+      "Staleness risk",
+      "Redis is a dependency"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var v = await cache.GetAsync(key) ?? await LoadAndSet(key); // cache-aside"
+    }
+  },
+  "microservices-38": {
+    "pitch": "Zero-downtime deploys use rolling/blue-green releases with health checks.",
+    "definition": "You achieve zero-downtime deployment with strategies that never take all instances down at once: rolling updates replace instances gradually while health checks keep traffic on healthy ones; blue-green keeps two environments and switches traffic atomically; canary releases shift a small slice of traffic first. Backward-compatible changes and database migration discipline are essential so old and new versions coexist.",
+    "how": "Deploy new instances -> health-check -> shift traffic gradually (rolling/canary) or switch (blue-green) -> retire old.",
+    "when": "Production services needing continuous availability.",
+    "whenNot": "Internal tools that tolerate brief downtime.",
+    "advantages": [
+      "No downtime for users",
+      "Safe gradual rollout",
+      "Easy rollback"
+    ],
+    "disadvantages": [
+      "Needs backward compatibility",
+      "DB migrations must coexist",
+      "More deploy machinery"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Zero-downtime",
+      "mermaid": "flowchart LR\n  LB[Load Balancer] --> Old[v1 instances]\n  LB --> New[v2 instances]\n  New -->|healthy| Promote\n  Old --> Retire"
+    }
+  },
+  "microservices-39": {
+    "pitch": "Migrate a monolith incrementally with the Strangler Fig pattern.",
+    "definition": "You migrate a monolith to microservices incrementally using the Strangler Fig pattern: put a facade/gateway in front, then carve out one capability at a time into a new service, routing that traffic to it while the rest stays in the monolith, until the monolith is 'strangled' away. You start with loosely-coupled, high-value modules, split the data carefully, and avoid a risky big-bang rewrite.",
+    "how": "Add a gateway -> extract one capability + its data into a service -> route its traffic -> repeat until monolith shrinks.",
+    "when": "Evolving a large monolith without a rewrite.",
+    "whenNot": "Small monoliths that work fine as-is.",
+    "advantages": [
+      "Incremental, low-risk",
+      "Value delivered early",
+      "No big-bang rewrite"
+    ],
+    "disadvantages": [
+      "Long transition period",
+      "Data splitting is hard",
+      "Temporary dual complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Strangler migration",
+      "mermaid": "flowchart LR\n  C[Clients] --> G[Gateway]\n  G --> Mono[Monolith]\n  G --> S1[New Service]\n  G --> S2[New Service]"
+    }
+  },
+  "microservices-40": {
+    "pitch": "An e-commerce request flows gateway -> auth -> services -> events -> order.",
+    "definition": "The end-to-end flow: the user logs in via the auth/identity service and gets a JWT; the client calls the API gateway with that token; the gateway validates it and routes to the product service (browse, cached), then the cart service. On checkout, the order service creates an order and runs a saga - reserving inventory and charging payment via events - then emits an OrderConfirmed event that the notification service consumes to email the user. Tracing correlates the whole journey.",
+    "how": "Login -> JWT -> gateway routes -> product/cart -> order saga (inventory + payment via events) -> confirmation + notify.",
+    "when": "Understanding a full microservices request path.",
+    "whenNot": "A single-service demo flow.",
+    "advantages": [
+      "Shows real end-to-end flow",
+      "Combines key patterns",
+      "Gateway + saga + events"
+    ],
+    "disadvantages": [
+      "Many moving parts",
+      "Eventual consistency",
+      "Needs tracing to follow"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "E-commerce request flow",
+      "mermaid": "flowchart LR\n  U[User] --> Auth[Auth -> JWT]\n  U --> G[Gateway]\n  G --> Prod[Product]\n  G --> Cart[Cart]\n  G --> Ord[Order Saga]\n  Ord --> Pay[Payment]\n  Ord --> Inv[Inventory]\n  Ord --> Notify[Notification]"
+    }
+  }
+}
