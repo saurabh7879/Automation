@@ -1,1 +1,1106 @@
-{}
+{
+  "docker-k8s-1": {
+    "pitch": "Docker packages an app and its dependencies into a portable container.",
+    "definition": "Docker is a platform for building, shipping and running applications in containers - lightweight, isolated units that bundle the app with all its dependencies and run consistently anywhere. It solves 'works on my machine' by making the runtime environment part of the artifact, and starts fast with low overhead because containers share the host OS kernel.",
+    "how": "Build an image from a Dockerfile -> run it as an isolated container sharing the host kernel.",
+    "when": "Consistent, portable app packaging and deployment.",
+    "whenNot": "Heavy GUI apps or where full OS isolation is required.",
+    "advantages": [
+      "Consistent across environments",
+      "Lightweight + fast start",
+      "Isolates dependencies"
+    ],
+    "disadvantages": [
+      "Shares host kernel (less isolation than VM)",
+      "Stateful data needs volumes",
+      "Learning curve"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "docker build -t myapp .\ndocker run -p 8080:80 myapp"
+    }
+  },
+  "docker-k8s-2": {
+    "pitch": "VMs virtualize hardware; containers share the host OS kernel.",
+    "definition": "A Virtual Machine runs a full guest OS on a hypervisor, virtualizing hardware - strong isolation but heavy (GBs, slow boot). A Docker container shares the host OS kernel and isolates only the process/filesystem - lightweight (MBs, instant start) and dense. VMs isolate more; containers are far more efficient for packaging apps.",
+    "how": "VM = hypervisor + guest OS per app; container = isolated process on a shared kernel.",
+    "when": "Containers for app density/speed; VMs for strong isolation.",
+    "whenNot": "Running different OS kernels (needs a VM).",
+    "advantages": [
+      "Containers: light + fast",
+      "Higher density",
+      "Shorter start time"
+    ],
+    "disadvantages": [
+      "Weaker isolation than VMs",
+      "Shared-kernel constraints",
+      "Same-OS-family only"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "VM vs Container",
+      "mermaid": "flowchart TB\n  VM[VM: Hypervisor -> Guest OS each] \n  Co[Container: Shared kernel -> isolated processes]"
+    }
+  },
+  "docker-k8s-3": {
+    "pitch": "Docker is a client-server system: CLI, daemon, images and registry.",
+    "definition": "Docker's architecture has a client (the docker CLI) that talks to the Docker daemon (dockerd), which builds, runs and manages images and containers on the host. Images are stored locally and pulled/pushed to a registry (Docker Hub or private). The daemon uses the host kernel's namespaces and cgroups for isolation and resource limits.",
+    "how": "CLI -> daemon (dockerd) builds/runs containers from images; registry stores and distributes images.",
+    "when": "Understanding how Docker operates.",
+    "whenNot": "Not a deployment choice - it's the platform model.",
+    "advantages": [
+      "Clear client/daemon split",
+      "Registry for distribution",
+      "Kernel namespaces/cgroups"
+    ],
+    "disadvantages": [
+      "Daemon is a single point",
+      "Root daemon security",
+      "Rootless mode newer"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Docker architecture",
+      "mermaid": "flowchart LR\n  CLI[docker CLI] --> D[Docker Daemon]\n  D --> Img[Images]\n  D --> Con[Containers]\n  D <--> Reg[Registry]"
+    }
+  },
+  "docker-k8s-4": {
+    "pitch": "A Docker image is a read-only template for creating containers.",
+    "definition": "A Docker image is an immutable, layered, read-only template containing the application, runtime, libraries and config needed to run it. Images are built from a Dockerfile in stacked layers (each instruction a layer, cached and shareable) and are the artifact you push to a registry and run as containers.",
+    "how": "Built layer by layer from a Dockerfile; layers are cached and shared; a container is a running instance of an image.",
+    "when": "Packaging an app into a portable artifact.",
+    "whenNot": "Storing mutable runtime data (use volumes).",
+    "advantages": [
+      "Immutable, reproducible",
+      "Layered + cacheable",
+      "Portable artifact"
+    ],
+    "disadvantages": [
+      "Can get large",
+      "Layer caching nuances",
+      "Needs registry to share"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "docker images          # list images\ndocker pull nginx:latest"
+    }
+  },
+  "docker-k8s-5": {
+    "pitch": "A container is a running instance of an image.",
+    "definition": "A Docker container is a runnable, isolated instance of an image - a process (or processes) running with its own filesystem, network and limits, started from the image's read-only layers plus a writable top layer. Containers are ephemeral and disposable; you run, stop and remove them, and persist data via volumes.",
+    "how": "Run an image -> the daemon creates an isolated process with a writable layer over the image's read-only layers.",
+    "when": "Running an app instance in isolation.",
+    "whenNot": "Persisting data inside the container's writable layer.",
+    "advantages": [
+      "Isolated, disposable",
+      "Fast to start/stop",
+      "Reproducible from image"
+    ],
+    "disadvantages": [
+      "Ephemeral by default",
+      "State needs volumes",
+      "Shares host kernel"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "docker run -d --name web -p 80:80 nginx\ndocker ps     # running containers"
+    }
+  },
+  "docker-k8s-6": {
+    "pitch": "An image is the blueprint; a container is the running instance.",
+    "definition": "A Docker image is a static, immutable template (the blueprint) stored on disk or in a registry. A container is a live, running instance created from that image, with its own writable layer and isolated runtime. One image can spawn many containers - like a class and its objects in OOP.",
+    "how": "Image = read-only layers on disk; container = a running process with a writable layer on top of those layers.",
+    "when": "Distinguishing the artifact from its running form.",
+    "whenNot": "Confusing the two (build vs run).",
+    "advantages": [
+      "Image: immutable artifact",
+      "Container: live instance",
+      "One image, many containers"
+    ],
+    "disadvantages": [
+      "Easy to conflate",
+      "Containers add writable layer",
+      "Image rebuild for changes"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "docker-k8s-7": {
+    "pitch": "A Dockerfile is a recipe of instructions that builds an image.",
+    "definition": "A Dockerfile is a text file with instructions Docker executes in order to build an image. Common instructions: FROM (base image), WORKDIR (working dir), COPY/ADD (files in), RUN (build-time commands), ENV (env vars), EXPOSE (ports), and CMD/ENTRYPOINT (what runs at start). Each instruction creates a cacheable layer.",
+    "how": "Docker reads the Dockerfile top-down, executing each instruction into a cached image layer.",
+    "when": "Defining reproducible image builds.",
+    "whenNot": "Ad-hoc manual container changes you don't capture.",
+    "advantages": [
+      "Reproducible builds",
+      "Layer caching speeds rebuilds",
+      "Versionable in git"
+    ],
+    "disadvantages": [
+      "Order affects cache",
+      "Large layers bloat images",
+      "Subtle COPY/RUN pitfalls"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "dockerfile",
+      "snippet": "FROM node:20-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nEXPOSE 3000\nCMD [\"node\",\"server.js\"]"
+    }
+  },
+  "docker-k8s-8": {
+    "pitch": "CMD sets default args; ENTRYPOINT sets the fixed executable.",
+    "definition": "Both define what runs when a container starts but differ. ENTRYPOINT sets the executable that always runs (treat the container like that command). CMD provides default arguments (or a default command) that are easily overridden at 'docker run'. Used together, ENTRYPOINT is the command and CMD supplies default args. CMD alone is fully overridable; ENTRYPOINT is not (without --entrypoint).",
+    "how": "ENTRYPOINT is the fixed command; CMD supplies default args appended to it (or the default command if no ENTRYPOINT).",
+    "when": "ENTRYPOINT for a fixed tool; CMD for overridable defaults.",
+    "whenNot": "Hard-coding args you want users to override (use CMD).",
+    "advantages": [
+      "ENTRYPOINT: fixed executable",
+      "CMD: overridable defaults",
+      "Combine for tool + args"
+    ],
+    "disadvantages": [
+      "Confusing precedence",
+      "Shell vs exec form pitfalls",
+      "Override behaviour differs"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "dockerfile",
+      "snippet": "ENTRYPOINT [\"python\",\"app.py\"]\nCMD [\"--port\",\"8080\"]   # default arg, overridable"
+    }
+  },
+  "docker-k8s-9": {
+    "pitch": "COPY just copies files; ADD also unpacks archives and fetches URLs.",
+    "definition": "Both add files to an image. COPY simply copies local files/directories into the image - predictable and preferred. ADD does the same but adds two extra behaviours: it auto-extracts local tar archives and can fetch from remote URLs. Best practice is to use COPY unless you specifically need ADD's extraction (URL fetching is discouraged for clarity/security).",
+    "how": "COPY transfers files as-is; ADD additionally untars archives and can download URLs.",
+    "when": "COPY for normal files; ADD only to auto-extract a tar.",
+    "whenNot": "Using ADD for URLs (use curl in RUN instead).",
+    "advantages": [
+      "COPY: simple, explicit",
+      "ADD: auto-extract tar",
+      "Clear default (COPY)"
+    ],
+    "disadvantages": [
+      "ADD's magic is surprising",
+      "URL fetch is opaque",
+      "Misuse hides behaviour"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "dockerfile",
+      "snippet": "COPY app/ /app/            # preferred\nADD release.tar.gz /opt/   # auto-extracts"
+    }
+  },
+  "docker-k8s-10": {
+    "pitch": "Docker Compose runs multi-container apps from one YAML file.",
+    "definition": "Docker Compose is a tool for defining and running multi-container applications with a single YAML file (compose.yaml) that declares services, networks and volumes. One 'docker compose up' starts the whole stack (e.g. app + database + cache) wired together. It's ideal for local development and simple multi-service setups.",
+    "how": "Declare services/networks/volumes in YAML -> 'compose up' builds and starts them all, wired on a shared network.",
+    "when": "Local dev and small multi-service stacks.",
+    "whenNot": "Production orchestration at scale (use Kubernetes).",
+    "advantages": [
+      "One file, whole stack",
+      "Easy local dev",
+      "Service networking built-in"
+    ],
+    "disadvantages": [
+      "Single-host focused",
+      "Not for large-scale prod",
+      "Limited orchestration"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "services:\n  web:\n    build: .\n    ports: [\"8080:80\"]\n  db:\n    image: postgres:16"
+    }
+  },
+  "docker-k8s-11": {
+    "pitch": "Volumes persist data outside the container's ephemeral layer.",
+    "definition": "Docker Volumes are the mechanism for persisting and sharing data outside a container's writable layer, which is lost when the container is removed. A named volume is managed by Docker and survives container restarts/removal; bind mounts map a host path into the container. Volumes are how databases and stateful apps keep data.",
+    "how": "Mount a volume into a container path -> data lives on the host/managed store, independent of the container lifecycle.",
+    "when": "Persisting databases, uploads, and shared state.",
+    "whenNot": "Stateless apps that need no persistence.",
+    "advantages": [
+      "Data survives the container",
+      "Shareable between containers",
+      "Managed by Docker"
+    ],
+    "disadvantages": [
+      "Backup/permissions to manage",
+      "Bind mounts host-coupled",
+      "Can hide state in dev"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "docker run -v pgdata:/var/lib/postgresql/data postgres"
+    }
+  },
+  "docker-k8s-12": {
+    "pitch": "Docker networks let containers communicate, with several driver types.",
+    "definition": "Docker Networks connect containers to each other and the outside world. The main drivers are bridge (default, isolated network on one host with container-name DNS), host (shares the host's network stack, no isolation), none (no networking), and overlay (spans multiple hosts, used in Swarm/multi-host). Containers on the same user-defined bridge can reach each other by name.",
+    "how": "Attach containers to a network driver -> they communicate per that driver's rules (bridge by name, host directly, etc.).",
+    "when": "Wiring multi-container apps together.",
+    "whenNot": "host network where isolation matters.",
+    "advantages": [
+      "bridge: isolated + DNS",
+      "host: max performance",
+      "overlay: multi-host"
+    ],
+    "disadvantages": [
+      "host: no isolation",
+      "overlay: more setup",
+      "Driver choice nuances"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "docker network create appnet\ndocker run --network appnet --name db postgres"
+    }
+  },
+  "docker-k8s-13": {
+    "pitch": "Shrink images with small bases, multi-stage builds and fewer layers.",
+    "definition": "You optimize image size by starting from a minimal base (alpine/distroless), using multi-stage builds so build tools don't ship in the final image, combining and cleaning up RUN commands to avoid leftover layers, copying only what's needed (.dockerignore), and not installing dev dependencies. Smaller images pull faster, start quicker and have less attack surface.",
+    "how": "Minimal base + multi-stage final + .dockerignore + cleaned layers -> a lean production image.",
+    "when": "Production images you pull and run often.",
+    "whenNot": "Local dev where size matters less.",
+    "advantages": [
+      "Faster pulls/starts",
+      "Smaller attack surface",
+      "Lower storage cost"
+    ],
+    "disadvantages": [
+      "Alpine libc quirks",
+      "Multi-stage complexity",
+      "Debugging minimal images"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "dockerfile",
+      "snippet": "# .dockerignore + alpine base + only prod deps\nFROM node:20-alpine\nRUN npm ci --omit=dev"
+    }
+  },
+  "docker-k8s-14": {
+    "pitch": "Multi-stage builds keep build tools out of the final image.",
+    "definition": "A Multi-Stage Build uses multiple FROM stages in one Dockerfile: an early 'build' stage compiles/produces artifacts with full SDK/tooling, and a final lean stage copies only the built output into a minimal runtime image. This yields small, secure production images without the compiler, source or dev dependencies.",
+    "how": "Build stage compiles -> final stage COPY --from=build only the output into a minimal runtime base.",
+    "when": "Compiled apps (Go, .NET, Node builds).",
+    "whenNot": "Trivial images with no build step.",
+    "advantages": [
+      "Tiny final image",
+      "No build tools shipped",
+      "Single Dockerfile"
+    ],
+    "disadvantages": [
+      "More complex Dockerfile",
+      "Stage caching nuances",
+      "Copy paths must be right"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "dockerfile",
+      "snippet": "FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build\nRUN dotnet publish -c Release -o /app\nFROM mcr.microsoft.com/dotnet/aspnet:8.0\nCOPY --from=build /app ."
+    }
+  },
+  "docker-k8s-15": {
+    "pitch": "Pass env vars with -e, --env-file, ENV, or Compose.",
+    "definition": "You pass environment variables to a container several ways: -e KEY=VALUE on docker run, an --env-file file, ENV in the Dockerfile (baked into the image), or the environment section in Compose. Env vars configure the app per environment without changing the image; secrets should use a secret store, not plain env.",
+    "how": "Supply variables at run (-e/--env-file/Compose) or bake defaults with ENV; the app reads them at startup.",
+    "when": "Per-environment config (URLs, flags).",
+    "whenNot": "Storing secrets in plain env vars/images.",
+    "advantages": [
+      "Config without rebuild",
+      "Multiple injection methods",
+      "12-factor friendly"
+    ],
+    "disadvantages": [
+      "Plain secrets are unsafe",
+      "ENV bakes into image",
+      "Sprawl across files"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "docker run -e ASPNETCORE_ENVIRONMENT=Production --env-file .env myapp"
+    }
+  },
+  "docker-k8s-16": {
+    "pitch": "Debug a container with logs, exec, inspect and stats.",
+    "definition": "To debug a running container you use docker logs (view stdout/stderr), docker exec -it <c> sh/bash (open a shell inside it), docker inspect (full config/network/mounts), docker stats (live resource usage), and docker top (processes). For crashed containers, check logs and exit codes. These tools let you observe state without changing the image.",
+    "how": "logs for output -> exec for an interactive shell -> inspect/stats for config and resource state.",
+    "when": "Diagnosing a misbehaving container.",
+    "whenNot": "Minimal images with no shell (use ephemeral debug containers).",
+    "advantages": [
+      "Live introspection",
+      "Shell inside the container",
+      "Resource + config visibility"
+    ],
+    "disadvantages": [
+      "No shell in distroless",
+      "Ephemeral state lost on exit",
+      "Prod access controls"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "docker logs -f web\ndocker exec -it web sh\ndocker inspect web"
+    }
+  },
+  "docker-k8s-17": {
+    "pitch": "A registry stores and distributes images; Hub is the public one.",
+    "definition": "A Docker Registry is a server that stores and distributes images. Docker Hub is the default public registry hosting official and community images. Private registries (Azure Container Registry, AWS ECR, Harbor, or a self-hosted registry) store your proprietary images securely with access control. You push images to a registry and pull them on any host/cluster.",
+    "how": "Tag an image for a registry -> docker push -> hosts/clusters docker pull it by name + tag.",
+    "when": "Sharing and deploying images across environments.",
+    "whenNot": "Single-machine use where local images suffice.",
+    "advantages": [
+      "Centralized distribution",
+      "Public (Hub) + private options",
+      "Access control + scanning"
+    ],
+    "disadvantages": [
+      "Private registry to operate",
+      "Auth/secret management",
+      "Bandwidth/storage cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "docker tag myapp myregistry.azurecr.io/myapp:1.0\ndocker push myregistry.azurecr.io/myapp:1.0"
+    }
+  },
+  "docker-k8s-18": {
+    "pitch": "Secure containers with minimal images, non-root users and scanning.",
+    "definition": "You secure containers by using minimal trusted base images, running as a non-root user, dropping unneeded Linux capabilities, making the filesystem read-only where possible, scanning images for vulnerabilities (Trivy/Snyk), keeping secrets out of images (use a secret store), limiting resources, and keeping the host/daemon patched. Defense in depth reduces the blast radius of a compromised container.",
+    "how": "Minimal image + non-root + dropped capabilities + scanning + external secrets + resource limits.",
+    "when": "Any production container workload.",
+    "whenNot": "Never - security is always relevant.",
+    "advantages": [
+      "Smaller attack surface",
+      "Non-root limits damage",
+      "Scanning catches CVEs"
+    ],
+    "disadvantages": [
+      "Non-root needs setup",
+      "Capability tuning effort",
+      "Ongoing patching"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "dockerfile",
+      "snippet": "RUN adduser -D appuser\nUSER appuser   # run as non-root"
+    }
+  },
+  "docker-k8s-19": {
+    "pitch": "Good Dockerfiles are small, cache-friendly, pinned and non-root.",
+    "definition": "Dockerfile best practices: use a minimal pinned base image, leverage layer caching by copying dependency manifests and installing before copying source, use multi-stage builds, add a .dockerignore, combine and clean RUN commands, run as non-root, set explicit CMD/ENTRYPOINT, and avoid embedding secrets. These produce small, secure, fast-to-build images.",
+    "how": "Order instructions for cache reuse, keep layers lean, pin versions, run non-root, and exclude junk via .dockerignore.",
+    "when": "Every production Dockerfile.",
+    "whenNot": "Throwaway experiments where polish is unneeded.",
+    "advantages": [
+      "Smaller, faster images",
+      "Better cache hits",
+      "More secure defaults"
+    ],
+    "disadvantages": [
+      "Discipline required",
+      "Cache ordering subtle",
+      "Pinning needs maintenance"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "docker-k8s-20": {
+    "pitch": "Dockerize ASP.NET Core with a multi-stage SDK->runtime build.",
+    "definition": "To Dockerize an ASP.NET Core app you write a multi-stage Dockerfile: a build stage on the .NET SDK image restores and publishes the app in Release, and a final stage on the smaller ASP.NET runtime image copies the published output and sets the entrypoint. You expose the port, set ASPNETCORE_URLS, and build/run the image. This yields a small, production-ready container.",
+    "how": "SDK stage: restore + publish -> runtime stage: COPY --from=build output -> ENTRYPOINT dotnet App.dll.",
+    "when": "Containerizing .NET web apps/APIs.",
+    "whenNot": "Tiny console tools where containers add little.",
+    "advantages": [
+      "Small runtime image",
+      "Reproducible builds",
+      "Cross-platform deploy"
+    ],
+    "disadvantages": [
+      "Multi-stage to maintain",
+      "Port/env config care",
+      "Image size if not minimized"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "dockerfile",
+      "snippet": "FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build\nWORKDIR /src\nCOPY . . \nRUN dotnet publish -c Release -o /app\nFROM mcr.microsoft.com/dotnet/aspnet:8.0\nWORKDIR /app\nCOPY --from=build /app .\nENTRYPOINT [\"dotnet\",\"MyApi.dll\"]"
+    }
+  },
+  "docker-k8s-21": {
+    "pitch": "Kubernetes orchestrates containers across a cluster of machines.",
+    "definition": "Kubernetes (K8s) is an open-source container orchestrator that automates deploying, scaling, healing and networking containerized apps across a cluster of machines. You declare the desired state (e.g. 'run 3 replicas of this image'); Kubernetes continuously reconciles reality to match it - scheduling pods, restarting failures, load-balancing and rolling out updates.",
+    "how": "Declare desired state in manifests -> the control plane schedules pods and continuously reconciles to that state.",
+    "when": "Running many containers reliably at scale.",
+    "whenNot": "A single container/app (overkill).",
+    "advantages": [
+      "Auto-scaling + self-healing",
+      "Declarative desired state",
+      "Rolling updates + service discovery"
+    ],
+    "disadvantages": [
+      "Steep learning curve",
+      "Operational complexity",
+      "Cluster overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Kubernetes",
+      "mermaid": "flowchart LR\n  U[kubectl/Manifests] --> CP[Control Plane]\n  CP --> N1[Node: Pods]\n  CP --> N2[Node: Pods]"
+    }
+  },
+  "docker-k8s-22": {
+    "pitch": "Kubernetes solves scaling, healing, networking and rollout at scale.",
+    "definition": "Kubernetes solves the hard problems of running containers in production: scheduling containers onto machines efficiently, scaling them up/down with demand, self-healing (restarting/rescheduling failed containers), service discovery and load balancing, rolling updates and rollbacks with zero downtime, config/secret management, and storage orchestration. Doing all this manually across many hosts is error-prone.",
+    "how": "It continuously reconciles desired vs actual state, automating scheduling, scaling, healing, networking and rollout.",
+    "when": "Operating many services across many machines.",
+    "whenNot": "Small static deployments a script can handle.",
+    "advantages": [
+      "Automated scaling/healing",
+      "Zero-downtime rollouts",
+      "Built-in discovery/LB"
+    ],
+    "disadvantages": [
+      "Complex to run",
+      "Resource overhead",
+      "Requires expertise"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "docker-k8s-23": {
+    "pitch": "K8s has a control plane that manages worker nodes running pods.",
+    "definition": "Kubernetes architecture splits into the control plane and worker nodes. The control plane runs the API server (front door), etcd (cluster state store), scheduler (places pods), and controller manager (reconciles state). Each worker node runs the kubelet (manages pods), a container runtime, and kube-proxy (networking). The control plane decides; nodes execute.",
+    "how": "API server stores desired state in etcd -> scheduler places pods -> kubelet on nodes runs them -> controllers reconcile.",
+    "when": "Understanding how a cluster operates.",
+    "whenNot": "Not a per-app choice - it's the platform.",
+    "advantages": [
+      "Clear control/worker split",
+      "etcd as source of truth",
+      "Reconciliation loops"
+    ],
+    "disadvantages": [
+      "Many components to grasp",
+      "etcd is critical",
+      "HA control plane needed"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "K8s architecture",
+      "mermaid": "flowchart LR\n  API[API Server] --> etcd[(etcd)]\n  API --> Sched[Scheduler]\n  API --> CM[Controller Mgr]\n  API --> Kubelet[Kubelet on Nodes]"
+    }
+  },
+  "docker-k8s-24": {
+    "pitch": "A node is one machine; a cluster is the whole set of nodes.",
+    "definition": "A Node is a single worker machine (VM or physical) in Kubernetes that runs pods, with a kubelet, container runtime and kube-proxy. A Cluster is the entire set of nodes plus the control plane managed together as one system. So nodes are the members; the cluster is the collective that schedules workloads across them.",
+    "how": "Nodes provide compute; the cluster's control plane schedules pods across all nodes as one unit.",
+    "when": "Reasoning about capacity and scheduling.",
+    "whenNot": "Confusing a single node with the whole cluster.",
+    "advantages": [
+      "Node: a worker machine",
+      "Cluster: all nodes + control plane",
+      "Scale by adding nodes"
+    ],
+    "disadvantages": [
+      "Node failure handling",
+      "Cluster ops complexity",
+      "Capacity planning"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "docker-k8s-25": {
+    "pitch": "A Pod is the smallest deployable unit - one or more containers.",
+    "definition": "A Pod is the smallest deployable unit in Kubernetes: one or more tightly-coupled containers that share the same network namespace (IP/port space) and storage volumes, scheduled together on a node. Usually a pod holds one main container (plus optional sidecars). Pods are ephemeral - controllers like Deployments create and replace them.",
+    "how": "K8s schedules a pod onto a node; its containers share the pod's IP and volumes and live/die together.",
+    "when": "Running a containerized workload unit.",
+    "whenNot": "Treating pods as long-lived pets (they're cattle).",
+    "advantages": [
+      "Shared network/storage",
+      "Smallest schedulable unit",
+      "Supports sidecars"
+    ],
+    "disadvantages": [
+      "Ephemeral by design",
+      "One IP per pod",
+      "Multi-container coordination"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "apiVersion: v1\nkind: Pod\nmetadata: { name: web }\nspec:\n  containers:\n  - name: app\n    image: myapp:1.0"
+    }
+  },
+  "docker-k8s-26": {
+    "pitch": "A container runs one process; a pod can wrap several sharing context.",
+    "definition": "A container is a single isolated process/image. A Pod is a Kubernetes abstraction that wraps one or more containers that share a network namespace, IP and volumes and are always co-located and co-scheduled. So Kubernetes schedules pods, not bare containers; a single-container pod is common, multi-container pods enable sidecar patterns.",
+    "how": "A pod groups containers to share IP/volumes; K8s schedules the pod as a unit.",
+    "when": "Co-locating helper (sidecar) containers with the main app.",
+    "whenNot": "Putting unrelated apps in one pod.",
+    "advantages": [
+      "Pod shares network/storage",
+      "Enables sidecars",
+      "Schedulable unit"
+    ],
+    "disadvantages": [
+      "Coupled lifecycle",
+      "Single pod IP",
+      "Multi-container complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "docker-k8s-27": {
+    "pitch": "A Deployment manages a replicated, self-healing, updatable set of pods.",
+    "definition": "A Deployment is a controller that declaratively manages a set of identical pods via a ReplicaSet: it keeps a desired number of replicas running, replaces failed pods, and handles rolling updates and rollbacks when you change the image or config. It's the standard way to run stateless apps on Kubernetes.",
+    "how": "You declare replicas + pod template -> the Deployment creates/updates a ReplicaSet to maintain that state.",
+    "when": "Stateless apps needing scaling + rolling updates.",
+    "whenNot": "Stateful apps needing stable identity (use StatefulSet).",
+    "advantages": [
+      "Self-healing replicas",
+      "Rolling updates + rollback",
+      "Declarative scaling"
+    ],
+    "disadvantages": [
+      "Stateless-oriented",
+      "No stable pod identity",
+      "Config drift if edited live"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "apiVersion: apps/v1\nkind: Deployment\nspec:\n  replicas: 3\n  template:\n    spec: { containers: [{ name: app, image: myapp:1.0 }] }"
+    }
+  },
+  "docker-k8s-28": {
+    "pitch": "A ReplicaSet keeps a specified number of identical pods running.",
+    "definition": "A ReplicaSet is the controller that ensures a specified number of replica pods are running at all times, recreating them if they fail or are deleted. You rarely create one directly - a Deployment manages ReplicaSets for you and uses them to roll out new versions. Its job is purely maintaining replica count and pod matching via labels.",
+    "how": "Watches pods matching its label selector -> creates/deletes pods to match the desired replica count.",
+    "when": "Guaranteeing a fixed number of pod replicas.",
+    "whenNot": "Direct use - prefer Deployments that manage it.",
+    "advantages": [
+      "Maintains replica count",
+      "Self-heals deleted pods",
+      "Label-based selection"
+    ],
+    "disadvantages": [
+      "No rollout logic itself",
+      "Managed via Deployment",
+      "Selector mistakes orphan pods"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "docker-k8s-29": {
+    "pitch": "A Service gives pods a stable address and load-balances to them.",
+    "definition": "A Kubernetes Service is a stable network endpoint that load-balances traffic to a changing set of pods (selected by labels), since pod IPs are ephemeral. Types: ClusterIP (internal-only virtual IP, the default), NodePort (exposes a port on every node), and LoadBalancer (provisions an external cloud load balancer). Services decouple callers from individual pods.",
+    "how": "Service selects pods by label -> gives a stable virtual IP/DNS -> load-balances requests across healthy pods.",
+    "when": "Stable access + load balancing to pods.",
+    "whenNot": "Direct pod IP access (ephemeral, unstable).",
+    "advantages": [
+      "Stable endpoint + DNS",
+      "Load-balances to pods",
+      "ClusterIP/NodePort/LoadBalancer"
+    ],
+    "disadvantages": [
+      "LoadBalancer cost per service",
+      "NodePort port range limits",
+      "Extra layer to learn"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "apiVersion: v1\nkind: Service\nspec:\n  type: ClusterIP\n  selector: { app: web }\n  ports: [{ port: 80, targetPort: 8080 }]"
+    }
+  },
+  "docker-k8s-30": {
+    "pitch": "Ingress routes external HTTP(S) traffic to services by host/path.",
+    "definition": "An Ingress is an API object that manages external HTTP/HTTPS access to services, providing host- and path-based routing, TLS termination and a single entry point - instead of one LoadBalancer per service. An Ingress controller (nginx, Traefik) implements the rules. It's the standard way to expose multiple web services under one address.",
+    "how": "Ingress rules map host/path -> services; an ingress controller (e.g. nginx) enforces routing + TLS.",
+    "when": "Exposing multiple HTTP services under one entry.",
+    "whenNot": "Non-HTTP traffic or a single simple service.",
+    "advantages": [
+      "One entry, many routes",
+      "Host/path routing + TLS",
+      "Cheaper than many LBs"
+    ],
+    "disadvantages": [
+      "Needs an ingress controller",
+      "HTTP(S)-focused",
+      "Config complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "kind: Ingress\nspec:\n  rules:\n  - host: app.com\n    http: { paths: [{ path: /api, backend: { service: { name: api } } }] }"
+    }
+  },
+  "docker-k8s-31": {
+    "pitch": "ConfigMaps hold non-secret config; Secrets hold sensitive data.",
+    "definition": "ConfigMaps store non-confidential configuration (settings, URLs) as key-value pairs, injected into pods as env vars or files. Secrets store sensitive data (passwords, tokens, keys) similarly but base64-encoded and with tighter access controls and optional encryption at rest. Both decouple configuration from images so the same image runs in any environment.",
+    "how": "Define ConfigMap/Secret -> mount as env vars or files in pods -> app reads config without rebuilding the image.",
+    "when": "Externalizing config and secrets from images.",
+    "whenNot": "Hard-coding config/secrets in the image.",
+    "advantages": [
+      "Config decoupled from image",
+      "Secrets handled separately",
+      "Env or file injection"
+    ],
+    "disadvantages": [
+      "Secrets base64, not encrypted by default",
+      "RBAC needed for secrets",
+      "Sync/rotation effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "envFrom:\n- configMapRef: { name: app-config }\n- secretRef: { name: app-secrets }"
+    }
+  },
+  "docker-k8s-32": {
+    "pitch": "A Namespace partitions a cluster into virtual sub-clusters.",
+    "definition": "A Namespace is a way to divide a single Kubernetes cluster into multiple virtual clusters, scoping names, resources and access. You use namespaces to separate environments (dev/test/prod), teams, or apps, apply resource quotas and RBAC per namespace, and avoid name collisions. Some resources are namespaced; others (nodes) are cluster-wide.",
+    "how": "Resources are created within a namespace -> names/quotas/RBAC apply per namespace, isolating groups logically.",
+    "when": "Multi-team/multi-env clusters.",
+    "whenNot": "Tiny single-app clusters (default namespace is fine).",
+    "advantages": [
+      "Logical isolation",
+      "Per-namespace quotas/RBAC",
+      "Avoids name clashes"
+    ],
+    "disadvantages": [
+      "Not hard security isolation",
+      "More objects to manage",
+      "Cross-namespace access care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "kubectl create namespace prod\nkubectl get pods -n prod"
+    }
+  },
+  "docker-k8s-33": {
+    "pitch": "A StatefulSet runs stateful pods with stable identity and storage.",
+    "definition": "A StatefulSet manages stateful applications that need stable, unique network identities, ordered deployment/scaling, and persistent per-pod storage - unlike a Deployment's interchangeable pods. Each pod gets a stable name (app-0, app-1) and its own persistent volume that survives rescheduling. It's used for databases, message brokers and clustered stateful systems.",
+    "how": "Creates pods in order with stable names + dedicated PersistentVolumes that stick to each pod identity.",
+    "when": "Databases and clustered stateful services.",
+    "whenNot": "Stateless web apps (use a Deployment).",
+    "advantages": [
+      "Stable pod identity",
+      "Per-pod persistent storage",
+      "Ordered scaling"
+    ],
+    "disadvantages": [
+      "More complex than Deployment",
+      "Slower scaling",
+      "Storage management"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "docker-k8s-34": {
+    "pitch": "A DaemonSet runs one pod on every (or selected) node.",
+    "definition": "A DaemonSet ensures a copy of a pod runs on every node (or a subset matching a selector), and automatically adds the pod to new nodes. It's required for node-level agents that must run everywhere - log collectors (Fluentd), monitoring agents (node-exporter), and network/storage plugins.",
+    "how": "The DaemonSet controller schedules exactly one matching pod per node, adding/removing as nodes join/leave.",
+    "when": "Per-node agents (logging, monitoring, networking).",
+    "whenNot": "App workloads that scale by demand, not by node.",
+    "advantages": [
+      "One pod per node guaranteed",
+      "Auto-covers new nodes",
+      "Ideal for agents"
+    ],
+    "disadvantages": [
+      "Scales with node count only",
+      "Resource use on every node",
+      "Not for app scaling"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "docker-k8s-35": {
+    "pitch": "A Job runs a task to completion; a CronJob runs Jobs on a schedule.",
+    "definition": "A Job creates one or more pods and runs them until a specified number complete successfully, then stops - for batch/one-off tasks like migrations or data processing. A CronJob creates Jobs on a time schedule (cron syntax) for recurring tasks like nightly backups or reports. Both handle retries and parallelism.",
+    "how": "Job runs pods to completion with retries; CronJob triggers a Job per schedule entry.",
+    "when": "Batch tasks (Job) and scheduled tasks (CronJob).",
+    "whenNot": "Long-running services (use a Deployment).",
+    "advantages": [
+      "Run-to-completion semantics",
+      "Retries on failure",
+      "CronJob for schedules"
+    ],
+    "disadvantages": [
+      "Not for services",
+      "Schedule/timezone care",
+      "History cleanup config"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "kind: CronJob\nspec:\n  schedule: \"0 2 * * *\"   # nightly at 02:00\n  jobTemplate: { ... }"
+    }
+  },
+  "docker-k8s-36": {
+    "pitch": "Autoscaling adjusts replicas (HPA) or pod resources (VPA) automatically.",
+    "definition": "Kubernetes autoscaling has two main forms. The Horizontal Pod Autoscaler (HPA) adds/removes pod replicas based on metrics like CPU, memory or custom metrics. The Vertical Pod Autoscaler (VPA) adjusts a pod's CPU/memory requests/limits to right-size it. The Cluster Autoscaler adds/removes nodes. HPA scales out for traffic; VPA scales up per pod.",
+    "how": "HPA watches metrics -> changes replica count; VPA recommends/sets pod resource requests; cluster autoscaler adds nodes.",
+    "when": "Workloads with variable load.",
+    "whenNot": "Steady, predictable load that needs no scaling.",
+    "advantages": [
+      "HPA: scale out on demand",
+      "VPA: right-size pods",
+      "Cluster autoscaler adds nodes"
+    ],
+    "disadvantages": [
+      "Metrics server needed",
+      "HPA/VPA can conflict",
+      "Tuning thresholds"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "kubectl autoscale deployment web --cpu-percent=70 --min=2 --max=10"
+    }
+  },
+  "docker-k8s-37": {
+    "pitch": "Rolling updates replace pods gradually; rollback reverts to a prior version.",
+    "definition": "A Rolling Update is Kubernetes' default deployment strategy: it incrementally replaces old pods with new ones (respecting maxSurge/maxUnavailable) while health checks keep traffic on healthy pods, giving zero downtime. If a release is bad, a Rollback reverts the Deployment to a previous revision. Both are built into Deployments.",
+    "how": "Deployment spins up new pods + drains old gradually per surge/unavailable settings; rollback re-applies an old revision.",
+    "when": "Updating stateless services without downtime.",
+    "whenNot": "Breaking schema changes needing coordination.",
+    "advantages": [
+      "Zero-downtime updates",
+      "Health-gated rollout",
+      "Easy rollback"
+    ],
+    "disadvantages": [
+      "Needs backward compatibility",
+      "Slow for huge fleets",
+      "DB migrations need care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "kubectl set image deployment/web app=myapp:2.0\nkubectl rollout undo deployment/web   # rollback"
+    }
+  },
+  "docker-k8s-38": {
+    "pitch": "Monitor K8s with metrics, logs, events and kubectl diagnostics.",
+    "definition": "You monitor and troubleshoot Kubernetes apps with a metrics/monitoring stack (Prometheus + Grafana) for resource and custom metrics, centralized logging (EFK/Loki) for pod logs, kubectl for live diagnostics (get/describe/logs/events), liveness/readiness probes for health, and tracing for request flow. The workflow: check pod status and events, read logs, inspect resource usage, then fix.",
+    "how": "Collect metrics/logs/events -> kubectl describe/logs to inspect a failing pod -> identify cause -> fix and redeploy.",
+    "when": "Operating apps reliably on Kubernetes.",
+    "whenNot": "A single static container (simpler tools suffice).",
+    "advantages": [
+      "Metrics + logs + events",
+      "kubectl live diagnostics",
+      "Probes catch unhealthy pods"
+    ],
+    "disadvantages": [
+      "Observability stack to run",
+      "Lots of signals",
+      "Skill to interpret"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "kubectl get pods\nkubectl describe pod web-xyz\nkubectl logs web-xyz --previous"
+    }
+  },
+  "docker-k8s-39": {
+    "pitch": "Deploy microservices as separate Deployments + Services behind Ingress.",
+    "definition": "You deploy a microservices app to Kubernetes by giving each service its own Deployment (replicated pods) and Service (stable endpoint), wiring inter-service calls via service DNS, exposing public ones through an Ingress, externalizing config/secrets via ConfigMaps/Secrets, and adding HPA, probes and resource limits. CI/CD builds images and applies manifests/Helm charts per service.",
+    "how": "Each service -> Deployment + Service; internal DNS for calls; Ingress for external; ConfigMaps/Secrets + HPA + probes.",
+    "when": "Running a microservices system at scale.",
+    "whenNot": "A monolith where one Deployment suffices.",
+    "advantages": [
+      "Independent service scaling",
+      "Service DNS + Ingress routing",
+      "Config/secret separation"
+    ],
+    "disadvantages": [
+      "Many manifests (use Helm)",
+      "Networking complexity",
+      "Cluster ops overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Microservices on K8s",
+      "mermaid": "flowchart LR\n  In[Ingress] --> S1[Order Svc]\n  In --> S2[Payment Svc]\n  S1 --> D1[Order Pods]\n  S2 --> D2[Payment Pods]"
+    }
+  },
+  "docker-k8s-40": {
+    "pitch": "Build images, push to a registry, then apply K8s manifests via CI/CD.",
+    "definition": "The end-to-end flow for ASP.NET Core microservices: each service has a multi-stage Dockerfile producing a small image; CI builds and pushes images to a registry (ACR/ECR); CD applies Kubernetes manifests/Helm charts that define Deployments, Services, ConfigMaps/Secrets, Ingress and HPA; rolling updates deploy new versions with health probes; monitoring and logging observe the running system.",
+    "how": "Dockerfile -> CI builds + pushes image -> CD applies manifests -> rolling update -> probes + monitoring verify.",
+    "when": "Productionizing .NET microservices.",
+    "whenNot": "A simple single service (compose may suffice).",
+    "advantages": [
+      "Reproducible, automated deploys",
+      "Rolling updates + rollback",
+      "Observable in production"
+    ],
+    "disadvantages": [
+      "Significant tooling/setup",
+      "Manifest/Helm maintenance",
+      "Requires DevOps maturity"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Docker + K8s pipeline",
+      "mermaid": "flowchart LR\n  Code --> CI[CI: build image]\n  CI --> Reg[Registry]\n  Reg --> CD[CD: apply manifests]\n  CD --> K8s[Kubernetes]"
+    }
+  },
+  "docker-k8s-41": {
+    "pitch": "Dockerize a Web API with a multi-stage SDK->runtime Dockerfile.",
+    "definition": "To Dockerize an ASP.NET Core Web API: write a multi-stage Dockerfile - a build stage on the .NET SDK restores and publishes in Release, a final stage on the ASP.NET runtime copies the output and sets the entrypoint - add a .dockerignore, expose the port, and build/run the image. The result is a small, portable API container.",
+    "how": "SDK stage publishes -> runtime stage copies output -> ENTRYPOINT runs the API DLL on the exposed port.",
+    "when": "Containerizing a .NET Web API.",
+    "whenNot": "Tiny utilities where a container adds little.",
+    "advantages": [
+      "Small runtime image",
+      "Reproducible build",
+      "Portable across hosts"
+    ],
+    "disadvantages": [
+      "Multi-stage upkeep",
+      "Port/env config",
+      "Image-size discipline"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "dockerfile",
+      "snippet": "FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build\nWORKDIR /src\nCOPY . . \nRUN dotnet publish -c Release -o /app\nFROM mcr.microsoft.com/dotnet/aspnet:8.0\nWORKDIR /app\nCOPY --from=build /app .\nEXPOSE 8080\nENTRYPOINT [\"dotnet\",\"Api.dll\"]"
+    }
+  },
+  "docker-k8s-42": {
+    "pitch": "Deploy a Docker app to K8s with Deployment + Service manifests.",
+    "definition": "To deploy a Dockerized app to Kubernetes: push the image to a registry, write a Deployment manifest (image, replicas, probes, resources) and a Service to expose it, then kubectl apply them. Kubernetes pulls the image, schedules pods, and the Service load-balances traffic. Add an Ingress for external HTTP access.",
+    "how": "Push image -> kubectl apply Deployment + Service -> K8s pulls + schedules pods -> Service routes traffic.",
+    "when": "Getting a container running on a cluster.",
+    "whenNot": "Local single-container runs (use docker run).",
+    "advantages": [
+      "Declarative deploy",
+      "Self-healing + scalable",
+      "Service load balancing"
+    ],
+    "disadvantages": [
+      "Registry + manifests needed",
+      "YAML learning curve",
+      "Cluster required"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "kubectl apply -f deployment.yaml\nkubectl apply -f service.yaml\nkubectl get pods,svc"
+    }
+  },
+  "docker-k8s-43": {
+    "pitch": "Deploy multiple microservices with per-service manifests, via Helm.",
+    "definition": "To deploy multiple microservices you give each its own Deployment + Service (and config/secrets), manage them together with Helm charts or Kustomize for templating/reuse, route external traffic through a shared Ingress, and let CI/CD apply changes per service. Namespaces and labels keep them organized; HPA and probes keep them healthy.",
+    "how": "Template each service (Helm) -> apply Deployments/Services/Ingress -> shared Ingress routes; CI/CD updates per service.",
+    "when": "Running many services on one cluster.",
+    "whenNot": "A single service (plain manifests are fine).",
+    "advantages": [
+      "Reusable templates (Helm)",
+      "Independent service deploys",
+      "Shared Ingress routing"
+    ],
+    "disadvantages": [
+      "Manifest sprawl without tooling",
+      "Helm learning curve",
+      "Cross-service config"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "docker-k8s-44": {
+    "pitch": "Expose a service externally via LoadBalancer or Ingress.",
+    "definition": "To expose a microservice to external users you use a Service of type LoadBalancer (cloud provisions an external IP for that service) or, more commonly for HTTP, an Ingress with an ingress controller that routes by host/path and terminates TLS - giving one external entry for many services. NodePort is a simpler but less polished option.",
+    "how": "LoadBalancer gives a service its own external IP; Ingress routes external HTTP(S) to many services via host/path.",
+    "when": "Public HTTP access to services.",
+    "whenNot": "Internal-only services (keep ClusterIP).",
+    "advantages": [
+      "Ingress: one entry, TLS, routing",
+      "LoadBalancer: dedicated IP",
+      "Cloud-integrated"
+    ],
+    "disadvantages": [
+      "LoadBalancer cost per service",
+      "Ingress controller to run",
+      "TLS/cert management"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "kind: Service\nspec: { type: LoadBalancer, selector: { app: web }, ports: [{ port: 80 }] }"
+    }
+  },
+  "docker-k8s-45": {
+    "pitch": "Store connection strings as Kubernetes Secrets, not in images.",
+    "definition": "You store database connection strings securely as Kubernetes Secrets (optionally backed by an external vault like Azure Key Vault / AWS Secrets Manager via the Secrets Store CSI driver), injected into pods as env vars or mounted files. You enable encryption at rest for etcd, restrict access with RBAC, and never bake secrets into images or commit them to git.",
+    "how": "Create a Secret -> reference it as env/volume in the pod -> app reads it; optionally sync from an external vault.",
+    "when": "Any sensitive config in the cluster.",
+    "whenNot": "Putting secrets in ConfigMaps or images.",
+    "advantages": [
+      "Separated from images",
+      "RBAC-controlled",
+      "Vault integration possible"
+    ],
+    "disadvantages": [
+      "Base64 != encryption by default",
+      "Need etcd encryption + RBAC",
+      "Rotation effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "kubectl create secret generic db --from-literal=conn=\"Server=...;Pwd=...\""
+    }
+  },
+  "docker-k8s-46": {
+    "pitch": "Zero-downtime on K8s via rolling updates with readiness probes.",
+    "definition": "You achieve zero-downtime deployment using Kubernetes' rolling update strategy with readiness probes: new pods must pass readiness before receiving traffic, old pods drain gradually (maxUnavailable/maxSurge tuned), so users always hit healthy pods. Blue-green or canary (via two Deployments/Ingress weights or a service mesh) are alternatives for safer rollouts. Backward-compatible changes are essential.",
+    "how": "Roll out new pods -> readiness gates traffic -> old pods drain gradually -> always-healthy endpoints.",
+    "when": "Updating user-facing services continuously.",
+    "whenNot": "Breaking changes needing a maintenance window.",
+    "advantages": [
+      "No downtime for users",
+      "Readiness-gated traffic",
+      "Rollback on failure"
+    ],
+    "disadvantages": [
+      "Needs backward compatibility",
+      "Probe tuning",
+      "DB migration coordination"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "strategy:\n  rollingUpdate: { maxSurge: 1, maxUnavailable: 0 }"
+    }
+  },
+  "docker-k8s-47": {
+    "pitch": "Scale up by adding replicas (HPA) and nodes (cluster autoscaler).",
+    "definition": "When traffic increases you scale horizontally: the Horizontal Pod Autoscaler adds pod replicas based on CPU/memory/custom metrics, and if nodes run out of capacity the Cluster Autoscaler adds nodes. You also add caching and ensure services are stateless so replicas are interchangeable. Scaling is automatic once HPA and resource requests are configured.",
+    "how": "HPA watches load metrics -> increases replicas; cluster autoscaler adds nodes when pods can't schedule.",
+    "when": "Variable or spiky traffic.",
+    "whenNot": "Stateful pods that can't scale out cleanly.",
+    "advantages": [
+      "Automatic horizontal scaling",
+      "Adds nodes when needed",
+      "Stateless = clean scaling"
+    ],
+    "disadvantages": [
+      "Needs metrics + requests set",
+      "Scale-up lag",
+      "Cost grows with scale"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "kubectl autoscale deploy api --cpu-percent=70 --min=3 --max=20"
+    }
+  },
+  "docker-k8s-48": {
+    "pitch": "Debug CrashLoopBackOff by reading logs, events and probe config.",
+    "definition": "A pod in CrashLoopBackOff is repeatedly starting and crashing. To debug: kubectl logs (and --previous) to see why it crashed, kubectl describe pod for events and exit codes, check liveness/readiness probe config (a too-strict probe can kill a healthy app), verify env/config/secrets and resource limits (OOMKilled), and confirm the image/command are correct. Fix the root cause, then redeploy.",
+    "how": "logs --previous shows the crash -> describe shows events/exit code -> check probes/config/resources -> fix.",
+    "when": "Diagnosing repeatedly crashing pods.",
+    "whenNot": "Healthy pods (this state means a real failure).",
+    "advantages": [
+      "Logs reveal the crash",
+      "Events show OOM/exit codes",
+      "Probe/config checks"
+    ],
+    "disadvantages": [
+      "Crash loops can be intermittent",
+      "Many possible causes",
+      "Minimal-image debug limits"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bash",
+      "snippet": "kubectl logs pod-xyz --previous\nkubectl describe pod pod-xyz   # events, exit code"
+    }
+  },
+  "docker-k8s-49": {
+    "pitch": "Deploy updates without impact via rolling/canary releases.",
+    "definition": "To deploy updates without affecting existing users you use a progressive strategy: rolling updates with readiness probes (default), or canary releases that send a small slice of traffic to the new version first and ramp up if healthy, or blue-green that switches traffic atomically after validation. Combined with backward-compatible changes and feature flags, users see no disruption.",
+    "how": "Release new version to a subset -> verify health/metrics -> shift more traffic -> complete or roll back.",
+    "when": "Frequent updates to live services.",
+    "whenNot": "Changes requiring a hard cutover.",
+    "advantages": [
+      "No user disruption",
+      "Gradual, verifiable rollout",
+      "Quick rollback"
+    ],
+    "disadvantages": [
+      "Backward compatibility needed",
+      "More release tooling",
+      "Canary observability"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "docker-k8s-50": {
+    "pitch": "Production runs containers on K8s with CI/CD, Ingress, monitoring and logging.",
+    "definition": "A production architecture: CI/CD builds Docker images and pushes them to a registry, then deploys to a Kubernetes cluster where each microservice is a Deployment + Service; an external Load Balancer feeds an Ingress that routes HTTP(S) with TLS to services; config/secrets come from ConfigMaps/Secrets (or a vault); HPA and probes provide scaling and self-healing; and Prometheus/Grafana plus centralized logging (EFK/Loki) and tracing give full observability. Rolling/canary deploys keep releases zero-downtime.",
+    "how": "CI/CD -> registry -> K8s (Deployments/Services) behind LB + Ingress; ConfigMaps/Secrets, HPA, probes; monitoring + logging.",
+    "when": "Running reliable services at scale.",
+    "whenNot": "Small apps where this is over-engineering.",
+    "advantages": [
+      "Automated, observable deploys",
+      "Scalable + self-healing",
+      "Zero-downtime releases"
+    ],
+    "disadvantages": [
+      "High operational complexity",
+      "Many components to run",
+      "Requires DevOps maturity"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Production architecture",
+      "mermaid": "flowchart LR\n  CI[CI/CD] --> Reg[Registry]\n  Reg --> K8s[Kubernetes]\n  LB[Load Balancer] --> Ing[Ingress]\n  Ing --> K8s\n  K8s --> Mon[Monitoring + Logging]"
+    },
+    "realWorld": "On an e-commerce platform, moving to K8s with CI/CD, HPA, Ingress and Prometheus/Grafana cut deploy time from hours to minutes and gave automatic scaling during sales peaks."
+  }
+}
