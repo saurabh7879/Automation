@@ -1,1 +1,530 @@
-{}
+{
+  "system-design-1": {
+    "pitch": "A URL shortener maps a long URL to a short key and redirects on lookup.",
+    "definition": "Design a service that turns a long URL into a short code and redirects users back. The core is generating a unique short key (base62 of an auto-increment id or a hash), storing the key -> URL mapping in a fast key-value store, and on a GET to the short link returning a 301/302 redirect. It is read-heavy, so you cache hot keys and scale reads horizontally.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "URL shortener",
+      "mermaid": "flowchart LR\n  U[User] --> LB[Load Balancer]\n  LB --> S[Shorten/Redirect Service]\n  S --> C[(Cache)]\n  S --> DB[(KV Store)]"
+    },
+    "keyPoints": [
+      "Short key: base62 of an id or hash",
+      "KV store maps key -> long URL",
+      "Cache hot keys (read-heavy)",
+      "301/302 redirect on lookup",
+      "Optional: analytics, expiry, custom alias"
+    ]
+  },
+  "system-design-2": {
+    "pitch": "A distributed cache shards an in-memory KV store across nodes with replicas.",
+    "definition": "Design an in-memory key-value cache like Redis serving low-latency reads/writes at scale. Keys are partitioned across nodes by consistent hashing, each shard has replicas for availability, and an eviction policy (LRU/LFU) plus TTLs bound memory. Clients route to the right node, and you choose a consistency/replication model based on whether you favor availability or strong consistency.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Distributed cache",
+      "mermaid": "flowchart LR\n  C[Client] --> R[Router]\n  R --> N1[Shard 1 + Replica]\n  R --> N2[Shard 2 + Replica]\n  R --> N3[Shard 3 + Replica]"
+    },
+    "keyPoints": [
+      "In-memory KV for low latency",
+      "Consistent hashing shards keys across nodes",
+      "Replicas per shard for availability",
+      "Eviction (LRU/LFU) + TTL bound memory",
+      "Client-side or proxy routing"
+    ]
+  },
+  "system-design-3": {
+    "pitch": "A chat app uses persistent connections, a message queue and fan-out.",
+    "definition": "Design a real-time messaging app like WhatsApp. Clients hold a persistent connection (WebSocket) to gateway servers; messages go through a queue to a delivery service that writes to a per-conversation store and pushes to recipients online, or stores for offline delivery. You track delivery/read receipts, fan out to group members, and shard storage by conversation for scale.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Chat application",
+      "mermaid": "flowchart LR\n  A[Client A] --> G[WebSocket Gateway]\n  G --> Q[Message Queue]\n  Q --> D[Delivery Service]\n  D --> DB[(Message Store)]\n  D --> B[Client B]"
+    },
+    "keyPoints": [
+      "WebSocket gateways for live connections",
+      "Queue + delivery service decouple send",
+      "Per-conversation message store (sharded)",
+      "Online push vs offline store-and-forward",
+      "Delivery/read receipts, group fan-out"
+    ]
+  },
+  "system-design-4": {
+    "pitch": "A notification system fans events out to subscribers via pub/sub.",
+    "definition": "Design a system that pushes real-time notifications to users. Producers publish events to a pub/sub broker; a fan-out service resolves subscribers and delivers via WebSocket/push for online users or queues for offline. You decouple producers from delivery, support multiple channels, and scale the broker by topic partitioning.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Real-time notifications",
+      "mermaid": "flowchart LR\n  P[Producer] --> B[Pub/Sub Broker]\n  B --> F[Fan-out Service]\n  F --> WS[WebSocket Push]\n  F --> Q[Offline Queue]"
+    },
+    "keyPoints": [
+      "Producers publish events to a broker",
+      "Pub/sub fans out to subscribers",
+      "WebSocket/push for online, queue for offline",
+      "Topic partitioning for scale",
+      "Idempotent, retried delivery"
+    ]
+  },
+  "system-design-5": {
+    "pitch": "A file storage service splits files into chunks over blob storage + metadata.",
+    "definition": "Design a Drive/Dropbox-like service. Files are split into chunks, deduplicated by content hash, and stored in object/blob storage, while a metadata DB tracks files, versions, permissions and chunk maps. Clients sync via a delta/diff protocol, and a CDN speeds downloads. Chunking enables dedup, resumable uploads and efficient sync.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "File storage service",
+      "mermaid": "flowchart LR\n  U[Client] --> API[API]\n  API --> M[(Metadata DB)]\n  API --> B[(Blob Storage)]\n  B --> CDN[CDN] --> U"
+    },
+    "keyPoints": [
+      "Chunk files; dedup by content hash",
+      "Blob/object store for chunks",
+      "Metadata DB: files, versions, ACLs, chunk map",
+      "Delta sync + resumable uploads",
+      "CDN for fast downloads"
+    ]
+  },
+  "system-design-6": {
+    "pitch": "Video streaming transcodes to adaptive bitrates and serves via CDN.",
+    "definition": "Design a YouTube/Netflix-style platform. Uploaded videos are transcoded into multiple resolutions/bitrates and segmented (HLS/DASH), stored in blob storage, and served from a CDN close to users with adaptive bitrate streaming. Metadata and a recommendation/search layer sit in front, and the read path is CDN-heavy for scale.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Video streaming",
+      "mermaid": "flowchart LR\n  U[Uploader] --> T[Transcoder]\n  T --> B[(Blob Storage)]\n  B --> CDN[CDN]\n  V[Viewer] --> CDN"
+    },
+    "keyPoints": [
+      "Transcode to multiple bitrates (HLS/DASH)",
+      "Segment videos; store in blob storage",
+      "CDN edge delivery, adaptive bitrate",
+      "Metadata DB + search/recommendations",
+      "Async upload/transcode pipeline"
+    ]
+  },
+  "system-design-7": {
+    "pitch": "Food delivery matches orders to restaurants and nearby delivery agents.",
+    "definition": "Design a Swiggy/Zomato-style system. Core services handle restaurant catalog, cart/order, payment, and a matching/dispatch service that assigns nearby delivery partners using their live location (geospatial index). Real-time tracking streams agent location to the customer, and an event-driven design keeps order state in sync across services.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Food delivery",
+      "mermaid": "flowchart LR\n  C[Customer] --> O[Order Service]\n  O --> P[Payment]\n  O --> M[Matching/Dispatch]\n  M --> A[Delivery Agent]\n  A --> L[Location Stream] --> C"
+    },
+    "keyPoints": [
+      "Catalog, cart/order, payment services",
+      "Geospatial index to find nearby agents",
+      "Dispatch/matching assigns delivery partner",
+      "Live location tracking to customer",
+      "Event-driven order state machine"
+    ]
+  },
+  "system-design-8": {
+    "pitch": "Ride-sharing matches riders to drivers using live geospatial data.",
+    "definition": "Design an Uber-style app. Drivers stream GPS location into a geospatial index (e.g. quadtree/geohash); when a rider requests, a matching service finds nearby drivers, applies surge pricing, and dispatches. Trip and location updates flow over real-time channels, and payments/ratings happen at trip end. The hard parts are low-latency matching and high-frequency location updates.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Ride sharing",
+      "mermaid": "flowchart LR\n  D[Drivers] --> G[Geo Index]\n  R[Rider] --> M[Matching Service]\n  M --> G\n  M --> T[Trip Service]\n  T --> P[Payment]"
+    },
+    "keyPoints": [
+      "Drivers stream location to a geo index",
+      "Matching finds nearest available drivers",
+      "Surge pricing by supply/demand",
+      "Real-time trip + location channels",
+      "Payment and rating at trip end"
+    ]
+  },
+  "system-design-9": {
+    "pitch": "E-commerce composes catalog, cart, order, inventory, payment and search.",
+    "definition": "Design an Amazon-style platform as microservices: a product catalog with search, cart, order and payment services, an inventory service guarding stock, and async fulfillment. Reads (catalog/search) are cache- and CDN-heavy; writes (orders/inventory) need consistency and idempotency. Events coordinate order -> payment -> inventory -> shipping.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "E-commerce platform",
+      "mermaid": "flowchart LR\n  U[User] --> G[API Gateway]\n  G --> Cat[Catalog/Search]\n  G --> Cart[Cart]\n  G --> Ord[Order]\n  Ord --> Pay[Payment]\n  Ord --> Inv[Inventory]"
+    },
+    "keyPoints": [
+      "Catalog + search (read-heavy, cached)",
+      "Cart, order, payment services",
+      "Inventory service guards stock",
+      "Event-driven fulfillment pipeline",
+      "Idempotent orders, consistent inventory"
+    ]
+  },
+  "system-design-10": {
+    "pitch": "A payment gateway tokenizes cards and processes charges idempotently.",
+    "definition": "Design a payment gateway that securely processes transactions. It tokenizes card data (PCI-DSS scope minimized), forwards charges to acquiring banks/processors, records every state change in an immutable ledger, and uses idempotency keys so retries never double-charge. Webhooks and reconciliation handle async results and failures.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Payment gateway",
+      "mermaid": "flowchart LR\n  M[Merchant] --> G[Gateway]\n  G --> V[Tokenize/Validate]\n  V --> P[Processor/Bank]\n  G --> L[(Ledger)]\n  P --> W[Webhook] --> M"
+    },
+    "keyPoints": [
+      "Tokenize cards (minimize PCI scope)",
+      "Idempotency keys prevent double charges",
+      "Immutable ledger of every transaction",
+      "Async results via webhooks",
+      "Retries, reconciliation, fraud checks"
+    ]
+  },
+  "system-design-11": {
+    "pitch": "Hotel booking guards room inventory with availability and locking.",
+    "definition": "Design a hotel booking system. Core pieces are a search/availability service over room inventory by date range, a booking service that reserves rooms with a short-lived lock to prevent double-booking, payment, and confirmation. Availability is read-heavy (cached); booking needs transactional consistency on the inventory.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Hotel booking",
+      "mermaid": "flowchart LR\n  U[User] --> S[Search/Availability]\n  S --> Inv[(Inventory)]\n  U --> B[Booking Service]\n  B --> Inv\n  B --> P[Payment]"
+    },
+    "keyPoints": [
+      "Search/availability by date range (cached)",
+      "Reserve with a short lock to avoid double-book",
+      "Transactional inventory decrement",
+      "Payment + confirmation",
+      "Cancellations release inventory"
+    ]
+  },
+  "system-design-12": {
+    "pitch": "Ticket booking handles seat selection with concurrency-safe locking.",
+    "definition": "Design a movie/flight/train ticket system. The crux is concurrency: many users compete for the same seats, so you hold a temporary seat lock/reservation (with timeout) during checkout, confirm on payment, and release on timeout. Inventory updates are transactional, and read paths (showtimes/seat maps) are cached.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Ticket booking",
+      "mermaid": "flowchart LR\n  U[User] --> Seat[Seat Service]\n  Seat --> Lock[(Lock/Reservation)]\n  U --> Pay[Payment]\n  Pay --> Confirm[Confirm Booking]\n  Confirm --> DB[(Bookings)]"
+    },
+    "keyPoints": [
+      "Seat map + showtime search (cached)",
+      "Temporary seat lock with timeout",
+      "Confirm on payment; release on timeout",
+      "Transactional seat inventory",
+      "Idempotent booking to avoid duplicates"
+    ]
+  },
+  "system-design-13": {
+    "pitch": "A social platform combines a social graph, feed and media at scale.",
+    "definition": "Design a Facebook/Instagram-style platform. Key parts are a social graph (followers/friends), a post/media service backed by blob storage + CDN, and a news feed built by fan-out. Reads dominate, so you cache aggressively and pre-compute feeds; writes propagate via events. Celebrity accounts force a hybrid fan-out strategy.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Social media platform",
+      "mermaid": "flowchart LR\n  U[User] --> G[API Gateway]\n  G --> Graph[Social Graph]\n  G --> Post[Post/Media]\n  Post --> CDN[CDN]\n  G --> Feed[Feed Service] --> Cache[(Feed Cache)]"
+    },
+    "keyPoints": [
+      "Social graph (followers/friends)",
+      "Posts + media in blob storage + CDN",
+      "Feed via fan-out (write vs read)",
+      "Heavy caching, precomputed feeds",
+      "Hybrid fan-out for celebrity accounts"
+    ]
+  },
+  "system-design-14": {
+    "pitch": "A news feed pre-computes or assembles ranked posts per user.",
+    "definition": "Design a news feed. The central decision is fan-out on write (push each post into followers' feeds, fast reads, costly for big accounts) versus fan-out on read (assemble the feed at request time, cheap writes, slower reads). Most systems use a hybrid, rank posts by a relevance model, and cache assembled feeds.",
+    "similarQuestions": [],
+    "diagram": null,
+    "comparison": {
+      "altName": "Fan-out on read",
+      "rows": [
+        {
+          "criterion": "Write cost",
+          "this": "High (push to all)",
+          "alt": "Low"
+        },
+        {
+          "criterion": "Read cost",
+          "this": "Low (precomputed)",
+          "alt": "High (assemble)"
+        },
+        {
+          "criterion": "Best for",
+          "this": "Normal users",
+          "alt": "Celebrity accounts"
+        }
+      ]
+    },
+    "keyPoints": [
+      "Fan-out on write vs read (or hybrid)",
+      "Relevance ranking model",
+      "Cache assembled feeds",
+      "Pagination via cursors"
+    ]
+  },
+  "system-design-15": {
+    "pitch": "A rate limiter caps request rate using counters in a shared store.",
+    "definition": "Design an API rate limiter that throttles clients to N requests per window. Common algorithms are token bucket (smooth bursts) and sliding window (accurate). Counters live in a fast shared store (Redis) keyed by client/API so limits hold across distributed instances, returning 429 when exceeded.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Rate limiter",
+      "mermaid": "flowchart LR\n  C[Client] --> RL[Rate Limiter]\n  RL --> R[(Redis Counters)]\n  RL -->|under limit| API[API]\n  RL -->|over limit| X[429]"
+    },
+    "keyPoints": [
+      "Token bucket or sliding window algorithm",
+      "Counters in Redis keyed by client/API",
+      "Works across instances (shared store)",
+      "Return 429 + Retry-After when exceeded",
+      "Per-user / per-API tiers"
+    ]
+  },
+  "system-design-16": {
+    "pitch": "Logging/monitoring ingests, stores and alerts on telemetry at scale.",
+    "definition": "Design a logging and monitoring platform. Agents ship logs/metrics to an ingestion pipeline (often a queue), which indexes them into a searchable, time-series store; dashboards query it and an alerting engine evaluates rules to page on-call. The pipeline must absorb spikes (buffering) and retain data cost-effectively (tiered storage).",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Logging & monitoring",
+      "mermaid": "flowchart LR\n  A[Agents] --> Q[Ingestion Queue]\n  Q --> I[Index/Store]\n  I --> D[Dashboards]\n  I --> AL[Alerting] --> O[On-call]"
+    },
+    "keyPoints": [
+      "Agents ship logs/metrics",
+      "Queue buffers ingestion spikes",
+      "Time-series / search index storage",
+      "Dashboards + alerting rules",
+      "Tiered retention for cost"
+    ]
+  },
+  "system-design-17": {
+    "pitch": "A distributed scheduler runs jobs reliably with leader election and retries.",
+    "definition": "Design a system that schedules and runs jobs at the right time across a cluster. A durable store holds job definitions and next-run times; scheduler nodes use leader election (or partitioning) to avoid double-execution, push due jobs onto a queue, and workers execute with retries and idempotency. Missed runs and failures are tracked.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Distributed job scheduler",
+      "mermaid": "flowchart LR\n  DB[(Job Store)] --> S[Scheduler Leader]\n  S --> Q[Job Queue]\n  Q --> W1[Worker]\n  Q --> W2[Worker]"
+    },
+    "keyPoints": [
+      "Durable job store with next-run times",
+      "Leader election / partitioning avoids duplicates",
+      "Queue + workers execute due jobs",
+      "Retries + idempotency for failures",
+      "Track missed runs and history"
+    ]
+  },
+  "system-design-18": {
+    "pitch": "Autocomplete serves ranked prefix matches from a trie/index fast.",
+    "definition": "Design a search autocomplete. Queries are matched by prefix using a trie or an inverted/prefix index, ranked by popularity/recency, and served from memory with heavy caching for single-digit-millisecond responses. Suggestions are precomputed and updated from query logs offline.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Search autocomplete",
+      "mermaid": "flowchart LR\n  U[User keystrokes] --> S[Suggest Service]\n  S --> T[Trie/Prefix Index]\n  S --> C[(Cache)]\n  Logs[Query Logs] --> B[Offline Builder] --> T"
+    },
+    "keyPoints": [
+      "Trie / prefix index for matches",
+      "Rank by popularity + recency",
+      "In-memory + cache for low latency",
+      "Precompute top suggestions offline",
+      "Debounce + limit results client-side"
+    ]
+  },
+  "system-design-19": {
+    "pitch": "A recommender combines offline models with online serving.",
+    "definition": "Design a recommendation engine. It blends collaborative filtering (users like you) and content-based filtering (similar items), trained offline on interaction data into a model/embeddings, then serves real-time candidate generation + ranking at request time. Feedback loops continuously improve the model, and results are cached per user.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Recommendation engine",
+      "mermaid": "flowchart LR\n  E[Events] --> Train[Offline Training]\n  Train --> M[Model/Embeddings]\n  U[User] --> Serve[Ranking Service]\n  Serve --> M\n  Serve --> C[(Cache)]"
+    },
+    "keyPoints": [
+      "Collaborative + content-based filtering",
+      "Offline training -> embeddings/model",
+      "Online candidate generation + ranking",
+      "Feedback loop improves the model",
+      "Per-user cached recommendations"
+    ]
+  },
+  "system-design-20": {
+    "pitch": "Order management splits into services coordinated by a saga.",
+    "definition": "Design a microservices order system. Order, payment, inventory and shipping are separate services; an order is a distributed transaction coordinated by a saga (orchestrated or choreographed) with compensating actions on failure. Services communicate via events for loose coupling, behind an API gateway, each owning its data.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Order management (microservices)",
+      "mermaid": "flowchart LR\n  G[API Gateway] --> O[Order]\n  O --> P[Payment]\n  O --> I[Inventory]\n  O --> S[Shipping]\n  O --> E[(Event Bus)]"
+    },
+    "keyPoints": [
+      "Order, payment, inventory, shipping services",
+      "Saga coordinates the distributed transaction",
+      "Compensating actions on failure",
+      "Event-driven, each service owns its data",
+      "API gateway in front"
+    ]
+  },
+  "system-design-21": {
+    "pitch": "Auth issues tokens (JWT/OAuth2) and validates them on each request.",
+    "definition": "Design an authentication and authorization system. An auth/identity service authenticates users and issues short-lived access tokens (JWT) plus refresh tokens via OAuth2 flows; resource services validate the token signature and claims statelessly and enforce RBAC/policies. Refresh tokens are revocable and stored server-side.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Auth system",
+      "mermaid": "flowchart LR\n  U[User] --> Auth[Auth Service]\n  Auth -->|JWT + Refresh| U\n  U -->|Bearer JWT| API[Resource Service]\n  API -->|Validate + RBAC| API"
+    },
+    "keyPoints": [
+      "Identity service issues JWT access tokens",
+      "OAuth2 flows (auth code, client creds)",
+      "Stateless token validation at services",
+      "RBAC / policy-based authorization",
+      "Refresh tokens, revocation, short expiry"
+    ]
+  },
+  "system-design-22": {
+    "pitch": "An API gateway is the single entry that routes, secures and aggregates.",
+    "definition": "Design an API gateway - the single entry point in front of microservices. It routes requests to the right service, and centralizes cross-cutting concerns: authentication, rate limiting, TLS termination, request/response transformation, caching and aggregation of multiple service calls. It decouples clients from internal service topology.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "API gateway",
+      "mermaid": "flowchart LR\n  C[Clients] --> GW[API Gateway]\n  GW --> S1[Service A]\n  GW --> S2[Service B]\n  GW --> S3[Service C]"
+    },
+    "keyPoints": [
+      "Single entry, routes to services",
+      "Centralizes auth, rate limiting, TLS",
+      "Request/response transform + aggregation",
+      "Caching and observability",
+      "Decouples clients from internal topology"
+    ]
+  },
+  "system-design-23": {
+    "pitch": "Real-time inventory keeps stock consistent under concurrent updates.",
+    "definition": "Design a real-time inventory system. Stock levels change from many sources (orders, returns, restocks), so it is event-driven: each change is an event applied to an authoritative, transactional store, with reservations to prevent overselling and a read model/cache for fast availability checks. Consistency on decrements is the hard part.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Real-time inventory",
+      "mermaid": "flowchart LR\n  Src[Orders/Returns/Restock] --> E[(Event Stream)]\n  E --> Inv[Inventory Service]\n  Inv --> DB[(Stock Store)]\n  Inv --> Cache[(Availability Cache)]"
+    },
+    "keyPoints": [
+      "Event-driven stock updates",
+      "Authoritative transactional store",
+      "Reservations prevent overselling",
+      "Cached read model for availability",
+      "Idempotent event processing"
+    ]
+  },
+  "system-design-24": {
+    "pitch": "High availability removes single points of failure with redundancy.",
+    "definition": "Design a highly available web app that survives failures. Every tier is redundant: stateless app servers behind load balancers across multiple availability zones, replicated databases with failover, health checks that route around dead instances, and no single point of failure. You add auto-scaling, retries with backoff, and graceful degradation.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "High availability",
+      "mermaid": "flowchart LR\n  U[Users] --> LB[Load Balancer]\n  LB --> A1[App AZ-1]\n  LB --> A2[App AZ-2]\n  A1 --> DBp[(DB Primary)]\n  A2 --> DBr[(DB Replica)]\n  DBp -.failover.- DBr"
+    },
+    "keyPoints": [
+      "Redundancy at every tier, multi-AZ",
+      "Load balancers + health checks",
+      "Replicated DB with automatic failover",
+      "Auto-scaling stateless app servers",
+      "Retries, backoff, graceful degradation"
+    ]
+  },
+  "system-design-25": {
+    "pitch": "Multi-tenant SaaS isolates tenants while sharing infrastructure.",
+    "definition": "Design a multi-tenant SaaS app where many customers share one system safely. The key choice is the isolation model: separate database per tenant (strong isolation, costlier), shared database with separate schemas, or a shared schema with a tenant_id (cheapest, most scalable). Every request carries tenant context, and you enforce isolation, per-tenant config and noisy-neighbor limits.",
+    "similarQuestions": [],
+    "diagram": null,
+    "comparison": {
+      "altName": "Shared DB + tenant_id",
+      "rows": [
+        {
+          "criterion": "Isolation",
+          "this": "DB-per-tenant: strong",
+          "alt": "Logical (row-level)"
+        },
+        {
+          "criterion": "Cost/scale",
+          "this": "Higher cost",
+          "alt": "Cheapest, most scalable"
+        },
+        {
+          "criterion": "Best for",
+          "this": "Few large/regulated tenants",
+          "alt": "Many small tenants"
+        }
+      ]
+    },
+    "keyPoints": [
+      "Isolation: DB-per-tenant vs shared schema",
+      "Tenant context on every request",
+      "Per-tenant config + limits (noisy neighbor)",
+      "Enforce data isolation rigorously"
+    ]
+  },
+  "system-design-26": {
+    "pitch": "A distributed queue decouples producers and consumers durably.",
+    "definition": "Design a distributed message queue like Kafka/SQS. Producers append messages to partitioned, replicated logs; consumers read at their own offset in groups for parallelism, with at-least-once delivery and durability. Partitioning gives ordering-per-key and horizontal scale; consumers commit offsets to track progress.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Distributed queue",
+      "mermaid": "flowchart LR\n  P[Producers] --> Br[Broker Partitions]\n  Br --> C1[Consumer Group A]\n  Br --> C2[Consumer Group B]"
+    },
+    "keyPoints": [
+      "Partitioned, replicated message log",
+      "Producers append; consumers read by offset",
+      "Consumer groups for parallel processing",
+      "At-least-once delivery, durable",
+      "Ordering per partition key"
+    ]
+  },
+  "system-design-27": {
+    "pitch": "A notification service abstracts Email, SMS and Push behind one API.",
+    "definition": "Design a multi-channel notification service. A single API accepts a notification request, which is queued and processed by channel adapters (email, SMS, push), each handling provider integration, templating, rate limits and retries. User preferences decide channels, and the queue absorbs spikes and isolates failures per channel.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Notification service",
+      "mermaid": "flowchart LR\n  App[App] --> API[Notification API]\n  API --> Q[Queue]\n  Q --> E[Email Adapter]\n  Q --> S[SMS Adapter]\n  Q --> Pu[Push Adapter]"
+    },
+    "keyPoints": [
+      "One API, queue, channel adapters",
+      "Adapters: Email, SMS, Push providers",
+      "Templating + user channel preferences",
+      "Per-channel retries and rate limits",
+      "Queue absorbs spikes, isolates failures"
+    ]
+  },
+  "system-design-28": {
+    "pitch": "A banking system uses ACID, a double-entry ledger and idempotency.",
+    "definition": "Design a banking transaction system where correctness is paramount. Money movements are recorded in an append-only, double-entry ledger inside ACID transactions so debits and credits always balance; idempotency keys prevent double-processing, and strong consistency beats availability for the core ledger. Async events drive notifications and reporting.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Banking transactions",
+      "mermaid": "flowchart LR\n  U[User] --> T[Transaction Service]\n  T --> L[(Double-entry Ledger)]\n  T --> Acc[(Accounts DB)]\n  T --> E[(Event Stream)]"
+    },
+    "keyPoints": [
+      "ACID transactions for money movement",
+      "Append-only double-entry ledger",
+      "Idempotency keys prevent double-spend",
+      "Strong consistency over availability",
+      "Async events for notifications/reporting"
+    ]
+  },
+  "system-design-29": {
+    "pitch": "Distributed sessions move state to a shared store, not sticky servers.",
+    "definition": "Design session management across many app servers. Instead of relying on sticky sessions, you store session state in a fast shared store (Redis) keyed by a session id in a cookie/token, so any server can serve any request - enabling scale and failover. Alternatively, stateless JWTs carry session data client-side with revocation handled separately.",
+    "similarQuestions": [],
+    "diagram": null,
+    "comparison": {
+      "altName": "Sticky sessions",
+      "rows": [
+        {
+          "criterion": "State",
+          "this": "Central store (Redis)",
+          "alt": "On one server"
+        },
+        {
+          "criterion": "Failover",
+          "this": "Any server serves",
+          "alt": "Lost if server dies"
+        },
+        {
+          "criterion": "Scale",
+          "this": "Scales out cleanly",
+          "alt": "Uneven load"
+        }
+      ]
+    },
+    "keyPoints": [
+      "Central session store (Redis) by session id",
+      "Any server serves any request",
+      "Or stateless JWT (client-side state)",
+      "Expiry + revocation strategy"
+    ]
+  },
+  "system-design-30": {
+    "pitch": "An audit trail is an append-only, correlated, tamper-evident log.",
+    "definition": "Design an audit and logging trail for microservices. Every service emits structured audit events with a correlation id, actor, action and timestamp to a durable append-only store; the trail is immutable and tamper-evident (hash-chained), queryable for compliance, and retained per policy. Correlation ids stitch one user action across services.",
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Audit trail",
+      "mermaid": "flowchart LR\n  S1[Service A] --> Q[Audit Pipeline]\n  S2[Service B] --> Q\n  Q --> Store[(Append-only Store)]\n  Store --> Query[Compliance Query]"
+    },
+    "keyPoints": [
+      "Append-only, immutable event store",
+      "Structured events: actor, action, time, correlation id",
+      "Correlation id links across services",
+      "Tamper-evident (hash chaining)",
+      "Compliance retention + query"
+    ]
+  }
+}
