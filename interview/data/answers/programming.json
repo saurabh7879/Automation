@@ -1,1 +1,462 @@
-{}
+{
+  "programming-1": {
+    "pitch": "Reverse a string with a two-pointer swap or by building from the end.",
+    "definition": "Reverse a string without built-in methods. Approach 1: convert to a char array and swap the i-th and (n-1-i)-th characters from both ends inward (O(n) time, O(n) space for the array). Approach 2: build a new string by appending characters from the last index to the first. Both are O(n).",
+    "how": "Two-pointer: swap ends moving inward. Loop: append chars from end to start into a new buffer.",
+    "when": "Technique: two-pointer / reverse iteration.",
+    "whenNot": "Strings are immutable - work on a char array/StringBuilder.",
+    "advantages": [
+      "O(n) time",
+      "Two clean approaches",
+      "No built-ins needed"
+    ],
+    "disadvantages": [
+      "O(n) extra space",
+      "Char array conversion",
+      "Unicode surrogate care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var a = s.ToCharArray();\nfor(int i=0,j=a.Length-1;i<j;i++,j--){ (a[i],a[j])=(a[j],a[i]); }\nreturn new string(a);"
+    }
+  },
+  "programming-2": {
+    "pitch": "Sort integers manually with bubble/selection sort.",
+    "definition": "Sort an integer array without built-in sorting. A simple approach is selection sort: repeatedly find the minimum of the unsorted portion and swap it into place; or bubble sort: repeatedly swap adjacent out-of-order pairs. Both are O(n^2) but clear; for production you'd use Array.Sort (O(n log n)).",
+    "how": "Selection sort: for each position, find the min in the rest and swap it in.",
+    "when": "Demonstrating sorting logic in interviews.",
+    "whenNot": "Production code (use Array.Sort - O(n log n)).",
+    "advantages": [
+      "Simple, in-place",
+      "Shows algorithm knowledge",
+      "No built-ins"
+    ],
+    "disadvantages": [
+      "O(n^2) slow",
+      "Not for large arrays",
+      "Beaten by built-in sort"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "for(int i=0;i<n-1;i++){ int min=i;\n  for(int j=i+1;j<n;j++) if(a[j]<a[min]) min=j;\n  (a[i],a[min])=(a[min],a[i]); }"
+    }
+  },
+  "programming-3": {
+    "pitch": "Sort strings alphabetically with a comparison-based manual sort.",
+    "definition": "Sort a string array alphabetically without built-ins. Use the same selection/bubble approach but compare strings with String.Compare (or char-by-char) instead of numeric comparison, swapping when out of order. O(n^2) with the manual sort; built-in Array.Sort gives O(n log n).",
+    "how": "Same selection sort, but compare with String.Compare(a, b) < 0 to decide order.",
+    "when": "Showing comparator-based sorting.",
+    "whenNot": "Production (use Array.Sort with StringComparer).",
+    "advantages": [
+      "Reuses sort logic",
+      "Custom comparison",
+      "Culture-aware option"
+    ],
+    "disadvantages": [
+      "O(n^2)",
+      "Culture/case nuances",
+      "Slower than built-in"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "for(int i=0;i<n-1;i++) for(int j=0;j<n-1-i;j++)\n  if(string.Compare(arr[j],arr[j+1])>0) (arr[j],arr[j+1])=(arr[j+1],arr[j]);"
+    }
+  },
+  "programming-4": {
+    "pitch": "Reverse each word by splitting, then reversing characters per word.",
+    "definition": "Reverse each word in a sentence (keeping word order). Split on spaces, reverse the characters of each word, and rejoin. Three approaches: (1) split + reverse each via two-pointer, (2) split + LINQ Reverse, (3) manual scan building each word backwards without split. All are O(n).",
+    "how": "Split into words -> reverse each word's characters -> join with spaces.",
+    "when": "Technique: tokenize + per-token transform.",
+    "whenNot": "Reversing the whole string (changes word order too).",
+    "advantages": [
+      "O(n) time",
+      "Multiple approaches",
+      "Word order preserved"
+    ],
+    "disadvantages": [
+      "Split allocates",
+      "Whitespace handling",
+      "Unicode care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var words = s.Split(' ');\nfor(int i=0;i<words.Length;i++)\n  words[i] = new string(words[i].Reverse().ToArray());\nreturn string.Join(\" \", words);"
+    }
+  },
+  "programming-5": {
+    "pitch": "Count word frequencies with a dictionary.",
+    "definition": "Count how many times each word appears in a string. Split into words and use a Dictionary<string,int>, incrementing the count per word. O(n) time. The result maps each distinct word to its frequency.",
+    "how": "Split words -> for each, dict[word] = dict.GetValueOrDefault(word) + 1.",
+    "when": "Technique: frequency map.",
+    "whenNot": "Nested counting per word is O(n^2).",
+    "advantages": [
+      "O(n) single pass",
+      "Clear dictionary use",
+      "Easy to extend"
+    ],
+    "disadvantages": [
+      "Case/punctuation handling",
+      "Split allocates",
+      "Memory for the map"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var freq = new Dictionary<string,int>();\nforeach(var w in s.Split(' ', StringSplitOptions.RemoveEmptyEntries))\n  freq[w] = freq.GetValueOrDefault(w) + 1;"
+    }
+  },
+  "programming-6": {
+    "pitch": "Sum the first N Fibonacci numbers in one iterative pass.",
+    "definition": "Find the sum of the first N Fibonacci numbers. Generate them iteratively with two running variables (previous and current), adding each to a total as you go - O(n) time, O(1) space. Avoid naive recursion, which is exponential. (A closed-form identity also exists: sum of first N = F(N+2) - 1.)",
+    "how": "Iterate N times: total += current; advance (prev, current) = (current, prev + current).",
+    "when": "Technique: iterative DP over a recurrence.",
+    "whenNot": "Naive recursion is exponential O(2^n).",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "No recursion blowup",
+      "Closed-form alternative"
+    ],
+    "disadvantages": [
+      "Overflow for large N",
+      "Off-by-one on N",
+      "Recursion tempting but bad"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "long a=0,b=1,sum=0;\nfor(int i=0;i<n;i++){ sum+=a; (a,b)=(b,a+b); }\nreturn sum;"
+    }
+  },
+  "programming-7": {
+    "pitch": "Count vowels by scanning and checking membership.",
+    "definition": "Count the vowels in a string. Iterate over each character and check whether it is one of a/e/i/o/u (case-insensitive); increment a counter on match. O(n) time, O(1) space.",
+    "how": "For each char, lowercase it and test membership in the vowel set; count matches.",
+    "when": "Technique: single-pass membership count.",
+    "whenNot": "Regex per char is overkill for this.",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "Simple membership test",
+      "Case-insensitive"
+    ],
+    "disadvantages": [
+      "Unicode vowels ignored",
+      "y sometimes a vowel",
+      "Locale nuances"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int count=0; foreach(var c in s.ToLower())\n  if(\"aeiou\".IndexOf(c) >= 0) count++;\nreturn count;"
+    }
+  },
+  "programming-8": {
+    "pitch": "Model nested arrays with jagged arrays or object arrays.",
+    "definition": "C# arrays are homogeneous, so a structure like [1,[1,2,[...]]] mixing ints and nested arrays is modeled with jagged arrays (int[][]) for uniform nesting, or object[] when levels mix scalars and arrays. You access elements by chained indexers, casting object elements back to their type. Recursion is the natural way to walk arbitrary depth.",
+    "how": "Use object[] for mixed nesting; index level by level (arr[1] as object[])[2]; recurse to traverse depth.",
+    "when": "Representing irregular/heterogeneous nested data.",
+    "whenNot": "Uniform rectangular data (use a 2D array).",
+    "advantages": [
+      "Jagged: efficient uniform nesting",
+      "object[]: mixed content",
+      "Recursion walks depth"
+    ],
+    "disadvantages": [
+      "object[] needs casting",
+      "No compile-time shape",
+      "Easy to get index wrong"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "object[] nested = { 1, new object[]{ 1, 2, new object[]{ 1,2,3 } } };\nvar inner = (object[])nested[1];\nint x = (int)inner[1];   // 2"
+    }
+  },
+  "programming-9": {
+    "pitch": "Find duplicates using a hash set of seen values.",
+    "definition": "Find duplicate elements in an integer array. Track seen values in a HashSet; if adding a value fails (already present), it's a duplicate. O(n) time, O(n) space - better than the O(n^2) nested-loop comparison. Sorting then scanning adjacent equals is an O(n log n) alternative.",
+    "how": "For each value, if the set already contains it -> duplicate; otherwise add it.",
+    "when": "Technique: hash set for seen/dedup.",
+    "whenNot": "Nested loops comparing all pairs are O(n^2).",
+    "advantages": [
+      "O(n) time",
+      "Set gives O(1) checks",
+      "Finds all duplicates"
+    ],
+    "disadvantages": [
+      "O(n) extra space",
+      "Sorting alt mutates order",
+      "Hash overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var seen=new HashSet<int>(); var dups=new List<int>();\nforeach(var x in a) if(!seen.Add(x)) dups.Add(x);"
+    }
+  },
+  "programming-10": {
+    "pitch": "Remove duplicates with a hash set (no Distinct()).",
+    "definition": "Remove duplicate elements from an array without LINQ's Distinct. Iterate, adding each element to a HashSet and keeping only first occurrences (Add returns false for duplicates) into a result list. O(n) time, O(n) space, preserving order. Sorting in place is an O(n log n) alternative that loses original order.",
+    "how": "Walk the array; HashSet.Add returns true the first time -> keep that element; skip when it returns false.",
+    "when": "Technique: order-preserving dedup with a set.",
+    "whenNot": "Nested-loop dedup is O(n^2).",
+    "advantages": [
+      "O(n), preserves order",
+      "Set tracks seen",
+      "No LINQ needed"
+    ],
+    "disadvantages": [
+      "O(n) extra space",
+      "Result list allocation",
+      "Hashing cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var seen=new HashSet<int>(); var r=new List<int>();\nforeach(var x in a) if(seen.Add(x)) r.Add(x);"
+    }
+  },
+  "programming-11": {
+    "pitch": "Largest and second largest in one pass with two trackers.",
+    "definition": "Find the largest and second-largest numbers in an array. Keep two variables (max, second); for each value, if it beats max, push max down to second and update max; else if it beats second (and differs), update second. One pass, O(n) time, O(1) space.",
+    "how": "For each x: if x>max -> second=max, max=x; else if x>second -> second=x.",
+    "when": "Technique: single-pass top-2 tracking.",
+    "whenNot": "Sorting just to read the top two is O(n log n).",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "Single pass",
+      "No sorting"
+    ],
+    "disadvantages": [
+      "Duplicate-of-max edge",
+      "Init values care",
+      "Arrays < 2 elements"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int max=int.MinValue, second=int.MinValue;\nforeach(var x in a){ if(x>max){ second=max; max=x; } else if(x>second && x<max) second=x; }"
+    }
+  },
+  "programming-12": {
+    "pitch": "Smallest and second smallest in one pass with two trackers.",
+    "definition": "Find the smallest and second-smallest numbers. Mirror the largest approach: track min and second; for each value, if it's below min, shift min to second and update min; else if it's below second (and differs), update second. One pass, O(n), O(1) space.",
+    "how": "For each x: if x<min -> second=min, min=x; else if x<second -> second=x.",
+    "when": "Technique: single-pass bottom-2 tracking.",
+    "whenNot": "Sorting to read the two smallest is O(n log n).",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "Single pass",
+      "Symmetric to max version"
+    ],
+    "disadvantages": [
+      "Duplicate-of-min edge",
+      "Init to int.MaxValue",
+      "Tiny arrays"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int min=int.MaxValue, second=int.MaxValue;\nforeach(var x in a){ if(x<min){ second=min; min=x; } else if(x<second && x>min) second=x; }"
+    }
+  },
+  "programming-13": {
+    "pitch": "Palindrome check with two pointers from both ends.",
+    "definition": "Check whether a string is a palindrome (reads the same forwards and backwards). Use two pointers from the start and end moving inward, comparing characters; if any pair differs it's not a palindrome. O(n) time, O(1) space. Optionally normalize case and skip non-alphanumerics first.",
+    "how": "Compare s[left] and s[right] moving inward; mismatch -> not a palindrome.",
+    "when": "Technique: two-pointer comparison.",
+    "whenNot": "Reversing and comparing uses O(n) extra space.",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "Early exit on mismatch",
+      "No reversal needed"
+    ],
+    "disadvantages": [
+      "Case/whitespace normalization",
+      "Unicode care",
+      "Empty-string edge"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "for(int i=0,j=s.Length-1;i<j;i++,j--) if(s[i]!=s[j]) return false;\nreturn true;"
+    }
+  },
+  "programming-14": {
+    "pitch": "Anagram check by comparing character counts.",
+    "definition": "Check whether two strings are anagrams (same characters, any order). Quick reject if lengths differ; then count each character's frequency in the first string and subtract using the second - if all counts end at zero they're anagrams. O(n) time, O(1) space (fixed alphabet). Sorting both and comparing is an O(n log n) alternative.",
+    "how": "Tally char counts from string A, decrement with string B; all zero -> anagram.",
+    "when": "Technique: frequency count.",
+    "whenNot": "Sorting both strings is O(n log n).",
+    "advantages": [
+      "O(n) time",
+      "Length pre-check",
+      "Count array is O(1) space"
+    ],
+    "disadvantages": [
+      "Charset assumptions",
+      "Case/whitespace rules",
+      "Unicode counts"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "if(a.Length!=b.Length) return false;\nvar c=new int[256];\nforeach(var ch in a) c[ch]++; foreach(var ch in b) c[ch]--;\nreturn c.All(x => x==0);"
+    }
+  },
+  "programming-15": {
+    "pitch": "First non-repeating char via a frequency map, then re-scan.",
+    "definition": "Find the first character that appears exactly once. Count each character's frequency in one pass, then scan the string again and return the first character with count 1. O(n) time, O(1) space (fixed alphabet).",
+    "how": "Count frequencies -> scan in order -> return the first char whose count is 1.",
+    "when": "Technique: frequency count + order scan.",
+    "whenNot": "Checking the rest of the string per char is O(n^2).",
+    "advantages": [
+      "O(n) two passes",
+      "Returns first by position",
+      "Simple counts"
+    ],
+    "disadvantages": [
+      "Two passes needed",
+      "Unicode sizing",
+      "All-repeating edge case"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var f=new int[256]; foreach(var c in s) f[c]++;\nforeach(var c in s) if(f[c]==1) return c;\nreturn '\\0';"
+    }
+  },
+  "programming-16": {
+    "pitch": "Missing number via expected-minus-actual sum.",
+    "definition": "Find the missing number in an array of 1..N (or 0..N) with one absent. Compute the expected sum N*(N+1)/2 and subtract the actual sum; the difference is the missing number. O(n) time, O(1) space. XOR of indices and values avoids overflow.",
+    "how": "missing = expectedSum - actualSum; or XOR all values with 1..N.",
+    "when": "Technique: math/XOR invariant.",
+    "whenNot": "Sorting or a set uses more time/space.",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "Single pass",
+      "XOR avoids overflow"
+    ],
+    "disadvantages": [
+      "Sum overflow risk",
+      "Range must be known",
+      "One-missing assumption"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int n=a.Length+1, sum=n*(n+1)/2;\nforeach(var x in a) sum-=x;\nreturn sum;"
+    }
+  },
+  "programming-17": {
+    "pitch": "Move zeroes to the end with a write-pointer, preserving order.",
+    "definition": "Move all zeroes to the end of an array while keeping the order of non-zero elements. Use a write index: scan the array and copy each non-zero element to the write position, then fill the rest with zeroes. O(n) time, O(1) space, stable order.",
+    "how": "Copy non-zeros forward into a write index; fill remaining slots with zero.",
+    "when": "Technique: two-pointer in-place partition.",
+    "whenNot": "Removing and re-appending zeroes is O(n^2) or extra space.",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "Stable order",
+      "In-place"
+    ],
+    "disadvantages": [
+      "Two-step fill",
+      "Write-index care",
+      "Mutates input"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int w=0;\nforeach(var x in a) if(x!=0) a[w++]=x;\nwhile(w<a.Length) a[w++]=0;"
+    }
+  },
+  "programming-18": {
+    "pitch": "Merge two sorted arrays with a two-pointer pass.",
+    "definition": "Merge two sorted arrays into one sorted array without built-in sorting. Use two indices, repeatedly taking the smaller current element into the result, then append any remaining tail. O(n+m) time - the merge step of merge sort - far better than concatenating and re-sorting.",
+    "how": "Compare a[i] and b[j], take the smaller, advance; append leftovers when one runs out.",
+    "when": "Technique: two-pointer merge.",
+    "whenNot": "Concatenate-then-sort is O((n+m) log(n+m)).",
+    "advantages": [
+      "O(n+m) linear",
+      "No re-sorting",
+      "Stable merge"
+    ],
+    "disadvantages": [
+      "O(n+m) result space",
+      "Pointer bookkeeping",
+      "Requires sorted inputs"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int i=0,j=0; var r=new int[a.Length+b.Length]; int k=0;\nwhile(i<a.Length&&j<b.Length) r[k++]= a[i]<=b[j]?a[i++]:b[j++];\nwhile(i<a.Length) r[k++]=a[i++]; while(j<b.Length) r[k++]=b[j++];"
+    }
+  },
+  "programming-19": {
+    "pitch": "Rotate an array by K using the reverse technique in place.",
+    "definition": "Rotate an array left or right by K positions. The O(1)-space trick is three reversals: for a right rotation, reverse the whole array, then the first K and the rest; for a left rotation, reverse the first K and the rest, then the whole. Remember K %= n. O(n) time.",
+    "how": "Right by k: reverse(all) -> reverse(0..k-1) -> reverse(k..n-1).",
+    "when": "Technique: in-place reversal.",
+    "whenNot": "Shifting one position K times is O(n*k).",
+    "advantages": [
+      "O(n) time, O(1) space",
+      "No extra array",
+      "Left/right via reorder"
+    ],
+    "disadvantages": [
+      "Handle k % n",
+      "Reversal index care",
+      "Direction confusion"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "void Rev(int[] a,int l,int r){ while(l<r){ (a[l],a[r])=(a[r],a[l]); l++; r--; } }\nk%=n; Rev(a,0,n-1); Rev(a,0,k-1); Rev(a,k,n-1);  // right rotate"
+    }
+  },
+  "programming-20": {
+    "pitch": "Flatten nested collections with recursion or SelectMany.",
+    "definition": "Flatten a nested collection like List<List<int>> into one sequence. With LINQ, SelectMany concatenates the inner lists in one expression. Without LINQ, loop over the outer list and add each inner element to a result list. For arbitrary depth, recursion is needed. Both are O(total elements).",
+    "how": "LINQ: outer.SelectMany(inner => inner). Manual: nested foreach adding to a result; recurse for deep nesting.",
+    "when": "Technique: flatten via SelectMany/recursion.",
+    "whenNot": "Manual indexing when SelectMany is clearer.",
+    "advantages": [
+      "SelectMany: one line",
+      "Manual: no LINQ dependency",
+      "Recursion for any depth"
+    ],
+    "disadvantages": [
+      "Recursion depth limits",
+      "Allocates a new collection",
+      "Deep nesting complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var flat = nested.SelectMany(x => x).ToList();   // with LINQ\n// without: foreach(var inner in nested) foreach(var x in inner) r.Add(x);"
+    }
+  }
+}
