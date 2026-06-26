@@ -1,847 +1,1142 @@
 {
   "csharp-1": {
     "pitch": "CLR runs the code, CTS defines the types, CLS keeps languages compatible.",
-    "definition": "These are the three pillars of .NET's common runtime. The CLR (Common Language Runtime) is the virtual machine that executes managed code, handling JIT compilation, garbage collection and security. The CTS (Common Type System) defines how types are declared and used so all .NET languages share one type model. The CLS (Common Language Specification) is a subset of rules every language must follow so components written in C#, F# or VB can interoperate.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "CLR: executes code, JIT + GC + security",
-      "CTS: common type rules across languages",
-      "CLS: subset for cross-language interop",
-      "Together they enable one runtime, many languages"
-    ]
-  },
-  "csharp-7": {
-    "pitch": "Value types hold the data; reference types hold a pointer to it.",
-    "definition": "Value types (int, struct, enum, bool) store their data directly and live on the stack or inline, so copying them copies the whole value. Reference types (class, string, array, delegate) store a reference to an object on the managed heap, so copying copies only the pointer and both variables share the same object. This difference drives how assignment, equality and method arguments behave.",
-    "similarQuestions": [],
-    "diagram": null,
-    "comparison": {
-      "altName": "Reference types",
-      "rows": [
-        {
-          "criterion": "Stores",
-          "this": "The actual data",
-          "alt": "A reference to data"
-        },
-        {
-          "criterion": "Lives on",
-          "this": "Stack / inline",
-          "alt": "Managed heap"
-        },
-        {
-          "criterion": "Copy gives",
-          "this": "A full copy",
-          "alt": "A shared reference"
-        },
-        {
-          "criterion": "Examples",
-          "this": "int, struct, enum",
-          "alt": "class, string, array"
-        }
-      ]
-    }
-  },
-  "csharp-8": {
-    "pitch": "Class = reference, Struct = value, Record = value-equality data type.",
-    "definition": "A class is a reference type for objects with identity and behaviour, allocated on the heap. A struct is a value type for small, immutable, short-lived data, copied by value and usually stack-allocated. A record (C# 9+) is a reference type (or record struct) built for immutable data, giving value-based equality, with-expressions and concise syntax. You pick based on size, mutability and whether you want reference or value semantics.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Class: reference type, identity + behaviour",
-      "Struct: value type, small immutable data",
-      "Record: value equality + immutability + with",
-      "Use struct for tiny data, record for DTOs"
-    ]
-  },
-  "csharp-9": {
-    "pitch": "Boxing wraps a value type in an object on the heap; unboxing unwraps it.",
-    "definition": "Boxing is the implicit conversion of a value type (like int) into an object reference, which allocates a box on the managed heap and copies the value into it. Unboxing is the reverse cast back to the value type. They are expensive because each boxing causes a heap allocation and later GC pressure, plus the copy cost, so hot paths that box in loops (e.g. via non-generic collections or object) can hurt performance.",
-    "similarQuestions": [],
-    "diagram": null,
-    "code": {
-      "language": "csharp",
-      "snippet": "int n = 42;\nobject boxed = n;        // boxing: heap allocation + copy\nint back = (int)boxed;   // unboxing: cast back + copy\n\n// Avoid: use generics so no boxing happens\nList<int> nums = new();  // no boxing, unlike ArrayList"
-    },
-    "keyPoints": [
-      "Boxing: value type -> object (heap alloc)",
-      "Unboxing: object -> value type (cast)",
-      "Costs: allocation, copy, GC pressure",
-      "Avoid with generics (List<T> not ArrayList)"
-    ]
-  },
-  "csharp-10": {
-    "pitch": "The GC automatically reclaims heap memory you no longer reference.",
-    "definition": "The .NET garbage collector automatically frees managed heap memory that is no longer reachable, so you rarely free memory by hand. It is generational: Gen 0 holds new short-lived objects and is collected often and cheaply, survivors are promoted to Gen 1 then Gen 2 (long-lived), and large objects (>= 85KB) go on the Large Object Heap which is collected with Gen 2. A 'memory leak' in .NET usually means objects stay reachable (e.g. static references, undisposed event handlers) so the GC never collects them.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Gen 0: new, short-lived, collected often",
-      "Gen 1: buffer between short and long lived",
-      "Gen 2 + LOH: long-lived / large objects",
-      "Leaks = still-reachable objects (statics, events)"
+    "definition": "These are the three pillars of .NET's runtime. The CLR (Common Language Runtime) is the virtual machine that executes managed code with JIT, garbage collection and security. The CTS (Common Type System) defines how types are declared so all .NET languages share one type model. The CLS (Common Language Specification) is a subset of rules every language follows so C#, F# and VB components interoperate.",
+    "how": "CLR executes IL; CTS guarantees a shared type model; CLS restricts to a common subset for cross-language calls.",
+    "when": "Understanding how .NET runs and interoperates across languages.",
+    "whenNot": "Day-to-day coding - it is background runtime knowledge.",
+    "advantages": [
+      "One runtime, many languages",
+      "Shared type system (CTS)",
+      "Cross-language interop (CLS)"
     ],
-    "bestPractices": [
-      "Unsubscribe events / dispose to avoid leaks",
-      "Avoid long-lived static references to large graphs",
-      "Reduce hot-path allocations to cut Gen 0 churn"
-    ]
-  },
-  "csharp-11": {
-    "pitch": "Strings are immutable; use StringBuilder for heavy concatenation.",
-    "definition": "A string in C# is immutable - every operation that 'changes' it actually creates a new string, which makes strings thread-safe and safe to share but means repeated concatenation allocates many objects. String interning stores one shared copy of identical literals in an intern pool so equal literals reference the same instance. For building strings in loops you use StringBuilder, which edits an internal buffer in place instead of allocating a new string each time.",
-    "similarQuestions": [],
-    "diagram": null,
-    "code": {
-      "language": "csharp",
-      "snippet": "var sb = new StringBuilder();\nfor (int i = 0; i < 1000; i++)\n    sb.Append(i);          // one buffer, no new string each loop\nstring result = sb.ToString();",
-      "note": "StringBuilder mutates a buffer; string += in a loop would allocate 1000 strings."
-    },
-    "keyPoints": [
-      "Immutable: edits create a new string",
-      "Immutability -> thread-safe, shareable",
-      "Interning: shared copy of equal literals",
-      "StringBuilder: in-place buffer for loops"
-    ]
-  },
-  "csharp-15": {
-    "pitch": "OOP rests on encapsulation, abstraction, inheritance and polymorphism.",
-    "definition": "The four pillars of object-oriented programming organise code around objects. Encapsulation hides internal state behind a public interface; abstraction exposes only the essential behaviour and hides the details; inheritance lets a type reuse and extend another; and polymorphism lets one interface behave differently across types (via overriding or interfaces). Together they make code modular, reusable and easy to extend.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Encapsulation: hide state behind methods/properties",
-      "Abstraction: expose essentials, hide details",
-      "Inheritance: reuse and extend a base type",
-      "Polymorphism: one interface, many behaviours"
-    ]
-  },
-  "csharp-18": {
-    "pitch": "Interface = a contract; abstract class = a shared base with state.",
-    "definition": "An interface defines a contract of members a type must implement, with no state and (historically) no implementation, and a class can implement many interfaces. An abstract class is a partially implemented base that can hold fields, constructors and shared logic, but a class can inherit only one. You choose an interface for capability and multiple inheritance, and an abstract class when you want to share state or default behaviour across related types.",
-    "similarQuestions": [],
-    "diagram": null,
-    "comparison": {
-      "altName": "Abstract class",
-      "rows": [
-        {
-          "criterion": "Holds state/fields",
-          "this": "No (contract)",
-          "alt": "Yes"
-        },
-        {
-          "criterion": "Multiple inheritance",
-          "this": "Yes (many)",
-          "alt": "No (one)"
-        },
-        {
-          "criterion": "Default code",
-          "this": "Default members (C# 8+)",
-          "alt": "Full shared logic"
-        },
-        {
-          "criterion": "Use for",
-          "this": "Capability / contract",
-          "alt": "Shared base + state"
-        }
-      ]
-    }
-  },
-  "csharp-25": {
-    "pitch": "Generics let you write type-safe code that works for any type.",
-    "definition": "Generics let you parameterize classes and methods by type, so one implementation works for many types without boxing or casting. They give compile-time type safety and better performance than using object, and constraints (where T : ...) restrict what T can be so you can call its members. List<T>, Dictionary<TKey,TValue> and Func<T> are all generic.",
-    "similarQuestions": [],
-    "diagram": null,
-    "code": {
-      "language": "csharp",
-      "snippet": "public T Max<T>(T a, T b) where T : IComparable<T>  // constraint enables CompareTo\n    => a.CompareTo(b) >= 0 ? a : b;\n\nint m = Max(3, 9);          // works for int...\nstring s = Max(\"a\", \"b\");   // ...and string, type-safe",
-      "note": "The where T : IComparable<T> constraint lets you call CompareTo on T."
-    },
-    "keyPoints": [
-      "One implementation, many types",
-      "Compile-time type safety, no casts",
-      "No boxing -> better performance",
-      "Constraints (where T:) enable member calls"
-    ]
-  },
-  "csharp-26": {
-    "pitch": "LINQ queries are lazy until you actually enumerate them.",
-    "definition": "LINQ uses deferred execution: building a query (Where, Select, etc.) does not run it - it only runs when you enumerate the result, e.g. in a foreach or via ToList/ToArray/Count/First. Immediate execution happens with those materializing operators that force evaluation right away. The pitfall is that a deferred query re-runs every time you enumerate it and reflects the latest source data, so capturing variables or expecting a snapshot can surprise you.",
-    "similarQuestions": [],
-    "diagram": null,
-    "code": {
-      "language": "csharp",
-      "snippet": "var q = numbers.Where(n => n > 5);  // deferred - nothing runs yet\nnumbers.Add(10);\nvar list = q.ToList();              // executes now, sees the added 10",
-      "note": "The query runs at ToList(), so it includes items added after it was defined."
-    },
-    "keyPoints": [
-      "Deferred: query runs when enumerated",
-      "Immediate: ToList/ToArray/Count/First",
-      "Deferred queries re-run on each enumeration",
-      "Materialize (ToList) to snapshot results"
-    ]
-  },
-  "csharp-28": {
-    "pitch": "IQueryable builds a DB query; IEnumerable filters in memory.",
-    "definition": "IEnumerable<T> executes LINQ in memory using delegates, so with Entity Framework it would pull rows into the app and then filter. IQueryable<T> builds an expression tree that the provider (EF) translates into SQL, so filtering, sorting and paging run in the database and only the needed rows come back. That is why IQueryable is preferred in EF - it avoids loading whole tables into memory.",
-    "similarQuestions": [],
-    "diagram": null,
-    "comparison": {
-      "altName": "IEnumerable",
-      "rows": [
-        {
-          "criterion": "Runs where",
-          "this": "Database (SQL)",
-          "alt": "In memory (app)"
-        },
-        {
-          "criterion": "Built from",
-          "this": "Expression trees",
-          "alt": "Delegates"
-        },
-        {
-          "criterion": "EF filtering",
-          "this": "Translated to SQL",
-          "alt": "After loading rows"
-        },
-        {
-          "criterion": "Best for",
-          "this": "Remote/DB queries",
-          "alt": "In-memory collections"
-        }
-      ]
-    }
-  },
-  "csharp-30": {
-    "pitch": "A delegate is a type-safe function pointer; an event wraps it safely.",
-    "definition": "A delegate is a type that references one or more methods with a matching signature, so you can pass methods around and invoke them. An event is a restricted wrapper over a delegate that exposes only subscribe (+=) and unsubscribe (-=) to the outside, so subscribers cannot invoke it or overwrite other subscribers. In short, events use delegates under the hood but enforce the publisher/subscriber pattern safely.",
-    "similarQuestions": [],
-    "diagram": null,
-    "comparison": {
-      "altName": "Event",
-      "rows": [
-        {
-          "criterion": "What it is",
-          "this": "Function reference",
-          "alt": "Wrapper over a delegate"
-        },
-        {
-          "criterion": "Outside code can",
-          "this": "Invoke + assign",
-          "alt": "Only += / -="
-        },
-        {
-          "criterion": "Invoke",
-          "this": "Anyone",
-          "alt": "Only the declaring class"
-        },
-        {
-          "criterion": "Use for",
-          "this": "Callbacks, strategies",
-          "alt": "Pub/sub notifications"
-        }
-      ]
-    }
-  },
-  "csharp-31": {
-    "pitch": "Lambdas are inline functions; closures capture their surrounding variables.",
-    "definition": "A lambda expression is a concise inline function (x => x * 2) you pass as a delegate. A closure is what happens when a lambda captures a variable from its enclosing scope - it captures the variable, not its value, which is the classic loop gotcha. Func, Action and Predicate are the built-in delegate types: Func<...,TResult> returns a value, Action<...> returns void, and Predicate<T> returns a bool.",
-    "similarQuestions": [],
-    "diagram": null,
-    "code": {
-      "language": "csharp",
-      "snippet": "Func<int,int> square = x => x * x;     // returns a value\nAction<string> log = s => Console.WriteLine(s); // returns void\nPredicate<int> isEven = n => n % 2 == 0;        // returns bool",
-      "note": "Func returns a result, Action returns void, Predicate returns a bool."
-    },
-    "keyPoints": [
-      "Lambda: concise inline function",
-      "Closure: captures the variable, not its value",
-      "Func<...,T>: returns a value",
-      "Action<...>: void; Predicate<T>: bool"
-    ]
-  },
-  "csharp-33": {
-    "pitch": "Use throw to preserve the stack trace; throw ex erases it.",
-    "definition": "C# exception handling uses try/catch/finally to detect, handle and clean up after errors, with finally always running for resource cleanup. Inside a catch, 'throw;' rethrows the current exception and preserves the original stack trace, while 'throw ex;' resets the stack trace to the rethrow point, hiding where the error really started. Best practice is to catch only what you can handle and rethrow with 'throw;' (or wrap in a new exception with the original as InnerException).",
-    "similarQuestions": [],
-    "diagram": null,
-    "code": {
-      "language": "csharp",
-      "snippet": "try { Process(); }\ncatch (IOException ex)\n{\n    Log(ex);\n    throw;        // keeps original stack trace\n    // throw ex;  // BAD: resets stack trace\n}",
-      "note": "'throw;' preserves where the error originated; 'throw ex;' loses it."
-    },
-    "keyPoints": [
-      "try/catch/finally; finally always runs",
-      "throw; -> preserves original stack trace",
-      "throw ex; -> resets stack trace (avoid)",
-      "Catch only what you can handle"
-    ]
-  },
-  "csharp-34": {
-    "pitch": "IDisposable + using free unmanaged resources deterministically.",
-    "definition": "IDisposable defines a Dispose() method for releasing unmanaged resources (files, sockets, DB connections) deterministically, and a using statement calls Dispose automatically at the end of the block even on exceptions. Finalize (the destructor) is a safety net the GC calls non-deterministically if Dispose was missed, but it delays collection and should be avoided unless you hold unmanaged handles. The standard pattern is to implement IDisposable and rely on using rather than finalizers.",
-    "similarQuestions": [],
-    "diagram": null,
-    "code": {
-      "language": "csharp",
-      "snippet": "using (var conn = new SqlConnection(cs)) // Dispose called automatically\n{\n    conn.Open();\n    // ... use conn ...\n}                                        // closed even if an exception throws",
-      "note": "using guarantees Dispose() runs at the end of the block, even on errors."
-    },
-    "keyPoints": [
-      "IDisposable.Dispose: deterministic cleanup",
-      "using: auto-Dispose, even on exceptions",
-      "Finalize: GC safety net, non-deterministic",
-      "Prefer using over finalizers"
-    ]
-  },
-  "csharp-35": {
-    "pitch": "await frees the thread while an operation runs, then resumes after it.",
-    "definition": "async/await is C#'s model for non-blocking asynchronous code. The compiler rewrites an async method into a state machine: when you await an incomplete Task, the method returns to its caller and the current thread is released instead of blocking, and when the awaited operation completes a continuation resumes the method where it left off. This lets a server handle many concurrent requests with few threads, which is why I/O-bound work should be async.",
-    "similarQuestions": [],
-    "diagram": null,
-    "steps": [
-      "Compiler turns the method into a state machine",
-      "await checks if the Task is already complete",
-      "If not, the method returns; the thread is freed",
-      "When the Task completes, a continuation is scheduled",
-      "Execution resumes after the await with the result"
+    "disadvantages": [
+      "Abstract, not code you write",
+      "CLS limits some C# features",
+      "Easy to confuse the three"
     ],
-    "code": {
-      "language": "csharp",
-      "snippet": "public async Task<string> GetAsync(string url)\n{\n    var resp = await _http.GetAsync(url); // thread freed while waiting\n    return await resp.Content.ReadAsStringAsync();\n}",
-      "note": "At each await the thread is released; the method resumes when the I/O completes."
-    }
-  },
-  "csharp-36": {
-    "pitch": "Tasks are high-level async work; Threads are raw OS threads.",
-    "definition": "A Thread is a dedicated OS thread you create and manage directly - powerful but heavy. The ThreadPool is a managed pool of reusable worker threads that avoids the cost of creating threads per work item. A Task is a high-level abstraction representing async work that usually runs on the ThreadPool and composes with async/await. ValueTask is a lighter-weight alternative to Task for hot paths that often complete synchronously, avoiding an allocation.",
     "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Thread: raw OS thread, heavy, manual",
-      "ThreadPool: reusable worker threads",
-      "Task: high-level async unit (uses pool)",
-      "ValueTask: low-alloc Task for hot paths"
-    ]
-  },
-  "csharp-39": {
-    "pitch": "Pick the lightest sync primitive that covers your sharing scenario.",
-    "definition": "These are .NET's thread-synchronization primitives, from lightest to heaviest. lock is syntactic sugar over Monitor for mutual exclusion within a process; Interlocked does atomic operations (increment, exchange) without a lock; Mutex is a heavier, OS-level lock that can work across processes; Semaphore/SemaphoreSlim limit how many threads enter a region at once; and ReaderWriterLockSlim allows many readers but one writer. You choose the lightest one that fits to minimize contention.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "lock / Monitor: in-process mutual exclusion",
-      "Interlocked: lock-free atomic ops",
-      "Mutex: cross-process, OS-level (heavy)",
-      "Semaphore(Slim): limit concurrent entrants",
-      "ReaderWriterLockSlim: many readers, one writer"
-    ]
+    "diagram": null
   },
   "csharp-2": {
-    "pitch": "C# code goes source -> IL -> JIT -> native, run by the CLR.",
-    "definition": "A C# program is compiled in two stages. First the C# compiler (Roslyn) turns source code into platform-neutral Intermediate Language (IL) plus metadata, packaged in an assembly (.dll/.exe). At runtime the CLR loads the assembly and the JIT compiler converts IL into native machine code on demand, which the CPU then executes while the GC manages memory. This two-step model is what makes .NET cross-platform and language-agnostic.",
+    "pitch": "C# goes source -> IL -> JIT -> native, executed by the CLR.",
+    "definition": "A C# program compiles in two stages. The C# compiler (Roslyn) turns source into platform-neutral IL plus metadata, packaged in an assembly (.dll/.exe). At runtime the CLR loads the assembly and the JIT converts IL into native machine code on demand, which the CPU executes while the GC manages memory. This two-step model is what makes .NET cross-platform and language-agnostic.",
+    "how": "Roslyn -> IL + metadata (assembly) -> CLR loads -> JIT -> native code -> CPU executes; GC manages memory.",
+    "when": "Understanding builds, IL, and why .NET is portable.",
+    "whenNot": "It is conceptual - not something you tune per request.",
+    "advantages": [
+      "Portable IL, runs anywhere",
+      "JIT optimizes for the machine",
+      "Metadata enables reflection"
+    ],
+    "disadvantages": [
+      "JIT adds first-call latency",
+      "Two-stage build to grasp",
+      "IL is abstracted from you"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "Compilation to execution",
-      "mermaid": "flowchart LR\n  A[C# Source] --> B[Roslyn Compiler]\n  B --> C[IL + Metadata]\n  C --> D[CLR + JIT]\n  D --> E[Native Code]\n  E --> F[CPU Execution]"
-    },
-    "steps": [
-      "C# compiler turns source into IL + metadata",
-      "IL is packaged into an assembly (.dll/.exe)",
-      "CLR loads the assembly at runtime",
-      "JIT compiles IL to native code on demand",
-      "CPU executes native code; GC manages memory"
-    ]
+      "mermaid": "flowchart LR\n  A[C# Source] --> B[Roslyn]\n  B --> C[IL + Metadata]\n  C --> D[CLR + JIT]\n  D --> E[Native]\n  E --> F[CPU]"
+    }
   },
   "csharp-3": {
     "pitch": "The JIT compiles IL to native code at runtime, method by method.",
-    "definition": "The Just-In-Time compiler turns IL into native machine code at runtime, typically the first time each method is called, then caches it so later calls reuse the native version. Variants include normal JIT (compile on first use), pre-JIT/AOT (compile everything ahead of time, e.g. ReadyToRun or Native AOT), and tiered compilation, where .NET first emits quick code then re-JITs hot methods with deeper optimizations. This balances startup time against peak performance.",
+    "definition": "The Just-In-Time compiler turns IL into native machine code at runtime, typically the first time each method is called, then caches it so later calls reuse the native version. Variants include normal JIT, pre-JIT/AOT (compile ahead, e.g. ReadyToRun or Native AOT), and tiered compilation, where .NET emits quick code first then re-JITs hot methods with deeper optimizations. This balances startup against peak performance.",
+    "how": "First call -> JIT compiles that method's IL to native -> cache it; tiered JIT re-optimizes hot methods later.",
+    "when": "Reasoning about startup vs steady-state performance.",
+    "whenNot": "When startup is critical and you should consider AOT.",
+    "advantages": [
+      "Optimizes for the actual CPU",
+      "Caches native code",
+      "Tiered: fast start + hot tuning"
+    ],
+    "disadvantages": [
+      "First-call JIT latency",
+      "Higher memory than AOT",
+      "Cold starts hurt serverless"
+    ],
     "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Normal JIT: compile each method on first call",
-      "Pre-JIT / AOT: compile ahead (ReadyToRun, Native AOT)",
-      "Tiered: quick code first, optimize hot paths later",
-      "Native code is cached and reused"
-    ]
+    "diagram": null
   },
   "csharp-4": {
-    "pitch": "Managed code runs under the CLR; unmanaged code runs directly on the OS.",
-    "definition": "Managed code is compiled to IL and executed by the CLR, which provides garbage collection, type safety and security. Unmanaged code (C/C++, COM, OS APIs) compiles straight to native machine code and manages its own memory, running outside the CLR's control. C# is managed, but it can call unmanaged code via P/Invoke or interop when it needs native libraries.",
+    "pitch": "Managed code runs under the CLR; unmanaged runs directly on the OS.",
+    "definition": "Managed code is compiled to IL and executed by the CLR, which provides garbage collection, type safety and security. Unmanaged code (C/C++, COM, OS APIs) compiles straight to native machine code and manages its own memory, running outside the CLR. C# is managed, but it can call unmanaged code via P/Invoke or interop when it needs native libraries.",
+    "how": "Managed: CLR runs IL with GC + safety. Unmanaged: native code with manual memory; bridge via P/Invoke.",
+    "when": "Knowing when interop/P-Invoke and manual cleanup apply.",
+    "whenNot": "Pure C# work where everything is already managed.",
+    "advantages": [
+      "GC + type safety (managed)",
+      "Portable and secure",
+      "Interop available when needed"
+    ],
+    "disadvantages": [
+      "Interop needs marshalling care",
+      "Unmanaged leaks if mishandled",
+      "P/Invoke adds complexity"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "Unmanaged code",
-      "rows": [
-        {
-          "criterion": "Runs under",
-          "this": "CLR",
-          "alt": "OS directly"
-        },
-        {
-          "criterion": "Memory",
-          "this": "GC-managed",
-          "alt": "Manual"
-        },
-        {
-          "criterion": "Safety",
-          "this": "Type-safe",
-          "alt": "No guarantees"
-        },
-        {
-          "criterion": "Examples",
-          "this": "C#, F#, VB",
-          "alt": "C/C++, COM"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "[DllImport(\"user32.dll\")]\nstatic extern int MessageBox(IntPtr h, string txt, string cap, int type); // call unmanaged"
     }
   },
   "csharp-5": {
     "pitch": "Modern C# (8-13) adds null safety, records, pattern matching and more.",
-    "definition": "Recent C# versions focus on safety, conciseness and performance. Highlights: C# 8 added nullable reference types, switch expressions and default interface methods; C# 9 brought records, init-only setters and top-level statements; C# 10-11 added global usings, file-scoped namespaces, required members and raw string literals; C# 12-13 added primary constructors, collection expressions and further refinements. Together they cut boilerplate and make null handling explicit.",
+    "definition": "Recent C# versions focus on safety, conciseness and performance. C# 8 added nullable reference types, switch expressions and default interface methods; C# 9 brought records, init-only setters and top-level statements; C# 10-11 added global usings, file-scoped namespaces, required members and raw string literals; C# 12-13 added primary constructors and collection expressions. Together they cut boilerplate and make null handling explicit.",
+    "how": "Each version layers compiler features on the same runtime; you opt in via LangVersion and the target framework.",
+    "when": "Writing modern, concise, null-safe C#.",
+    "whenNot": "Code that must compile on very old language versions.",
+    "advantages": [
+      "Less boilerplate",
+      "Explicit null safety",
+      "Records simplify data types"
+    ],
+    "disadvantages": [
+      "Newer features need newer SDK",
+      "Team must learn them",
+      "Some need latest runtime"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "C# 8: nullable refs, switch expressions",
-      "C# 9: records, init-only, top-level statements",
-      "C# 10-11: global usings, required members, raw strings",
-      "C# 12-13: primary constructors, collection expressions"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public record Point(int X, int Y);        // C# 9 record\nstring s = shape switch { Circle => \"round\", _ => \"other\" }; // switch expression"
+    }
   },
   "csharp-6": {
     "pitch": "var is compile-time inferred, dynamic is runtime, explicit is fixed.",
-    "definition": "All three declare variables but differ in when the type is resolved. var is still statically typed - the compiler infers the type at compile time from the right-hand side, so it is fully type-checked. Explicit typing states the type directly. dynamic bypasses compile-time checking entirely and resolves members at runtime, which is flexible for interop/COM but loses IntelliSense and can throw at runtime.",
+    "definition": "All three declare variables but differ in when the type is resolved. var is still statically typed - the compiler infers the type at compile time from the right-hand side, so it is fully type-checked. Explicit typing states the type directly. dynamic bypasses compile-time checking entirely and resolves members at runtime, flexible for interop/COM but losing IntelliSense and risking runtime errors.",
+    "how": "var: compiler infers the static type. explicit: you state it. dynamic: type resolved by the DLR at runtime.",
+    "when": "var for obvious types; dynamic only for interop/COM/JSON.",
+    "whenNot": "Using dynamic where a real type would be safer.",
+    "advantages": [
+      "var: concise, still type-safe",
+      "explicit: clearest intent",
+      "dynamic: flexible interop"
+    ],
+    "disadvantages": [
+      "dynamic loses compile checks",
+      "dynamic: no IntelliSense",
+      "var can hide the type"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "var: compile-time inferred, fully type-safe",
-      "explicit: type stated directly",
-      "dynamic: resolved at runtime, no compile check",
-      "dynamic suits interop/COM, risks runtime errors"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "var n = 5;            // int, inferred at compile time\ndynamic d = GetCom(); // member calls resolved at runtime"
+    }
+  },
+  "csharp-7": {
+    "pitch": "Value types hold the data; reference types hold a pointer to it.",
+    "definition": "Value types (int, struct, enum, bool) store their data directly and live on the stack or inline, so copying them copies the whole value. Reference types (class, string, array, delegate) store a reference to an object on the managed heap, so copying copies only the pointer and both variables share the same object. This drives how assignment, equality and arguments behave.",
+    "how": "Value type: data copied on assignment. Reference type: pointer copied, both share one heap object.",
+    "when": "Small immutable data as structs; everything else as classes.",
+    "whenNot": "Large mutable data as a struct (expensive copies).",
+    "advantages": [
+      "Value types avoid heap/GC",
+      "Reference types share state",
+      "Clear copy semantics"
+    ],
+    "disadvantages": [
+      "Struct copies can be costly",
+      "Shared refs cause aliasing bugs",
+      "Mutable structs surprise people"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int a = 1; int b = a; b++;            // a stays 1 (value copy)\nvar l1 = new List<int>(); var l2 = l1; l2.Add(9); // l1 also has 9 (shared ref)"
+    }
+  },
+  "csharp-8": {
+    "pitch": "Class = reference, Struct = value, Record = value-equality data type.",
+    "definition": "A class is a reference type for objects with identity and behaviour, on the heap. A struct is a value type for small, immutable, short-lived data, copied by value and usually stack-allocated. A record (C# 9+) is a reference type (or record struct) for immutable data, giving value-based equality, with-expressions and concise syntax. You pick by size, mutability and whether you want reference or value semantics.",
+    "how": "Class allocates on the heap with identity; struct copies by value; record adds value equality + with-clones.",
+    "when": "Struct for tiny data, record for immutable DTOs, class otherwise.",
+    "whenNot": "Big mutable data as a struct, or needing identity as a record.",
+    "advantages": [
+      "Class: rich, shareable objects",
+      "Struct: cheap small values",
+      "Record: easy immutable data"
+    ],
+    "disadvantages": [
+      "Mutable structs are bug-prone",
+      "Records copy on with",
+      "Wrong choice hurts perf/semantics"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "class C { } struct S { } record R(int X);\nvar r2 = r1 with { X = 5 };   // record clone with one change"
+    }
+  },
+  "csharp-9": {
+    "pitch": "Boxing wraps a value type in a heap object; unboxing unwraps it.",
+    "definition": "Boxing is the implicit conversion of a value type (like int) into an object reference, allocating a box on the managed heap and copying the value into it. Unboxing is the reverse cast back to the value type. They are expensive because each boxing causes a heap allocation and later GC pressure, plus the copy cost, so hot paths that box in loops (non-generic collections, object) hurt performance.",
+    "how": "Value type -> object: allocate a box on the heap + copy in. object -> value type: cast + copy out.",
+    "when": "Almost never on purpose - avoid it in hot paths.",
+    "whenNot": "Tight loops or large data (use generics instead).",
+    "advantages": [
+      "Lets value types act as object",
+      "Needed by legacy non-generic APIs",
+      "Transparent to write"
+    ],
+    "disadvantages": [
+      "Heap allocation per box",
+      "GC pressure in loops",
+      "Hidden cost, easy to miss"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "int n = 42;\nobject boxed = n;        // boxing: heap alloc + copy\nList<int> nums = new();  // generics avoid boxing (vs ArrayList)",
+      "note": "Use generics so no boxing happens."
+    }
+  },
+  "csharp-10": {
+    "pitch": "The GC automatically reclaims heap memory you no longer reference.",
+    "definition": "The .NET garbage collector automatically frees managed heap memory that is no longer reachable. It is generational: Gen 0 holds new short-lived objects (collected often and cheaply), survivors promote to Gen 1 then Gen 2 (long-lived), and large objects (>= 85KB) go on the Large Object Heap collected with Gen 2. A .NET 'memory leak' usually means objects stay reachable (statics, undisposed event handlers) so the GC never collects them.",
+    "how": "Roots traced -> unreachable objects collected; survivors promote Gen 0 -> 1 -> 2; LOH with Gen 2.",
+    "when": "Understanding allocation cost and tuning GC pressure.",
+    "whenNot": "Assuming GC frees unmanaged or still-referenced objects.",
+    "advantages": [
+      "Automatic memory management",
+      "Generational = cheap Gen 0",
+      "Compaction reduces fragmentation"
+    ],
+    "disadvantages": [
+      "Non-deterministic pauses",
+      "Leaks via reachable refs",
+      "LOH fragments, no compaction by default"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "btn.Click -= Handler;   // unsubscribe so the GC can collect the subscriber",
+      "note": "Undisposed event handlers keep objects reachable - a common leak."
+    }
+  },
+  "csharp-11": {
+    "pitch": "Strings are immutable; use StringBuilder for heavy concatenation.",
+    "definition": "A string in C# is immutable - every operation that 'changes' it creates a new string, which makes strings thread-safe and shareable but means repeated concatenation allocates many objects. String interning stores one shared copy of identical literals in an intern pool so equal literals reference the same instance. For building strings in loops you use StringBuilder, which edits an internal buffer in place.",
+    "how": "string ops allocate a new string; intern pool shares equal literals; StringBuilder mutates one buffer.",
+    "when": "StringBuilder for loops/large builds; string for fixed text.",
+    "whenNot": "Concatenating in a big loop with += (allocates each time).",
+    "advantages": [
+      "Immutable = thread-safe",
+      "Interning shares literals",
+      "StringBuilder avoids allocations"
+    ],
+    "disadvantages": [
+      "Concatenation allocates a lot",
+      "Interned strings live long",
+      "Easy to misuse += in loops"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var sb = new StringBuilder();\nfor (int i = 0; i < 1000; i++) sb.Append(i); // one buffer, not 1000 strings\nstring r = sb.ToString();"
+    }
   },
   "csharp-12": {
     "pitch": "const is compile-time, readonly is run-time, static readonly is shared.",
-    "definition": "All three create values you cannot reassign, but they differ in when the value is set. const is a compile-time constant baked into callers, so it must be a literal and never changes. readonly is set once at runtime (in the declaration or constructor), so it can use computed or injected values per instance. static readonly is a single readonly value shared across all instances, set in a static constructor.",
+    "definition": "All three create values you cannot reassign, but differ in when set. const is a compile-time constant baked into callers (literals only, never changes). readonly is set once at runtime (declaration or constructor), so it can use computed/injected values per instance. static readonly is a single readonly value shared across all instances, set in a static constructor.",
+    "how": "const inlined at compile time; readonly assigned in a ctor at runtime; static readonly shared, set once.",
+    "when": "const for true constants; readonly for runtime-fixed values.",
+    "whenNot": "const for values that might change (forces recompiles of callers).",
+    "advantages": [
+      "const: fast, inlined",
+      "readonly: runtime values",
+      "static readonly: shared once"
+    ],
+    "disadvantages": [
+      "const changes need recompiles",
+      "const literals only",
+      "readonly settable only in ctor"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "readonly",
-      "rows": [
-        {
-          "criterion": "Set at",
-          "this": "Compile time",
-          "alt": "Runtime (ctor)"
-        },
-        {
-          "criterion": "Value",
-          "this": "Literal only",
-          "alt": "Computed allowed"
-        },
-        {
-          "criterion": "Per",
-          "this": "Inlined to callers",
-          "alt": "Instance (or static)"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "const double Pi = 3.14159;          // compile-time\nreadonly DateTime _created = DateTime.Now; // runtime, per instance"
     }
   },
   "csharp-13": {
     "pitch": "Access modifiers control where a member can be seen and used.",
-    "definition": "C# access modifiers set the visibility of types and members. public is visible everywhere; private is only inside the same type; protected is the type plus derived types; internal is the same assembly; protected internal is protected OR internal (derived types or same assembly); and private protected is protected AND internal (derived types within the same assembly). Defaulting to the most restrictive level that still works is good encapsulation.",
+    "definition": "C# access modifiers set the visibility of types and members. public is visible everywhere; private is only inside the same type; protected is the type plus derived types; internal is the same assembly; protected internal is protected OR internal; and private protected is protected AND internal. Defaulting to the most restrictive level that works is good encapsulation.",
+    "how": "The compiler enforces visibility at each call site based on the member's modifier and the caller's location.",
+    "when": "Encapsulating - expose only what callers need.",
+    "whenNot": "Making everything public (breaks encapsulation).",
+    "advantages": [
+      "Enforces encapsulation",
+      "Six precise levels",
+      "internal hides assembly internals"
+    ],
+    "disadvantages": [
+      "Six levels to remember",
+      "protected internal vs private protected confuse",
+      "Over-exposing is tempting"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "public: everywhere",
-      "private: same type only",
-      "protected: type + derived types",
-      "internal: same assembly",
-      "protected internal: derived OR same assembly",
-      "private protected: derived AND same assembly"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public int Id;          private string _secret;\nprotected void OnInit(); internal void Helper();"
+    }
   },
   "csharp-14": {
     "pitch": "ref passes by reference, out returns a value, in passes read-only.",
-    "definition": "These modifiers change how arguments are passed. ref passes a variable by reference so the method can read and modify it, and it must be initialized before the call. out also passes by reference but the method must assign it before returning, so it is used to return extra values. in passes by reference as read-only, avoiding a copy of large structs while preventing modification.",
+    "definition": "These modifiers change how arguments pass. ref passes a variable by reference so the method can read and modify it (must be initialized first). out also passes by reference but the method must assign it before returning, so it is used to return extra values. in passes by reference as read-only, avoiding a copy of large structs while preventing modification.",
+    "how": "ref/out/in all pass an alias to the variable; out requires assignment, in forbids it, ref allows read+write.",
+    "when": "out for multiple returns; in for big read-only structs.",
+    "whenNot": "Overusing ref/out where a return value is clearer.",
+    "advantages": [
+      "out: return extra values",
+      "in: avoid big struct copies",
+      "ref: in-place modification"
+    ],
+    "disadvantages": [
+      "Harder to read than returns",
+      "out must be assigned",
+      "Overuse hurts clarity"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "comparison": {
-      "altName": "out / in",
-      "rows": [
-        {
-          "criterion": "ref",
-          "this": "Read + write, pre-init",
-          "alt": ""
-        },
-        {
-          "criterion": "out",
-          "this": "Method must assign",
-          "alt": "Returns extra values"
-        },
-        {
-          "criterion": "in",
-          "this": "Read-only by ref",
-          "alt": "Avoids copying big structs"
-        }
-      ]
+    "code": {
+      "language": "csharp",
+      "snippet": "if (int.TryParse(s, out int n)) Use(n);  // out returns the parsed value"
+    }
+  },
+  "csharp-15": {
+    "pitch": "OOP rests on encapsulation, abstraction, inheritance and polymorphism.",
+    "definition": "The four pillars organise code around objects. Encapsulation hides internal state behind a public interface; abstraction exposes only essential behaviour and hides details; inheritance lets a type reuse and extend another; and polymorphism lets one interface behave differently across types (via overriding or interfaces). Together they make code modular, reusable and extensible.",
+    "how": "Hide state (encapsulation), model essentials (abstraction), reuse via base types (inheritance), vary behaviour (polymorphism).",
+    "when": "Designing maintainable object-oriented systems.",
+    "whenNot": "Tiny scripts where heavy OOP is overkill.",
+    "advantages": [
+      "Modular, reusable design",
+      "Hides complexity",
+      "Polymorphism = flexible code"
+    ],
+    "disadvantages": [
+      "Over-abstraction adds layers",
+      "Deep inheritance is brittle",
+      "Misuse hurts more than helps"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "abstract class Shape { public abstract double Area(); }   // abstraction\nclass Circle : Shape { public override double Area() => ...; } // polymorphism"
     }
   },
   "csharp-16": {
     "pitch": "Overloading is compile-time, overriding is run-time, hiding shadows.",
-    "definition": "These three look similar but resolve differently. Overloading means several methods with the same name but different parameters, resolved at compile time. Overriding replaces a virtual/abstract base method in a derived class (override keyword) and is resolved at runtime via polymorphism. Method hiding uses the new keyword to shadow a base member without polymorphism, so the version called depends on the reference's compile-time type.",
+    "definition": "These resolve differently. Overloading means several methods with the same name but different parameters, resolved at compile time. Overriding replaces a virtual/abstract base method in a derived class (override) and is resolved at runtime via polymorphism. Method hiding uses new to shadow a base member without polymorphism, so the called version depends on the reference's compile-time type.",
+    "how": "Overload: compiler picks by signature. Override: runtime picks by actual type. Hide (new): picks by reference type.",
+    "when": "Override for polymorphism; overload for verb variants.",
+    "whenNot": "Using new (hiding) when you meant override.",
+    "advantages": [
+      "Overload: flexible call shapes",
+      "Override: true polymorphism",
+      "Clear when used correctly"
+    ],
+    "disadvantages": [
+      "Hiding surprises callers",
+      "Override needs virtual base",
+      "Easy to confuse the three"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Overloading: same name, different params (compile-time)",
-      "Overriding: replace virtual method (runtime, polymorphic)",
-      "Hiding (new): shadow base member, not polymorphic",
-      "Override needs virtual/abstract base"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public virtual void Draw();          // base\npublic override void Draw();         // overriding (runtime)\npublic new void Draw();              // hiding (by ref type)"
+    }
   },
   "csharp-17": {
     "pitch": "Constructor chaining reuses one constructor from another.",
-    "definition": "Constructor chaining is calling one constructor from another to avoid duplicating initialization - this(...) calls another constructor in the same class, and base(...) calls a base-class constructor. In an inheritance hierarchy, construction runs base-first: the base constructor executes before the derived one, so the object is built from the most-base type up. Field initializers run before the constructor body.",
+    "definition": "Constructor chaining is calling one constructor from another to avoid duplicating initialization - this(...) calls another constructor in the same class, and base(...) calls a base-class constructor. In inheritance, construction runs base-first: the base constructor executes before the derived one, and field initializers run before the constructor body.",
+    "how": "Derived ctor -> base(...) -> base field init + base ctor -> derived field init -> derived ctor body.",
+    "when": "Removing duplicated initialization across constructors.",
+    "whenNot": "Doing heavy work or virtual calls in constructors.",
+    "advantages": [
+      "No duplicated init code",
+      "Clear base-first order",
+      "Centralizes setup"
+    ],
+    "disadvantages": [
+      "Order surprises beginners",
+      "Virtual calls in ctors are unsafe",
+      "Deep chains hard to trace"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "steps": [
-      "Derived constructor is invoked",
-      "It calls base(...) (implicitly if omitted)",
-      "Base field initializers + base constructor run first",
-      "Then derived field initializers",
-      "Finally the derived constructor body"
-    ],
     "code": {
       "language": "csharp",
-      "snippet": "public Animal(string name) { Name = name; }\npublic Dog(string name) : base(name)  // chain to base ctor\n{\n    // runs AFTER Animal's constructor\n}"
+      "snippet": "public Dog(string name) : base(name) { } // chain to base ctor (runs first)"
+    }
+  },
+  "csharp-18": {
+    "pitch": "Interface = a contract; abstract class = a shared base with state.",
+    "definition": "An interface defines a contract of members a type must implement, with no state and (historically) no implementation, and a class can implement many interfaces. An abstract class is a partially implemented base that can hold fields, constructors and shared logic, but a class can inherit only one. Choose an interface for capability and multiple inheritance, an abstract class to share state or default behaviour.",
+    "how": "Interface = pure contract (multi-implement); abstract class = base with fields/ctors/shared code (single-inherit).",
+    "when": "Interface for capability; abstract class for shared base + state.",
+    "whenNot": "Forcing one base class when a contract is enough.",
+    "advantages": [
+      "Interface: many per type",
+      "Abstract: share state + logic",
+      "Both enable polymorphism"
+    ],
+    "disadvantages": [
+      "Interface holds no state (pre-C# 8)",
+      "Single class inheritance",
+      "Choosing wrong limits design"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "interface IRepo { void Save(); }\nabstract class RepoBase { protected Db Db; public abstract void Save(); }"
     }
   },
   "csharp-19": {
     "pitch": "Explicit implementation hides an interface member behind the interface.",
-    "definition": "Explicit interface implementation implements a member as InterfaceName.Member, so it is only accessible when the object is referenced through that interface, not through the class. You use it to resolve name clashes when a type implements two interfaces with the same member, or to keep an interface member out of the class's public surface. It cannot have an access modifier.",
+    "definition": "Explicit interface implementation implements a member as InterfaceName.Member, so it is only accessible when the object is referenced through that interface, not through the class. You use it to resolve name clashes when a type implements two interfaces with the same member, or to keep an interface member off the class's public surface. It cannot have an access modifier.",
+    "how": "Member declared as IFace.Member is invoked only via an IFace reference, not the concrete class.",
+    "when": "Resolving member-name clashes between two interfaces.",
+    "whenNot": "When the member should be part of the public API.",
+    "advantages": [
+      "Resolves interface clashes",
+      "Hides member from class API",
+      "Keeps surface clean"
+    ],
+    "disadvantages": [
+      "Must cast to call it",
+      "No access modifier allowed",
+      "Less discoverable"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "when": "When two interfaces share a member name, or to hide an interface member from the class's public API.",
     "code": {
       "language": "csharp",
-      "snippet": "class Repo : IDisposable\n{\n    void IDisposable.Dispose() { }  // only callable via IDisposable\n}\n((IDisposable)repo).Dispose();    // must cast to the interface"
+      "snippet": "class Repo : IDisposable {\n    void IDisposable.Dispose() { }   // only via IDisposable\n}\n((IDisposable)repo).Dispose();"
     }
   },
   "csharp-20": {
     "pitch": "The diamond problem is ambiguous multiple inheritance; C# avoids it.",
     "definition": "The diamond problem occurs when a type inherits the same member from two paths, leaving it ambiguous which to use. C# sidesteps it by not allowing multiple class inheritance - a class has one base. A type can implement many interfaces, and if two interfaces declare the same default method, C# requires you to resolve it explicitly, so ambiguity is a compile error you must fix.",
+    "how": "C# forbids multiple base classes; clashing interface default methods must be disambiguated explicitly.",
+    "when": "Reasoning about multiple inheritance and interfaces.",
+    "whenNot": "Expecting C++-style multiple class inheritance.",
+    "advantages": [
+      "No ambiguous base members",
+      "Multiple interfaces still allowed",
+      "Compiler forces resolution"
+    ],
+    "disadvantages": [
+      "No multiple class inheritance",
+      "Default-method clashes need handling",
+      "Workarounds via composition"
+    ],
     "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Problem: same member inherited via two paths",
-      "C# allows only single class inheritance",
-      "Multiple interfaces are allowed",
-      "Clashing default methods must be resolved explicitly"
-    ]
+    "diagram": null
   },
   "csharp-21": {
     "pitch": "static members belong to the type, not to any instance.",
-    "definition": "The static keyword ties members to the type itself rather than to instances. A static field is one shared value across all instances; a static method is called on the type and cannot touch instance data; a static constructor runs once to initialize static state before first use; and a static class cannot be instantiated and holds only static members (e.g. utility/helper classes like Math).",
+    "definition": "The static keyword ties members to the type rather than instances. A static field is one shared value across all instances; a static method is called on the type and cannot touch instance data; a static constructor runs once to initialize static state before first use; and a static class cannot be instantiated and holds only static members (e.g. Math).",
+    "how": "Static state lives once per type; static ctor runs once before first use; static classes hold only static members.",
+    "when": "Stateless helpers, shared counters, utility classes.",
+    "whenNot": "Shared mutable static state in concurrent code.",
+    "advantages": [
+      "Shared, no instance needed",
+      "Good for utilities (Math)",
+      "Static ctor lazy-inits once"
+    ],
+    "disadvantages": [
+      "Mutable static = thread risk",
+      "Hard to mock/unit-test",
+      "Global state hides coupling"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Static field: one shared value for all instances",
-      "Static method: called on the type, no instance data",
-      "Static constructor: runs once before first use",
-      "Static class: no instances, only static members"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public static class MathUtil { public static int Square(int x) => x*x; }"
+    }
   },
   "csharp-22": {
     "pitch": "Properties wrap fields with logic; init-only allows set only at creation.",
-    "definition": "These are ways to expose data on a type. A field is a raw variable; a property wraps get/set accessors around backing data so you can add validation or logic. An auto-implemented property (public int X { get; set; }) lets the compiler generate the backing field. An init-only property (get; init;) can be set only during object initialization, enabling immutable objects you still construct with object initializers.",
+    "definition": "These expose data on a type. A field is a raw variable; a property wraps get/set accessors around backing data so you can add validation. An auto-implemented property (get; set;) lets the compiler generate the backing field. An init-only property (get; init;) can be set only during object initialization, enabling immutable objects you still build with object initializers.",
+    "how": "Property accessors run code around a backing field; init restricts the setter to the object-initialization phase.",
+    "when": "Properties for public data; init-only for immutability.",
+    "whenNot": "Public mutable fields (no encapsulation).",
+    "advantages": [
+      "Validation via accessors",
+      "Auto-properties cut boilerplate",
+      "init-only = safe immutability"
+    ],
+    "disadvantages": [
+      "Slightly more than a field",
+      "Init-only set once only",
+      "Over-engineering trivial data"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Field: raw variable",
-      "Property: get/set with logic/validation",
-      "Auto-property: compiler-generated backing field",
-      "init-only: settable only at creation (immutability)"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public string Name { get; init; }   // settable only at creation\npublic int Age  { get; set;  }"
+    }
   },
   "csharp-23": {
     "pitch": "Pick the collection by access pattern: index, key, order or uniqueness.",
-    "definition": "Each collection optimizes a different access pattern. Arrays are fixed-size, contiguous, fast index access. List<T> is a resizable array with fast index access and amortized append. LinkedList<T> gives O(1) insert/remove at known nodes but slow indexing. Dictionary<TKey,TValue> and the legacy non-generic HashTable give O(1) key lookups via hashing. HashSet<T> stores unique items with O(1) membership tests.",
+    "definition": "Each collection optimizes a different access pattern. Arrays are fixed-size, contiguous, fast index access. List<T> is a resizable array with fast index and amortized append. LinkedList<T> gives O(1) insert/remove at known nodes but slow indexing. Dictionary<TKey,TValue> and the legacy HashTable give O(1) key lookups via hashing. HashSet<T> stores unique items with O(1) membership tests.",
+    "how": "Arrays/List index by position; Dictionary/HashSet hash keys to buckets; LinkedList links nodes for O(1) splice.",
+    "when": "Match the structure to your dominant operation.",
+    "whenNot": "Using a List for key lookups (O(n) scans).",
+    "advantages": [
+      "List<T>: general purpose",
+      "Dictionary: O(1) key lookup",
+      "HashSet: fast uniqueness"
+    ],
+    "disadvantages": [
+      "Wrong choice = O(n) ops",
+      "LinkedList: poor cache locality",
+      "Dictionary unordered"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Array: fixed size, fast index access",
-      "List<T>: resizable array, fast index/append",
-      "LinkedList<T>: O(1) node insert/remove, slow index",
-      "Dictionary/HashTable: O(1) key lookup",
-      "HashSet<T>: unique items, O(1) contains"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "var byId = new Dictionary<int, User>();   // O(1) lookup\nvar seen = new HashSet<string>();         // O(1) contains"
+    }
   },
   "csharp-24": {
-    "pitch": "These interfaces add capability as you go from read-only to queryable.",
-    "definition": "These collection interfaces form a capability ladder. IEnumerable<T> only supports forward iteration. ICollection<T> adds Count, Add and Remove. IList<T> adds index access and insertion. IReadOnlyCollection<T> exposes Count without mutation. IQueryable<T> represents a query that a provider (like EF) translates to another language such as SQL. You expose the least capable interface that the caller needs.",
+    "pitch": "These interfaces add capability from read-only iteration to queryable.",
+    "definition": "These collection interfaces form a capability ladder. IEnumerable<T> only supports forward iteration. ICollection<T> adds Count, Add and Remove. IList<T> adds index access and insertion. IReadOnlyCollection<T> exposes Count without mutation. IQueryable<T> represents a query a provider (like EF) translates to SQL. Expose the least capable interface the caller needs.",
+    "how": "Each interface extends the previous with more capability; IQueryable defers to a provider that translates the query.",
+    "when": "Return the least powerful interface that satisfies callers.",
+    "whenNot": "Returning IList when callers only iterate (over-exposing).",
+    "advantages": [
+      "Least-privilege return types",
+      "IQueryable = DB-side queries",
+      "Read-only options exist"
+    ],
+    "disadvantages": [
+      "Easy to over-expose",
+      "IQueryable provider quirks",
+      "Choosing wrong leaks intent"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "when": "Return the least capable interface a caller needs; IQueryable only for remote/DB queries.",
-    "keyPoints": [
-      "IEnumerable<T>: iterate forward only",
-      "ICollection<T>: + Count, Add, Remove",
-      "IList<T>: + indexer and Insert",
-      "IReadOnlyCollection<T>: Count, no mutation",
-      "IQueryable<T>: provider-translated queries (EF)"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public IReadOnlyCollection<Order> GetAll() => _orders;  // expose minimum needed"
+    }
+  },
+  "csharp-25": {
+    "pitch": "Generics let you write type-safe code that works for any type.",
+    "definition": "Generics let you parameterize classes and methods by type, so one implementation works for many types without boxing or casting. They give compile-time type safety and better performance than using object, and constraints (where T : ...) restrict T so you can call its members. List<T>, Dictionary<TKey,TValue> and Func<T> are all generic.",
+    "how": "The compiler specializes the generic per type argument; constraints unlock members; no boxing for value types.",
+    "when": "Reusable, type-safe containers and algorithms.",
+    "whenNot": "When a single concrete type is all you will ever need.",
+    "advantages": [
+      "One impl, many types",
+      "Type-safe, no casts",
+      "No boxing -> faster"
+    ],
+    "disadvantages": [
+      "Constraints can get complex",
+      "Harder error messages",
+      "Over-generalizing adds noise"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public T Max<T>(T a, T b) where T : IComparable<T> // constraint enables CompareTo\n    => a.CompareTo(b) >= 0 ? a : b;"
+    }
+  },
+  "csharp-26": {
+    "pitch": "LINQ queries are lazy until you actually enumerate them.",
+    "definition": "LINQ uses deferred execution: building a query (Where, Select) does not run it - it runs only when you enumerate, e.g. in a foreach or via ToList/ToArray/Count/First. Immediate execution happens with those materializing operators. The pitfall is that a deferred query re-runs every time you enumerate it and reflects the latest source data, so expecting a snapshot can surprise you.",
+    "how": "Operators build an expression chain; iteration pulls items through it; materializers force evaluation now.",
+    "when": "Deferred for composability; materialize to snapshot/reuse.",
+    "whenNot": "Re-enumerating an expensive deferred query repeatedly.",
+    "advantages": [
+      "Composable, lazy queries",
+      "Only computes what's needed",
+      "Materialize when you want a snapshot"
+    ],
+    "disadvantages": [
+      "Re-runs on each enumeration",
+      "Captured variables surprise",
+      "Hidden DB round trips"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var q = nums.Where(n => n > 5); // deferred - nothing runs\nnums.Add(10);\nvar list = q.ToList();          // runs now, sees the 10"
+    }
   },
   "csharp-27": {
     "pitch": "These LINQ operators filter, project and pick elements differently.",
-    "definition": "These are common LINQ operators. Where filters by a predicate. Select projects each item; SelectMany projects and flattens nested sequences into one. Any returns whether any item matches; Count returns how many. First/FirstOrDefault return the first match (FirstOrDefault gives a default instead of throwing when empty). Single/SingleOrDefault expect exactly one match and throw if there are more than one.",
+    "definition": "Common LINQ operators: Where filters by a predicate; Select projects each item, SelectMany projects and flattens nested sequences; Any returns whether any item matches, Count returns how many; First/FirstOrDefault return the first match (FirstOrDefault returns a default instead of throwing when empty); Single/SingleOrDefault expect exactly one and throw if there are more than one.",
+    "how": "Each operator transforms or reduces the sequence; First/Single differ by how they treat zero or many matches.",
+    "when": "Pick by intent: filter, project, exists, count, or pick one.",
+    "whenNot": "Using Single when duplicates are possible (it throws).",
+    "advantages": [
+      "Expressive data queries",
+      "Project + flatten (SelectMany)",
+      "Safe variants (...OrDefault)"
+    ],
+    "disadvantages": [
+      "First vs Single misuse throws",
+      "SelectMany confuses beginners",
+      "Deferred semantics bite"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Where: filter by predicate",
-      "Select: project; SelectMany: project + flatten",
-      "Any: exists? Count: how many",
-      "First(OrDefault): first match (default if empty)",
-      "Single(OrDefault): exactly one, else throws"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "var names = users.Where(u => u.Active).Select(u => u.Name);\nvar one = users.SingleOrDefault(u => u.Id == id); // exactly one or null"
+    }
+  },
+  "csharp-28": {
+    "pitch": "IQueryable builds a DB query; IEnumerable filters in memory.",
+    "definition": "IEnumerable<T> executes LINQ in memory using delegates, so with EF it would pull rows into the app and then filter. IQueryable<T> builds an expression tree that the provider (EF) translates into SQL, so filtering, sorting and paging run in the database and only the needed rows return. That is why IQueryable is preferred in EF - it avoids loading whole tables.",
+    "how": "IQueryable: expression tree -> SQL at the DB. IEnumerable: delegates -> evaluated in app memory.",
+    "when": "IQueryable for DB queries; IEnumerable for in-memory data.",
+    "whenNot": "Calling AsEnumerable early then filtering (loads everything).",
+    "advantages": [
+      "IQueryable: DB-side filtering",
+      "Transfers only needed rows",
+      "Composable into SQL"
+    ],
+    "disadvantages": [
+      "Accidental client-eval is slow",
+      "Provider can't translate all C#",
+      "Mixing the two surprises"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "db.Users.Where(u => u.Age > 18)   // IQueryable -> SQL WHERE\n  .ToList();                       // executes the query"
+    }
   },
   "csharp-29": {
     "pitch": "A delegate references methods; multicast holds several; events wrap it.",
     "definition": "A delegate is a type-safe reference to one or more methods with a matching signature. A multicast delegate chains multiple methods with += and invokes them all in order on a single call (for non-void delegates only the last return value is kept). An event is a restricted delegate that exposes only subscribe/unsubscribe to outside code, enforcing the publisher/subscriber pattern safely.",
+    "how": "Delegate stores method pointers; += chains them; an event exposes only += / -= to callers.",
+    "when": "Callbacks, plug-in behaviour, and pub/sub notifications.",
+    "whenNot": "Exposing a raw delegate field where an event is safer.",
+    "advantages": [
+      "Type-safe callbacks",
+      "Multicast fan-out",
+      "Events = safe pub/sub"
+    ],
+    "disadvantages": [
+      "Multicast keeps only last return",
+      "Leaks if not unsubscribed",
+      "Order of handlers matters"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
-      "snippet": "Action notify = A;\nnotify += B;     // multicast: calls A then B\nnotify();\n\npublic event Action OnSaved;  // event: outsiders can only += / -="
-    },
-    "keyPoints": [
-      "Delegate: type-safe method reference",
-      "Multicast: += chains many methods",
-      "Event: delegate exposing only += / -=",
-      "Events enforce safe pub/sub"
-    ]
+      "snippet": "Action notify = A; notify += B;   // multicast: A then B\npublic event Action OnSaved;       // event: outsiders only += / -="
+    }
+  },
+  "csharp-30": {
+    "pitch": "A delegate is a type-safe function pointer; an event wraps it safely.",
+    "definition": "A delegate is a type that references methods with a matching signature, so you can pass methods around and invoke them. An event is a restricted wrapper over a delegate that exposes only subscribe (+=) and unsubscribe (-=) to the outside, so subscribers cannot invoke it or overwrite other subscribers. Events use delegates under the hood but enforce the pub/sub pattern.",
+    "how": "Event = delegate + access restriction: only the declaring type invokes it; outsiders may only subscribe/unsubscribe.",
+    "when": "Event for notifications; delegate for passing callbacks.",
+    "whenNot": "Using a public delegate field where you want pub/sub safety.",
+    "advantages": [
+      "Event protects subscribers",
+      "Only owner can invoke",
+      "Delegate stays flexible"
+    ],
+    "disadvantages": [
+      "Extra concept over delegates",
+      "Forgetting -= leaks",
+      "Misuse exposes invocation"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "public event EventHandler Saved;     // safe\nSaved?.Invoke(this, EventArgs.Empty); // only this class can raise it"
+    }
+  },
+  "csharp-31": {
+    "pitch": "Lambdas are inline functions; closures capture their surrounding variables.",
+    "definition": "A lambda expression is a concise inline function (x => x * 2) you pass as a delegate. A closure is what happens when a lambda captures a variable from its enclosing scope - it captures the variable, not its value, the classic loop gotcha. Func, Action and Predicate are the built-in delegate types: Func returns a value, Action returns void, Predicate returns a bool. Expression trees represent a lambda as data (used by IQueryable).",
+    "how": "Compiler turns a lambda into a delegate (or expression tree); captured variables are hoisted into a closure object.",
+    "when": "Inline callbacks, LINQ predicates, event handlers.",
+    "whenNot": "Capturing a loop variable expecting its value, not the variable.",
+    "advantages": [
+      "Concise inline logic",
+      "Func/Action/Predicate built-in",
+      "Expression trees enable LINQ-to-SQL"
+    ],
+    "disadvantages": [
+      "Closure capture gotchas",
+      "Captured refs can leak",
+      "Overuse hurts readability"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Func<int,int> sq = x => x*x;          // returns a value\nPredicate<int> even = n => n%2==0;    // returns bool"
+    }
   },
   "csharp-32": {
     "pitch": "Extension methods add methods to a type without modifying it.",
-    "definition": "An extension method lets you call a static method as if it were an instance method on an existing type, using the this modifier on the first parameter, without changing or inheriting that type. LINQ is the classic example - Where and Select are extension methods on IEnumerable<T>. They are great for fluent helpers (string utilities, builders) but should not hide important behaviour.",
+    "definition": "An extension method lets you call a static method as if it were an instance method on an existing type, using the this modifier on the first parameter, without changing or inheriting that type. LINQ is the classic example - Where and Select are extension methods on IEnumerable<T>. They are great for fluent helpers but should not hide important behaviour.",
+    "how": "Compiler rewrites obj.Ext() into StaticClass.Ext(obj); resolution needs the namespace in scope.",
+    "when": "Fluent helpers and adding utility to types you don't own.",
+    "whenNot": "Hiding real behaviour or replacing proper methods.",
+    "advantages": [
+      "Extend sealed/external types",
+      "Fluent, readable APIs",
+      "Powers LINQ"
+    ],
+    "disadvantages": [
+      "Needs namespace in scope",
+      "Can clutter IntelliSense",
+      "Shadows real methods if misused"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
-      "snippet": "public static bool IsNullOrEmpty(this string s)  // 'this' makes it an extension\n    => string.IsNullOrEmpty(s);\n\nbool empty = name.IsNullOrEmpty();   // called like an instance method",
-      "note": "The this modifier on the first parameter turns a static method into an extension."
+      "snippet": "public static bool IsBlank(this string s) => string.IsNullOrWhiteSpace(s);\nbool b = name.IsBlank();   // called like an instance method"
+    }
+  },
+  "csharp-33": {
+    "pitch": "Use throw to preserve the stack trace; throw ex erases it.",
+    "definition": "C# exception handling uses try/catch/finally to detect, handle and clean up after errors, with finally always running for resource cleanup. Inside a catch, 'throw;' rethrows the current exception and preserves the original stack trace, while 'throw ex;' resets the stack trace to the rethrow point, hiding where the error started. Best practice: catch only what you can handle and rethrow with 'throw;' (or wrap with InnerException).",
+    "how": "try runs code; catch handles matching exceptions; finally always cleans up; 'throw;' keeps the original trace.",
+    "when": "Handling recoverable errors and guaranteeing cleanup.",
+    "whenNot": "Catching Exception broadly or using throw ex.",
+    "advantages": [
+      "finally guarantees cleanup",
+      "throw; keeps the trace",
+      "Targeted catches are clear"
+    ],
+    "disadvantages": [
+      "throw ex; loses the trace",
+      "Over-catching hides bugs",
+      "Empty catch swallows errors"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "try { Process(); }\ncatch (IOException ex) { Log(ex); throw; }   // keeps original stack trace",
+      "note": "throw; preserves where the error originated; throw ex; resets it."
+    }
+  },
+  "csharp-34": {
+    "pitch": "IDisposable + using free unmanaged resources deterministically.",
+    "definition": "IDisposable defines a Dispose() method for releasing unmanaged resources (files, sockets, DB connections) deterministically, and a using statement calls Dispose automatically at the end of the block even on exceptions. Finalize (the destructor) is a GC safety net called non-deterministically if Dispose was missed, but it delays collection and should be avoided unless you hold unmanaged handles. Prefer IDisposable + using over finalizers.",
+    "how": "using -> try/finally that calls Dispose(); Finalize runs later on the finalizer thread only if Dispose was skipped.",
+    "when": "Any unmanaged or expensive resource (streams, connections).",
+    "whenNot": "Adding a finalizer to purely managed classes.",
+    "advantages": [
+      "Deterministic cleanup",
+      "using = safe, automatic",
+      "Works even on exceptions"
+    ],
+    "disadvantages": [
+      "Finalizers delay collection",
+      "Forgetting Dispose leaks",
+      "Dispose pattern boilerplate"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "using (var conn = new SqlConnection(cs)) { conn.Open(); /* ... */ } // auto-Dispose",
+      "note": "using guarantees Dispose runs, even if the block throws."
+    }
+  },
+  "csharp-35": {
+    "pitch": "await frees the thread while an operation runs, then resumes after it.",
+    "definition": "async/await is C#'s model for non-blocking asynchronous code. The compiler rewrites an async method into a state machine: when you await an incomplete Task, the method returns to its caller and the current thread is released instead of blocking, and when the operation completes a continuation resumes the method where it left off. This lets a server handle many concurrent requests with few threads.",
+    "how": "Compiler builds a state machine; await on an incomplete Task returns + frees the thread; completion resumes via a continuation.",
+    "when": "I/O-bound work (DB, HTTP, files) to scale concurrency.",
+    "whenNot": "CPU-bound work (use Task.Run / parallelism instead).",
+    "advantages": [
+      "Non-blocking, scales I/O",
+      "Few threads, many requests",
+      "Readable sequential style"
+    ],
+    "disadvantages": [
+      "Sync-over-async deadlocks",
+      "Async spreads through the call stack",
+      "Overhead for trivial work"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "async/await",
+      "mermaid": "flowchart LR\n  A[Call async] --> B[await Task]\n  B -->|incomplete| C[Return, free thread]\n  C --> D[Task completes]\n  D --> E[Resume after await]"
     },
-    "keyPoints": [
-      "Add methods without changing the type",
-      "First param uses the this modifier",
-      "Must live in a static class",
-      "LINQ operators are extension methods"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "public async Task<string> GetAsync(string url) {\n    var r = await _http.GetAsync(url);   // thread freed while waiting\n    return await r.Content.ReadAsStringAsync();\n}"
+    }
+  },
+  "csharp-36": {
+    "pitch": "Tasks are high-level async work; Threads are raw OS threads.",
+    "definition": "A Thread is a dedicated OS thread you create and manage - powerful but heavy. The ThreadPool is a managed pool of reusable worker threads that avoids per-work-item thread creation. A Task is a high-level abstraction representing async work that usually runs on the ThreadPool and composes with async/await. ValueTask is a lighter alternative to Task for hot paths that often complete synchronously, avoiding an allocation.",
+    "how": "Task schedules work on the ThreadPool and awaits via continuations; Thread is a raw OS thread you manage directly.",
+    "when": "Task for async work; ValueTask for hot, often-sync paths.",
+    "whenNot": "Spinning raw Threads for short work (use the pool/Task).",
+    "advantages": [
+      "Task: composable async",
+      "ThreadPool reuses threads",
+      "ValueTask cuts allocations"
+    ],
+    "disadvantages": [
+      "Raw Thread is heavy",
+      "ValueTask misuse is buggy",
+      "Thread management is manual"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "await Task.Run(() => Heavy());     // pool thread for CPU work\nThread t = new(Work); t.Start();   // raw thread - rarely needed"
+    }
   },
   "csharp-37": {
     "pitch": "These are the everyday tools for controlling and combining async work.",
-    "definition": "These help you control async flow. ConfigureAwait(false) tells await not to resume on the original synchronization context, which avoids deadlocks and overhead in library code. A CancellationToken lets callers cooperatively cancel long-running work. Task.WhenAll runs tasks in parallel and completes when all finish (great for fan-out); Task.WhenAny completes when the first finishes (useful for timeouts or first-response-wins).",
+    "definition": "These help control async flow. ConfigureAwait(false) tells await not to resume on the original synchronization context, avoiding deadlocks and overhead in library code. A CancellationToken lets callers cooperatively cancel long-running work. Task.WhenAll runs tasks in parallel and completes when all finish (fan-out); Task.WhenAny completes when the first finishes (timeouts, first-wins).",
+    "how": "ConfigureAwait(false) skips context capture; tokens signal cancel; WhenAll/WhenAny await many tasks together.",
+    "when": "Library code, parallel fan-out, cancellation, timeouts.",
+    "whenNot": "ConfigureAwait(false) in UI code that needs the context.",
+    "advantages": [
+      "Avoids context deadlocks",
+      "Cooperative cancellation",
+      "WhenAll/WhenAny compose tasks"
+    ],
+    "disadvantages": [
+      "ConfigureAwait misuse breaks UI",
+      "Tokens must be honored",
+      "WhenAll aggregates exceptions"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
-      "snippet": "var results = await Task.WhenAll(ids.Select(GetAsync)); // run all in parallel\n\nawait DoWorkAsync(token);          // honors cancellation\nawait call.ConfigureAwait(false);  // don't capture the context"
-    },
-    "keyPoints": [
-      "ConfigureAwait(false): don't resume on context",
-      "CancellationToken: cooperative cancellation",
-      "Task.WhenAll: wait for all (fan-out)",
-      "Task.WhenAny: first to finish (timeouts)"
-    ]
+      "snippet": "var all = await Task.WhenAll(ids.Select(GetAsync)); // run in parallel\nawait DoAsync(token).ConfigureAwait(false);"
+    }
   },
   "csharp-38": {
     "pitch": "Concurrency needs synchronization to stay correct and deadlock-free.",
-    "definition": "These are the core concurrency concepts. Multithreading runs multiple threads at once to use CPU cores or overlap I/O. A race condition is when the outcome depends on unsynchronized timing of threads touching shared state. A deadlock is when threads wait on each other's locks forever. Thread synchronization (locks, semaphores, atomics) coordinates access to shared data so results stay correct.",
+    "definition": "These are core concurrency concepts. Multithreading runs multiple threads at once to use CPU cores or overlap I/O. A race condition is when the outcome depends on unsynchronized timing of threads touching shared state. A deadlock is when threads wait on each other's locks forever. Thread synchronization (locks, semaphores, atomics) coordinates access to shared data so results stay correct.",
+    "how": "Threads run concurrently; shared mutable state without synchronization races; circular lock waits deadlock.",
+    "when": "Parallel work over shared data needing correctness.",
+    "whenNot": "Sharing mutable state without any synchronization.",
+    "advantages": [
+      "Uses multiple cores",
+      "Overlaps I/O latency",
+      "Sync keeps data correct"
+    ],
+    "disadvantages": [
+      "Races are non-deterministic",
+      "Deadlocks freeze threads",
+      "Hard to debug/reproduce"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Multithreading: many threads at once",
-      "Race condition: unsynchronized shared-state access",
-      "Deadlock: threads wait on each other forever",
-      "Synchronization: locks/atomics protect shared data"
+    "code": {
+      "language": "csharp",
+      "snippet": "lock (_gate) { _count++; }   // protect shared state from races"
+    }
+  },
+  "csharp-39": {
+    "pitch": "Pick the lightest sync primitive that covers your sharing scenario.",
+    "definition": "These are .NET's synchronization primitives, lightest to heaviest. lock is sugar over Monitor for in-process mutual exclusion; Interlocked does atomic operations (increment, exchange) without a lock; Mutex is a heavier OS-level lock that can work across processes; Semaphore/SemaphoreSlim limit how many threads enter at once; ReaderWriterLockSlim allows many readers but one writer. Choose the lightest that fits to minimize contention.",
+    "how": "Each primitive trades weight for capability; the runtime/OS enforces the chosen mutual-exclusion or counting rule.",
+    "when": "Protecting shared state - match the primitive to the need.",
+    "whenNot": "Using a Mutex where a simple lock would do (slow).",
+    "advantages": [
+      "lock/Interlocked: light + fast",
+      "Semaphore: limit concurrency",
+      "ReaderWriterLockSlim: many readers"
     ],
-    "bestPractices": [
-      "Lock the smallest scope for the shortest time",
-      "Always acquire multiple locks in the same order",
-      "Prefer immutable data / concurrent collections"
-    ]
+    "disadvantages": [
+      "Wrong choice adds contention",
+      "Mutex is cross-process heavy",
+      "Misuse -> deadlocks"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Interlocked.Increment(ref _count);   // atomic, no lock\nlock (_gate) { /* critical section */ }"
+    }
   },
   "csharp-40": {
     "pitch": "Reflection inspects and invokes types at runtime; DI relies on it.",
-    "definition": "Reflection lets code examine assemblies, types and members at runtime and create instances or invoke methods dynamically. DI containers use it to discover a type's constructor parameters and instantiate the right dependencies automatically. It is powerful for frameworks, serializers and DI, but it is slower than direct calls and bypasses compile-time checks, so it should be used sparingly (and cached) in hot paths.",
+    "definition": "Reflection lets code examine assemblies, types and members at runtime and create instances or invoke methods dynamically. DI containers use it to discover a type's constructor parameters and instantiate the right dependencies automatically. It is powerful for frameworks, serializers and DI, but slower than direct calls and bypasses compile-time checks, so use it sparingly and cache it in hot paths.",
+    "how": "Read metadata to inspect types/members -> Activator/expressions create instances or invoke members at runtime.",
+    "when": "Frameworks, DI, serializers, plug-in discovery.",
+    "whenNot": "Hot paths where direct calls are far faster.",
+    "advantages": [
+      "Inspect/build types at runtime",
+      "Powers DI and serializers",
+      "Enables plug-in models"
+    ],
+    "disadvantages": [
+      "Slower than direct calls",
+      "Bypasses compile checks",
+      "Can break with obfuscation"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "how": "A DI container reads a type's constructor via reflection, resolves each parameter type from its registrations, then uses Activator/compiled expressions to create the instance.",
-    "keyPoints": [
-      "Inspect types/members at runtime",
-      "Create instances and invoke methods dynamically",
-      "Powers DI, serializers, frameworks",
-      "Slower than direct calls - cache it"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "var t = typeof(Service);\nvar obj = Activator.CreateInstance(t);   // create at runtime (DI does this)"
+    }
   },
   "csharp-41": {
     "pitch": "Assemblies are .NET's deployment unit; strong names/GAC enable sharing.",
     "definition": "An assembly (.dll/.exe) is the unit of deployment and versioning in .NET, containing IL, metadata and a manifest. Strong naming signs an assembly with a key pair to give it a unique identity and tamper-check. The GAC (Global Assembly Cache) is a machine-wide store for shared strong-named assemblies on .NET Framework. The CLR loads assemblies on demand by probing configured paths or the GAC.",
+    "how": "CLR resolves an assembly by name/version -> probes app paths or the GAC -> loads its IL + manifest.",
+    "when": "Packaging, versioning and sharing compiled code.",
+    "whenNot": "GAC on .NET Core/5+ (it does not use the GAC).",
+    "advantages": [
+      "Self-describing deploy unit",
+      "Strong name = identity",
+      "Lazy on-demand loading"
+    ],
+    "disadvantages": [
+      "GAC is Framework-only",
+      "Versioning/binding pitfalls",
+      "Strong-naming adds steps"
+    ],
     "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Assembly: deployment/versioning unit (IL + manifest)",
-      "Strong naming: signed unique identity",
-      "GAC: machine-wide shared store (.NET Framework)",
-      "CLR loads assemblies lazily on demand"
-    ]
+    "diagram": null
   },
   "csharp-42": {
-    "pitch": "Stream APIs read/write data in chunks; never load a 10GB file at once.",
-    "definition": "FileStream reads and writes raw bytes to a file; StreamReader and StreamWriter wrap a stream to read and write text with encoding. To process a huge file you stream it - read line by line or in buffered chunks so memory stays flat regardless of file size, ideally with async I/O. Reading the whole file into memory (File.ReadAllText) would blow up on a 10GB file.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "FileStream: raw byte read/write",
-      "StreamReader/Writer: text with encoding",
-      "Process big files line-by-line / buffered",
-      "Never ReadAllText a 10GB file"
+    "pitch": "Stream APIs read/write in chunks; never load a 10GB file at once.",
+    "definition": "FileStream reads and writes raw bytes to a file; StreamReader and StreamWriter wrap a stream to read and write text with encoding. To process a huge file you stream it - read line by line or in buffered chunks so memory stays flat regardless of file size, ideally with async I/O. Reading the whole file (File.ReadAllText) would blow up on a 10GB file.",
+    "how": "Open a FileStream -> wrap in a reader -> loop ReadLineAsync/buffered reads -> process and release each chunk.",
+    "when": "Large files and streaming data with bounded memory.",
+    "whenNot": "Loading huge files fully into memory.",
+    "advantages": [
+      "Constant memory streaming",
+      "Text encoding handled",
+      "Async I/O scales"
     ],
-    "bestPractices": [
-      "Stream with ReadLineAsync or buffered reads",
-      "Keep memory flat - don't buffer the whole file",
-      "Use async I/O and dispose streams with using"
-    ]
-  },
-  "csharp-43": {
-    "pitch": "These are modern C# features for performance and expressive code.",
-    "definition": "These modern features improve performance and readability. Span<T> and Memory<T> give safe, allocation-free views over contiguous memory (arrays, stack, strings), avoiding copies. A ref struct (like Span<T>) is stack-only so it cannot be boxed or captured. Pattern matching and switch expressions let you branch concisely on type, shape and values, replacing long if/else chains.",
+    "disadvantages": [
+      "Manual chunk handling",
+      "Encoding mistakes corrupt text",
+      "Forgetting to dispose leaks"
+    ],
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
-      "snippet": "ReadOnlySpan<char> slice = text.AsSpan(0, 4); // no allocation/copy\n\nstring kind = shape switch {       // switch expression\n    Circle => \"round\",\n    Square => \"boxy\",\n    _ => \"other\"\n};"
-    },
-    "keyPoints": [
-      "Span<T>/Memory<T>: zero-copy memory views",
-      "ref struct: stack-only, no boxing",
-      "Pattern matching: branch on type/shape/value",
-      "Switch expressions: concise multi-way branching"
-    ]
+      "snippet": "using var r = new StreamReader(\"big.csv\");\nstring? line;\nwhile ((line = await r.ReadLineAsync()) != null) Process(line); // flat memory"
+    }
   },
-  "csharp-44": {
-    "pitch": "Dictionary/HashSet use hashing with buckets to get O(1) lookups.",
-    "definition": "Dictionary<TKey,TValue> and HashSet<T> store items in buckets indexed by the key's hash code, giving average O(1) insert and lookup. The hash maps a key to a bucket; within a bucket, items are kept in a chain and compared with Equals to find the exact match. Collisions (different keys, same bucket) are resolved by chaining, and the structure resizes/rehashes when it gets too full to keep chains short.",
+  "csharp-43": {
+    "pitch": "These modern features boost performance and expressive code.",
+    "definition": "These improve performance and readability. Span<T> and Memory<T> give safe, allocation-free views over contiguous memory (arrays, stack, strings), avoiding copies. A ref struct (like Span<T>) is stack-only so it cannot be boxed or captured. Pattern matching and switch expressions let you branch concisely on type, shape and values, replacing long if/else chains.",
+    "how": "Span<T> points into existing memory (no copy); ref struct stays on the stack; switch expressions match by pattern.",
+    "when": "Hot paths, parsing, and clean multi-way branching.",
+    "whenNot": "Storing a Span<T> on the heap or across awaits (illegal).",
+    "advantages": [
+      "Span: zero-copy slices",
+      "ref struct: no heap/boxing",
+      "Pattern matching: concise branches"
+    ],
+    "disadvantages": [
+      "ref struct usage is restricted",
+      "Span can't cross awaits",
+      "New syntax to learn"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "how": "Compute key.GetHashCode() -> map to a bucket -> within the bucket, walk the chain comparing with Equals -> resize and rehash when the load factor grows.",
-    "keyPoints": [
-      "Items placed in buckets by hash code",
-      "Average O(1) insert and lookup",
-      "Collisions resolved by chaining + Equals",
-      "Resizes/rehashes as it fills up"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "ReadOnlySpan<char> s = text.AsSpan(0, 4);   // no allocation\nstring k = shape switch { Circle => \"round\", _ => \"other\" };"
+    }
+  },
+  "csharp-44": {
+    "pitch": "Dictionary/HashSet use hashing with buckets for O(1) lookups.",
+    "definition": "Dictionary<TKey,TValue> and HashSet<T> store items in buckets indexed by the key's hash code, giving average O(1) insert and lookup. The hash maps a key to a bucket; within a bucket, items are kept in a chain and compared with Equals to find the exact match. Collisions (different keys, same bucket) are resolved by chaining, and the structure resizes/rehashes when it gets too full to keep chains short.",
+    "how": "GetHashCode -> bucket index -> walk the bucket chain comparing Equals -> resize + rehash as it fills.",
+    "when": "Fast keyed lookup and uniqueness checks.",
+    "whenNot": "Keys with bad/mutable GetHashCode (degrades to O(n)).",
+    "advantages": [
+      "Average O(1) operations",
+      "Chaining handles collisions",
+      "Auto-resizes to stay fast"
+    ],
+    "disadvantages": [
+      "Bad hashes -> O(n)",
+      "Unordered storage",
+      "Mutating keys breaks lookups"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "// Equals + GetHashCode must agree, or lookups fail\npublic override int GetHashCode() => Id.GetHashCode();"
+    }
   },
   "csharp-45": {
     "pitch": "Cut allocations and reuse buffers to reduce GC pressure.",
-    "definition": "GC pressure comes from allocating many short-lived objects, which forces frequent Gen 0 collections. You reduce it by allocating less and reusing more: prefer structs/Span<T> for transient data, pool reusable objects (ArrayPool, object pools), avoid boxing and unnecessary LINQ allocations in hot paths, use StringBuilder for string building, and stream large data instead of buffering it. Always profile first to target the real hotspots.",
-    "similarQuestions": [],
-    "diagram": null,
-    "keyPoints": [
-      "Allocate less in hot paths (Span<T>, structs)",
-      "Pool/reuse buffers (ArrayPool, object pools)",
-      "Avoid boxing and LINQ churn in loops",
-      "Stream large data, don't buffer it"
+    "definition": "GC pressure comes from allocating many short-lived objects, forcing frequent Gen 0 collections. You reduce it by allocating less and reusing more: prefer structs/Span<T> for transient data, pool reusable objects (ArrayPool, object pools), avoid boxing and unnecessary LINQ allocations in hot paths, use StringBuilder for string building, and stream large data instead of buffering. Always profile first.",
+    "how": "Fewer/short-lived allocations -> fewer Gen 0 collections; pooling and Span reuse memory instead of allocating.",
+    "when": "Hot paths and high-throughput services under GC pressure.",
+    "whenNot": "Micro-optimizing cold code before profiling.",
+    "advantages": [
+      "Span/structs cut allocations",
+      "Pools reuse buffers",
+      "Less Gen 0 churn"
     ],
-    "bestPractices": [
-      "Profile allocations before optimizing",
-      "Reuse buffers instead of re-allocating",
-      "Avoid async-over-sync and needless captures"
-    ]
-  },
-  "csharp-46": {
-    "pitch": "Find what stays reachable, then break the reference holding it.",
-    "definition": "A .NET memory leak means objects remain reachable so the GC never frees them - common causes are static collections that keep growing, event handlers never unsubscribed, and undisposed resources. To fix it you reproduce the growth, capture memory snapshots over time (dotnet-gcdump, dotMemory, PerfView), compare snapshots to find the type that keeps growing, trace its GC roots to the offending reference, then remove it (unsubscribe, dispose, or scope the cache).",
-    "similarQuestions": [],
-    "diagram": null,
-    "steps": [
-      "Reproduce and confirm memory grows over time",
-      "Take heap snapshots (dotnet-gcdump / dotMemory)",
-      "Diff snapshots to find the growing type",
-      "Trace its GC roots to the holding reference",
-      "Fix it: unsubscribe, dispose, or bound the cache"
+    "disadvantages": [
+      "Pooling adds complexity",
+      "Premature tuning wastes effort",
+      "ref struct rules constrain you"
     ],
-    "bestPractices": [
-      "Unsubscribe events and dispose resources",
-      "Bound caches with size/expiry",
-      "Watch static collections that only grow"
-    ]
-  },
-  "csharp-47": {
-    "pitch": "Reproduce, capture thread stacks, find the lock cycle, then order locks.",
-    "definition": "An intermittent deadlock is two or more threads each holding a lock the other needs, so they wait forever. To resolve it you capture the process while it is hung (a dump or dotnet-dump), inspect the thread stacks to see which threads are blocked on which locks, identify the cyclic wait, then fix the root cause - usually by acquiring locks in a consistent global order, reducing lock scope, using timeouts (Monitor.TryEnter), or switching to lock-free/async patterns.",
-    "similarQuestions": [],
-    "diagram": null,
-    "steps": [
-      "Reproduce, then capture a dump while hung",
-      "Inspect thread stacks (dotnet-dump / WinDbg)",
-      "Find the threads blocked on each other's locks",
-      "Identify the cyclic lock-wait",
-      "Fix: consistent lock order, timeouts, smaller scope"
-    ],
-    "bestPractices": [
-      "Always acquire multiple locks in one global order",
-      "Use Monitor.TryEnter with a timeout",
-      "Avoid blocking on async (.Result/.Wait)"
-    ]
-  },
-  "csharp-48": {
-    "pitch": "Use a concurrent store with expiry, sized to avoid unbounded growth.",
-    "definition": "A thread-safe, high-performance in-memory cache stores values keyed for fast lookup while staying correct under concurrency and bounded in size. I would build on ConcurrentDictionary for lock-free reads and fine-grained writes, add per-entry expiry (absolute/sliding) and a size limit with an eviction policy (LRU), and use atomic GetOrAdd to avoid duplicate work on cache misses. MemoryCache already provides much of this out of the box.",
     "similarQuestions": [],
     "diagram": null,
     "code": {
       "language": "csharp",
-      "snippet": "var value = _cache.GetOrAdd(key, k => Load(k)); // atomic, computes once on miss"
-    },
-    "keyPoints": [
-      "ConcurrentDictionary for thread-safe access",
-      "GetOrAdd to avoid duplicate work on misses",
-      "Per-entry expiry (absolute/sliding)",
-      "Size limit + LRU eviction to stay bounded",
-      "Or use built-in IMemoryCache"
-    ]
+      "snippet": "var buf = ArrayPool<byte>.Shared.Rent(4096);\ntry { /* use buf */ } finally { ArrayPool<byte>.Shared.Return(buf); }"
+    }
+  },
+  "csharp-46": {
+    "pitch": "Find what stays reachable, then break the reference holding it.",
+    "definition": "A .NET memory leak means objects remain reachable so the GC never frees them - common causes are static collections that grow, event handlers never unsubscribed, and undisposed resources. To fix it you reproduce the growth, capture memory snapshots over time, compare them to find the type that keeps growing, trace its GC roots to the offending reference, then remove it (unsubscribe, dispose, or scope the cache).",
+    "how": "Reproduce growth -> diff heap snapshots -> find the growing type -> trace GC roots -> remove the holding reference.",
+    "when": "Diagnosing rising memory in long-running services.",
+    "whenNot": "Guessing without snapshots and root analysis.",
+    "advantages": [
+      "Snapshots pinpoint the leak",
+      "GC roots reveal the holder",
+      "Targeted, evidence-based fix"
+    ],
+    "disadvantages": [
+      "Needs profiling tools",
+      "Reproduction can be slow",
+      "Roots can be non-obvious"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "src.Changed -= OnChanged;   // unsubscribe to release the subscriber"
+    }
+  },
+  "csharp-47": {
+    "pitch": "Reproduce, capture thread stacks, find the lock cycle, then order locks.",
+    "definition": "An intermittent deadlock is two or more threads each holding a lock the other needs, so they wait forever. To resolve it you capture the process while hung (a dump), inspect the thread stacks to see which threads block on which locks, identify the cyclic wait, then fix the root cause - usually by acquiring locks in a consistent global order, reducing lock scope, using timeouts (Monitor.TryEnter), or switching to lock-free/async patterns.",
+    "how": "Capture a dump while hung -> read thread stacks -> find the circular lock-wait -> impose a global lock order.",
+    "when": "Sporadic hangs in multithreaded apps.",
+    "whenNot": "Random retries instead of finding the lock cycle.",
+    "advantages": [
+      "Dump shows the real cycle",
+      "Consistent order prevents it",
+      "Timeouts add resilience"
+    ],
+    "disadvantages": [
+      "Intermittent = hard to catch",
+      "Dump analysis is skilled work",
+      "Fixes can reduce concurrency"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "if (Monitor.TryEnter(_lock, TimeSpan.FromSeconds(5))) { try { ... } finally { Monitor.Exit(_lock); } }"
+    }
+  },
+  "csharp-48": {
+    "pitch": "Use a concurrent store with expiry, sized to avoid unbounded growth.",
+    "definition": "A thread-safe, high-performance in-memory cache stores values keyed for fast lookup while staying correct under concurrency and bounded in size. I would build on ConcurrentDictionary for lock-free reads and fine-grained writes, add per-entry expiry (absolute/sliding) and a size limit with an eviction policy (LRU), and use atomic GetOrAdd to avoid duplicate work on misses. MemoryCache already provides much of this.",
+    "how": "ConcurrentDictionary for safe access -> GetOrAdd computes once on miss -> background expiry + LRU eviction bound size.",
+    "when": "Caching hot data in a concurrent service.",
+    "whenNot": "An unbounded dictionary cache (it becomes a leak).",
+    "advantages": [
+      "Lock-free concurrent reads",
+      "GetOrAdd avoids dup work",
+      "Expiry + LRU bound memory"
+    ],
+    "disadvantages": [
+      "Eviction logic is tricky",
+      "Stale data trade-offs",
+      "Reinventing IMemoryCache"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var v = _cache.GetOrAdd(key, k => Load(k)); // atomic; computes once on miss"
+    }
   },
   "csharp-49": {
     "pitch": "Stream rows in batches; never load millions of records into memory.",
-    "definition": "To process millions of rows efficiently you avoid loading them all at once and keep memory flat by streaming. Read with a server-side / streaming query (no buffering), process in batches, and project only the columns you need. Use async enumeration (IAsyncEnumerable / DbDataReader), avoid change-tracking in EF (AsNoTracking), and write results in bulk. This keeps memory constant regardless of how many rows there are.",
+    "definition": "To process millions of rows efficiently you avoid loading them all and keep memory flat by streaming. Read with a server-side/streaming query (no buffering), process in batches, and project only the columns you need. Use async enumeration (IAsyncEnumerable / DbDataReader), disable EF change tracking (AsNoTracking), and write results in bulk. Memory stays constant regardless of row count.",
+    "how": "Stream rows via a reader/IAsyncEnumerable -> process in batches with AsNoTracking -> bulk-write -> constant memory.",
+    "when": "Large ETL/exports and bulk data processing.",
+    "whenNot": "ToList() on a huge result set (OOM risk).",
+    "advantages": [
+      "Constant memory at any scale",
+      "AsNoTracking is faster",
+      "Batching balances throughput"
+    ],
+    "disadvantages": [
+      "More code than ToList",
+      "Batch size needs tuning",
+      "Streaming holds a connection"
+    ],
     "similarQuestions": [],
     "diagram": null,
-    "keyPoints": [
-      "Stream rows, don't buffer the whole set",
-      "Process in batches with constant memory",
-      "AsNoTracking + project only needed columns",
-      "Use async streaming (IAsyncEnumerable/DataReader)",
-      "Bulk-write results"
-    ],
-    "bestPractices": [
-      "Never ToList() millions of rows",
-      "Disable EF change tracking for read-only scans",
-      "Tune batch size to balance throughput vs memory"
-    ]
+    "code": {
+      "language": "csharp",
+      "snippet": "await foreach (var row in db.Items.AsNoTracking().AsAsyncEnumerable())\n    Process(row);   // streamed, flat memory"
+    }
   },
   "csharp-50": {
     "pitch": "Stateless services, async I/O, smart caching, and hard-won lessons.",
-    "definition": "A high-scale C# system I would describe is a set of stateless ASP.NET Core services behind a load balancer, communicating via a message queue for async work, with a distributed cache in front of the database and async I/O throughout. The concurrency model is async/await plus the ThreadPool so a few threads serve many requests; performance comes from caching, paging, AsNoTracking queries and reduced allocations. The hardest challenges are usually cache invalidation, avoiding hot partitions, and taming GC pauses under load.",
+    "definition": "A high-scale C# system I would describe is stateless ASP.NET Core services behind a load balancer, communicating via a message queue for async work, with a distributed cache in front of the database and async I/O throughout. The concurrency model is async/await plus the ThreadPool so a few threads serve many requests; performance comes from caching, paging, AsNoTracking and reduced allocations. The hardest challenges are cache invalidation, hot partitions, and GC pauses under load.",
+    "how": "Clients -> LB -> stateless services -> queue + distributed cache + DB; async/await on the ThreadPool scales requests.",
+    "when": "High-throughput, scalable .NET back ends.",
+    "whenNot": "Small apps where this architecture is overkill.",
+    "advantages": [
+      "Stateless scales out",
+      "Cache + async cut DB load",
+      "Queue smooths spikes"
+    ],
+    "disadvantages": [
+      "Distributed complexity",
+      "Cache invalidation is hard",
+      "GC tuning under load"
+    ],
     "similarQuestions": [],
     "diagram": {
       "title": "High-scale C# architecture",
-      "mermaid": "flowchart LR\n  C[Clients] --> LB[Load Balancer]\n  LB --> S1[Service]\n  LB --> S2[Service]\n  S1 --> Q[Message Queue]\n  S1 --> Cache[(Distributed Cache)]\n  S1 --> DB[(Database)]\n  S2 --> Cache\n  S2 --> DB"
+      "mermaid": "flowchart LR\n  C[Clients] --> LB[Load Balancer]\n  LB --> S1[Service]\n  LB --> S2[Service]\n  S1 --> Q[Queue]\n  S1 --> Cache[(Distributed Cache)]\n  S1 --> DB[(Database)]\n  S2 --> Cache\n  S2 --> DB"
     },
-    "realWorld": "On one system, moving hot reads to a distributed cache and making the data layer fully async cut database load by ~60% and let the same hardware handle 3x the traffic.",
-    "keyPoints": [
-      "Stateless services behind a load balancer",
-      "Async I/O + ThreadPool for high concurrency",
-      "Distributed cache in front of the DB",
-      "Message queue for async/background work",
-      "Wins: caching, paging, AsNoTracking, fewer allocations"
-    ]
+    "realWorld": "Moving hot reads to a distributed cache and making the data layer fully async cut DB load ~60% and let the same hardware serve 3x traffic."
   }
 }
