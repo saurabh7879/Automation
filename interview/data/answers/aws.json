@@ -38,6 +38,39 @@
     "diagram": {
       "title": "Regions/AZs/Edge",
       "mermaid": "flowchart TB\n  R[Region] --> AZ1[AZ-1]\n  R --> AZ2[AZ-2]\n  Edge[Edge Locations] --> Users"
+    },
+    "comparison": {
+      "headers": [
+        "Region",
+        "Availability Zone",
+        "Edge Location"
+      ],
+      "rows": [
+        {
+          "criterion": "Is",
+          "cells": [
+            "Geographic area",
+            "Isolated DC(s)",
+            "CDN cache point"
+          ]
+        },
+        {
+          "criterion": "Purpose",
+          "cells": [
+            "Data residency",
+            "High availability",
+            "Low-latency delivery"
+          ]
+        },
+        {
+          "criterion": "Scope",
+          "cells": [
+            "Many AZs",
+            "Within a region",
+            "Global, near users"
+          ]
+        }
+      ]
     }
   },
   "aws-3": {
@@ -171,7 +204,44 @@
       "Wrong tier = surprises"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Standard",
+        "IA",
+        "Glacier",
+        "Deep Archive"
+      ],
+      "rows": [
+        {
+          "criterion": "Access",
+          "cells": [
+            "Frequent",
+            "Infrequent",
+            "Archive",
+            "Cold archive"
+          ]
+        },
+        {
+          "criterion": "Retrieval",
+          "cells": [
+            "Instant",
+            "Instant",
+            "Minutes-hours",
+            "Hours"
+          ]
+        },
+        {
+          "criterion": "Cost",
+          "cells": [
+            "Highest",
+            "Lower",
+            "Low",
+            "Lowest"
+          ]
+        }
+      ]
+    }
   },
   "aws-10": {
     "pitch": "EBS is block storage for one instance; S3 is object storage over HTTP.",
@@ -386,7 +456,36 @@
       "Misplacement exposes resources"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Public Subnet",
+        "Private Subnet"
+      ],
+      "rows": [
+        {
+          "criterion": "Internet route",
+          "cells": [
+            "Via IGW",
+            "Via NAT (outbound only)"
+          ]
+        },
+        {
+          "criterion": "Reachable from net",
+          "cells": [
+            "Yes",
+            "No"
+          ]
+        },
+        {
+          "criterion": "Hosts",
+          "cells": [
+            "LBs, bastions",
+            "App servers, DBs"
+          ]
+        }
+      ]
+    }
   },
   "aws-21": {
     "pitch": "An IGW connects a VPC to the internet; a NAT lets private subnets go out.",
@@ -443,7 +542,43 @@
       "Two layers to reason about"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Security Group",
+        "Network ACL"
+      ],
+      "rows": [
+        {
+          "criterion": "Level",
+          "cells": [
+            "Instance / ENI",
+            "Subnet"
+          ]
+        },
+        {
+          "criterion": "State",
+          "cells": [
+            "Stateful",
+            "Stateless"
+          ]
+        },
+        {
+          "criterion": "Rules",
+          "cells": [
+            "Allow only",
+            "Allow + deny"
+          ]
+        },
+        {
+          "criterion": "Evaluation",
+          "cells": [
+            "All rules",
+            "By rule number"
+          ]
+        }
+      ]
+    }
   },
   "aws-24": {
     "pitch": "IAM controls who can do what via users, groups, roles and policies.",
@@ -618,7 +753,43 @@
       "Polling model"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Standard",
+        "FIFO"
+      ],
+      "rows": [
+        {
+          "criterion": "Throughput",
+          "cells": [
+            "Nearly unlimited",
+            "Limited"
+          ]
+        },
+        {
+          "criterion": "Ordering",
+          "cells": [
+            "Best-effort",
+            "Strict"
+          ]
+        },
+        {
+          "criterion": "Delivery",
+          "cells": [
+            "At-least-once (dups)",
+            "Exactly-once"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "High volume",
+            "Order matters"
+          ]
+        }
+      ]
+    }
   },
   "aws-33": {
     "pitch": "EventBridge is an event bus with routing/filtering; SNS is simple pub/sub.",

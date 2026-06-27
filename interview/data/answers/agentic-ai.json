@@ -95,7 +95,43 @@
       "Needs safety controls"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "AI Agent",
+        "Chatbot"
+      ],
+      "rows": [
+        {
+          "criterion": "Behaviour",
+          "cells": [
+            "Plans + acts",
+            "Replies"
+          ]
+        },
+        {
+          "criterion": "Tools",
+          "cells": [
+            "Uses tools",
+            "None"
+          ]
+        },
+        {
+          "criterion": "Autonomy",
+          "cells": [
+            "Multi-step",
+            "Single-turn / scripted"
+          ]
+        },
+        {
+          "criterion": "Memory",
+          "cells": [
+            "Yes",
+            "Limited"
+          ]
+        }
+      ]
+    }
   },
   "agentic-ai-6": {
     "pitch": "Single-agent uses one agent; multi-agent splits work across specialists.",
@@ -114,7 +150,43 @@
       "Harder to debug"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Single-Agent",
+        "Multi-Agent"
+      ],
+      "rows": [
+        {
+          "criterion": "Agents",
+          "cells": [
+            "One",
+            "Several specialists"
+          ]
+        },
+        {
+          "criterion": "Complexity",
+          "cells": [
+            "Simpler",
+            "Coordination overhead"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Focused tasks",
+            "Complex decomposable tasks"
+          ]
+        },
+        {
+          "criterion": "Cost",
+          "cells": [
+            "Lower",
+            "Higher"
+          ]
+        }
+      ]
+    }
   },
   "agentic-ai-7": {
     "pitch": "Agent types range from reactive to learning and autonomous.",
@@ -228,7 +300,43 @@
       "Retrieval relevance"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Short-Term",
+        "Long-Term"
+      ],
+      "rows": [
+        {
+          "criterion": "Holds",
+          "cells": [
+            "Current session/steps",
+            "Persistent facts/history"
+          ]
+        },
+        {
+          "criterion": "Where",
+          "cells": [
+            "In the prompt",
+            "External (vector DB)"
+          ]
+        },
+        {
+          "criterion": "Survives session",
+          "cells": [
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Limit",
+          "cells": [
+            "Context window",
+            "Storage"
+          ]
+        }
+      ]
+    }
   },
   "agentic-ai-13": {
     "pitch": "Tool calling lets an agent invoke functions to act and fetch data.",
@@ -308,7 +416,43 @@
       "Different scopes"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "RAG",
+        "Agentic AI"
+      ],
+      "rows": [
+        {
+          "criterion": "Is",
+          "cells": [
+            "Retrieval technique",
+            "Autonomous system"
+          ]
+        },
+        {
+          "criterion": "Does",
+          "cells": [
+            "Ground one answer",
+            "Plan + act multi-step"
+          ]
+        },
+        {
+          "criterion": "Tools",
+          "cells": [
+            "Just retrieval",
+            "Many (incl. RAG)"
+          ]
+        },
+        {
+          "criterion": "Scope",
+          "cells": [
+            "Knowledge",
+            "Action"
+          ]
+        }
+      ]
+    }
   },
   "agentic-ai-17": {
     "pitch": "A vector DB stores embeddings so agents can retrieve relevant memory/knowledge.",

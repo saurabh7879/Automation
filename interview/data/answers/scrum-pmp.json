@@ -114,7 +114,43 @@
       "Refinement discipline needed"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Product Backlog",
+        "Sprint Backlog"
+      ],
+      "rows": [
+        {
+          "criterion": "Contains",
+          "cells": [
+            "All prioritized work",
+            "This sprint's committed work"
+          ]
+        },
+        {
+          "criterion": "Owned by",
+          "cells": [
+            "Product Owner",
+            "Dev Team"
+          ]
+        },
+        {
+          "criterion": "Scope",
+          "cells": [
+            "Whole product",
+            "Current sprint"
+          ]
+        },
+        {
+          "criterion": "Changes",
+          "cells": [
+            "Continuously refined",
+            "Stable in sprint"
+          ]
+        }
+      ]
+    }
   },
   "scrum-pmp-7": {
     "pitch": "DoD is when work is truly complete; DoR is when an item is ready to start.",

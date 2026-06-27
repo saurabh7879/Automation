@@ -57,6 +57,43 @@
     "diagram": {
       "title": "AI hierarchy",
       "mermaid": "flowchart TB\n  AI --> ML\n  ML --> DL[Deep Learning]\n  DL --> GenAI[Generative AI]"
+    },
+    "comparison": {
+      "headers": [
+        "AI",
+        "ML",
+        "Deep Learning",
+        "Generative AI"
+      ],
+      "rows": [
+        {
+          "criterion": "Is",
+          "cells": [
+            "Broad goal",
+            "Learns from data",
+            "Neural networks",
+            "Creates content"
+          ]
+        },
+        {
+          "criterion": "Subset of",
+          "cells": [
+            "-",
+            "AI",
+            "ML",
+            "Deep Learning"
+          ]
+        },
+        {
+          "criterion": "Example",
+          "cells": [
+            "Any intelligent task",
+            "Spam filter",
+            "Image recognition",
+            "LLM / diffusion"
+          ]
+        }
+      ]
     }
   },
   "gen-ai-4": {
@@ -114,7 +151,40 @@
       "Diminishing returns"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Zero-shot",
+        "One-shot",
+        "Few-shot"
+      ],
+      "rows": [
+        {
+          "criterion": "Examples",
+          "cells": [
+            "None",
+            "One",
+            "Several"
+          ]
+        },
+        {
+          "criterion": "Accuracy",
+          "cells": [
+            "Baseline",
+            "Better",
+            "Best (harder tasks)"
+          ]
+        },
+        {
+          "criterion": "Tokens",
+          "cells": [
+            "Fewest",
+            "Some",
+            "Most"
+          ]
+        }
+      ]
+    }
   },
   "gen-ai-7": {
     "pitch": "RAG retrieves relevant knowledge and adds it to the prompt.",
@@ -152,7 +222,43 @@
       "Each fits different needs"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "RAG",
+        "Fine-Tuning"
+      ],
+      "rows": [
+        {
+          "criterion": "Injects",
+          "cells": [
+            "Knowledge at query",
+            "Behaviour into weights"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Current/proprietary facts",
+            "Style / format"
+          ]
+        },
+        {
+          "criterion": "Updates",
+          "cells": [
+            "Update index",
+            "Retrain"
+          ]
+        },
+        {
+          "criterion": "Cost",
+          "cells": [
+            "Retrieval infra",
+            "Training cost"
+          ]
+        }
+      ]
+    }
   },
   "gen-ai-9": {
     "pitch": "Embeddings are meaning-vectors that power semantic search.",
@@ -228,7 +334,44 @@
       "Fast-changing field"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "GPT",
+        "Claude",
+        "Gemini",
+        "Llama"
+      ],
+      "rows": [
+        {
+          "criterion": "Vendor",
+          "cells": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Meta"
+          ]
+        },
+        {
+          "criterion": "Type",
+          "cells": [
+            "Proprietary",
+            "Proprietary",
+            "Proprietary",
+            "Open-weight"
+          ]
+        },
+        {
+          "criterion": "Strength",
+          "cells": [
+            "Versatile/coding",
+            "Reasoning/safety",
+            "Multimodal",
+            "Self-host + tune"
+          ]
+        }
+      ]
+    }
   },
   "gen-ai-13": {
     "pitch": "Function calling lets the LLM invoke your tools with structured arguments.",

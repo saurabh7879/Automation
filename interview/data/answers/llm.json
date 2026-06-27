@@ -35,7 +35,43 @@
       "Different data/skill needs"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Traditional ML",
+        "LLM"
+      ],
+      "rows": [
+        {
+          "criterion": "Scope",
+          "cells": [
+            "Narrow task",
+            "General language"
+          ]
+        },
+        {
+          "criterion": "Data",
+          "cells": [
+            "Structured + labeled",
+            "Broad text"
+          ]
+        },
+        {
+          "criterion": "Adaptation",
+          "cells": [
+            "Retrain per task",
+            "Prompt"
+          ]
+        },
+        {
+          "criterion": "Size",
+          "cells": [
+            "Light, specialized",
+            "Large, general"
+          ]
+        }
+      ]
+    }
   },
   "llm-3": {
     "pitch": "Tokens are text chunks; the context window is how many fit at once.",
@@ -114,7 +150,43 @@
       "Can overfit/forget"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Pre-training",
+        "Fine-Tuning"
+      ],
+      "rows": [
+        {
+          "criterion": "Phase",
+          "cells": [
+            "Initial, broad",
+            "Specialize after"
+          ]
+        },
+        {
+          "criterion": "Data",
+          "cells": [
+            "Massive unlabeled",
+            "Small task-specific"
+          ]
+        },
+        {
+          "criterion": "Cost",
+          "cells": [
+            "Very high",
+            "Lower"
+          ]
+        },
+        {
+          "criterion": "Result",
+          "cells": [
+            "Base model",
+            "Adapted behaviour"
+          ]
+        }
+      ]
+    }
   },
   "llm-7": {
     "pitch": "Fine-tuning changes the model's weights; RAG injects knowledge at query time.",
@@ -133,7 +205,43 @@
       "Each fits different needs"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Fine-Tuning",
+        "RAG"
+      ],
+      "rows": [
+        {
+          "criterion": "Changes",
+          "cells": [
+            "Model weights",
+            "Prompt at query time"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Behaviour / style",
+            "Fresh / proprietary facts"
+          ]
+        },
+        {
+          "criterion": "Updates",
+          "cells": [
+            "Retrain",
+            "Update the index"
+          ]
+        },
+        {
+          "criterion": "Citations",
+          "cells": [
+            "No",
+            "Yes"
+          ]
+        }
+      ]
+    }
   },
   "llm-8": {
     "pitch": "Embeddings turn text into vectors that capture meaning.",
@@ -217,7 +325,53 @@
       "Rapidly changing landscape"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "GPT/Claude",
+        "Gemini",
+        "Llama",
+        "Mistral"
+      ],
+      "rows": [
+        {
+          "criterion": "Vendor",
+          "cells": [
+            "OpenAI/Anthropic",
+            "Google",
+            "Meta",
+            "Mistral"
+          ]
+        },
+        {
+          "criterion": "Openness",
+          "cells": [
+            "Proprietary",
+            "Proprietary",
+            "Open-weight",
+            "Open-weight"
+          ]
+        },
+        {
+          "criterion": "Strength",
+          "cells": [
+            "Reasoning/coding/safety",
+            "Multimodal + ecosystem",
+            "Self-host + tune",
+            "Efficient open"
+          ]
+        },
+        {
+          "criterion": "Hosting",
+          "cells": [
+            "API",
+            "API",
+            "Self-host",
+            "Self-host"
+          ]
+        }
+      ]
+    }
   },
   "llm-12": {
     "pitch": "Function/tool calling lets an LLM invoke your code with structured args.",

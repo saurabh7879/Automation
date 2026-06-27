@@ -168,7 +168,36 @@
       "Two different products"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Splunk Enterprise",
+        "Observability Cloud"
+      ],
+      "rows": [
+        {
+          "criterion": "Model",
+          "cells": [
+            "Self-managed",
+            "SaaS"
+          ]
+        },
+        {
+          "criterion": "Focus",
+          "cells": [
+            "Log analytics",
+            "Metrics/traces (APM)"
+          ]
+        },
+        {
+          "criterion": "Built on",
+          "cells": [
+            "Indexed logs",
+            "OpenTelemetry"
+          ]
+        }
+      ]
+    }
   },
   "monitoring-9": {
     "pitch": "SPL is Splunk's search language for querying machine data.",
@@ -362,7 +391,43 @@
       "Different query languages"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "ELK (Elasticsearch)",
+        "Grafana Loki"
+      ],
+      "rows": [
+        {
+          "criterion": "Indexes",
+          "cells": [
+            "Full log content",
+            "Labels only"
+          ]
+        },
+        {
+          "criterion": "Search",
+          "cells": [
+            "Rich full-text",
+            "Label + grep"
+          ]
+        },
+        {
+          "criterion": "Cost",
+          "cells": [
+            "Higher (storage)",
+            "Cheaper"
+          ]
+        },
+        {
+          "criterion": "Query",
+          "cells": [
+            "Kibana / KQL",
+            "LogQL"
+          ]
+        }
+      ]
+    }
   },
   "monitoring-19": {
     "pitch": "Choose Elasticsearch when you need powerful full-text log search.",
@@ -381,7 +446,43 @@
       "Overkill for simple grep"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Elasticsearch",
+        "Loki"
+      ],
+      "rows": [
+        {
+          "criterion": "Choose for",
+          "cells": [
+            "Full-text search/analytics",
+            "Cheap label-scoped logs"
+          ]
+        },
+        {
+          "criterion": "Indexing",
+          "cells": [
+            "All content",
+            "Labels only"
+          ]
+        },
+        {
+          "criterion": "Cost",
+          "cells": [
+            "Higher",
+            "Lower"
+          ]
+        },
+        {
+          "criterion": "Best with",
+          "cells": [
+            "SIEM, ad-hoc queries",
+            "Grafana, high volume"
+          ]
+        }
+      ]
+    }
   },
   "monitoring-20": {
     "pitch": "Jaeger and Zipkin collect, store and visualize distributed traces.",

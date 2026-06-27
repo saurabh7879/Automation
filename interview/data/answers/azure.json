@@ -35,7 +35,40 @@
       "Design effort"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Region",
+        "Availability Zone",
+        "Availability Set"
+      ],
+      "rows": [
+        {
+          "criterion": "Is",
+          "cells": [
+            "Geographic area",
+            "Isolated DC in region",
+            "Fault/update domains in a DC"
+          ]
+        },
+        {
+          "criterion": "Protects against",
+          "cells": [
+            "-",
+            "DC failure",
+            "Rack/maintenance failure"
+          ]
+        },
+        {
+          "criterion": "Scope",
+          "cells": [
+            "Geography",
+            "Cross-DC",
+            "Within one DC"
+          ]
+        }
+      ]
+    }
   },
   "azure-3": {
     "pitch": "An Azure VM is a configurable cloud virtual server.",
@@ -191,7 +224,44 @@
       "Choosing the right one"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Blob",
+        "File",
+        "Queue",
+        "Table"
+      ],
+      "rows": [
+        {
+          "criterion": "Stores",
+          "cells": [
+            "Objects/files",
+            "SMB/NFS shares",
+            "Messages",
+            "NoSQL key-value"
+          ]
+        },
+        {
+          "criterion": "Access",
+          "cells": [
+            "HTTP API",
+            "Mounted drive",
+            "Poll messages",
+            "Key lookup"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Media, backups",
+            "Shared files",
+            "Decoupling",
+            "Structured non-relational"
+          ]
+        }
+      ]
+    }
   },
   "azure-11": {
     "pitch": "Azure SQL Database is managed PaaS SQL; SQL on a VM is self-managed.",
@@ -286,7 +356,36 @@
       "Misplacement exposes resources"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Public Subnet",
+        "Private Subnet"
+      ],
+      "rows": [
+        {
+          "criterion": "IPs",
+          "cells": [
+            "Public / behind LB",
+            "Private only"
+          ]
+        },
+        {
+          "criterion": "Internet",
+          "cells": [
+            "Inbound + outbound",
+            "Outbound via NAT"
+          ]
+        },
+        {
+          "criterion": "Hosts",
+          "cells": [
+            "Front ends, gateways",
+            "App + data tiers"
+          ]
+        }
+      ]
+    }
   },
   "azure-16": {
     "pitch": "NSGs are stateful firewalls filtering subnet/NIC traffic by rules.",
@@ -419,7 +518,43 @@
       "Hybrid setup effort"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Entra ID",
+        "AD DS"
+      ],
+      "rows": [
+        {
+          "criterion": "Type",
+          "cells": [
+            "Cloud IAM",
+            "On-prem directory"
+          ]
+        },
+        {
+          "criterion": "Protocols",
+          "cells": [
+            "OAuth2/OIDC/SAML",
+            "Kerberos/LDAP"
+          ]
+        },
+        {
+          "criterion": "Manages",
+          "cells": [
+            "Cloud apps SSO",
+            "Windows domains"
+          ]
+        },
+        {
+          "criterion": "Group Policy",
+          "cells": [
+            "No",
+            "Yes"
+          ]
+        }
+      ]
+    }
   },
   "azure-23": {
     "pitch": "Managed Identities give Azure resources an identity without secrets.",
