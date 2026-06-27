@@ -1,1 +1,995 @@
-{}
+{
+  "azure-1": {
+    "pitch": "Azure is Microsoft's cloud platform with broad managed services.",
+    "definition": "Microsoft Azure is Microsoft's cloud computing platform offering on-demand compute, storage, networking, databases, AI and many managed services on a pay-as-you-go model. Core services include Virtual Machines and App Service (compute), Blob Storage, Azure SQL and Cosmos DB (data), VNet (networking), Entra ID (identity), Functions (serverless) and Azure Monitor (observability). It's especially strong for .NET/enterprise workloads.",
+    "how": "Provision services via portal/CLI/IaC -> Azure runs the infrastructure -> you pay for what you use.",
+    "when": "Scalable apps, strong in the Microsoft/.NET ecosystem.",
+    "whenNot": "Strict on-prem-only mandates.",
+    "advantages": [
+      "Vast managed services",
+      "Strong .NET/enterprise fit",
+      "Global regions"
+    ],
+    "disadvantages": [
+      "Cost can sprawl",
+      "Broad surface to learn",
+      "Vendor lock-in risk"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-2": {
+    "pitch": "Regions are geographies; AZs are isolated DCs; Sets guard within a DC.",
+    "definition": "Azure Regions are geographic areas (East US) containing data centers. Availability Zones are physically separate data centers within a region for high availability across zones. Availability Sets distribute VMs across fault and update domains within a single data center to protect against hardware failures and maintenance - a within-DC resilience construct. AZs protect against DC-level failures; Sets against rack/maintenance failures.",
+    "how": "Region = geography; AZ = isolated DC for HA; Availability Set = fault/update-domain spread within one DC.",
+    "when": "Designing VM/app resilience.",
+    "whenNot": "Confusing Sets (in-DC) with Zones (cross-DC).",
+    "advantages": [
+      "Region: data residency",
+      "AZ: cross-DC HA",
+      "Set: in-DC fault tolerance"
+    ],
+    "disadvantages": [
+      "AZ not in all regions",
+      "Set is single-DC only",
+      "Design effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-3": {
+    "pitch": "An Azure VM is a configurable cloud virtual server.",
+    "definition": "An Azure Virtual Machine is an on-demand, scalable virtualized server where you control the OS, size, storage and software - infrastructure as a service. You use VMs when you need full control over the environment, to run legacy or custom software, specialized configurations, or lift-and-shift workloads that don't fit PaaS options like App Service.",
+    "how": "Pick an image + size in a VNet -> RDP/SSH or deploy your app -> scale with VM Scale Sets.",
+    "when": "Full control or lift-and-shift workloads.",
+    "whenNot": "Standard web apps (App Service is simpler).",
+    "advantages": [
+      "Full OS control",
+      "Many sizes/images",
+      "Lift-and-shift friendly"
+    ],
+    "disadvantages": [
+      "You manage the OS/patching",
+      "More ops than PaaS",
+      "Idle cost if oversized"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-4": {
+    "pitch": "App Service is managed PaaS hosting; VMs are self-managed IaaS.",
+    "definition": "Azure App Service is a fully managed Platform-as-a-Service for hosting web apps, APIs and back ends - Azure handles the OS, patching, scaling and load balancing, so you just deploy code/containers. Unlike a VM (where you manage everything), App Service removes server management and adds built-in CI/CD, scaling, slots and auth. Use App Service for standard web workloads; VMs for full control.",
+    "how": "Deploy code/container to App Service -> Azure runs + scales it on managed infrastructure (no OS management).",
+    "when": "Web apps/APIs wanting managed hosting.",
+    "whenNot": "Workloads needing OS-level control (use a VM).",
+    "advantages": [
+      "No server management",
+      "Built-in scaling + slots",
+      "Easy CI/CD + auth"
+    ],
+    "disadvantages": [
+      "Less control than a VM",
+      "Platform constraints",
+      "Cost at high scale"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-5": {
+    "pitch": "AKS is managed Kubernetes for container orchestration on Azure.",
+    "definition": "Azure Kubernetes Service (AKS) is a managed Kubernetes offering where Azure runs the control plane (free) and you manage worker nodes. You use it to run containerized apps at scale with Kubernetes' orchestration - auto-scaling, self-healing, rolling updates, service discovery - while offloading control-plane operations. It's the choice for container workloads needing standard Kubernetes and ecosystem tooling.",
+    "how": "Azure manages the K8s control plane -> you run node pools -> deploy standard Kubernetes workloads (manifests/Helm).",
+    "when": "Container workloads needing Kubernetes at scale.",
+    "whenNot": "A single container (Container Apps/App Service is simpler).",
+    "advantages": [
+      "Managed control plane",
+      "Standard Kubernetes",
+      "Auto-scaling + self-healing"
+    ],
+    "disadvantages": [
+      "K8s complexity",
+      "Node management",
+      "Steep learning curve"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-6": {
+    "pitch": "Container Apps is serverless containers; AKS is full Kubernetes.",
+    "definition": "Azure Container Apps is a serverless container platform built on Kubernetes/KEDA that runs containers and microservices without you managing the cluster - it auto-scales (to zero), supports event-driven workloads, Dapr and revisions. AKS exposes full Kubernetes with complete control. Container Apps trades K8s flexibility for simplicity and serverless scaling; AKS suits teams needing the full Kubernetes API and ecosystem.",
+    "how": "Container Apps: deploy a container, Azure scales it serverlessly. AKS: you operate a full Kubernetes cluster.",
+    "when": "Container Apps for simple/serverless; AKS for full K8s control.",
+    "whenNot": "Needing the full Kubernetes API on Container Apps.",
+    "advantages": [
+      "Container Apps: serverless, simple",
+      "Scale to zero",
+      "AKS: full K8s power"
+    ],
+    "disadvantages": [
+      "Container Apps: less control",
+      "AKS: more to manage",
+      "Feature differences"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-7": {
+    "pitch": "Azure Functions runs event-triggered code serverlessly.",
+    "definition": "Azure Functions is a serverless compute service that runs small pieces of code (functions) in response to triggers - HTTP, timers, queue/blob events, Event Grid - without managing servers, scaling automatically and (on the Consumption plan) charging only per execution. Benefits: no infrastructure, automatic scaling, pay-per-use, and many built-in bindings to Azure services. Ideal for event-driven and glue workloads.",
+    "how": "A trigger fires the function -> Azure runs + scales it per event -> bindings simplify input/output to services.",
+    "when": "Event-driven, bursty, or integration workloads.",
+    "whenNot": "Long-running or steady high-compute work.",
+    "advantages": [
+      "No servers, auto-scale",
+      "Pay-per-execution",
+      "Rich triggers/bindings"
+    ],
+    "disadvantages": [
+      "Cold starts",
+      "Execution time limits",
+      "Stateless design"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "[Function(\"Hello\")]\npublic IActionResult Run([HttpTrigger(...)] HttpRequest req) => new OkObjectResult(\"hi\");"
+    }
+  },
+  "azure-8": {
+    "pitch": "Logic Apps build workflows/integrations with low/no code.",
+    "definition": "Azure Logic Apps is a serverless workflow/integration service for automating business processes by visually connecting triggers and actions across hundreds of connectors (Office 365, SQL, SAP, HTTP) - largely no-code. Use it for integration and orchestration scenarios (approvals, data sync, B2B/EDI) where a visual workflow beats writing code. Functions is for code logic; Logic Apps is for connector-based workflows.",
+    "how": "Design a workflow (trigger -> actions via connectors) -> Logic Apps runs it serverlessly on events/schedules.",
+    "when": "Integration/automation across many systems.",
+    "whenNot": "Custom code-heavy logic (use Functions).",
+    "advantages": [
+      "Low/no-code workflows",
+      "Hundreds of connectors",
+      "Serverless + visual"
+    ],
+    "disadvantages": [
+      "Less flexible than code",
+      "Connector limits/cost",
+      "Hard to version-control visually"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-9": {
+    "pitch": "A Storage Account is the container for Azure's core storage services.",
+    "definition": "An Azure Storage Account is a namespace that holds Azure Storage data services: Blob (objects/files), File (SMB/NFS shares), Queue (messaging), and Table (NoSQL key-value). It provides durable, scalable, secure storage with redundancy options (LRS/ZRS/GRS), and is the foundation for storing app data, backups, static content and more.",
+    "how": "Create a storage account -> use Blob/File/Queue/Table services within it -> data is replicated per the redundancy option.",
+    "when": "Storing files, queues, and NoSQL data on Azure.",
+    "whenNot": "Relational data (use Azure SQL).",
+    "advantages": [
+      "Multiple storage types",
+      "Durable + redundant",
+      "Scalable + secure"
+    ],
+    "disadvantages": [
+      "Service-specific APIs",
+      "Redundancy/cost choices",
+      "Access policy management"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-10": {
+    "pitch": "Blob=objects, File=shares, Queue=messages, Table=NoSQL.",
+    "definition": "These are the four Azure Storage services. Blob Storage holds unstructured objects (files, media, backups) accessed over HTTP. File Storage provides managed SMB/NFS file shares mountable like a network drive. Queue Storage offers simple message queuing to decouple components. Table Storage is a schemaless NoSQL key-value store for large structured-but-non-relational data. Each targets a different storage pattern.",
+    "how": "Pick the service by data shape: objects (Blob), shared files (File), messages (Queue), key-value rows (Table).",
+    "when": "Matching storage type to the data pattern.",
+    "whenNot": "Using Table for relational queries (use Azure SQL).",
+    "advantages": [
+      "Blob: object storage",
+      "File: SMB/NFS shares",
+      "Queue/Table: messaging + NoSQL"
+    ],
+    "disadvantages": [
+      "Different APIs/semantics",
+      "Table query limits",
+      "Choosing the right one"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-11": {
+    "pitch": "Azure SQL Database is managed PaaS SQL; SQL on a VM is self-managed.",
+    "definition": "Azure SQL Database is a fully managed PaaS relational database based on SQL Server - Microsoft handles patching, backups, HA and scaling, and you get features like auto-scaling, geo-replication and serverless tiers. SQL Server on a VM is IaaS: full control over the SQL instance and OS, but you manage everything. Use Azure SQL DB for managed convenience; SQL on a VM when you need full control or specific instance features.",
+    "how": "Azure SQL DB: managed database, no server ops. SQL-on-VM: you install and manage SQL Server on your VM.",
+    "when": "Managed SQL without DBA toil.",
+    "whenNot": "Needing full instance/OS control (use a VM).",
+    "advantages": [
+      "Managed patching/backups/HA",
+      "Auto-scale + geo-replication",
+      "Less ops"
+    ],
+    "disadvantages": [
+      "Less control than a VM",
+      "Some feature differences",
+      "Cost at high tiers"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-12": {
+    "pitch": "Cosmos DB is a globally-distributed, multi-model NoSQL database.",
+    "definition": "Azure Cosmos DB is a fully managed, globally distributed NoSQL database offering single-digit-millisecond latency, elastic scale, and multiple consistency levels with turnkey global replication. It supports multiple APIs - Core (SQL/document), MongoDB, Cassandra, Gremlin (graph) and Table - so you can use familiar models. Ideal for globally distributed, high-scale, low-latency apps.",
+    "how": "Choose an API + partition key -> Cosmos auto-distributes/replicates globally with chosen consistency and SLAs.",
+    "when": "Global, high-scale, low-latency NoSQL.",
+    "whenNot": "Relational queries/joins or small single-region apps.",
+    "advantages": [
+      "Global distribution",
+      "Multi-model APIs",
+      "Single-digit-ms latency"
+    ],
+    "disadvantages": [
+      "RU-based cost model",
+      "Partition design critical",
+      "No relational joins"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-13": {
+    "pitch": "Azure Cache for Redis is a managed in-memory cache.",
+    "definition": "Azure Cache for Redis is a managed, in-memory data store based on Redis, providing sub-millisecond access to cached data. You use it to cache frequently-read data (reducing database load and latency), store sessions, implement leaderboards/rate limiting, or as a message broker. Being shared and fast, it dramatically speeds up read-heavy applications.",
+    "how": "App checks Redis first (cache-aside) -> on miss, load from DB and populate -> serve from cache until expiry.",
+    "when": "Read-heavy apps, sessions, rate limiting.",
+    "whenNot": "Durable primary storage (cache is volatile).",
+    "advantages": [
+      "Sub-ms reads",
+      "Cuts DB load",
+      "Shared across instances"
+    ],
+    "disadvantages": [
+      "Volatile (not durable)",
+      "Invalidation is hard",
+      "Memory cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-14": {
+    "pitch": "A VNet is your private network in Azure.",
+    "definition": "An Azure Virtual Network (VNet) is a logically isolated private network in Azure where you deploy and connect resources securely. Components include subnets (segmenting the address space), network security groups (firewall rules), route tables, gateways (VPN/ExpressRoute for hybrid connectivity), peering (VNet-to-VNet), and private endpoints. It controls IP addressing, segmentation and traffic flow.",
+    "how": "Define an address space -> create subnets -> NSGs + routes + gateways control connectivity and security.",
+    "when": "Securely networking and isolating Azure resources.",
+    "whenNot": "Trivial single-service apps (defaults suffice).",
+    "advantages": [
+      "Network isolation + control",
+      "Subnet segmentation",
+      "Hybrid connectivity"
+    ],
+    "disadvantages": [
+      "Networking complexity",
+      "Misconfig risks",
+      "Many components"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-15": {
+    "pitch": "Public subnets allow internet exposure; private ones stay internal.",
+    "definition": "In an Azure VNet, the public/private distinction is driven by configuration: a 'public' subnet hosts resources with public IPs or behind a public load balancer/gateway, reachable from the internet (front ends, gateways). A 'private' subnet hosts resources with only private IPs, reachable only within the VNet, using a NAT gateway for outbound - the secure place for app and data tiers. NSGs and routing enforce the boundary.",
+    "how": "Public-facing resources get public IPs/load balancers; private resources use private IPs + NAT for outbound only.",
+    "when": "Segmenting internet-facing vs internal tiers.",
+    "whenNot": "Placing databases in a public-facing subnet.",
+    "advantages": [
+      "Public: controlled entry",
+      "Private: protected backends",
+      "Tiered security"
+    ],
+    "disadvantages": [
+      "NAT for private egress",
+      "Routing/NSG care",
+      "Misplacement exposes resources"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-16": {
+    "pitch": "NSGs are stateful firewalls filtering subnet/NIC traffic by rules.",
+    "definition": "Network Security Groups (NSGs) are Azure's stateful firewalls that allow or deny inbound and outbound traffic to subnets or network interfaces, based on prioritized rules (source/destination, port, protocol). Because they're stateful, return traffic is automatically allowed. They're the primary tool for controlling network access to Azure resources, applying least-privilege at the network layer.",
+    "how": "Attach an NSG to a subnet/NIC -> rules (by priority) allow/deny traffic; stateful return traffic flows automatically.",
+    "when": "Controlling network access to Azure resources.",
+    "whenNot": "Relying on defaults for production security.",
+    "advantages": [
+      "Stateful allow/deny rules",
+      "Subnet or NIC scope",
+      "Priority-based control"
+    ],
+    "disadvantages": [
+      "Rule sprawl",
+      "Priority ordering care",
+      "Misconfig blocks/exposes"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-17": {
+    "pitch": "Azure Load Balancer is a layer-4 (TCP/UDP) traffic distributor.",
+    "definition": "Azure Load Balancer distributes inbound TCP/UDP traffic across healthy backend instances at layer 4 for high availability and scale. Types: Public Load Balancer (internet-facing, public IP) and Internal Load Balancer (private, within a VNet). It's fast and protocol-agnostic but doesn't understand HTTP - for layer-7 routing you use Application Gateway. SKUs (Basic/Standard) differ in features and SLA.",
+    "how": "The LB health-checks backends and distributes TCP/UDP connections across healthy instances (layer 4).",
+    "when": "Distributing TCP/UDP traffic for HA.",
+    "whenNot": "HTTP path/host routing (use Application Gateway).",
+    "advantages": [
+      "High availability",
+      "Public or internal",
+      "Low-latency layer 4"
+    ],
+    "disadvantages": [
+      "No HTTP awareness",
+      "No path/host routing",
+      "SKU feature limits"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-18": {
+    "pitch": "Application Gateway is a layer-7 web load balancer with WAF.",
+    "definition": "Azure Application Gateway is a layer-7 (HTTP/HTTPS) load balancer that understands web traffic - it offers URL path- and host-based routing, SSL/TLS termination, cookie-based session affinity, and an optional Web Application Firewall (WAF). Unlike Azure Load Balancer (layer-4 TCP/UDP), Application Gateway makes routing decisions based on HTTP content, making it the choice for web apps.",
+    "how": "Inspects HTTP requests -> routes by path/host -> terminates TLS + WAF -> forwards to the right backend pool.",
+    "when": "Web apps needing layer-7 routing + WAF.",
+    "whenNot": "Plain TCP/UDP traffic (use Load Balancer).",
+    "advantages": [
+      "Layer-7 path/host routing",
+      "TLS termination + WAF",
+      "Session affinity"
+    ],
+    "disadvantages": [
+      "HTTP(S)-focused",
+      "More config than LB",
+      "Cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-19": {
+    "pitch": "Front Door is a global layer-7 entry with CDN and WAF.",
+    "definition": "Azure Front Door is a global, scalable entry point that uses Microsoft's edge network to deliver fast, secure web apps - providing global HTTP load balancing, path-based routing, SSL offload, caching/CDN, and WAF at the edge close to users. Use it for global applications needing low latency, failover across regions, and edge security. Application Gateway is regional; Front Door is global.",
+    "how": "Requests hit the nearest Microsoft edge -> Front Door routes/caches/protects -> forwards to the best healthy backend.",
+    "when": "Global apps needing edge routing + failover.",
+    "whenNot": "Single-region apps (Application Gateway suffices).",
+    "advantages": [
+      "Global edge routing",
+      "CDN caching + WAF",
+      "Cross-region failover"
+    ],
+    "disadvantages": [
+      "Global service cost",
+      "Overkill for one region",
+      "Config complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-20": {
+    "pitch": "Traffic Manager is DNS-based global routing; Front Door is layer-7 edge.",
+    "definition": "Azure Traffic Manager is a DNS-based traffic load balancer that distributes users across global endpoints using routing methods (performance, priority/failover, geographic, weighted) by returning the best endpoint's DNS. Front Door operates at layer 7 (HTTP) at the edge with caching, WAF and faster failover. Traffic Manager routes at the DNS level (any protocol); Front Door routes/accelerates HTTP traffic with more features.",
+    "how": "Traffic Manager answers DNS with the best endpoint; Front Door proxies HTTP at the edge with routing + caching.",
+    "when": "Traffic Manager for DNS-level multi-region; Front Door for HTTP edge.",
+    "whenNot": "Using DNS routing when you need HTTP-aware features.",
+    "advantages": [
+      "Traffic Manager: DNS, any protocol",
+      "Front Door: HTTP edge + cache/WAF",
+      "Both global"
+    ],
+    "disadvantages": [
+      "DNS TTL slows failover",
+      "Front Door: HTTP only",
+      "Choosing the right one"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-21": {
+    "pitch": "Entra ID is Microsoft's cloud identity and access service.",
+    "definition": "Microsoft Entra ID (formerly Azure Active Directory) is Microsoft's cloud-based identity and access management service. It authenticates users and apps, provides single sign-on, multi-factor authentication, conditional access, and OAuth2/OpenID Connect-based authorization for Azure, Microsoft 365 and custom apps. It's how you manage who can access what across cloud resources and applications.",
+    "how": "Users/apps authenticate against Entra ID -> it issues tokens (OIDC/OAuth2) -> apps/Azure authorize based on them.",
+    "when": "Cloud identity, SSO and app authentication.",
+    "whenNot": "On-prem Windows domain auth (use AD DS).",
+    "advantages": [
+      "Cloud SSO + MFA",
+      "OAuth2/OIDC for apps",
+      "Conditional access"
+    ],
+    "disadvantages": [
+      "Cloud-centric model",
+      "Config complexity",
+      "Licensing tiers"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-22": {
+    "pitch": "Entra ID is cloud IAM; AD DS is on-prem Windows domain services.",
+    "definition": "Microsoft Entra ID is a cloud identity service using modern protocols (OAuth2/OIDC/SAML) for SSO to cloud and web apps - no domain controllers, no Kerberos/LDAP/Group Policy. Active Directory Domain Services (AD DS) is the traditional on-premises directory using Kerberos/LDAP and Group Policy to manage Windows domains, computers and users. They solve different problems and are often used together (hybrid identity).",
+    "how": "Entra ID: cloud tokens (OIDC) for apps. AD DS: on-prem Kerberos/LDAP + Group Policy for Windows domains.",
+    "when": "Entra ID for cloud apps; AD DS for on-prem domains.",
+    "whenNot": "Expecting Group Policy/domain-join from Entra ID.",
+    "advantages": [
+      "Entra ID: cloud, modern protocols",
+      "AD DS: on-prem domain control",
+      "Hybrid possible"
+    ],
+    "disadvantages": [
+      "Different protocols/models",
+      "Not interchangeable",
+      "Hybrid setup effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-23": {
+    "pitch": "Managed Identities give Azure resources an identity without secrets.",
+    "definition": "Managed Identities are automatically managed Entra ID identities for Azure resources (App Service, VMs, Functions), letting them authenticate to other Azure services (Key Vault, SQL, Storage) without storing any credentials. Azure handles credential creation and rotation. They eliminate secrets in code/config for service-to-service auth - the recommended way to access Azure resources securely.",
+    "how": "Enable a managed identity on a resource -> grant it access (RBAC) -> the resource gets tokens automatically, no secrets.",
+    "when": "Service-to-service auth without secrets.",
+    "whenNot": "Non-Azure or user-interactive auth.",
+    "advantages": [
+      "No secrets to manage",
+      "Auto credential rotation",
+      "RBAC-controlled access"
+    ],
+    "disadvantages": [
+      "Azure-only",
+      "Token scope/permission setup",
+      "Local-dev differences"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var client = new SecretClient(uri, new DefaultAzureCredential()); // uses managed identity"
+    }
+  },
+  "azure-24": {
+    "pitch": "Key Vault securely stores secrets, keys and certificates.",
+    "definition": "Azure Key Vault is a managed service for securely storing and accessing secrets (passwords, connection strings), encryption keys, and certificates, with access controlled by Entra ID/RBAC and full audit logging. Apps retrieve secrets at runtime (ideally via Managed Identity, no stored credentials), and Key Vault handles rotation and HSM-backed key protection. It keeps sensitive data out of code and config.",
+    "how": "Store secrets in Key Vault -> app (with a managed identity) fetches them at runtime -> access is RBAC-controlled + audited.",
+    "when": "Centralizing secrets/keys/certs securely.",
+    "whenNot": "Tiny apps with no sensitive data.",
+    "advantages": [
+      "Central, audited secret store",
+      "Managed identity access (no creds)",
+      "Rotation + HSM keys"
+    ],
+    "disadvantages": [
+      "Fetch latency (cache it)",
+      "Access policy/RBAC setup",
+      "Service dependency"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-25": {
+    "pitch": "APIM is a managed gateway to publish, secure and manage APIs.",
+    "definition": "Azure API Management (APIM) is a managed service that fronts your APIs, providing a single gateway to publish, secure, transform, throttle, version and monitor them. It adds authentication, rate limiting, caching, request/response transformation, a developer portal and analytics over your backend services. Use it to expose internal/microservice APIs to consumers safely and consistently.",
+    "how": "Clients call APIM -> it authenticates, throttles, transforms and routes to backends -> returns responses, with analytics.",
+    "when": "Publishing/securing APIs to internal or external consumers.",
+    "whenNot": "A single internal API with no governance needs.",
+    "advantages": [
+      "Central API gateway",
+      "Auth/throttling/caching",
+      "Versioning + dev portal"
+    ],
+    "disadvantages": [
+      "Added cost/latency",
+      "Config complexity",
+      "Another component to run"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-26": {
+    "pitch": "Service Bus is enterprise messaging; Queue Storage is simple queuing.",
+    "definition": "Azure Service Bus is a fully managed enterprise message broker supporting queues and publish/subscribe topics, with advanced features: FIFO ordering, sessions, transactions, dead-lettering, duplicate detection and scheduled delivery. Azure Queue Storage is a simpler, cheaper queue for basic decoupling with large capacity but few features. Use Service Bus for complex, reliable enterprise messaging; Queue Storage for simple, high-volume tasks.",
+    "how": "Service Bus: queues/topics with ordering, sessions, transactions, DLQ. Queue Storage: basic FIFO-ish queue, minimal features.",
+    "when": "Service Bus for enterprise messaging; Queue Storage for simple decoupling.",
+    "whenNot": "Using Queue Storage where ordering/transactions matter.",
+    "advantages": [
+      "Service Bus: rich features",
+      "Topics (pub/sub), DLQ, sessions",
+      "Queue Storage: cheap + simple"
+    ],
+    "disadvantages": [
+      "Service Bus pricier",
+      "Queue Storage: few features",
+      "Choosing the right one"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-27": {
+    "pitch": "Event Grid is a serverless event router for reactive architectures.",
+    "definition": "Azure Event Grid is a fully managed event routing service that delivers discrete events from sources (Azure services, custom apps) to subscribers (Functions, Logic Apps, webhooks) using a publish-subscribe model with filtering and near-real-time push. Use it for reactive, event-driven architectures - reacting to things like blob created, resource changes - where you want lightweight, push-based event distribution.",
+    "how": "A source emits an event -> Event Grid routes it (with filters) -> pushes to subscribed handlers in near real time.",
+    "when": "Reactive, event-driven Azure integrations.",
+    "whenNot": "High-throughput streaming (use Event Hubs).",
+    "advantages": [
+      "Serverless event routing",
+      "Push + filtering",
+      "Many Azure sources"
+    ],
+    "disadvantages": [
+      "Discrete events, not streams",
+      "Delivery retry limits",
+      "Subscription management"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-28": {
+    "pitch": "Event Hubs ingests big data streams; Event Grid routes events; Service Bus is messaging.",
+    "definition": "Azure Event Hubs is a big-data streaming/event ingestion service handling millions of events per second (telemetry, logs, IoT), with partitioned consumers and replay - like Kafka. It differs from Event Grid (which routes discrete reactive events) and Service Bus (enterprise message queuing/commands). Event Hubs = high-throughput streaming; Event Grid = event routing; Service Bus = reliable message processing.",
+    "how": "Producers stream events into partitioned hubs -> consumer groups read (and can replay) at scale.",
+    "when": "High-volume telemetry/log/IoT streaming.",
+    "whenNot": "Discrete event routing (Event Grid) or commands (Service Bus).",
+    "advantages": [
+      "Massive ingestion throughput",
+      "Partitioned + replayable",
+      "Kafka-compatible"
+    ],
+    "disadvantages": [
+      "Stream model (not per-message)",
+      "Partition/consumer design",
+      "Overkill for low volume"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-29": {
+    "pitch": "Azure Monitor is the platform for metrics, logs and alerts.",
+    "definition": "Azure Monitor is Azure's comprehensive observability platform that collects, analyzes and acts on telemetry from applications and infrastructure - metrics, logs, traces and alerts. It includes Application Insights (app telemetry) and Log Analytics (log queries), and lets you build dashboards, set alerts, and trigger automated actions (autoscale, notifications). It's the single pane for monitoring everything in Azure.",
+    "how": "Resources/apps emit telemetry -> Azure Monitor stores + analyzes it -> dashboards, alerts and automated actions.",
+    "when": "Monitoring any Azure workload.",
+    "whenNot": "Trivial apps with no operational concerns.",
+    "advantages": [
+      "Unified metrics/logs/alerts",
+      "Includes App Insights + Log Analytics",
+      "Drives autoscale/alerts"
+    ],
+    "disadvantages": [
+      "Cost at high volume",
+      "Many sub-services",
+      "Query/config learning"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-30": {
+    "pitch": "App Insights is APM for apps; Azure Monitor is the broader platform.",
+    "definition": "Application Insights is an Application Performance Management (APM) feature of Azure Monitor focused on application telemetry - request rates, response times, failures, dependencies, exceptions, and distributed tracing - with deep code-level insight. Azure Monitor is the umbrella platform covering all telemetry (infrastructure, platform, apps). App Insights is the app-focused part; Azure Monitor is the whole observability suite.",
+    "how": "Instrument your app with App Insights SDK -> it feeds request/dependency/exception telemetry into Azure Monitor.",
+    "when": "Deep application performance monitoring.",
+    "whenNot": "Only infrastructure metrics (use Azure Monitor broadly).",
+    "advantages": [
+      "App-level performance insight",
+      "Dependency + failure tracking",
+      "Distributed tracing"
+    ],
+    "disadvantages": [
+      "App-focused (not infra)",
+      "Instrumentation needed",
+      "Telemetry cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-31": {
+    "pitch": "Log Analytics queries collected logs with KQL.",
+    "definition": "Azure Log Analytics is the tool (and workspace) within Azure Monitor for collecting and querying log and performance data using the powerful Kusto Query Language (KQL). Telemetry from many sources lands in a Log Analytics workspace, where you write KQL queries to search, aggregate, visualize and alert on it. It's how you analyze logs across applications and infrastructure centrally.",
+    "how": "Logs flow into a Log Analytics workspace -> you query them with KQL -> build alerts, dashboards and insights.",
+    "when": "Centralized log querying and analysis on Azure.",
+    "whenNot": "Tiny apps where local logs suffice.",
+    "advantages": [
+      "Powerful KQL querying",
+      "Central log workspace",
+      "Drives alerts/dashboards"
+    ],
+    "disadvantages": [
+      "KQL learning curve",
+      "Ingestion/retention cost",
+      "Workspace design"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-32": {
+    "pitch": "Azure DevOps is a suite: Boards, Repos, Pipelines, Artifacts, Test Plans.",
+    "definition": "Azure DevOps is Microsoft's end-to-end DevOps platform providing Azure Boards (agile work tracking), Repos (Git hosting), Pipelines (CI/CD), Artifacts (package feeds), and Test Plans (test management). It covers planning, source control, build/release automation, package management and testing in one integrated suite, widely used in .NET/enterprise teams.",
+    "how": "Plan in Boards -> code in Repos -> build/deploy with Pipelines -> share via Artifacts -> test with Test Plans.",
+    "when": "Enterprise/.NET teams wanting integrated DevOps.",
+    "whenNot": "Small projects happy on GitHub alone.",
+    "advantages": [
+      "End-to-end DevOps suite",
+      "Strong .NET fit",
+      "Integrated tooling"
+    ],
+    "disadvantages": [
+      "Heavier than GitHub Actions",
+      "Learning curve",
+      "Licensing at scale"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-33": {
+    "pitch": "An Azure Pipeline automates CI/CD via YAML or classic stages.",
+    "definition": "An Azure DevOps Pipeline is the CI/CD engine that automatically builds, tests and deploys your code. You implement CI/CD by defining a pipeline (YAML in the repo, or classic GUI) with stages/jobs/steps that trigger on commits/PRs: CI builds and tests, CD deploys to environments with approvals and gates. It supports any language, containers, and deployment to Azure or anywhere.",
+    "how": "A commit triggers the pipeline -> CI builds + tests -> CD deploys to environments with approvals -> monitored.",
+    "when": "Automating .NET/any app delivery on Azure.",
+    "whenNot": "One-off manual deployments.",
+    "advantages": [
+      "YAML pipeline-as-code",
+      "Build + release stages",
+      "Approvals + environments"
+    ],
+    "disadvantages": [
+      "YAML complexity grows",
+      "Agent/pool management",
+      "Setup effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "- task: DotNetCoreCLI@2\n  inputs: { command: test }\n- task: AzureWebApp@1"
+    }
+  },
+  "azure-34": {
+    "pitch": "ARM is Azure's deployment/management layer; ARM templates are its IaC.",
+    "definition": "Azure Resource Manager (ARM) is the deployment and management service for Azure - every action goes through it, providing resource groups, RBAC, tags and consistent management. ARM Templates are JSON files that declaratively define Azure resources for repeatable, idempotent deployments handled by ARM. They're Azure's native Infrastructure-as-Code, though verbose (Bicep is the friendlier alternative that compiles to ARM).",
+    "how": "ARM is the control plane; you submit an ARM template (JSON) -> ARM provisions the resources idempotently as a deployment.",
+    "when": "Native, repeatable Azure provisioning.",
+    "whenNot": "Multi-cloud (use Terraform).",
+    "advantages": [
+      "Azure-native IaC",
+      "Idempotent deployments",
+      "RBAC/tags via ARM"
+    ],
+    "disadvantages": [
+      "JSON is verbose",
+      "Azure-only",
+      "Bicep is friendlier"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-35": {
+    "pitch": "Bicep is a cleaner DSL that compiles to ARM templates.",
+    "definition": "Bicep is a domain-specific language for deploying Azure resources that compiles down to ARM JSON, offering much cleaner, more concise syntax, modules, type safety and better tooling for the same capabilities. It removes ARM JSON's verbosity while staying Azure-native and fully supported. Bicep is Microsoft's recommended modern choice over hand-writing ARM templates.",
+    "how": "Write Bicep -> it transpiles to an ARM template -> ARM deploys it; same result, far cleaner authoring.",
+    "when": "Azure-native IaC with better authoring.",
+    "whenNot": "Multi-cloud needs (use Terraform).",
+    "advantages": [
+      "Concise vs ARM JSON",
+      "Modules + type safety",
+      "Azure-native, supported"
+    ],
+    "disadvantages": [
+      "Azure-only",
+      "Newer ecosystem",
+      "Still compiles to ARM"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "bicep",
+      "snippet": "resource sa \"Microsoft.Storage/storageAccounts@2023-01-01\" = {\n  name: \"appstore\"; location: rg.location; sku: { name: \"Standard_LRS\" }\n}"
+    }
+  },
+  "azure-36": {
+    "pitch": "Terraform is cloud-agnostic IaC; ARM/Bicep are Azure-native.",
+    "definition": "Terraform (HashiCorp) is a cloud-agnostic IaC tool using HCL to provision across Azure, AWS, GCP and more, with a separate state file and plan/apply workflow. ARM Templates and Bicep are Azure-native (no external state to host, deep Azure integration). Choose Terraform for multi-cloud/portability and a mature ecosystem; choose Bicep/ARM for pure-Azure projects wanting first-class native support.",
+    "how": "Terraform: HCL + state, multi-cloud. ARM/Bicep: Azure-native deployments via ARM, no external state.",
+    "when": "Terraform for multi-cloud; Bicep/ARM for Azure-only.",
+    "whenNot": "Forcing one where the other clearly fits.",
+    "advantages": [
+      "Terraform: multi-cloud + plan",
+      "Bicep/ARM: native, no state host",
+      "All declarative"
+    ],
+    "disadvantages": [
+      "Terraform: manage state",
+      "ARM JSON verbose",
+      "Ecosystem differences"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-37": {
+    "pitch": "Secure Azure apps with Entra ID, Key Vault, network isolation and monitoring.",
+    "definition": "You secure an Azure application with layered defenses: Entra ID for authentication and Managed Identities (no stored secrets), Key Vault for secrets/keys, network isolation via VNets/NSGs/private endpoints, TLS and encryption at rest, a WAF (App Gateway/Front Door) for web protection, RBAC least-privilege, and Azure Monitor/Defender for Cloud for threat detection and auditing. Each layer reduces the blast radius of a compromise.",
+    "how": "Entra ID + Managed Identity + Key Vault + VNet/NSG + WAF + RBAC + Monitor/Defender around the app.",
+    "when": "Any production Azure workload.",
+    "whenNot": "Never - security always applies.",
+    "advantages": [
+      "Identity + secret management",
+      "Network isolation + WAF",
+      "Least privilege + monitoring"
+    ],
+    "disadvantages": [
+      "Many layers to configure",
+      "Misconfig is top risk",
+      "Ongoing maintenance"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-38": {
+    "pitch": "Design for HA/scale with zones, load balancing, autoscale and managed data.",
+    "definition": "You design a highly available, scalable Azure app by spreading compute across Availability Zones behind a load balancer/App Gateway, using autoscaling (App Service/VMSS/AKS), choosing zone-redundant managed data (Azure SQL/Cosmos DB with geo-replication), caching with Redis, decoupling via Service Bus, and adding Front Door for global routing/failover. Health probes and retries handle failures. It survives instance and zone outages and scales elastically.",
+    "how": "Zone-redundant compute behind a gateway + autoscale + zone/geo-redundant data + caching + global Front Door.",
+    "when": "Apps needing high uptime and elastic scale.",
+    "whenNot": "Low-stakes tools tolerant of downtime.",
+    "advantages": [
+      "Zone/region resilience",
+      "Elastic autoscaling",
+      "Managed redundant data"
+    ],
+    "disadvantages": [
+      "Higher cost",
+      "Architectural complexity",
+      "Failover testing"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "HA Azure app",
+      "mermaid": "flowchart LR\n  FD[Front Door] --> AG[App Gateway]\n  AG --> Z1[Zone-1 app]\n  AG --> Z2[Zone-2 app]\n  Z1 --> DB[(Zone-redundant SQL)]"
+    }
+  },
+  "azure-39": {
+    "pitch": "Migrate .NET to Azure with assessment, the right target, and tooling.",
+    "definition": "You migrate an on-prem .NET app to Azure by assessing it (Azure Migrate), then picking a target: rehost VMs (lift-and-shift), replatform to App Service/Container Apps/AKS, or refactor to cloud-native. Move the database to Azure SQL (with Data Migration Service), externalize config/secrets to Key Vault, set up CI/CD and monitoring, migrate in waves, validate, then optimize. .NET apps often modernize well onto App Service or containers.",
+    "how": "Assess -> choose rehost/replatform/refactor -> migrate app + DB with Azure tools -> validate -> optimize.",
+    "when": "Moving existing .NET workloads to Azure.",
+    "whenNot": "Greenfield apps (build cloud-native).",
+    "advantages": [
+      "Structured migration path",
+      "Azure Migrate/DMS tooling",
+      "Modernize onto PaaS"
+    ],
+    "disadvantages": [
+      "Migration risk/effort",
+      "Dependency mapping",
+      "Optimization comes later"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-40": {
+    "pitch": "A real Azure project combines App Service/AKS, SQL, Key Vault, CI/CD and monitoring.",
+    "definition": "A real Azure architecture I would describe: an ASP.NET Core app on App Service (or containers on AKS) across Availability Zones behind Application Gateway/Front Door with autoscaling; data in zone-redundant Azure SQL plus Cosmos DB; caching via Azure Cache for Redis; secrets in Key Vault accessed by Managed Identity; identity via Entra ID; CI/CD with Azure DevOps Pipelines; and observability through Azure Monitor/Application Insights, with RBAC and VNet isolation. It scales, self-heals and is secured and observable end to end.",
+    "how": "App Service/AKS across zones behind App Gateway/Front Door + Azure SQL/Cosmos + Redis + Key Vault + CI/CD + Monitor.",
+    "when": "Describing a production Azure system.",
+    "whenNot": "A trivial app where this is over-engineering.",
+    "advantages": [
+      "Zone-resilient + autoscaled",
+      "Managed data + secrets",
+      "Observable + secured"
+    ],
+    "disadvantages": [
+      "Architectural complexity",
+      "Cost management",
+      "Requires Azure expertise"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Azure project",
+      "mermaid": "flowchart LR\n  FD[Front Door] --> AG[App Gateway]\n  AG --> App[App Service/AKS]\n  App --> SQL[(Azure SQL)]\n  App --> Cos[(Cosmos DB)]\n  App --> KV[Key Vault]"
+    }
+  },
+  "azure-41": {
+    "pitch": "HA Web API: zone-redundant App Service/AKS behind App Gateway + Azure SQL.",
+    "definition": "A highly available ASP.NET Core Web API on Azure: host it on App Service (zone-redundant) or AKS across Availability Zones with autoscaling, behind Application Gateway (layer-7 + WAF) or Front Door for global entry; use zone-redundant Azure SQL (or Cosmos DB) with geo-replication; cache with Redis; store secrets in Key Vault via Managed Identity; and monitor with Application Insights. Health probes and retries keep it resilient - no single instance or zone failure takes it down.",
+    "how": "App Gateway/Front Door -> zone-redundant App Service/AKS (autoscale) -> zone-redundant Azure SQL + Redis; probes + retries.",
+    "when": "Production APIs needing uptime + scale.",
+    "whenNot": "Low-traffic internal APIs.",
+    "advantages": [
+      "Survives instance/zone loss",
+      "Elastic scaling + WAF",
+      "Resilient data tier"
+    ],
+    "disadvantages": [
+      "Higher cost",
+      "More to operate",
+      "Stateless design needed"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "HA Web API",
+      "mermaid": "flowchart LR\n  AG[App Gateway/WAF] --> A1[API Zone-1]\n  AG --> A2[API Zone-2]\n  A1 --> DB[(Zone-redundant SQL)]\n  A2 --> DB"
+    }
+  },
+  "azure-42": {
+    "pitch": "Serverless: Azure Functions + Storage (Blob/Queue/Table).",
+    "definition": "A serverless application on Azure uses Azure Functions for event-triggered compute (HTTP, queue, blob, timer triggers) and Azure Storage for data - Blob for files, Queue for messaging between functions, and Table for NoSQL records - with no servers to manage and automatic, pay-per-use scaling. Add Entra ID for auth and Application Insights for monitoring. It scales from zero to high load and you pay only for executions.",
+    "how": "Trigger -> Azure Function runs logic -> reads/writes Blob/Queue/Table storage -> response; all serverless + auto-scaled.",
+    "when": "Event-driven apps with no infrastructure.",
+    "whenNot": "Steady heavy compute or long-running tasks.",
+    "advantages": [
+      "No servers, auto-scale",
+      "Pay-per-use",
+      "Storage bindings simplify code"
+    ],
+    "disadvantages": [
+      "Cold starts",
+      "Execution limits",
+      "Storage design (Table/Queue)"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Serverless Azure",
+      "mermaid": "flowchart LR\n  E[Event] --> F[Azure Function]\n  F --> B[(Blob)]\n  F --> Q[(Queue)]\n  F --> T[(Table)]"
+    }
+  },
+  "azure-43": {
+    "pitch": "Deploy microservices on AKS as Deployments + Services behind Ingress.",
+    "definition": "You deploy a microservices app using AKS by containerizing each service and running it as its own Kubernetes Deployment + Service, fronted by an Ingress controller (or Application Gateway Ingress) for routing and TLS; services scale independently with HPA; config/secrets come from ConfigMaps and Key Vault (via the CSI driver/Managed Identity); CI/CD builds images to Azure Container Registry and deploys via Helm; and Azure Monitor/Container Insights provides observability.",
+    "how": "Each service -> Deployment + Service on AKS behind Ingress -> HPA + Key Vault secrets -> ACR + Helm CI/CD -> monitored.",
+    "when": "Running microservices at scale on Azure.",
+    "whenNot": "A monolith better hosted on App Service.",
+    "advantages": [
+      "Independent scale/deploy",
+      "Ingress routing + TLS",
+      "Key Vault + ACR integration"
+    ],
+    "disadvantages": [
+      "K8s complexity",
+      "Cluster ops",
+      "Networking/secrets setup"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-44": {
+    "pitch": "Implement auth with Entra ID using OIDC/OAuth2 and the Microsoft identity platform.",
+    "definition": "You implement authentication with Microsoft Entra ID by registering the app in Entra ID and using the Microsoft identity platform (OpenID Connect/OAuth2): users sign in against Entra ID, which issues ID/access tokens (JWT); your ASP.NET Core app validates them via the Microsoft.Identity.Web library, and APIs authorize by scopes/roles. It gives SSO, MFA and conditional access with minimal code, and Managed Identities cover service-to-service auth.",
+    "how": "Register the app -> users sign in via Entra ID (OIDC) -> app validates the JWT -> authorize by scopes/roles.",
+    "when": "SSO and secure auth for Azure-hosted apps.",
+    "whenNot": "Custom local user stores with no SSO need.",
+    "advantages": [
+      "SSO + MFA built in",
+      "Standard OIDC/OAuth2",
+      "Minimal code (Microsoft.Identity.Web)"
+    ],
+    "disadvantages": [
+      "Entra ID setup",
+      "Token/scope configuration",
+      "Conditional access nuances"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration); // validates Entra ID JWT"
+    }
+  },
+  "azure-45": {
+    "pitch": "Store connection strings and keys in Key Vault, accessed via Managed Identity.",
+    "definition": "You securely store connection strings and API keys in Azure Key Vault (never in code/config), and have the app read them at runtime using a Managed Identity so there are no credentials to manage. App Service/Functions can reference Key Vault secrets directly in configuration (Key Vault references), and access is controlled by RBAC and audited. This keeps secrets out of source control and rotatable.",
+    "how": "Put secrets in Key Vault -> grant the app's managed identity access -> app/App Service reads them at runtime, no creds.",
+    "when": "Any Azure app handling secrets.",
+    "whenNot": "Hard-coding secrets in app settings/code.",
+    "advantages": [
+      "Central, audited secrets",
+      "Managed identity (no creds)",
+      "Rotatable + RBAC-controlled"
+    ],
+    "disadvantages": [
+      "Fetch latency (cache it)",
+      "Access policy setup",
+      "Service dependency"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "text",
+      "snippet": "AppSetting = @Microsoft.KeyVault(SecretUri=https://vault.vault.azure.net/secrets/DbConn)"
+    }
+  },
+  "azure-46": {
+    "pitch": "Centralize microservice logging/monitoring with App Insights + Log Analytics.",
+    "definition": "You implement centralized logging and monitoring for microservices on Azure by sending all telemetry to Azure Monitor: Application Insights instruments each service (requests, dependencies, exceptions, distributed traces correlated by operation/trace IDs), and logs flow to a shared Log Analytics workspace queried with KQL. Dashboards visualize health and alerts fire on anomalies. The application map and end-to-end traces let you follow a request across services.",
+    "how": "Each service -> App Insights telemetry + logs -> Log Analytics workspace -> KQL queries, dashboards, alerts, traces.",
+    "when": "Operating distributed services on Azure.",
+    "whenNot": "A single small service.",
+    "advantages": [
+      "Unified telemetry",
+      "Distributed tracing + app map",
+      "KQL queries + alerts"
+    ],
+    "disadvantages": [
+      "Instrumentation effort",
+      "Telemetry cost",
+      "Alert tuning"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-47": {
+    "pitch": "Do blue-green/rolling deploys with App Service slots or AKS strategies.",
+    "definition": "You implement blue-green or rolling deployments in Azure using App Service deployment slots (deploy to a 'staging' slot, warm it up, then swap with production instantly - with instant swap-back for rollback), or on AKS using Kubernetes rolling updates / canary via Ingress or a service mesh. Both use health checks and keep healthy capacity serving traffic, giving zero-downtime releases with easy rollback.",
+    "how": "App Service: deploy to a slot -> warm up -> swap. AKS: rolling/canary update with health gates -> shift traffic.",
+    "when": "Zero-downtime releases on Azure.",
+    "whenNot": "Breaking changes needing a maintenance window.",
+    "advantages": [
+      "Slot swap = instant cutover/rollback",
+      "AKS rolling/canary",
+      "Zero downtime"
+    ],
+    "disadvantages": [
+      "Backward compatibility needed",
+      "DB migration care",
+      "Slot/warm-up config"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-48": {
+    "pitch": "Implement uploads with Azure Blob Storage, ideally via SAS URLs.",
+    "definition": "You implement file upload with Azure Blob Storage by storing files as blobs in a container; the recommended pattern is the backend generating a short-lived SAS (Shared Access Signature) URL so the client uploads directly to Blob Storage, offloading your servers. Access is controlled by SAS/RBAC, data is encrypted at rest, you can trigger Functions on upload (e.g. processing), and downloads serve via SAS or Azure CDN.",
+    "how": "Backend issues a SAS URL -> client uploads the file directly to a blob container -> optional Function trigger processes it.",
+    "when": "Storing user files, media, backups at scale.",
+    "whenNot": "Tiny transient data kept elsewhere.",
+    "advantages": [
+      "Durable, scalable storage",
+      "Direct SAS uploads",
+      "Triggers + lifecycle tiers"
+    ],
+    "disadvantages": [
+      "SAS/token management",
+      "Access policy care",
+      "Egress cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var sas = blob.GenerateSasUri(BlobSasPermissions.Write, DateTimeOffset.UtcNow.AddMinutes(5));"
+    }
+  },
+  "azure-49": {
+    "pitch": "Design DR with geo-redundancy, replication and a tested failover plan.",
+    "definition": "You design disaster recovery in Azure to meet RTO/RPO targets using geo-redundancy: geo-replicated storage (GRS), Azure SQL auto-failover groups or Cosmos DB multi-region writes, deploying the app to a secondary region (active-passive or active-active), Front Door/Traffic Manager for regional failover routing, Azure Site Recovery for VM replication, regular backups, and - critically - tested failover runbooks. The plan ensures the app recovers in another region within target time/data-loss limits.",
+    "how": "Replicate data + app to a secondary region -> Front Door/Traffic Manager fails over -> tested runbooks meet RTO/RPO.",
+    "when": "Business-critical apps needing regional resilience.",
+    "whenNot": "Non-critical apps where downtime is acceptable.",
+    "advantages": [
+      "Survives regional outage",
+      "Geo-replicated data",
+      "Defined RTO/RPO"
+    ],
+    "disadvantages": [
+      "Cost of a second region",
+      "Failover complexity",
+      "Must be tested regularly"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "azure-50": {
+    "pitch": "Request flow: client -> Front Door -> App Gateway -> app -> Azure SQL.",
+    "definition": "The end-to-end flow for an ASP.NET Core app on Azure: a client request resolves DNS and hits Azure Front Door (global edge, caching/WAF), which routes to a regional Application Gateway (layer-7 + WAF) that load-balances to a healthy app instance (App Service/AKS) across Availability Zones; the app authenticates via Entra ID, reads secrets from Key Vault (Managed Identity), checks Azure Cache for Redis, then queries Azure SQL; the response returns back up the chain. Application Insights traces the whole path.",
+    "how": "DNS -> Front Door -> App Gateway -> App Service/AKS instance -> Redis/Azure SQL -> response back up the chain.",
+    "when": "Understanding a full Azure request path.",
+    "whenNot": "A single-tier app with no Azure services.",
+    "advantages": [
+      "Clear end-to-end path",
+      "Global + regional HA layers",
+      "Traced by App Insights"
+    ],
+    "disadvantages": [
+      "Many components",
+      "Latency per hop",
+      "Each layer to configure"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Request flow",
+      "mermaid": "flowchart LR\n  U[Client] --> FD[Front Door]\n  FD --> AG[App Gateway]\n  AG --> App[App Service/AKS]\n  App --> Redis[(Redis)]\n  App --> SQL[(Azure SQL)]"
+    }
+  }
+}
