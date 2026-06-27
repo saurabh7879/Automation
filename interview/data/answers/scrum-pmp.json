@@ -1,1 +1,407 @@
-{}
+{
+  "scrum-pmp-1": {
+    "pitch": "Agile is iterative and adaptive; Waterfall is sequential and fixed.",
+    "definition": "Agile is an iterative, incremental approach to software delivery that values working software, collaboration and responding to change, delivering in short cycles with continuous feedback. Waterfall is a sequential model where each phase (requirements, design, build, test, deploy) completes before the next begins, with the full scope fixed up front. Agile embraces change and delivers early; Waterfall is rigid but predictable for stable, well-understood projects.",
+    "how": "Agile: deliver in short iterations + adapt. Waterfall: complete each phase in sequence before the next.",
+    "when": "Agile for evolving requirements; Waterfall for fixed, well-defined scope.",
+    "whenNot": "Using Waterfall when requirements will clearly change.",
+    "advantages": [
+      "Agile: adapts to change",
+      "Early, frequent delivery",
+      "Continuous feedback"
+    ],
+    "disadvantages": [
+      "Agile needs discipline/buy-in",
+      "Waterfall rigid to change",
+      "Less upfront certainty in Agile"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-2": {
+    "pitch": "Scrum is an Agile framework for delivering work in short sprints.",
+    "definition": "Scrum is a lightweight Agile framework for developing and delivering complex products iteratively in fixed-length sprints. Its core principles are empiricism (transparency, inspection, adaptation), self-organizing cross-functional teams, time-boxed events, and continuous improvement. Work flows from a prioritized backlog into sprints that produce a potentially shippable increment, with regular feedback driving adjustments.",
+    "how": "Pull prioritized backlog items into a sprint -> build a shippable increment -> inspect + adapt each cycle.",
+    "when": "Iterative product delivery with changing priorities.",
+    "whenNot": "Simple, fixed, one-off tasks.",
+    "advantages": [
+      "Iterative + adaptive",
+      "Transparent + feedback-driven",
+      "Self-organizing teams"
+    ],
+    "disadvantages": [
+      "Needs commitment/discipline",
+      "Ceremony overhead if misused",
+      "Not ideal for fixed scope"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Scrum framework",
+      "mermaid": "flowchart LR\n  PB[Product Backlog] --> SP[Sprint Planning]\n  SP --> SB[Sprint Backlog]\n  SB --> Sprint[Sprint + Daily Scrum]\n  Sprint --> Inc[Increment]\n  Inc --> Rev[Review + Retro] --> PB"
+    }
+  },
+  "scrum-pmp-3": {
+    "pitch": "Scrum has three roles: Product Owner, Scrum Master, Development Team.",
+    "definition": "Scrum defines three accountabilities. The Product Owner owns the product backlog - maximizing value by prioritizing what to build and representing stakeholders. The Scrum Master is a servant-leader who facilitates Scrum, removes impediments, and coaches the team on the process. The Development Team (Developers) is the cross-functional group that self-organizes to build the increment. Together they balance value (PO), process (SM) and delivery (team).",
+    "how": "PO decides what + priority; Scrum Master enables the process; the Dev Team self-organizes to build it.",
+    "when": "Structuring responsibilities on a Scrum team.",
+    "whenNot": "Tiny solo projects with no team.",
+    "advantages": [
+      "PO: value + priority",
+      "Scrum Master: process + unblocking",
+      "Team: cross-functional delivery"
+    ],
+    "disadvantages": [
+      "Role confusion is common",
+      "PO availability matters",
+      "SM misused as a manager"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-4": {
+    "pitch": "Scrum events: Planning, Daily Scrum, Review, Retrospective, Refinement.",
+    "definition": "Scrum ceremonies are time-boxed events that create regularity. Sprint Planning sets the sprint goal and selects backlog items. The Daily Scrum is a brief daily sync to inspect progress and adapt the plan. The Sprint Review demos the increment to stakeholders for feedback. The Sprint Retrospective inspects how the team worked and plans improvements. Backlog Refinement (ongoing) clarifies and estimates upcoming items. Each event drives transparency, inspection and adaptation.",
+    "how": "Planning sets the goal -> Daily syncs progress -> Review gathers feedback -> Retro improves -> Refinement readies the backlog.",
+    "when": "Keeping a sprint transparent and on track.",
+    "whenNot": "Treating ceremonies as status meetings only.",
+    "advantages": [
+      "Regular inspect + adapt",
+      "Stakeholder feedback (Review)",
+      "Continuous improvement (Retro)"
+    ],
+    "disadvantages": [
+      "Overhead if run poorly",
+      "Can feel like too many meetings",
+      "Skipping retros loses learning"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-5": {
+    "pitch": "A Sprint is a fixed time-box (usually 1-4 weeks) to deliver an increment.",
+    "definition": "A Sprint is a fixed-length iteration (typically one to four weeks) during which the team builds a potentially shippable product increment toward the sprint goal. You decide its duration based on how often you want feedback and how stable requirements are: shorter sprints (1-2 weeks) suit fast-changing, uncertain work and give quicker feedback; longer sprints suit more stable work. Once chosen, the length stays consistent for a rhythm. Two weeks is the common default.",
+    "how": "Pick a consistent length by feedback cadence + requirement stability -> deliver an increment each sprint.",
+    "when": "Establishing a steady delivery rhythm.",
+    "whenNot": "Constantly changing the sprint length.",
+    "advantages": [
+      "Predictable cadence",
+      "Regular feedback",
+      "Bounded scope per cycle"
+    ],
+    "disadvantages": [
+      "Too long delays feedback",
+      "Too short = overhead",
+      "Mid-sprint change disruptive"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-6": {
+    "pitch": "Product Backlog is the whole prioritized list; Sprint Backlog is this sprint's slice.",
+    "definition": "The Product Backlog is the single, ordered list of everything that might be needed in the product - features, fixes, improvements - owned and prioritized by the Product Owner and continuously refined. The Sprint Backlog is the subset of items the team commits to for the current sprint plus the plan to deliver them, owned by the Development Team. Product Backlog = the full evolving wish list; Sprint Backlog = the committed work for now.",
+    "how": "PO maintains the prioritized Product Backlog -> the team pulls top items into the Sprint Backlog at planning.",
+    "when": "Separating overall scope from current commitment.",
+    "whenNot": "Confusing long-term scope with sprint commitment.",
+    "advantages": [
+      "Product Backlog: full priorities",
+      "Sprint Backlog: committed work",
+      "Clear ownership"
+    ],
+    "disadvantages": [
+      "Product Backlog can bloat",
+      "Sprint Backlog overcommit risk",
+      "Refinement discipline needed"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-7": {
+    "pitch": "DoD is when work is truly complete; DoR is when an item is ready to start.",
+    "definition": "The Definition of Done (DoD) is a shared, explicit checklist of criteria an increment must meet to be considered complete (coded, tested, reviewed, documented, deployable) - ensuring quality and consistency. The Definition of Ready (DoR) is the criteria a backlog item must meet before the team takes it into a sprint (clear, estimated, acceptance criteria defined, dependencies known). DoR gates work in; DoD gates work out.",
+    "how": "DoR: item is clear + estimated + has acceptance criteria before planning. DoD: increment meets all quality criteria to ship.",
+    "when": "Ensuring quality entering and leaving a sprint.",
+    "whenNot": "Skipping them, leading to half-done or unclear work.",
+    "advantages": [
+      "DoD: consistent quality bar",
+      "DoR: well-prepared work",
+      "Shared understanding"
+    ],
+    "disadvantages": [
+      "Too strict slows flow",
+      "Needs team agreement",
+      "Can be ignored under pressure"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-8": {
+    "pitch": "Epics are large; user stories are small user-value increments; tasks are the work.",
+    "definition": "These describe work at different sizes. An Epic is a large body of work spanning many sprints, broken into smaller stories. A User Story is a small, user-centric description of a feature delivering value, written in the form 'As a [role], I want [goal] so that [benefit]'. A Task is a technical step needed to complete a story. A good user story follows INVEST (Independent, Negotiable, Valuable, Estimable, Small, Testable) with clear acceptance criteria.",
+    "how": "Epic -> split into user stories (user value) -> break into tasks (implementation steps).",
+    "when": "Breaking down and writing valuable work items.",
+    "whenNot": "Writing vague, untestable stories.",
+    "advantages": [
+      "Right-sized hierarchy",
+      "Stories = user value",
+      "INVEST + acceptance criteria"
+    ],
+    "disadvantages": [
+      "Poor stories cause rework",
+      "Over/under splitting",
+      "Missing acceptance criteria"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-9": {
+    "pitch": "Story points estimate relative effort; Planning Poker reaches consensus.",
+    "definition": "Story point estimation sizes backlog items by relative effort/complexity/uncertainty (not hours), usually on a Fibonacci-like scale (1,2,3,5,8,13). Planning Poker is the collaborative technique to estimate: each team member privately picks a card, all reveal simultaneously, and differences are discussed until the team converges - surfacing assumptions and reducing anchoring bias. Relative sizing plus team consensus produces more reliable estimates than individual hour-guessing.",
+    "how": "Compare an item's relative size to a reference -> team estimates via Planning Poker -> discuss + converge.",
+    "when": "Estimating backlog effort as a team.",
+    "whenNot": "Treating story points as exact hours.",
+    "advantages": [
+      "Relative, less precise pressure",
+      "Team consensus + discussion",
+      "Reduces anchoring bias"
+    ],
+    "disadvantages": [
+      "Misused as time",
+      "Inconsistent across teams",
+      "Can be gamed"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-10": {
+    "pitch": "Velocity is the work completed per sprint; it forecasts capacity.",
+    "definition": "Velocity is the amount of work (sum of story points) a team completes in a sprint, averaged over recent sprints. It's used in sprint planning to forecast how much the team can realistically take on next sprint and to project release timelines. It's a planning aid specific to one team - not a productivity target or a way to compare teams - and stabilizes over a few sprints.",
+    "how": "Sum completed points per sprint -> average recent sprints -> use it to size the next sprint's commitment.",
+    "when": "Forecasting sprint capacity and release dates.",
+    "whenNot": "Comparing teams or using it as a target.",
+    "advantages": [
+      "Realistic capacity forecast",
+      "Improves planning",
+      "Stabilizes over time"
+    ],
+    "disadvantages": [
+      "Not cross-team comparable",
+      "Gameable if a target",
+      "Disrupted by team changes"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-11": {
+    "pitch": "Protect the sprint goal; route changes through the Product Owner and backlog.",
+    "definition": "You handle changing requirements during an active sprint by protecting the sprint goal - the sprint scope is committed, so new requests generally go to the Product Backlog for prioritization in a future sprint, not injected mid-sprint. If a change is critical, the PO and team negotiate a trade-off (swap out equivalent work) or, in the extreme, cancel the sprint if the goal becomes obsolete. Agile embraces change between sprints; within a sprint, stability lets the team deliver.",
+    "how": "Add the change to the backlog for future sprints; if urgent, PO negotiates a swap or (rarely) cancels the sprint.",
+    "when": "Balancing agility with sprint focus.",
+    "whenNot": "Constantly injecting work mid-sprint (thrash).",
+    "advantages": [
+      "Protects sprint focus",
+      "Change handled next sprint",
+      "PO-managed trade-offs"
+    ],
+    "disadvantages": [
+      "Urgent changes cause friction",
+      "Negotiation needed",
+      "Frequent change disrupts flow"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-12": {
+    "pitch": "I've used Azure DevOps, Jira, Trello and GitHub Projects for tracking.",
+    "definition": "Project management tools track and visualize work. Azure DevOps (Boards) offers enterprise agile tracking integrated with repos/pipelines, strong in .NET shops. Jira is a powerful, configurable agile tool widely used for Scrum/Kanban boards, backlogs and reporting. Trello is a simple Kanban board for lightweight tracking. GitHub Projects integrates issue/PR tracking with boards for dev-centric workflows. You pick by team size, ecosystem and process complexity.",
+    "how": "Model the backlog/board in the tool -> track items through the workflow -> use its reports/boards for visibility.",
+    "when": "Tracking agile work and visibility.",
+    "whenNot": "Tiny efforts where a tool adds overhead.",
+    "advantages": [
+      "Azure DevOps: integrated + enterprise",
+      "Jira: powerful, configurable",
+      "Trello/GH Projects: lightweight"
+    ],
+    "disadvantages": [
+      "Tool overhead/config",
+      "Process can ossify around tools",
+      "Migration cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-13": {
+    "pitch": "Manage risks/dependencies/blockers by identifying, tracking and resolving them.",
+    "definition": "You manage risks, dependencies and blockers by surfacing them early and continuously: maintain a risk register (likelihood/impact + mitigation/owner), map cross-team dependencies and sequence work to reduce them, and raise blockers in the Daily Scrum so the Scrum Master can drive resolution. You escalate when needed, track impediments visibly, and re-plan around them. Proactive visibility and ownership keep small issues from derailing the sprint.",
+    "how": "Identify + log risks/dependencies -> assign owners + mitigations -> raise blockers daily -> resolve/escalate + re-plan.",
+    "when": "Keeping delivery on track despite obstacles.",
+    "whenNot": "Ignoring risks until they become crises.",
+    "advantages": [
+      "Early visibility",
+      "Owned mitigations",
+      "Daily blocker resolution"
+    ],
+    "disadvantages": [
+      "Requires discipline",
+      "Cross-team coordination",
+      "Escalation can be slow"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-14": {
+    "pitch": "Prioritize the backlog by value and cost using MoSCoW, WSJF or value/effort.",
+    "definition": "You prioritize backlog items by maximizing value delivered. Common techniques: MoSCoW (Must/Should/Could/Won't have) for release scoping; Business Value vs effort (value/effort ranking, quick wins first); WSJF (Weighted Shortest Job First = cost of delay / job size, from SAFe) for economic sequencing; and considering risk, dependencies and stakeholder input. The Product Owner orders the backlog so the team always works on the highest-value items next.",
+    "how": "Score items by value (and cost of delay/effort) via MoSCoW/WSJF/value-effort -> PO orders the backlog accordingly.",
+    "when": "Ordering the backlog to maximize value.",
+    "whenNot": "Prioritizing by loudest stakeholder.",
+    "advantages": [
+      "Value-driven ordering",
+      "Techniques for different needs",
+      "WSJF = economic sequencing"
+    ],
+    "disadvantages": [
+      "Estimating value is subjective",
+      "Stakeholder pressure",
+      "Re-prioritization overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-15": {
+    "pitch": "My Agile process runs requirements -> backlog -> sprints -> deploy -> support.",
+    "definition": "An Agile/Scrum process end to end: requirements are gathered from stakeholders and shaped into a prioritized product backlog (epics -> stories with acceptance criteria) refined with the team; each sprint, the team plans a sprint goal, builds and tests the increment with daily syncs, demos it at the review and improves at the retro; completed work meeting the DoD flows through CI/CD to production (often via QA and staging), and the team provides production support/bug triage, feeding learnings back into the backlog. It's a continuous, feedback-driven cycle.",
+    "how": "Gather requirements -> refine backlog -> sprint (plan/build/test) -> review/retro -> CI/CD to prod -> support -> repeat.",
+    "when": "Describing a real delivery process.",
+    "whenNot": "A one-off task with no iteration.",
+    "advantages": [
+      "End-to-end, feedback-driven",
+      "Quality gates (DoD/QA)",
+      "Continuous improvement"
+    ],
+    "disadvantages": [
+      "Requires team discipline",
+      "Coordination overhead",
+      "Needs PO + stakeholder engagement"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Agile delivery flow",
+      "mermaid": "flowchart LR\n  Req[Requirements] --> BL[Backlog]\n  BL --> Sp[Sprint]\n  Sp --> QA[QA/DoD]\n  QA --> Prod[CI/CD -> Prod]\n  Prod --> Sup[Support] --> BL"
+    }
+  },
+  "scrum-pmp-16": {
+    "pitch": "If the sprint goal is at risk, re-plan scope transparently, don't hide it.",
+    "definition": "If a sprint goal is at risk, you address it transparently and early rather than at the end. In the Daily Scrum the team raises it; the Scrum Master removes impediments; and the team works with the Product Owner to re-negotiate scope - drop or reduce lower-priority items to still meet the core goal, add help, or break work down. If the goal has become unachievable or obsolete, the PO may adjust it (or, rarely, cancel the sprint). The key is honesty and timely adaptation, not crunching silently.",
+    "how": "Surface the risk early (Daily) -> remove blockers -> renegotiate scope with the PO to protect the core goal.",
+    "when": "When a sprint commitment is slipping.",
+    "whenNot": "Hiding the slippage until sprint end.",
+    "advantages": [
+      "Early, transparent handling",
+      "Protects the core goal",
+      "PO-negotiated scope"
+    ],
+    "disadvantages": [
+      "Requires honest reporting",
+      "Scope cuts disappoint",
+      "Recurring slippage signals deeper issues"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-17": {
+    "pitch": "Handle team conflict by facilitating open, respectful resolution.",
+    "definition": "You handle conflict within a Scrum team by surfacing it constructively rather than letting it fester: the Scrum Master facilitates a safe, respectful conversation focused on the issue (not people), encourages each side to be heard, finds common ground and a team agreement, and uses retrospectives to address recurring tensions. You promote a culture of psychological safety and shared goals. Healthy, resolved conflict can improve decisions; unaddressed conflict erodes the team.",
+    "how": "Facilitate an open, issue-focused discussion -> ensure everyone is heard -> reach a team agreement -> revisit in retros.",
+    "when": "Resolving interpersonal/technical disagreements.",
+    "whenNot": "Ignoring or suppressing conflict.",
+    "advantages": [
+      "Constructive resolution",
+      "Psychological safety",
+      "Retros address patterns"
+    ],
+    "disadvantages": [
+      "Needs facilitation skill",
+      "Can escalate if mishandled",
+      "Time to resolve"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-18": {
+    "pitch": "Estimate unclear work with spikes, ranges and assumptions, then refine.",
+    "definition": "When requirements are unclear, you avoid false precision: use a time-boxed spike to investigate and reduce uncertainty, estimate in ranges or with higher story points to reflect the unknowns, document explicit assumptions, break the work into smaller knowable pieces, and re-estimate as clarity improves. You also push the Product Owner to clarify acceptance criteria. The goal is a directional estimate now plus a plan to firm it up, not a precise guess on guesswork.",
+    "how": "Run a spike + state assumptions -> estimate a range / higher points -> split + re-estimate as it clarifies.",
+    "when": "Sizing genuinely uncertain work.",
+    "whenNot": "Committing to a precise estimate on vague scope.",
+    "advantages": [
+      "Spikes reduce uncertainty",
+      "Ranges reflect unknowns",
+      "Re-estimate as it clarifies"
+    ],
+    "disadvantages": [
+      "Stakeholders want exactness",
+      "Spikes use capacity",
+      "Assumptions can be wrong"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-19": {
+    "pitch": "Triage production bugs by severity; fix critical ones, queue the rest.",
+    "definition": "You handle production bugs during a sprint by triaging on severity and impact: critical/production-down issues are addressed immediately (the team or an on-call/support rotation interrupts to fix, swapping out equivalent sprint work to protect capacity), while lower-severity bugs are logged in the backlog and prioritized by the PO for a future sprint. Some teams reserve buffer capacity for unplanned work. Transparency with the PO about the trade-off keeps the sprint goal realistic.",
+    "how": "Triage by severity -> fix critical now (swap equivalent work) -> backlog + prioritize the rest with the PO.",
+    "when": "Balancing live incidents with sprint commitments.",
+    "whenNot": "Dropping all sprint work for every minor bug.",
+    "advantages": [
+      "Severity-based response",
+      "Protects sprint capacity",
+      "PO-managed trade-offs"
+    ],
+    "disadvantages": [
+      "Interruptions hurt focus",
+      "Capacity buffer needed",
+      "Frequent fires signal quality issues"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-20": {
+    "pitch": "In ceremonies I plan, sync, demo and improve as an active team member.",
+    "definition": "Across the Scrum events, a developer's role is active participation: in Sprint Planning, help define the sprint goal, clarify stories and estimate/commit to realistic work; in the Daily Stand-up, share progress, plan for the day, and raise blockers (it's for the team, not a status report to a manager); in the Sprint Review, demo completed work and gather stakeholder feedback; in the Retrospective, honestly reflect on what went well and what to improve, and commit to concrete actions. The throughline is collaboration, transparency and continuous improvement.",
+    "how": "Planning: shape + estimate work. Daily: sync + unblock. Review: demo + feedback. Retro: reflect + improve.",
+    "when": "Engaging effectively in Scrum events.",
+    "whenNot": "Treating events as passive status meetings.",
+    "advantages": [
+      "Active, collaborative role",
+      "Transparency + unblocking",
+      "Drives improvement"
+    ],
+    "disadvantages": [
+      "Requires engagement",
+      "Poorly run events waste time",
+      "Skipping retros loses learning"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "scrum-pmp-21": {
+    "pitch": "I coordinate cross-functionally through shared goals, ceremonies and communication.",
+    "definition": "You coordinate with QA, DevOps, the Product Owner and Business Analysts during a sprint through continuous collaboration: include QA early so testing and the Definition of Done are built in (shift-left); work with DevOps on CI/CD, environments and deployment readiness; sync with the PO on priorities, clarifications and acceptance; and partner with BAs on requirements and acceptance criteria. The Daily Scrum, refinement and reviews provide touchpoints, and tools (Azure DevOps/Jira) plus clear communication keep everyone aligned on the sprint goal.",
+    "how": "Engage QA + DevOps + PO + BA early and continuously via ceremonies, shared boards and clear communication.",
+    "when": "Delivering as a cross-functional team.",
+    "whenNot": "Working in functional silos.",
+    "advantages": [
+      "Cross-functional alignment",
+      "Shift-left QA + DevOps",
+      "PO/BA clarity"
+    ],
+    "disadvantages": [
+      "Coordination overhead",
+      "Dependency bottlenecks",
+      "Needs good communication"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  }
+}
