@@ -1,1 +1,514 @@
-{}
+{
+  "llm-1": {
+    "pitch": "An LLM is a neural network that predicts text, trained on huge corpora.",
+    "definition": "A Large Language Model is a deep neural network (typically a Transformer) trained on massive text datasets to predict the next token given previous ones. By learning statistical patterns of language at scale, it can generate coherent text, answer questions, summarize, translate and reason. At inference it repeatedly predicts the most likely next token to produce a response.",
+    "how": "Tokenize input -> Transformer with attention computes context -> predict next token -> repeat to generate text.",
+    "when": "Natural-language generation, Q&A, summarization, coding help.",
+    "whenNot": "Tasks needing guaranteed correctness or determinism.",
+    "advantages": [
+      "Versatile language tasks",
+      "Few-shot/zero-shot capable",
+      "Strong general knowledge"
+    ],
+    "disadvantages": [
+      "Can hallucinate",
+      "Compute/cost heavy",
+      "Knowledge cutoff + no true reasoning guarantee"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-2": {
+    "pitch": "Traditional ML solves narrow tasks; LLMs are broad, general language models.",
+    "definition": "A traditional ML model is trained for a specific, narrow task (spam detection, price prediction) on structured, labeled data with engineered features. An LLM is a massive general-purpose model pre-trained on broad text that can perform many language tasks without task-specific training, via prompting. Traditional ML is specialized and lightweight; LLMs are general, large, and adaptable but heavier and probabilistic.",
+    "how": "Traditional ML: features -> task-specific model. LLM: pre-trained on broad text -> prompt for many tasks.",
+    "when": "Traditional ML for narrow structured tasks; LLMs for language.",
+    "whenNot": "Using an LLM for a simple numeric classification.",
+    "advantages": [
+      "LLM: general, prompt-adaptable",
+      "Traditional: efficient, specialized",
+      "LLM: no task training"
+    ],
+    "disadvantages": [
+      "LLM: costly, probabilistic",
+      "Traditional: narrow",
+      "Different data/skill needs"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-3": {
+    "pitch": "Tokens are text chunks; the context window is how many fit at once.",
+    "definition": "Tokens are the units LLMs process - pieces of words (roughly 4 characters or 0.75 words in English) produced by tokenization, which splits text into these subword units mapped to IDs. The context window is the maximum number of tokens (input + output) a model can consider at once. Everything - prompt, history, retrieved data and the answer - must fit within it, and you're typically billed per token.",
+    "how": "Tokenizer splits text into subword tokens -> the model processes them within its fixed context-window limit.",
+    "when": "Managing prompt size, cost and what fits in context.",
+    "whenNot": "Assuming token counts equal word counts.",
+    "advantages": [
+      "Tokens drive cost + limits",
+      "Subword handles any text",
+      "Context window bounds input"
+    ],
+    "disadvantages": [
+      "Window limits long inputs",
+      "Token != word (estimation)",
+      "Truncation loses info"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-4": {
+    "pitch": "The Transformer uses attention to process sequences in parallel.",
+    "definition": "The Transformer is the neural network architecture behind modern LLMs, introduced in 'Attention Is All You Need'. Instead of processing tokens sequentially (like RNNs), it uses self-attention to relate every token to every other token in parallel, capturing long-range context efficiently. Stacked attention + feed-forward layers, with positional encodings, let it scale to billions of parameters and train on huge data - which is why LLMs use it.",
+    "how": "Embed tokens + positions -> stacked self-attention + feed-forward layers relate all tokens in parallel -> output.",
+    "when": "Sequence modeling at scale (the basis of LLMs).",
+    "whenNot": "Tiny tasks where simpler models suffice.",
+    "advantages": [
+      "Parallel, scalable training",
+      "Captures long-range context",
+      "Foundation of LLMs"
+    ],
+    "disadvantages": [
+      "Compute/memory heavy",
+      "Quadratic attention cost",
+      "Needs lots of data"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Transformer",
+      "mermaid": "flowchart LR\n  T[Tokens + Position] --> A[Self-Attention]\n  A --> F[Feed-Forward]\n  F --> R[Repeat x N layers]\n  R --> O[Output tokens]"
+    }
+  },
+  "llm-5": {
+    "pitch": "Self-attention lets each token weigh the relevance of all others.",
+    "definition": "Self-attention is the mechanism that lets a Transformer, for each token, compute how much to 'attend' to every other token in the sequence. Each token produces query, key and value vectors; attention scores (query.key) decide weights, and the output is a weighted sum of values - so context-relevant tokens influence each other strongly. Multi-head attention runs this in parallel across multiple subspaces, capturing different relationships.",
+    "how": "Each token gets Q/K/V -> score = Q.K -> softmax weights -> weighted sum of V; multi-head does this in parallel.",
+    "when": "Understanding how Transformers model context.",
+    "whenNot": "Not a usage choice - it's internal to the model.",
+    "advantages": [
+      "Captures token relationships",
+      "Long-range dependencies",
+      "Parallelizable"
+    ],
+    "disadvantages": [
+      "O(n^2) with sequence length",
+      "Memory-intensive",
+      "Conceptually complex"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-6": {
+    "pitch": "Pre-training learns general language; fine-tuning specializes it.",
+    "definition": "Pre-training is the initial, expensive phase where a model learns general language and knowledge from massive unlabeled text by predicting tokens - producing a broad base model. Fine-tuning takes that pre-trained model and further trains it on a smaller, task- or domain-specific labeled dataset to specialize its behaviour or style (e.g. instruction-following, a company's tone). Pre-training builds the foundation; fine-tuning adapts it.",
+    "how": "Pre-train on broad text (general ability) -> fine-tune on targeted data to specialize behaviour/domain.",
+    "when": "Fine-tune to specialize tone/format/domain behaviour.",
+    "whenNot": "Adding fresh facts (use RAG, not fine-tuning).",
+    "advantages": [
+      "Pre-train: broad foundation",
+      "Fine-tune: specialization",
+      "Reuses costly base model"
+    ],
+    "disadvantages": [
+      "Fine-tuning needs quality data",
+      "Cost/effort",
+      "Can overfit/forget"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-7": {
+    "pitch": "Fine-tuning changes the model's weights; RAG injects knowledge at query time.",
+    "definition": "Both adapt an LLM but differently. Fine-tuning retrains the model's weights on examples to change its behaviour/style - good for tone, format and skills, but expensive and static (doesn't add live facts well). RAG (Retrieval-Augmented Generation) keeps the model frozen and, at query time, retrieves relevant documents from a knowledge base and adds them to the prompt - great for up-to-date, proprietary knowledge with citations. Often you use RAG for knowledge and fine-tuning for behaviour.",
+    "how": "Fine-tune: bake behaviour into weights. RAG: fetch relevant docs at query time and prepend them to the prompt.",
+    "when": "RAG for current/proprietary facts; fine-tune for behaviour/style.",
+    "whenNot": "Fine-tuning to inject frequently-changing facts.",
+    "advantages": [
+      "RAG: fresh, cited knowledge",
+      "Fine-tune: behaviour/style",
+      "RAG: no retraining"
+    ],
+    "disadvantages": [
+      "Fine-tune: costly, static",
+      "RAG: retrieval infra",
+      "Each fits different needs"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-8": {
+    "pitch": "Embeddings turn text into vectors that capture meaning.",
+    "definition": "Embeddings are dense numeric vectors that represent the semantic meaning of text (or other data) so that similar meanings are close in vector space. They're essential in LLM applications because they power semantic search and RAG: you embed documents and the user query, then find the nearest vectors (by cosine similarity) to retrieve relevant context. They also enable clustering, classification and recommendations.",
+    "how": "An embedding model maps text -> a vector -> similar texts have nearby vectors -> compare with cosine similarity.",
+    "when": "Semantic search, RAG retrieval, clustering.",
+    "whenNot": "Exact keyword matching (use a text index).",
+    "advantages": [
+      "Capture semantic meaning",
+      "Power RAG/semantic search",
+      "Enable clustering/classification"
+    ],
+    "disadvantages": [
+      "Embedding model dependency",
+      "Storage in a vector DB",
+      "Quality varies by model"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "float[] vec = await embedder.EmbedAsync(text);   // text -> semantic vector"
+    }
+  },
+  "llm-9": {
+    "pitch": "Hallucinations are confident but wrong outputs; ground the model to reduce them.",
+    "definition": "Hallucinations are when an LLM generates plausible-sounding but factually incorrect or fabricated information, because it predicts likely text rather than retrieving verified facts. You reduce them by grounding the model with RAG (provide real source documents and ask it to answer only from them), lowering temperature, prompting it to say 'I don't know' and cite sources, validating outputs, and using smaller scoped tasks. Grounding plus verification is the main defense.",
+    "how": "The model predicts plausible text without a fact source -> ground it with retrieved data + citations + verification.",
+    "when": "Any factual application of LLMs.",
+    "whenNot": "Creative writing where invention is desired.",
+    "advantages": [
+      "RAG grounding cuts them",
+      "Citations enable verification",
+      "Lower temperature helps"
+    ],
+    "disadvantages": [
+      "Never fully eliminated",
+      "Hard to detect automatically",
+      "Grounding adds infra"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-10": {
+    "pitch": "Prompt engineering shapes inputs; shots are examples you provide.",
+    "definition": "Prompt engineering is the practice of crafting inputs to get the best, most reliable outputs from an LLM - clear instructions, role/context, format constraints and examples. Zero-shot prompting gives the task with no examples; one-shot gives a single example; few-shot gives several examples to demonstrate the pattern. More examples generally improve accuracy and format adherence on harder or format-sensitive tasks, at the cost of more tokens.",
+    "how": "Write clear instructions + optionally include 0/1/few examples -> the model follows the demonstrated pattern.",
+    "when": "Steering model behaviour without training.",
+    "whenNot": "When examples are huge (consider fine-tuning/RAG).",
+    "advantages": [
+      "No training needed",
+      "Few-shot improves accuracy",
+      "Fast iteration"
+    ],
+    "disadvantages": [
+      "Examples cost tokens",
+      "Prompt brittleness",
+      "Trial and error"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "text",
+      "snippet": "Classify sentiment.\nExample: \"great\" -> positive\nText: \"awful\" -> ?   # one-shot prompt"
+    }
+  },
+  "llm-11": {
+    "pitch": "GPT, Claude, Gemini, Llama and Mistral are major LLM families.",
+    "definition": "These are leading model families. GPT (OpenAI) and Claude (Anthropic) are strong proprietary models known for reasoning, coding and safety. Gemini (Google) is multimodal and integrated with Google's ecosystem. Llama (Meta) and Mistral are open-weight models you can self-host and fine-tune freely. They differ in capabilities, context length, cost, multimodality, openness and licensing - choose by your needs (quality vs cost vs control).",
+    "how": "Each family trades off quality, cost, context size, multimodality and openness; pick per requirement.",
+    "when": "Selecting a model family for a use case.",
+    "whenNot": "Assuming all models are interchangeable.",
+    "advantages": [
+      "Proprietary (GPT/Claude/Gemini): top quality",
+      "Open (Llama/Mistral): self-host + tune",
+      "Varied strengths"
+    ],
+    "disadvantages": [
+      "Proprietary: cost + lock-in",
+      "Open: you host/operate",
+      "Rapidly changing landscape"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-12": {
+    "pitch": "Function/tool calling lets an LLM invoke your code with structured args.",
+    "definition": "Function (tool) calling is when you describe available functions (name, description, JSON-schema parameters) to the LLM, and instead of answering directly it returns a structured request to call one with arguments it extracted; your app executes the function and feeds the result back for the model to use in its final answer. It's used to let LLMs take actions, fetch live data, or produce reliable structured output - the foundation of agents and tool-using apps.",
+    "how": "Define tools (schema) -> model decides to call one with args -> your code runs it -> result returned to the model -> answer.",
+    "when": "Live data, actions, structured output, agents.",
+    "whenNot": "Pure text generation needing no external actions.",
+    "advantages": [
+      "LLM takes real actions",
+      "Reliable structured args",
+      "Foundation of agents"
+    ],
+    "disadvantages": [
+      "Must implement + secure tools",
+      "Model may call wrong tool",
+      "Extra round trips"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "json",
+      "snippet": "{ \"name\": \"get_weather\", \"parameters\": { \"city\": \"string\" } }   // tool the model can call"
+    }
+  },
+  "llm-13": {
+    "pitch": "LLMs have real limits: hallucination, cost, context and currency.",
+    "definition": "Key LLM limitations: they hallucinate (confident wrong answers); have a knowledge cutoff (no events after training) and limited context windows; can be expensive and slow at scale; are non-deterministic; can reflect bias from training data; struggle with precise math/logic and long multi-step reasoning; and raise privacy/security concerns (data sent to providers, prompt injection). Mitigations include RAG, tools/function calling, validation, guardrails and human oversight.",
+    "how": "Probabilistic next-token prediction -> no guaranteed facts, currency or determinism -> needs grounding + guardrails.",
+    "when": "Knowing where LLMs need safeguards.",
+    "whenNot": "Trusting raw LLM output as ground truth.",
+    "advantages": [
+      "Awareness guides design",
+      "Mitigations exist (RAG/tools)",
+      "Sets realistic expectations"
+    ],
+    "disadvantages": [
+      "Hallucination + bias",
+      "Cost/latency/cutoff",
+      "Security: prompt injection, data leakage"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-14": {
+    "pitch": "Build LLM apps in ASP.NET Core via the Azure OpenAI/OpenAI SDK.",
+    "definition": "You build an LLM-powered ASP.NET Core app by calling Azure OpenAI or OpenAI through their .NET SDK (or Semantic Kernel): your API takes a user request, builds a prompt (with system instructions, history and any retrieved RAG context), calls the chat completions endpoint, and returns/streams the response. You deploy it like any web app (App Service/AKS), store keys in Key Vault, add caching, retries and monitoring. Azure OpenAI adds enterprise networking, compliance and regional hosting.",
+    "how": "ASP.NET Core API builds a prompt -> calls Azure OpenAI/OpenAI SDK -> returns/streams the completion -> deploy + secure.",
+    "when": "Adding generative AI features to .NET apps.",
+    "whenNot": "Apps with no language/AI requirement.",
+    "advantages": [
+      "Native .NET SDK",
+      "Azure OpenAI: enterprise-grade",
+      "Standard web deployment"
+    ],
+    "disadvantages": [
+      "API cost + latency",
+      "Key/security management",
+      "Prompt + reliability engineering"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var client = new AzureOpenAIClient(uri, cred);\nvar resp = await client.GetChatClient(\"gpt-4o\").CompleteChatAsync(messages);"
+    }
+  },
+  "llm-15": {
+    "pitch": "An LLM app flows: prompt -> embed -> retrieve -> LLM -> response.",
+    "definition": "The architecture of a RAG-based LLM application: the user's prompt is embedded into a vector; that vector queries a vector database to retrieve the most relevant documents (knowledge); those documents plus the prompt and instructions form the augmented context sent to the LLM; the LLM performs inference and generates a grounded answer (with citations), which is returned to the user. Ingestion separately embeds and indexes documents into the vector DB.",
+    "how": "Embed the query -> retrieve top-k docs from the vector DB -> build augmented prompt -> LLM infers -> grounded response.",
+    "when": "Building grounded, knowledge-aware LLM apps.",
+    "whenNot": "Simple single-prompt chat with no knowledge base.",
+    "advantages": [
+      "Grounded, current answers",
+      "Cited sources",
+      "Scales knowledge without retraining"
+    ],
+    "disadvantages": [
+      "Retrieval infra (vector DB)",
+      "Chunking/embedding quality",
+      "More moving parts"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "RAG LLM app",
+      "mermaid": "flowchart LR\n  U[Prompt] --> E[Embed]\n  E --> V[(Vector DB)]\n  V --> Ctx[Retrieve docs]\n  Ctx --> L[LLM Inference]\n  L --> R[Response]"
+    }
+  },
+  "llm-16": {
+    "pitch": "Cut token cost with shorter prompts, retrieval, caching and smaller models.",
+    "definition": "You reduce token usage and API cost by sending only what's needed: retrieve and include just the most relevant context (RAG with good chunking, not whole documents), trim/summarize conversation history, write concise system prompts, cap max output tokens, cache repeated responses/embeddings, batch where possible, and route easy requests to smaller/cheaper models (model tiering). Measuring tokens per request guides where to optimize.",
+    "how": "Send minimal relevant context + concise prompts + cap output + cache + use cheaper models for easy tasks.",
+    "when": "Controlling LLM API spend at scale.",
+    "whenNot": "Low-volume apps where cost is negligible.",
+    "advantages": [
+      "Less context = less cost",
+      "Caching avoids re-calls",
+      "Model tiering saves money"
+    ],
+    "disadvantages": [
+      "Over-trimming hurts quality",
+      "Caching staleness",
+      "Tuning effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-17": {
+    "pitch": "Prevent data leakage by redacting, filtering and controlling what you send.",
+    "definition": "You stop sensitive data reaching an LLM by minimizing and sanitizing inputs: redact or mask PII/secrets before sending (detection/DLP), filter what context RAG includes (only non-sensitive, access-controlled docs), use enterprise endpoints (Azure OpenAI with no training on your data, private networking), enforce least-privilege and policy guardrails, and log/audit prompts. For the most sensitive data, keep it out entirely or use on-prem/self-hosted models.",
+    "how": "Detect + redact PII/secrets -> restrict RAG context -> use no-retention enterprise endpoints -> audit prompts.",
+    "when": "Apps handling regulated or confidential data.",
+    "whenNot": "Truly public, non-sensitive content.",
+    "advantages": [
+      "Redaction/DLP before send",
+      "No-training enterprise endpoints",
+      "Access-controlled context"
+    ],
+    "disadvantages": [
+      "Redaction can miss data",
+      "Reduces useful context",
+      "Compliance overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-18": {
+    "pitch": "Evaluate LLM output with reference checks, LLM-as-judge and human review.",
+    "definition": "You evaluate LLM response quality with a mix of methods: automated metrics against reference answers (exact match, semantic similarity, BLEU/ROUGE for some tasks), task-specific checks (does it cite valid sources, is the JSON valid), 'LLM-as-a-judge' scoring responses on criteria, golden test sets run on every change (regression), groundedness/faithfulness checks for RAG, and human review for nuanced cases. Track metrics over time to catch regressions.",
+    "how": "Run a golden test set -> score with metrics/LLM-judge/groundedness checks + human review -> track over time.",
+    "when": "Ensuring and maintaining response quality.",
+    "whenNot": "Throwaway prototypes.",
+    "advantages": [
+      "Catches regressions",
+      "LLM-judge scales review",
+      "Groundedness checks for RAG"
+    ],
+    "disadvantages": [
+      "No perfect metric",
+      "LLM-judge has bias",
+      "Human review costs"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-19": {
+    "pitch": "Choose a model by balancing quality, cost, context, latency and control.",
+    "definition": "You choose between GPT, Claude, Gemini, Llama (and versions) by matching requirements: needed quality/reasoning and task type (coding, long-context, multimodal), cost and latency budgets, context-window size, data-privacy/hosting needs (proprietary API vs self-hosted open models), and ecosystem/compliance. The pragmatic approach is to define an evaluation set, prototype on a few candidates, and pick the best quality-per-cost - often tiering: a top model for hard tasks, a cheaper one for easy ones.",
+    "how": "Define requirements + an eval set -> benchmark candidates on quality/cost/latency/privacy -> pick (and tier) models.",
+    "when": "Selecting models for a real project.",
+    "whenNot": "Picking a model by hype rather than evaluation.",
+    "advantages": [
+      "Requirement-driven choice",
+      "Eval-based, not hype",
+      "Tiering optimizes cost"
+    ],
+    "disadvantages": [
+      "Fast-moving landscape",
+      "Benchmarking effort",
+      "Trade-offs per dimension"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-20": {
+    "pitch": "Implement conversation memory by managing and summarizing history.",
+    "definition": "You give an LLM app memory because the model itself is stateless - each call only sees what you send. Short-term memory means including recent conversation turns in the prompt (within the context window). For longer conversations you summarize older turns, or use retrieval-based memory: embed and store past messages/facts in a vector store and retrieve the relevant ones per turn. This keeps context relevant without exceeding token limits.",
+    "how": "Append recent turns to the prompt; summarize or embed+retrieve older context to stay within the window.",
+    "when": "Multi-turn chat and assistants.",
+    "whenNot": "Single-shot, stateless requests.",
+    "advantages": [
+      "Coherent multi-turn chat",
+      "Summarize to save tokens",
+      "Retrieval for long memory"
+    ],
+    "disadvantages": [
+      "Window limits history",
+      "Summarization loses detail",
+      "Memory store to manage"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-21": {
+    "pitch": "Build an enterprise chatbot with RAG over your knowledge base.",
+    "definition": "You build an enterprise chatbot using an LLM + RAG: ingest company documents (chunk, embed, index in a vector DB with access controls); at query time embed the user's question, retrieve the most relevant, permitted chunks, and prompt the LLM to answer only from them with citations; add conversation memory, guardrails (refuse off-topic/unsafe), authentication/authorization so users only see allowed data, streaming responses, and monitoring/evaluation. This grounds answers in trusted, current, access-controlled knowledge.",
+    "how": "Ingest + embed docs -> retrieve permitted chunks per query -> LLM answers grounded + cited -> memory + guardrails + auth.",
+    "when": "Internal knowledge assistants and support bots.",
+    "whenNot": "General chit-chat with no knowledge base.",
+    "advantages": [
+      "Grounded, cited answers",
+      "Access-controlled knowledge",
+      "Current without retraining"
+    ],
+    "disadvantages": [
+      "Retrieval/ingestion infra",
+      "Permission complexity",
+      "Quality + safety tuning"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Enterprise RAG chatbot",
+      "mermaid": "flowchart LR\n  U[User] --> Q[Embed query]\n  Q --> V[(Vector DB)]\n  V --> R[Permitted chunks]\n  R --> L[LLM + citations]\n  L --> U"
+    }
+  },
+  "llm-22": {
+    "pitch": "Stream LLM responses token-by-token over SSE in ASP.NET Core.",
+    "definition": "You stream LLM responses in an ASP.NET Core Web API by calling the model's streaming API (which yields tokens as they're generated) and forwarding them to the client as they arrive, typically via Server-Sent Events (text/event-stream) or a chunked/IAsyncEnumerable response. This improves perceived latency - the user sees text appear immediately - and you flush each chunk to the response. Handle cancellation so a disconnected client stops the generation.",
+    "how": "Call the streaming completion API -> await foreach the token chunks -> write+flush each to the SSE response.",
+    "when": "Chat UIs needing responsive, incremental output.",
+    "whenNot": "Batch jobs where the full result is needed at once.",
+    "advantages": [
+      "Lower perceived latency",
+      "Incremental UX",
+      "Cancellation frees resources"
+    ],
+    "disadvantages": [
+      "More complex than a single response",
+      "SSE/streaming plumbing",
+      "Partial-failure handling"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "await foreach (var update in client.CompleteChatStreamingAsync(messages))\n    await Response.WriteAsync(update.ContentUpdate[0].Text);  // stream tokens"
+    }
+  },
+  "llm-23": {
+    "pitch": "Handle LLM rate limits with retries, backoff, queueing and tiering.",
+    "definition": "You handle LLM API rate limits and transient errors by implementing retries with exponential backoff and jitter (honoring Retry-After headers), a circuit breaker to stop hammering an overloaded endpoint, request queuing/throttling to stay under quota, and graceful degradation (fallback to a smaller model or cached/queued response). Idempotency and good logging help, and spreading load (multiple deployments/regions) raises effective limits.",
+    "how": "On 429/5xx -> exponential backoff + jitter (Retry-After) -> circuit breaker + queue -> fallback model if needed.",
+    "when": "Production apps calling LLM APIs at scale.",
+    "whenNot": "Low-volume calls unlikely to hit limits.",
+    "advantages": [
+      "Resilient to throttling",
+      "Backoff prevents storms",
+      "Fallbacks keep serving"
+    ],
+    "disadvantages": [
+      "Added latency on retries",
+      "Queue/limit tuning",
+      "Non-idempotent retry care"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "Policy.Handle<RequestFailedException>(e => e.Status==429)\n  .WaitAndRetryAsync(3, i => TimeSpan.FromSeconds(Math.Pow(2,i)) + Jitter()); // Polly"
+    }
+  },
+  "llm-24": {
+    "pitch": "Vector databases store embeddings and power fast similarity search for RAG.",
+    "definition": "A vector database stores high-dimensional embedding vectors and enables fast approximate nearest-neighbor search by similarity (cosine/dot product) - the retrieval engine behind RAG and semantic search. You ingest documents as chunked embeddings; at query time you embed the question and the vector DB returns the most semantically similar chunks to feed the LLM. Examples: Azure AI Search, Pinecone, Weaviate, Qdrant, pgvector. It scales semantic retrieval that keyword search can't.",
+    "how": "Store doc embeddings -> at query time, ANN search returns the top-k most similar vectors -> feed to the LLM.",
+    "when": "RAG retrieval and semantic search at scale.",
+    "whenNot": "Small fixed data where a simple index works.",
+    "advantages": [
+      "Fast similarity search",
+      "Scales RAG retrieval",
+      "Semantic (not keyword) match"
+    ],
+    "disadvantages": [
+      "Extra infrastructure",
+      "Index tuning/cost",
+      "Embedding quality dependent"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "llm-25": {
+    "pitch": "A real LLM project ties RAG, prompts, deployment, monitoring and security.",
+    "definition": "An end-to-end LLM project I would describe: a RAG-based assistant over enterprise docs - an ingestion pipeline chunks and embeds documents into a vector DB (Azure AI Search) with access metadata; an ASP.NET Core API embeds the query, retrieves permitted chunks, builds a carefully designed prompt (system instructions + context + history), calls Azure OpenAI with streaming, and returns cited answers; deployed on App Service/AKS with Key Vault secrets and Managed Identity; monitored with Application Insights (token usage, latency, quality evals); and secured with auth, PII redaction and guardrails. Challenges were retrieval quality and hallucination, addressed via better chunking, citations and evaluation.",
+    "how": "Ingest+embed docs -> retrieve permitted context -> prompt + stream from Azure OpenAI -> deploy + monitor + secure.",
+    "when": "Production, grounded LLM applications.",
+    "whenNot": "A toy single-prompt demo.",
+    "advantages": [
+      "Grounded + cited answers",
+      "Secure, access-controlled",
+      "Monitored + evaluated"
+    ],
+    "disadvantages": [
+      "Multiple components",
+      "Retrieval/prompt tuning",
+      "Cost + safety engineering"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "End-to-end LLM project",
+      "mermaid": "flowchart LR\n  Docs --> Ing[Chunk + Embed]\n  Ing --> V[(Vector DB)]\n  U[User] --> API[ASP.NET Core API]\n  API --> V\n  API --> AOAI[Azure OpenAI]\n  AOAI --> API --> U"
+    },
+    "realWorld": "For a support assistant, RAG over the knowledge base with citations plus an evaluation set cut hallucinations sharply and deflected ~40% of tickets, with token-usage monitoring keeping API cost predictable."
+  }
+}
