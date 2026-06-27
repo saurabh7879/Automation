@@ -80,6 +80,42 @@
     "code": {
       "language": "csharp",
       "snippet": "[DllImport(\"user32.dll\")]\nstatic extern int MessageBox(IntPtr h, string txt, string cap, int type); // call unmanaged"
+    },
+    "comparison": {
+      "headers": [
+        "Managed",
+        "Unmanaged"
+      ],
+      "rows": [
+        {
+          "criterion": "Runs under",
+          "cells": [
+            "CLR",
+            "OS directly"
+          ]
+        },
+        {
+          "criterion": "Memory",
+          "cells": [
+            "GC-managed",
+            "Manual"
+          ]
+        },
+        {
+          "criterion": "Safety",
+          "cells": [
+            "Type-safe",
+            "No guarantees"
+          ]
+        },
+        {
+          "criterion": "Examples",
+          "cells": [
+            "C#, F#, VB",
+            "C/C++, COM"
+          ]
+        }
+      ]
     }
   },
   "csharp-5": {
@@ -126,6 +162,47 @@
     "code": {
       "language": "csharp",
       "snippet": "var n = 5;            // int, inferred at compile time\ndynamic d = GetCom(); // member calls resolved at runtime"
+    },
+    "comparison": {
+      "headers": [
+        "var",
+        "dynamic",
+        "explicit"
+      ],
+      "rows": [
+        {
+          "criterion": "Type resolved",
+          "cells": [
+            "Compile time",
+            "Runtime",
+            "Compile time"
+          ]
+        },
+        {
+          "criterion": "Type-safe",
+          "cells": [
+            "Yes",
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "IntelliSense",
+          "cells": [
+            "Yes",
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Obvious types",
+            "Interop/COM",
+            "Clear intent"
+          ]
+        }
+      ]
     }
   },
   "csharp-7": {
@@ -149,6 +226,42 @@
     "code": {
       "language": "csharp",
       "snippet": "int a = 1; int b = a; b++;            // a stays 1 (value copy)\nvar l1 = new List<int>(); var l2 = l1; l2.Add(9); // l1 also has 9 (shared ref)"
+    },
+    "comparison": {
+      "headers": [
+        "Value types",
+        "Reference types"
+      ],
+      "rows": [
+        {
+          "criterion": "Stores",
+          "cells": [
+            "The data",
+            "A reference"
+          ]
+        },
+        {
+          "criterion": "Lives on",
+          "cells": [
+            "Stack / inline",
+            "Managed heap"
+          ]
+        },
+        {
+          "criterion": "Copy gives",
+          "cells": [
+            "Full copy",
+            "Shared reference"
+          ]
+        },
+        {
+          "criterion": "Examples",
+          "cells": [
+            "int, struct, enum",
+            "class, string, array"
+          ]
+        }
+      ]
     }
   },
   "csharp-8": {
@@ -172,6 +285,47 @@
     "code": {
       "language": "csharp",
       "snippet": "class C { } struct S { } record R(int X);\nvar r2 = r1 with { X = 5 };   // record clone with one change"
+    },
+    "comparison": {
+      "headers": [
+        "Class",
+        "Struct",
+        "Record"
+      ],
+      "rows": [
+        {
+          "criterion": "Type",
+          "cells": [
+            "Reference",
+            "Value",
+            "Reference (value eq.)"
+          ]
+        },
+        {
+          "criterion": "Equality",
+          "cells": [
+            "Reference",
+            "Value",
+            "Value-based"
+          ]
+        },
+        {
+          "criterion": "Mutability",
+          "cells": [
+            "Mutable",
+            "Small/immutable",
+            "Immutable"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Objects + behaviour",
+            "Tiny data",
+            "DTOs / immutable data"
+          ]
+        }
+      ]
     }
   },
   "csharp-9": {
@@ -266,6 +420,39 @@
     "code": {
       "language": "csharp",
       "snippet": "const double Pi = 3.14159;          // compile-time\nreadonly DateTime _created = DateTime.Now; // runtime, per instance"
+    },
+    "comparison": {
+      "headers": [
+        "const",
+        "readonly",
+        "static readonly"
+      ],
+      "rows": [
+        {
+          "criterion": "Set at",
+          "cells": [
+            "Compile time",
+            "Runtime (ctor)",
+            "Runtime (static ctor)"
+          ]
+        },
+        {
+          "criterion": "Value",
+          "cells": [
+            "Literal only",
+            "Computed allowed",
+            "Computed, shared"
+          ]
+        },
+        {
+          "criterion": "Per",
+          "cells": [
+            "Inlined to callers",
+            "Instance",
+            "One shared (type)"
+          ]
+        }
+      ]
     }
   },
   "csharp-13": {
@@ -312,6 +499,39 @@
     "code": {
       "language": "csharp",
       "snippet": "if (int.TryParse(s, out int n)) Use(n);  // out returns the parsed value"
+    },
+    "comparison": {
+      "headers": [
+        "ref",
+        "out",
+        "in"
+      ],
+      "rows": [
+        {
+          "criterion": "Direction",
+          "cells": [
+            "Read + write",
+            "Write (must assign)",
+            "Read-only"
+          ]
+        },
+        {
+          "criterion": "Pre-init",
+          "cells": [
+            "Required",
+            "Not required",
+            "Required"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "In-place modify",
+            "Return extra values",
+            "Avoid big-struct copy"
+          ]
+        }
+      ]
     }
   },
   "csharp-15": {
@@ -358,6 +578,39 @@
     "code": {
       "language": "csharp",
       "snippet": "public virtual void Draw();          // base\npublic override void Draw();         // overriding (runtime)\npublic new void Draw();              // hiding (by ref type)"
+    },
+    "comparison": {
+      "headers": [
+        "Overloading",
+        "Overriding",
+        "Hiding (new)"
+      ],
+      "rows": [
+        {
+          "criterion": "Resolved",
+          "cells": [
+            "Compile time",
+            "Runtime",
+            "By reference type"
+          ]
+        },
+        {
+          "criterion": "Polymorphic",
+          "cells": [
+            "No",
+            "Yes",
+            "No"
+          ]
+        },
+        {
+          "criterion": "Needs",
+          "cells": [
+            "Different params",
+            "virtual base",
+            "new keyword"
+          ]
+        }
+      ]
     }
   },
   "csharp-17": {
@@ -404,6 +657,42 @@
     "code": {
       "language": "csharp",
       "snippet": "interface IRepo { void Save(); }\nabstract class RepoBase { protected Db Db; public abstract void Save(); }"
+    },
+    "comparison": {
+      "headers": [
+        "Interface",
+        "Abstract class"
+      ],
+      "rows": [
+        {
+          "criterion": "State / fields",
+          "cells": [
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Inheritance",
+          "cells": [
+            "Many per type",
+            "One only"
+          ]
+        },
+        {
+          "criterion": "Default code",
+          "cells": [
+            "Default members (C# 8+)",
+            "Full shared logic"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Capability / contract",
+            "Shared base + state"
+          ]
+        }
+      ]
     }
   },
   "csharp-19": {
@@ -492,6 +781,43 @@
     "code": {
       "language": "csharp",
       "snippet": "public string Name { get; init; }   // settable only at creation\npublic int Age  { get; set;  }"
+    },
+    "comparison": {
+      "headers": [
+        "Field",
+        "Property",
+        "Auto-property",
+        "Init-only"
+      ],
+      "rows": [
+        {
+          "criterion": "Logic in accessor",
+          "cells": [
+            "No",
+            "Yes",
+            "No (generated)",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Backing field",
+          "cells": [
+            "Itself",
+            "Manual",
+            "Compiler",
+            "Compiler"
+          ]
+        },
+        {
+          "criterion": "Settable",
+          "cells": [
+            "Anytime",
+            "Anytime",
+            "Anytime",
+            "At creation only"
+          ]
+        }
+      ]
     }
   },
   "csharp-23": {
@@ -515,6 +841,47 @@
     "code": {
       "language": "csharp",
       "snippet": "var byId = new Dictionary<int, User>();   // O(1) lookup\nvar seen = new HashSet<string>();         // O(1) contains"
+    },
+    "comparison": {
+      "headers": [
+        "Array",
+        "List<T>",
+        "LinkedList<T>",
+        "Dictionary",
+        "HashSet<T>"
+      ],
+      "rows": [
+        {
+          "criterion": "Access",
+          "cells": [
+            "O(1) index",
+            "O(1) index",
+            "O(n) index",
+            "O(1) key",
+            "O(1) contains"
+          ]
+        },
+        {
+          "criterion": "Size",
+          "cells": [
+            "Fixed",
+            "Resizable",
+            "Resizable",
+            "Resizable",
+            "Resizable"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Fixed data",
+            "General list",
+            "Frequent splice",
+            "Key lookup",
+            "Uniqueness"
+          ]
+        }
+      ]
     }
   },
   "csharp-24": {
@@ -607,6 +974,55 @@
     "code": {
       "language": "csharp",
       "snippet": "var names = users.Where(u => u.Active).Select(u => u.Name);\nvar one = users.SingleOrDefault(u => u.Id == id); // exactly one or null"
+    },
+    "comparison": {
+      "headers": [
+        "What it does"
+      ],
+      "rows": [
+        {
+          "criterion": "Where",
+          "cells": [
+            "Filter by predicate"
+          ]
+        },
+        {
+          "criterion": "Select",
+          "cells": [
+            "Project each item (1->1)"
+          ]
+        },
+        {
+          "criterion": "SelectMany",
+          "cells": [
+            "Project + flatten (1->many)"
+          ]
+        },
+        {
+          "criterion": "Any",
+          "cells": [
+            "True if any match (short-circuits)"
+          ]
+        },
+        {
+          "criterion": "Count",
+          "cells": [
+            "Number of matches"
+          ]
+        },
+        {
+          "criterion": "First / FirstOrDefault",
+          "cells": [
+            "First match / default if empty"
+          ]
+        },
+        {
+          "criterion": "Single / SingleOrDefault",
+          "cells": [
+            "Exactly one / throws if many"
+          ]
+        }
+      ]
     }
   },
   "csharp-28": {
@@ -676,6 +1092,42 @@
     "code": {
       "language": "csharp",
       "snippet": "public event EventHandler Saved;     // safe\nSaved?.Invoke(this, EventArgs.Empty); // only this class can raise it"
+    },
+    "comparison": {
+      "headers": [
+        "Delegate",
+        "Event"
+      ],
+      "rows": [
+        {
+          "criterion": "What",
+          "cells": [
+            "Function reference",
+            "Wrapper over a delegate"
+          ]
+        },
+        {
+          "criterion": "Outside code can",
+          "cells": [
+            "Invoke + assign",
+            "Only += / -="
+          ]
+        },
+        {
+          "criterion": "Invoke",
+          "cells": [
+            "Anyone",
+            "Declaring class only"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Callbacks",
+            "Pub/sub notifications"
+          ]
+        }
+      ]
     }
   },
   "csharp-31": {
@@ -746,6 +1198,35 @@
       "language": "csharp",
       "snippet": "try { Process(); }\ncatch (IOException ex) { Log(ex); throw; }   // keeps original stack trace",
       "note": "throw; preserves where the error originated; throw ex; resets it."
+    },
+    "comparison": {
+      "headers": [
+        "throw;",
+        "throw ex;"
+      ],
+      "rows": [
+        {
+          "criterion": "Stack trace",
+          "cells": [
+            "Preserved",
+            "Reset to here"
+          ]
+        },
+        {
+          "criterion": "Shows origin",
+          "cells": [
+            "Yes",
+            "No"
+          ]
+        },
+        {
+          "criterion": "Recommended",
+          "cells": [
+            "Yes",
+            "No (avoid)"
+          ]
+        }
+      ]
     }
   },
   "csharp-34": {
@@ -770,6 +1251,39 @@
       "language": "csharp",
       "snippet": "using (var conn = new SqlConnection(cs)) { conn.Open(); /* ... */ } // auto-Dispose",
       "note": "using guarantees Dispose runs, even if the block throws."
+    },
+    "comparison": {
+      "headers": [
+        "Dispose",
+        "Finalize",
+        "using"
+      ],
+      "rows": [
+        {
+          "criterion": "When runs",
+          "cells": [
+            "When you call it",
+            "GC (non-deterministic)",
+            "Block end (auto Dispose)"
+          ]
+        },
+        {
+          "criterion": "Deterministic",
+          "cells": [
+            "Yes",
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Free resources",
+            "Safety net",
+            "Auto cleanup"
+          ]
+        }
+      ]
     }
   },
   "csharp-35": {
@@ -819,6 +1333,43 @@
     "code": {
       "language": "csharp",
       "snippet": "await Task.Run(() => Heavy());     // pool thread for CPU work\nThread t = new(Work); t.Start();   // raw thread - rarely needed"
+    },
+    "comparison": {
+      "headers": [
+        "Task",
+        "Thread",
+        "ValueTask",
+        "ThreadPool"
+      ],
+      "rows": [
+        {
+          "criterion": "Level",
+          "cells": [
+            "High-level async",
+            "Raw OS thread",
+            "Low-alloc Task",
+            "Reusable workers"
+          ]
+        },
+        {
+          "criterion": "Cost",
+          "cells": [
+            "Light (pool)",
+            "Heavy",
+            "Lightest hot-path",
+            "-"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Async work",
+            "Rare manual",
+            "Often-sync hot paths",
+            "Backs Task"
+          ]
+        }
+      ]
     }
   },
   "csharp-37": {
@@ -888,6 +1439,47 @@
     "code": {
       "language": "csharp",
       "snippet": "Interlocked.Increment(ref _count);   // atomic, no lock\nlock (_gate) { /* critical section */ }"
+    },
+    "comparison": {
+      "headers": [
+        "lock/Monitor",
+        "Interlocked",
+        "Mutex",
+        "Semaphore",
+        "RWLockSlim"
+      ],
+      "rows": [
+        {
+          "criterion": "Scope",
+          "cells": [
+            "In-process",
+            "In-process",
+            "Cross-process",
+            "In-process",
+            "In-process"
+          ]
+        },
+        {
+          "criterion": "Does",
+          "cells": [
+            "Mutual exclusion",
+            "Atomic ops",
+            "OS-level lock",
+            "Limit N entrants",
+            "Many readers/1 writer"
+          ]
+        },
+        {
+          "criterion": "Weight",
+          "cells": [
+            "Light",
+            "Lightest",
+            "Heavy",
+            "Medium",
+            "Medium"
+          ]
+        }
+      ]
     }
   },
   "csharp-40": {
@@ -953,6 +1545,39 @@
     "code": {
       "language": "csharp",
       "snippet": "using var r = new StreamReader(\"big.csv\");\nstring? line;\nwhile ((line = await r.ReadLineAsync()) != null) Process(line); // flat memory"
+    },
+    "comparison": {
+      "headers": [
+        "FileStream",
+        "StreamReader",
+        "StreamWriter"
+      ],
+      "rows": [
+        {
+          "criterion": "Works with",
+          "cells": [
+            "Raw bytes",
+            "Text (read)",
+            "Text (write)"
+          ]
+        },
+        {
+          "criterion": "Direction",
+          "cells": [
+            "Read/write",
+            "Read",
+            "Write"
+          ]
+        },
+        {
+          "criterion": "Encoding",
+          "cells": [
+            "No",
+            "Yes",
+            "Yes"
+          ]
+        }
+      ]
     }
   },
   "csharp-43": {

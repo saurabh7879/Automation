@@ -133,6 +133,35 @@
     "code": {
       "language": "xml",
       "snippet": "<connectionStrings>\n  <add name=\"Db\" connectionString=\"Server=.;Database=App;...\" />\n</connectionStrings>"
+    },
+    "comparison": {
+      "headers": [
+        "web.config",
+        "machine.config"
+      ],
+      "rows": [
+        {
+          "criterion": "Scope",
+          "cells": [
+            "One app/folder",
+            "Whole server"
+          ]
+        },
+        {
+          "criterion": "Location",
+          "cells": [
+            "App root (nestable)",
+            "Framework config folder"
+          ]
+        },
+        {
+          "criterion": "Use",
+          "cells": [
+            "App overrides",
+            "Machine-wide defaults"
+          ]
+        }
+      ]
     }
   },
   "aspnet-7": {
@@ -179,6 +208,42 @@
     "code": {
       "language": "aspx",
       "snippet": "<input type=\"text\" />                    <!-- client control -->\n<asp:TextBox runat=\"server\" ID=\"t\" />   <!-- server control -->"
+    },
+    "comparison": {
+      "headers": [
+        "Client controls",
+        "Server controls"
+      ],
+      "rows": [
+        {
+          "criterion": "Runs on",
+          "cells": [
+            "Browser only",
+            "Server (runat=server)"
+          ]
+        },
+        {
+          "criterion": "Events",
+          "cells": [
+            "Client JS",
+            "Server-side"
+          ]
+        },
+        {
+          "criterion": "State",
+          "cells": [
+            "None",
+            "ViewState"
+          ]
+        },
+        {
+          "criterion": "Cost",
+          "cells": [
+            "Light",
+            "Heavier"
+          ]
+        }
+      ]
     }
   },
   "aspnet-9": {
@@ -271,6 +336,35 @@
     "code": {
       "language": "csharp",
       "snippet": "public class StarRating : WebControl   // custom control in a DLL\n{ protected override void Render(HtmlTextWriter w) { ... } }"
+    },
+    "comparison": {
+      "headers": [
+        "User Control",
+        "Custom Control"
+      ],
+      "rows": [
+        {
+          "criterion": "Built as",
+          "cells": [
+            ".ascx (composed)",
+            "Compiled class (DLL)"
+          ]
+        },
+        {
+          "criterion": "Reuse",
+          "cells": [
+            "Within project",
+            "Across projects"
+          ]
+        },
+        {
+          "criterion": "Effort",
+          "cells": [
+            "Low",
+            "Higher"
+          ]
+        }
+      ]
     }
   },
   "aspnet-13": {
@@ -317,6 +411,35 @@
     "code": {
       "language": "csharp",
       "snippet": "if (!Page.IsValid) return;   // server-side authoritative check"
+    },
+    "comparison": {
+      "headers": [
+        "Client-side",
+        "Server-side"
+      ],
+      "rows": [
+        {
+          "criterion": "Runs",
+          "cells": [
+            "Browser (JS)",
+            "Server (postback)"
+          ]
+        },
+        {
+          "criterion": "Speed",
+          "cells": [
+            "Instant",
+            "Round trip"
+          ]
+        },
+        {
+          "criterion": "Trust",
+          "cells": [
+            "Can be bypassed",
+            "Authoritative"
+          ]
+        }
+      ]
     }
   },
   "aspnet-15": {
@@ -378,7 +501,48 @@
       "Misuse hurts scale"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "ViewState",
+        "Session",
+        "Application",
+        "Cookies",
+        "Cache"
+      ],
+      "rows": [
+        {
+          "criterion": "Scope",
+          "cells": [
+            "Per page",
+            "Per user",
+            "All users",
+            "Per user",
+            "Shared"
+          ]
+        },
+        {
+          "criterion": "Location",
+          "cells": [
+            "Client",
+            "Server",
+            "Server",
+            "Client",
+            "Server"
+          ]
+        },
+        {
+          "criterion": "Lifetime",
+          "cells": [
+            "Postbacks",
+            "Session",
+            "App life",
+            "Expiry",
+            "Expiry/dependency"
+          ]
+        }
+      ]
+    }
   },
   "aspnet-18": {
     "pitch": "Cookies store small key/value data in the browser, in memory or on disk.",
@@ -420,7 +584,36 @@
       "Session needs a store for web farms"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Session",
+        "ViewState"
+      ],
+      "rows": [
+        {
+          "criterion": "Stored",
+          "cells": [
+            "Server",
+            "Client (hidden field)"
+          ]
+        },
+        {
+          "criterion": "Scope",
+          "cells": [
+            "Whole user session",
+            "Single page postbacks"
+          ]
+        },
+        {
+          "criterion": "Per",
+          "cells": [
+            "User",
+            "Page"
+          ]
+        }
+      ]
+    }
   },
   "aspnet-20": {
     "pitch": "Authentication proves who you are; authorization decides what you can do.",
@@ -466,6 +659,39 @@
     "code": {
       "language": "xml",
       "snippet": "<authentication mode=\"Forms\">\n  <forms loginUrl=\"~/Login.aspx\" />\n</authentication>"
+    },
+    "comparison": {
+      "headers": [
+        "Forms",
+        "Windows",
+        "Passport"
+      ],
+      "rows": [
+        {
+          "criterion": "Uses",
+          "cells": [
+            "Login page + cookie",
+            "AD via IIS",
+            "External SSO"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Internet apps",
+            "Intranet/domain",
+            "(retired)"
+          ]
+        },
+        {
+          "criterion": "Login page",
+          "cells": [
+            "Yes",
+            "No",
+            "External"
+          ]
+        }
+      ]
     }
   },
   "aspnet-22": {

@@ -48,6 +48,47 @@
     "code": {
       "language": "csharp",
       "snippet": "public class P : ControllerBase { public Product Get() => _svc.Get(); } // Web API: data\npublic class H : Controller       { public ActionResult Index() => View(); }  // MVC: HTML"
+    },
+    "comparison": {
+      "headers": [
+        "Web API",
+        "MVC",
+        "ASP.NET Core"
+      ],
+      "rows": [
+        {
+          "criterion": "Returns",
+          "cells": [
+            "Data (JSON/XML)",
+            "HTML views",
+            "Data or HTML"
+          ]
+        },
+        {
+          "criterion": "Platform",
+          "cells": [
+            ".NET Framework",
+            ".NET Framework",
+            "Cross-platform .NET 5+"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "REST services",
+            "Web pages",
+            "Both (modern)"
+          ]
+        },
+        {
+          "criterion": "Status",
+          "cells": [
+            "Legacy",
+            "Legacy",
+            "Recommended"
+          ]
+        }
+      ]
     }
   },
   "web-api-3": {
@@ -71,6 +112,42 @@
     "code": {
       "language": "csharp",
       "snippet": "[HttpGet(\"{id}\")] public Product Get(int id) => _svc.Get(id); // Web API: just HTTP + JSON"
+    },
+    "comparison": {
+      "headers": [
+        "Web API",
+        "WCF"
+      ],
+      "rows": [
+        {
+          "criterion": "Style",
+          "cells": [
+            "REST / HTTP",
+            "SOAP / WS-*"
+          ]
+        },
+        {
+          "criterion": "Transport",
+          "cells": [
+            "HTTP only",
+            "HTTP, TCP, pipes, MSMQ"
+          ]
+        },
+        {
+          "criterion": "Payload",
+          "cells": [
+            "JSON (light)",
+            "XML/SOAP (verbose)"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Web, mobile, microservices",
+            "Intranet, transactions"
+          ]
+        }
+      ]
     }
   },
   "web-api-4": {
@@ -90,7 +167,43 @@
       "Duplex/callbacks not natural"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Web API",
+        "WCF"
+      ],
+      "rows": [
+        {
+          "criterion": "Choose for",
+          "cells": [
+            "Open HTTP/REST, JSON",
+            "Non-HTTP transports, SOAP"
+          ]
+        },
+        {
+          "criterion": "Clients",
+          "cells": [
+            "Browsers, mobile, services",
+            "Enterprise/intranet"
+          ]
+        },
+        {
+          "criterion": "Setup",
+          "cells": [
+            "Minimal",
+            "More configuration"
+          ]
+        },
+        {
+          "criterion": "Transactions",
+          "cells": [
+            "No",
+            "Yes (distributed)"
+          ]
+        }
+      ]
+    }
   },
   "web-api-5": {
     "pitch": "The lifecycle is the ordered path a request takes from arrival to response.",
@@ -367,6 +480,42 @@
     "code": {
       "language": "csharp",
       "snippet": "builder.Services.AddControllers()\n    .AddXmlSerializerFormatters();      // enable XML alongside JSON"
+    },
+    "comparison": {
+      "headers": [
+        "JSON",
+        "XML"
+      ],
+      "rows": [
+        {
+          "criterion": "Size",
+          "cells": [
+            "Compact",
+            "Verbose"
+          ]
+        },
+        {
+          "criterion": "Speed",
+          "cells": [
+            "Fast",
+            "Slower"
+          ]
+        },
+        {
+          "criterion": "Schema",
+          "cells": [
+            "Loose",
+            "Strong (XSD)"
+          ]
+        },
+        {
+          "criterion": "Default",
+          "cells": [
+            "Yes (Core)",
+            "Opt-in"
+          ]
+        }
+      ]
     }
   },
   "web-api-17": {
@@ -555,6 +704,42 @@
     "code": {
       "language": "csharp",
       "snippet": "app.UseExceptionHandler(\"/error\");          // pipeline-wide backstop\n// + [TypeFilter(typeof(ApiExceptionFilter))] for controller-specific cases"
+    },
+    "comparison": {
+      "headers": [
+        "Exception Filter",
+        "Global Middleware"
+      ],
+      "rows": [
+        {
+          "criterion": "Scope",
+          "cells": [
+            "MVC/controller only",
+            "Whole pipeline"
+          ]
+        },
+        {
+          "criterion": "Context",
+          "cells": [
+            "Action-aware",
+            "Request-level"
+          ]
+        },
+        {
+          "criterion": "Catches non-MVC errors",
+          "cells": [
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Use as",
+          "cells": [
+            "Fine-grained handling",
+            "Catch-all backstop"
+          ]
+        }
+      ]
     }
   },
   "web-api-25": {

@@ -219,6 +219,35 @@
       "language": "csharp",
       "snippet": "public ActionResult Row(int id) => PartialView(\"_Row\", _svc.Get(id)); // no layout",
       "note": "PartialView returns just the fragment for AJAX."
+    },
+    "comparison": {
+      "headers": [
+        "ViewResult",
+        "PartialViewResult"
+      ],
+      "rows": [
+        {
+          "criterion": "Renders",
+          "cells": [
+            "Full view",
+            "Fragment"
+          ]
+        },
+        {
+          "criterion": "Layout",
+          "cells": [
+            "Applies",
+            "None"
+          ]
+        },
+        {
+          "criterion": "Used for",
+          "cells": [
+            "Full page",
+            "AJAX / composition"
+          ]
+        }
+      ]
     }
   },
   "mvc-10": {
@@ -242,6 +271,35 @@
     "code": {
       "language": "csharp",
       "snippet": "return View(model);        // full page (with layout)\nreturn PartialView(model); // fragment (no layout)"
+    },
+    "comparison": {
+      "headers": [
+        "View()",
+        "PartialView()"
+      ],
+      "rows": [
+        {
+          "criterion": "Returns",
+          "cells": [
+            "ViewResult (full)",
+            "PartialViewResult"
+          ]
+        },
+        {
+          "criterion": "Layout",
+          "cells": [
+            "Yes",
+            "No"
+          ]
+        },
+        {
+          "criterion": "Use",
+          "cells": [
+            "Whole page",
+            "AJAX snippet"
+          ]
+        }
+      ]
     }
   },
   "mvc-11": {
@@ -357,6 +415,35 @@
     "code": {
       "language": "csharp",
       "snippet": "@model UserVm                 // strongly typed\n<p>@Model.Email</p>          // compile-checked"
+    },
+    "comparison": {
+      "headers": [
+        "Strongly-typed",
+        "Weakly-typed"
+      ],
+      "rows": [
+        {
+          "criterion": "Data via",
+          "cells": [
+            "@model + Model",
+            "ViewBag / ViewData"
+          ]
+        },
+        {
+          "criterion": "Checking",
+          "cells": [
+            "Compile-time",
+            "Runtime"
+          ]
+        },
+        {
+          "criterion": "Tooling",
+          "cells": [
+            "IntelliSense",
+            "None"
+          ]
+        }
+      ]
     }
   },
   "mvc-16": {
@@ -518,6 +605,35 @@
     "code": {
       "language": "csharp",
       "snippet": "[Authorize(Roles = \"Admin\")]   // authenticated AND in Admin role\npublic ActionResult Delete(int id) { ... }"
+    },
+    "comparison": {
+      "headers": [
+        "Authentication",
+        "Authorization"
+      ],
+      "rows": [
+        {
+          "criterion": "Answers",
+          "cells": [
+            "Who are you?",
+            "What may you do?"
+          ]
+        },
+        {
+          "criterion": "Order",
+          "cells": [
+            "First",
+            "After authentication"
+          ]
+        },
+        {
+          "criterion": "In MVC",
+          "cells": [
+            "Login / principal",
+            "[Authorize] / roles"
+          ]
+        }
+      ]
     }
   },
   "mvc-23": {
