@@ -188,6 +188,42 @@
     "code": {
       "language": "sql",
       "snippet": "CREATE FUNCTION dbo.FullName(@f NVARCHAR(50), @l NVARCHAR(50))\nRETURNS NVARCHAR(101) AS BEGIN RETURN @f + ' ' + @l END;"
+    },
+    "comparison": {
+      "headers": [
+        "Stored Procedure",
+        "Function"
+      ],
+      "rows": [
+        {
+          "criterion": "Modify data",
+          "cells": [
+            "Yes",
+            "No"
+          ]
+        },
+        {
+          "criterion": "Returns",
+          "cells": [
+            "0..n result sets",
+            "Value or table"
+          ]
+        },
+        {
+          "criterion": "Use in SELECT",
+          "cells": [
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Called via",
+          "cells": [
+            "EXEC",
+            "Inline"
+          ]
+        }
+      ]
     }
   },
   "sql-server-10": {
@@ -230,6 +266,47 @@
     "code": {
       "language": "sql",
       "snippet": "WITH Recent AS (\n  SELECT * FROM Orders WHERE Date > '2024-01-01')\nSELECT * FROM Recent WHERE Total > 100;"
+    },
+    "comparison": {
+      "headers": [
+        "Temp Table (#t)",
+        "Table Variable (@t)",
+        "CTE"
+      ],
+      "rows": [
+        {
+          "criterion": "Storage",
+          "cells": [
+            "tempdb",
+            "Memory-ish",
+            "Inline (none)"
+          ]
+        },
+        {
+          "criterion": "Statistics",
+          "cells": [
+            "Yes",
+            "Limited",
+            "None"
+          ]
+        },
+        {
+          "criterion": "Scope",
+          "cells": [
+            "Session",
+            "Batch",
+            "Next statement"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Large sets",
+            "Small sets",
+            "Readable / recursive"
+          ]
+        }
+      ]
     }
   },
   "sql-server-12": {
@@ -276,6 +353,39 @@
     "code": {
       "language": "sql",
       "snippet": "SELECT Name FROM A UNION ALL SELECT Name FROM B;  -- rows\nSELECT o.Id, u.Name FROM Orders o JOIN Users u ON o.UserId=u.Id; -- columns"
+    },
+    "comparison": {
+      "headers": [
+        "UNION",
+        "UNION ALL",
+        "JOIN"
+      ],
+      "rows": [
+        {
+          "criterion": "Combines",
+          "cells": [
+            "Rows (dedup)",
+            "Rows (keep dups)",
+            "Columns"
+          ]
+        },
+        {
+          "criterion": "Direction",
+          "cells": [
+            "Vertical",
+            "Vertical",
+            "Horizontal"
+          ]
+        },
+        {
+          "criterion": "Speed",
+          "cells": [
+            "Slower (dedup)",
+            "Faster",
+            "-"
+          ]
+        }
+      ]
     }
   },
   "sql-server-14": {
@@ -299,6 +409,37 @@
     "code": {
       "language": "sql",
       "snippet": "SELECT u.Name, o.Id\nFROM Users u LEFT JOIN Orders o ON o.UserId = u.Id; -- all users"
+    },
+    "comparison": {
+      "headers": [
+        "INNER",
+        "LEFT",
+        "RIGHT",
+        "FULL",
+        "CROSS"
+      ],
+      "rows": [
+        {
+          "criterion": "Keeps",
+          "cells": [
+            "Matches only",
+            "All left",
+            "All right",
+            "All both",
+            "Every combo"
+          ]
+        },
+        {
+          "criterion": "Unmatched",
+          "cells": [
+            "Dropped",
+            "NULL right",
+            "NULL left",
+            "NULL both",
+            "-"
+          ]
+        }
+      ]
     }
   },
   "sql-server-15": {
@@ -391,6 +532,42 @@
     "code": {
       "language": "sql",
       "snippet": "CREATE CLUSTERED INDEX IX_Orders_Date ON Orders(OrderDate);\nCREATE NONCLUSTERED INDEX IX_Orders_User ON Orders(UserId);"
+    },
+    "comparison": {
+      "headers": [
+        "Clustered",
+        "Non-Clustered"
+      ],
+      "rows": [
+        {
+          "criterion": "Orders table",
+          "cells": [
+            "Yes (physical)",
+            "No (separate)"
+          ]
+        },
+        {
+          "criterion": "Count",
+          "cells": [
+            "One only",
+            "Many"
+          ]
+        },
+        {
+          "criterion": "Leaf",
+          "cells": [
+            "Table data",
+            "Key + row pointer"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Range scans",
+            "Lookups on other cols"
+          ]
+        }
+      ]
     }
   },
   "sql-server-19": {
@@ -456,6 +633,42 @@
     "code": {
       "language": "sql",
       "snippet": "SELECT * FROM Users u\nWHERE EXISTS (SELECT 1 FROM Orders o WHERE o.UserId = u.Id);"
+    },
+    "comparison": {
+      "headers": [
+        "EXISTS",
+        "IN"
+      ],
+      "rows": [
+        {
+          "criterion": "Tests",
+          "cells": [
+            "Any matching row",
+            "Value in a list"
+          ]
+        },
+        {
+          "criterion": "Short-circuits",
+          "cells": [
+            "Yes",
+            "No"
+          ]
+        },
+        {
+          "criterion": "NULL handling",
+          "cells": [
+            "Safe",
+            "NOT IN + NULL bug"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Correlated/large subqueries",
+            "Small value lists"
+          ]
+        }
+      ]
     }
   },
   "sql-server-22": {
@@ -479,6 +692,35 @@
     "code": {
       "language": "sql",
       "snippet": "SELECT Dept, COUNT(*) c FROM Emp\nWHERE Active = 1            -- rows\nGROUP BY Dept HAVING COUNT(*) > 5;  -- groups"
+    },
+    "comparison": {
+      "headers": [
+        "WHERE",
+        "HAVING"
+      ],
+      "rows": [
+        {
+          "criterion": "Filters",
+          "cells": [
+            "Rows (before group)",
+            "Groups (after aggregation)"
+          ]
+        },
+        {
+          "criterion": "Aggregates",
+          "cells": [
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Runs",
+          "cells": [
+            "Before GROUP BY",
+            "After GROUP BY"
+          ]
+        }
+      ]
     }
   },
   "sql-server-23": {
@@ -502,6 +744,47 @@
     "code": {
       "language": "sql",
       "snippet": "DELETE FROM Logs WHERE Date < '2023-01-01';  -- selective\nTRUNCATE TABLE Staging;                       -- fast wipe"
+    },
+    "comparison": {
+      "headers": [
+        "DELETE",
+        "TRUNCATE",
+        "DROP"
+      ],
+      "rows": [
+        {
+          "criterion": "Removes",
+          "cells": [
+            "Selected rows",
+            "All rows",
+            "Whole table"
+          ]
+        },
+        {
+          "criterion": "WHERE",
+          "cells": [
+            "Yes",
+            "No",
+            "-"
+          ]
+        },
+        {
+          "criterion": "Logging",
+          "cells": [
+            "Per row",
+            "Minimal",
+            "-"
+          ]
+        },
+        {
+          "criterion": "Rollback",
+          "cells": [
+            "Yes",
+            "Limited",
+            "No"
+          ]
+        }
+      ]
     }
   },
   "sql-server-24": {
@@ -521,7 +804,48 @@
       "Mismatch causes conversions"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "CHAR",
+        "VARCHAR",
+        "NVARCHAR"
+      ],
+      "rows": [
+        {
+          "criterion": "Length",
+          "cells": [
+            "Fixed (padded)",
+            "Variable",
+            "Variable"
+          ]
+        },
+        {
+          "criterion": "Encoding",
+          "cells": [
+            "ASCII",
+            "ASCII",
+            "Unicode"
+          ]
+        },
+        {
+          "criterion": "Bytes/char",
+          "cells": [
+            "1",
+            "1",
+            "2"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Fixed codes",
+            "ASCII text",
+            "International text"
+          ]
+        }
+      ]
+    }
   },
   "sql-server-25": {
     "pitch": "Views are saved queries; indexed/materialized views store results.",

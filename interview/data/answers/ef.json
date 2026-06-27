@@ -39,7 +39,43 @@
       "Feature gaps in early Core"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "EF6",
+        "EF Core"
+      ],
+      "rows": [
+        {
+          "criterion": "Platform",
+          "cells": [
+            ".NET Framework",
+            "Cross-platform .NET 5+"
+          ]
+        },
+        {
+          "criterion": "Performance",
+          "cells": [
+            "Mature",
+            "Faster"
+          ]
+        },
+        {
+          "criterion": "Features",
+          "cells": [
+            "Feature-complete",
+            "Split/compiled queries, batching"
+          ]
+        },
+        {
+          "criterion": "Status",
+          "cells": [
+            "Legacy",
+            "Recommended"
+          ]
+        }
+      ]
+    }
   },
   "ef-3": {
     "pitch": "EF evolved from EF6's maturity to EF Core's modern, fast versions.",
@@ -226,7 +262,36 @@
       "Hidden query cost"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "LINQ",
+        "Entity Framework"
+      ],
+      "rows": [
+        {
+          "criterion": "What",
+          "cells": [
+            "Query syntax",
+            "ORM"
+          ]
+        },
+        {
+          "criterion": "Role",
+          "cells": [
+            "Express queries",
+            "Map + track + persist"
+          ]
+        },
+        {
+          "criterion": "Scope",
+          "cells": [
+            "Any data source",
+            "Database access"
+          ]
+        }
+      ]
+    }
   },
   "ef-12": {
     "pitch": "LINQ to Entities runs in SQL; LINQ to Objects runs in memory.",
@@ -387,6 +452,39 @@
     "code": {
       "language": "csharp",
       "snippet": "db.Orders.Include(o => o.Items);             // eager\ndb.Entry(order).Collection(o => o.Items).Load(); // explicit"
+    },
+    "comparison": {
+      "headers": [
+        "Eager",
+        "Lazy",
+        "Explicit"
+      ],
+      "rows": [
+        {
+          "criterion": "Loads related",
+          "cells": [
+            "Up front (Include)",
+            "On property access",
+            "On demand (Load)"
+          ]
+        },
+        {
+          "criterion": "Queries",
+          "cells": [
+            "One",
+            "One per access",
+            "One per call"
+          ]
+        },
+        {
+          "criterion": "N+1 risk",
+          "cells": [
+            "No",
+            "Yes",
+            "Controlled"
+          ]
+        }
+      ]
     }
   },
   "ef-19": {
@@ -570,6 +668,42 @@
     "code": {
       "language": "csharp",
       "snippet": "db.Orders.AsNoTracking().AsSplitQuery()\n  .Include(o => o.Items).Include(o => o.Tags).ToList();"
+    },
+    "comparison": {
+      "headers": [
+        "Tracking",
+        "No-Tracking"
+      ],
+      "rows": [
+        {
+          "criterion": "Change tracking",
+          "cells": [
+            "Yes",
+            "No (AsNoTracking)"
+          ]
+        },
+        {
+          "criterion": "Speed / memory",
+          "cells": [
+            "Slower / more",
+            "Faster / less"
+          ]
+        },
+        {
+          "criterion": "Can save edits",
+          "cells": [
+            "Yes",
+            "No"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Reads + writes",
+            "Read-only queries"
+          ]
+        }
+      ]
     }
   },
   "ef-27": {

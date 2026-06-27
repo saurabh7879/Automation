@@ -43,6 +43,43 @@
     "code": {
       "language": "csharp",
       "snippet": "list.Where(...)          // LINQ to Objects (memory)\ndb.Users.Where(...)      // LINQ to Entities (SQL)\nxdoc.Descendants(\"a\")    // LINQ to XML"
+    },
+    "comparison": {
+      "headers": [
+        "to Objects",
+        "to SQL",
+        "to XML",
+        "to Entities"
+      ],
+      "rows": [
+        {
+          "criterion": "Source",
+          "cells": [
+            "In-memory",
+            "Database",
+            "XML docs",
+            "EF database"
+          ]
+        },
+        {
+          "criterion": "Executes",
+          "cells": [
+            "In memory",
+            "As SQL",
+            "Over XDocument",
+            "As SQL"
+          ]
+        },
+        {
+          "criterion": "Type",
+          "cells": [
+            "IEnumerable",
+            "IQueryable",
+            "IEnumerable",
+            "IQueryable"
+          ]
+        }
+      ]
     }
   },
   "linq-3": {
@@ -66,6 +103,42 @@
     "code": {
       "language": "csharp",
       "snippet": "from p in people where p.Age > 18 select p.Name;     // query\npeople.Where(p => p.Age > 18).Select(p => p.Name);    // method"
+    },
+    "comparison": {
+      "headers": [
+        "Query syntax",
+        "Method syntax"
+      ],
+      "rows": [
+        {
+          "criterion": "Looks like",
+          "cells": [
+            "SQL keywords",
+            "Fluent chain"
+          ]
+        },
+        {
+          "criterion": "Operators",
+          "cells": [
+            "Limited subset",
+            "All"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Joins / groupings",
+            "Everything"
+          ]
+        },
+        {
+          "criterion": "Performance",
+          "cells": [
+            "Same",
+            "Same"
+          ]
+        }
+      ]
     }
   },
   "linq-4": {
@@ -112,6 +185,42 @@
     "code": {
       "language": "csharp",
       "snippet": "db.Users.Where(u => u.Age > 18)   // IQueryable -> SQL WHERE\nlist.Where(u => u.Age > 18)       // IEnumerable -> in memory"
+    },
+    "comparison": {
+      "headers": [
+        "IEnumerable",
+        "IQueryable"
+      ],
+      "rows": [
+        {
+          "criterion": "Executes",
+          "cells": [
+            "In memory",
+            "At the source (SQL)"
+          ]
+        },
+        {
+          "criterion": "Built from",
+          "cells": [
+            "Delegates",
+            "Expression trees"
+          ]
+        },
+        {
+          "criterion": "EF filtering",
+          "cells": [
+            "After loading rows",
+            "Translated to SQL"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "In-memory data",
+            "Remote / DB queries"
+          ]
+        }
+      ]
     }
   },
   "linq-6": {
@@ -161,6 +270,35 @@
     "code": {
       "language": "csharp",
       "snippet": "orders.Select(o => o.Items);      // IEnumerable<List<Item>>\norders.SelectMany(o => o.Items);  // IEnumerable<Item> (flattened)"
+    },
+    "comparison": {
+      "headers": [
+        "Select",
+        "SelectMany"
+      ],
+      "rows": [
+        {
+          "criterion": "Mapping",
+          "cells": [
+            "1 -> 1",
+            "1 -> many"
+          ]
+        },
+        {
+          "criterion": "Result",
+          "cells": [
+            "Sequence (may nest)",
+            "Flattened sequence"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Projection",
+            "Flatten child lists"
+          ]
+        }
+      ]
     }
   },
   "linq-8": {
@@ -184,6 +322,39 @@
     "code": {
       "language": "csharp",
       "snippet": "list.Where(x => x > 5);     // deferred, any IEnumerable\nlist.Find(x => x > 5);      // first match now (List)\nlist.FindAll(x => x > 5);   // all matches now (List)"
+    },
+    "comparison": {
+      "headers": [
+        "Where",
+        "Find",
+        "FindAll"
+      ],
+      "rows": [
+        {
+          "criterion": "Type",
+          "cells": [
+            "LINQ (any source)",
+            "List method",
+            "List method"
+          ]
+        },
+        {
+          "criterion": "Execution",
+          "cells": [
+            "Deferred",
+            "Immediate",
+            "Immediate"
+          ]
+        },
+        {
+          "criterion": "Returns",
+          "cells": [
+            "Filtered sequence",
+            "First match",
+            "New List of matches"
+          ]
+        }
+      ]
     }
   },
   "linq-9": {
@@ -207,6 +378,43 @@
     "code": {
       "language": "csharp",
       "snippet": "users.First(u => u.Active);          // first or throws\nusers.SingleOrDefault(u => u.Id==id); // exactly one or null"
+    },
+    "comparison": {
+      "headers": [
+        "First",
+        "FirstOrDefault",
+        "Single",
+        "SingleOrDefault"
+      ],
+      "rows": [
+        {
+          "criterion": "Empty",
+          "cells": [
+            "Throws",
+            "Default",
+            "Throws",
+            "Default"
+          ]
+        },
+        {
+          "criterion": "Many matches",
+          "cells": [
+            "First",
+            "First",
+            "Throws",
+            "Throws"
+          ]
+        },
+        {
+          "criterion": "Use when",
+          "cells": [
+            "Any match",
+            "Maybe none",
+            "Exactly one",
+            "One or none"
+          ]
+        }
+      ]
     }
   },
   "linq-10": {
@@ -230,6 +438,43 @@
     "code": {
       "language": "csharp",
       "snippet": "if (users.Any(u => u.Active)) ...   // stops at first match\nint n = users.Count(u => u.Active); // counts all"
+    },
+    "comparison": {
+      "headers": [
+        "Any",
+        "All",
+        "Count",
+        "LongCount"
+      ],
+      "rows": [
+        {
+          "criterion": "Returns",
+          "cells": [
+            "bool (any)",
+            "bool (all)",
+            "int",
+            "long"
+          ]
+        },
+        {
+          "criterion": "Short-circuits",
+          "cells": [
+            "Yes",
+            "Yes",
+            "No",
+            "No"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Existence",
+            "Universality",
+            "Total",
+            "Huge totals"
+          ]
+        }
+      ]
     }
   },
   "linq-11": {
@@ -253,6 +498,34 @@
     "code": {
       "language": "csharp",
       "snippet": "people.OrderBy(p => p.Last)\n      .ThenBy(p => p.First);   // primary, then secondary key"
+    },
+    "comparison": {
+      "headers": [
+        "OrderBy",
+        "ThenBy",
+        "OrderByDescending",
+        "Reverse"
+      ],
+      "rows": [
+        {
+          "criterion": "Sorts by",
+          "cells": [
+            "Primary key asc",
+            "Secondary key",
+            "Primary key desc",
+            "No key"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Main sort",
+            "Tie-break",
+            "Descending",
+            "Flip order"
+          ]
+        }
+      ]
     }
   },
   "linq-12": {
@@ -276,6 +549,43 @@
     "code": {
       "language": "csharp",
       "snippet": "items.GroupBy(i => i.Cat);              // deferred groups\nitems.ToLookup(i => i.Cat);             // immediate, many-per-key\nitems.ToDictionary(i => i.Id);          // unique key -> item"
+    },
+    "comparison": {
+      "headers": [
+        "Distinct",
+        "GroupBy",
+        "ToLookup",
+        "ToDictionary"
+      ],
+      "rows": [
+        {
+          "criterion": "Does",
+          "cells": [
+            "Remove dups",
+            "Group by key",
+            "Group by key",
+            "Key -> value"
+          ]
+        },
+        {
+          "criterion": "Execution",
+          "cells": [
+            "Deferred",
+            "Deferred",
+            "Immediate",
+            "Immediate"
+          ]
+        },
+        {
+          "criterion": "Per key",
+          "cells": [
+            "-",
+            "Many",
+            "Many",
+            "One (throws on dup)"
+          ]
+        }
+      ]
     }
   },
   "linq-13": {
@@ -299,6 +609,43 @@
     "code": {
       "language": "csharp",
       "snippet": "orders.Join(users, o => o.UserId, u => u.Id, (o,u) => new { o, u }); // inner join"
+    },
+    "comparison": {
+      "headers": [
+        "Join",
+        "GroupJoin",
+        "Zip",
+        "SelectMany"
+      ],
+      "rows": [
+        {
+          "criterion": "Combines",
+          "cells": [
+            "Match by key",
+            "Group by key",
+            "By position",
+            "Flatten nested"
+          ]
+        },
+        {
+          "criterion": "Result",
+          "cells": [
+            "Flat pairs",
+            "Left + group",
+            "Positional pairs",
+            "One sequence"
+          ]
+        },
+        {
+          "criterion": "Like",
+          "cells": [
+            "INNER JOIN",
+            "LEFT JOIN shape",
+            "zip",
+            "-"
+          ]
+        }
+      ]
     }
   },
   "linq-14": {
@@ -322,6 +669,43 @@
     "code": {
       "language": "csharp",
       "snippet": "items.Skip(page * 20).Take(20);   // pagination\nitems.TakeWhile(x => x < 100);    // until first >= 100"
+    },
+    "comparison": {
+      "headers": [
+        "Skip",
+        "Take",
+        "SkipWhile",
+        "TakeWhile"
+      ],
+      "rows": [
+        {
+          "criterion": "Cuts by",
+          "cells": [
+            "Count",
+            "Count",
+            "Predicate",
+            "Predicate"
+          ]
+        },
+        {
+          "criterion": "Keeps",
+          "cells": [
+            "After N",
+            "First N",
+            "After cond fails",
+            "Until cond fails"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Paging",
+            "Paging",
+            "Conditional skip",
+            "Conditional take"
+          ]
+        }
+      ]
     }
   },
   "linq-15": {
@@ -503,6 +887,35 @@
     "code": {
       "language": "csharp",
       "snippet": "orders.SelectMany(o => o.Items);  // flatten all items into one sequence"
+    },
+    "comparison": {
+      "headers": [
+        "Select",
+        "SelectMany"
+      ],
+      "rows": [
+        {
+          "criterion": "Mapping",
+          "cells": [
+            "1 -> 1",
+            "1 -> many"
+          ]
+        },
+        {
+          "criterion": "Result",
+          "cells": [
+            "Sequence (may nest)",
+            "Flattened sequence"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Projection",
+            "Flatten child lists"
+          ]
+        }
+      ]
     }
   },
   "linq-23": {
@@ -595,6 +1008,34 @@
     "code": {
       "language": "csharp",
       "snippet": "people.OrderByDescending(p => p.Age).ThenBy(p => p.Name);"
+    },
+    "comparison": {
+      "headers": [
+        "OrderBy",
+        "OrderByDescending",
+        "ThenBy",
+        "ThenByDescending"
+      ],
+      "rows": [
+        {
+          "criterion": "Role",
+          "cells": [
+            "Primary asc",
+            "Primary desc",
+            "Secondary asc",
+            "Secondary desc"
+          ]
+        },
+        {
+          "criterion": "Applied",
+          "cells": [
+            "First",
+            "First",
+            "After primary",
+            "After primary"
+          ]
+        }
+      ]
     }
   },
   "linq-27": {
@@ -618,6 +1059,34 @@
     "code": {
       "language": "csharp",
       "snippet": "a.Union(b);      // a + b, no dups\na.Intersect(b);  // in both\na.Except(b);     // in a, not b"
+    },
+    "comparison": {
+      "headers": [
+        "Distinct",
+        "Union",
+        "Intersect",
+        "Except"
+      ],
+      "rows": [
+        {
+          "criterion": "Operates on",
+          "cells": [
+            "One set",
+            "Two sets",
+            "Two sets",
+            "Two sets"
+          ]
+        },
+        {
+          "criterion": "Returns",
+          "cells": [
+            "Unique items",
+            "A + B (no dups)",
+            "In both",
+            "In A not B"
+          ]
+        }
+      ]
     }
   },
   "linq-28": {
@@ -664,6 +1133,39 @@
     "code": {
       "language": "csharp",
       "snippet": "users.Any(u => u.Active);   // any match?\nids.Contains(5);            // value present?"
+    },
+    "comparison": {
+      "headers": [
+        "Any",
+        "All",
+        "Contains"
+      ],
+      "rows": [
+        {
+          "criterion": "Tests",
+          "cells": [
+            "Any match",
+            "All match",
+            "Value present"
+          ]
+        },
+        {
+          "criterion": "Takes",
+          "cells": [
+            "Predicate",
+            "Predicate",
+            "A value"
+          ]
+        },
+        {
+          "criterion": "Returns",
+          "cells": [
+            "bool",
+            "bool",
+            "bool"
+          ]
+        }
+      ]
     }
   },
   "linq-30": {
@@ -733,6 +1235,43 @@
     "code": {
       "language": "csharp",
       "snippet": "var byId = users.ToDictionary(u => u.Id);    // unique key map\nvar byCat = items.ToLookup(i => i.Category);  // many per key"
+    },
+    "comparison": {
+      "headers": [
+        "ToList",
+        "ToArray",
+        "ToDictionary",
+        "ToLookup"
+      ],
+      "rows": [
+        {
+          "criterion": "Produces",
+          "cells": [
+            "List<T>",
+            "Array",
+            "Key -> value",
+            "Key -> many"
+          ]
+        },
+        {
+          "criterion": "Dup keys",
+          "cells": [
+            "-",
+            "-",
+            "Throws",
+            "Allowed"
+          ]
+        },
+        {
+          "criterion": "Execution",
+          "cells": [
+            "Immediate",
+            "Immediate",
+            "Immediate",
+            "Immediate"
+          ]
+        }
+      ]
     }
   },
   "linq-33": {
@@ -779,6 +1318,42 @@
     "code": {
       "language": "csharp",
       "snippet": "IQueryable<User> q = db.Users.Where(u => u.Age > 18); // -> SQL\nIEnumerable<User> m = list.Where(u => u.Age > 18);   // in memory"
+    },
+    "comparison": {
+      "headers": [
+        "IEnumerable",
+        "IQueryable"
+      ],
+      "rows": [
+        {
+          "criterion": "Executes",
+          "cells": [
+            "In memory",
+            "At the source (SQL)"
+          ]
+        },
+        {
+          "criterion": "Built from",
+          "cells": [
+            "Delegates",
+            "Expression trees"
+          ]
+        },
+        {
+          "criterion": "EF filtering",
+          "cells": [
+            "After loading rows",
+            "Translated to SQL"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "In-memory data",
+            "Remote / DB queries"
+          ]
+        }
+      ]
     }
   },
   "linq-35": {
