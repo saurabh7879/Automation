@@ -38,6 +38,42 @@
     "diagram": {
       "title": "Array vs Linked List",
       "mermaid": "flowchart LR\n  A[Array: contiguous cells]\n  L[Node->Node->Node (pointers)]"
+    },
+    "comparison": {
+      "headers": [
+        "Array",
+        "Linked List"
+      ],
+      "rows": [
+        {
+          "criterion": "Access",
+          "cells": [
+            "O(1) index",
+            "O(n) traversal"
+          ]
+        },
+        {
+          "criterion": "Insert/delete",
+          "cells": [
+            "O(n) (shift)",
+            "O(1) at node"
+          ]
+        },
+        {
+          "criterion": "Memory",
+          "cells": [
+            "Contiguous",
+            "Nodes + pointers"
+          ]
+        },
+        {
+          "criterion": "Cache",
+          "cells": [
+            "Friendly",
+            "Poor locality"
+          ]
+        }
+      ]
     }
   },
   "data-structures-3": {
@@ -191,7 +227,36 @@
       "Ends-only access"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Stack",
+        "Queue"
+      ],
+      "rows": [
+        {
+          "criterion": "Order",
+          "cells": [
+            "LIFO",
+            "FIFO"
+          ]
+        },
+        {
+          "criterion": "Add / remove",
+          "cells": [
+            "One end (top)",
+            "Back / front"
+          ]
+        },
+        {
+          "criterion": "Use for",
+          "cells": [
+            "Undo, recursion",
+            "Scheduling, BFS"
+          ]
+        }
+      ]
+    }
   },
   "data-structures-10": {
     "pitch": "You can build a stack from queues and a queue from stacks.",
@@ -258,6 +323,35 @@
     "diagram": {
       "title": "BST",
       "mermaid": "flowchart TD\n  E[8] --> L[3]\n  E --> R[10]\n  L --> a[1]\n  L --> b[6]"
+    },
+    "comparison": {
+      "headers": [
+        "Binary Tree",
+        "BST"
+      ],
+      "rows": [
+        {
+          "criterion": "Ordering",
+          "cells": [
+            "None",
+            "left < node < right"
+          ]
+        },
+        {
+          "criterion": "Search",
+          "cells": [
+            "O(n)",
+            "O(log n) balanced"
+          ]
+        },
+        {
+          "criterion": "Inorder",
+          "cells": [
+            "Any order",
+            "Sorted"
+          ]
+        }
+      ]
     }
   },
   "data-structures-13": {

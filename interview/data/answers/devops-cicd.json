@@ -35,7 +35,43 @@
       "Both need buy-in"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "DevOps",
+        "Agile"
+      ],
+      "rows": [
+        {
+          "criterion": "Focus",
+          "cells": [
+            "Delivery + operations",
+            "Iterative development"
+          ]
+        },
+        {
+          "criterion": "Scope",
+          "cells": [
+            "Whole lifecycle",
+            "Building software"
+          ]
+        },
+        {
+          "criterion": "Emphasis",
+          "cells": [
+            "Automation, CI/CD",
+            "Sprints, feedback"
+          ]
+        },
+        {
+          "criterion": "Relation",
+          "cells": [
+            "Complements Agile",
+            "Complements DevOps"
+          ]
+        }
+      ]
+    }
   },
   "devops-cicd-3": {
     "pitch": "The DevOps lifecycle loops plan-code-build-test-release-deploy-operate-monitor.",
@@ -114,7 +150,36 @@
       "Risk if tests are weak"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Continuous Delivery",
+        "Continuous Deployment"
+      ],
+      "rows": [
+        {
+          "criterion": "Prod release",
+          "cells": [
+            "Manual approval",
+            "Automatic"
+          ]
+        },
+        {
+          "criterion": "Gate",
+          "cells": [
+            "Human",
+            "None"
+          ]
+        },
+        {
+          "criterion": "Needs",
+          "cells": [
+            "Strong automation",
+            "High confidence + tests"
+          ]
+        }
+      ]
+    }
   },
   "devops-cicd-7": {
     "pitch": "A CI/CD pipeline automates code from commit to production.",
@@ -221,6 +286,42 @@
     "code": {
       "language": "bash",
       "snippet": "git merge feature       # merge commit\ngit rebase main         # linear history (local only)"
+    },
+    "comparison": {
+      "headers": [
+        "Merge",
+        "Rebase"
+      ],
+      "rows": [
+        {
+          "criterion": "History",
+          "cells": [
+            "Merge commit (preserved)",
+            "Linear (rewritten)"
+          ]
+        },
+        {
+          "criterion": "Commit hashes",
+          "cells": [
+            "Unchanged",
+            "Rewritten"
+          ]
+        },
+        {
+          "criterion": "Shared branches",
+          "cells": [
+            "Safe",
+            "Avoid"
+          ]
+        },
+        {
+          "criterion": "Result",
+          "cells": [
+            "True topology",
+            "Clean line"
+          ]
+        }
+      ]
     }
   },
   "devops-cicd-12": {

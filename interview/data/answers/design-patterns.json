@@ -532,7 +532,48 @@
       "Choosing the right fit"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "MVC",
+        "MVP",
+        "MVVM"
+      ],
+      "rows": [
+        {
+          "criterion": "UI logic in",
+          "cells": [
+            "Controller",
+            "Presenter",
+            "ViewModel"
+          ]
+        },
+        {
+          "criterion": "View link",
+          "cells": [
+            "Controller mediates",
+            "Presenter updates view",
+            "Data binding"
+          ]
+        },
+        {
+          "criterion": "View",
+          "cells": [
+            "Active",
+            "Passive",
+            "Binds to VM"
+          ]
+        },
+        {
+          "criterion": "Common in",
+          "cells": [
+            "Web",
+            "WinForms",
+            "WPF / XAML"
+          ]
+        }
+      ]
+    }
   },
   "design-patterns-25": {
     "pitch": "MVC splits an app into Model, View and Controller.",
@@ -592,7 +633,43 @@
       "Easy to conflate the two"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Repository",
+        "DAO"
+      ],
+      "rows": [
+        {
+          "criterion": "Level",
+          "cells": [
+            "Domain (aggregates)",
+            "Data source / table"
+          ]
+        },
+        {
+          "criterion": "Focus",
+          "cells": [
+            "Business intent",
+            "Persistence CRUD"
+          ]
+        },
+        {
+          "criterion": "Granularity",
+          "cells": [
+            "Collection-like",
+            "Per-table"
+          ]
+        },
+        {
+          "criterion": "Uses",
+          "cells": [
+            "May use DAOs/ORM",
+            "Direct DB / ORM"
+          ]
+        }
+      ]
+    }
   },
   "design-patterns-28": {
     "pitch": "SOLID principles make patterns natural and effective.",

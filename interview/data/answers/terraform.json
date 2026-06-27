@@ -104,6 +104,34 @@
     "code": {
       "language": "bash",
       "snippet": "terraform init\nterraform plan\nterraform apply\nterraform destroy"
+    },
+    "comparison": {
+      "headers": [
+        "init",
+        "plan",
+        "apply",
+        "destroy"
+      ],
+      "rows": [
+        {
+          "criterion": "Does",
+          "cells": [
+            "Setup providers/backend",
+            "Preview changes",
+            "Provision changes",
+            "Remove all"
+          ]
+        },
+        {
+          "criterion": "Changes infra",
+          "cells": [
+            "No",
+            "No",
+            "Yes",
+            "Yes (removes)"
+          ]
+        }
+      ]
     }
   },
   "terraform-6": {
@@ -146,7 +174,43 @@
       "Backend access control"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Local State",
+        "Remote State"
+      ],
+      "rows": [
+        {
+          "criterion": "Stored",
+          "cells": [
+            "On disk",
+            "Shared backend"
+          ]
+        },
+        {
+          "criterion": "Sharing",
+          "cells": [
+            "No",
+            "Yes (team)"
+          ]
+        },
+        {
+          "criterion": "Locking",
+          "cells": [
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Quick tests",
+            "Teams / production"
+          ]
+        }
+      ]
+    }
   },
   "terraform-8": {
     "pitch": "A backend defines where state is stored and how operations run.",

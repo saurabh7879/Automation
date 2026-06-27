@@ -42,6 +42,42 @@
     "diagram": {
       "title": "VM vs Container",
       "mermaid": "flowchart TB\n  VM[VM: Hypervisor -> Guest OS each] \n  Co[Container: Shared kernel -> isolated processes]"
+    },
+    "comparison": {
+      "headers": [
+        "Virtual Machine",
+        "Container"
+      ],
+      "rows": [
+        {
+          "criterion": "Virtualizes",
+          "cells": [
+            "Hardware (guest OS)",
+            "OS (shared kernel)"
+          ]
+        },
+        {
+          "criterion": "Size",
+          "cells": [
+            "GBs",
+            "MBs"
+          ]
+        },
+        {
+          "criterion": "Boot",
+          "cells": [
+            "Minutes",
+            "Seconds"
+          ]
+        },
+        {
+          "criterion": "Isolation",
+          "cells": [
+            "Strong",
+            "Process-level"
+          ]
+        }
+      ]
     }
   },
   "docker-k8s-3": {
@@ -129,7 +165,43 @@
       "Image rebuild for changes"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Image",
+        "Container"
+      ],
+      "rows": [
+        {
+          "criterion": "Is",
+          "cells": [
+            "Read-only template",
+            "Running instance"
+          ]
+        },
+        {
+          "criterion": "State",
+          "cells": [
+            "Immutable",
+            "Writable layer"
+          ]
+        },
+        {
+          "criterion": "Form",
+          "cells": [
+            "Stored layers",
+            "Live process"
+          ]
+        },
+        {
+          "criterion": "Relation",
+          "cells": [
+            "Blueprint",
+            "Object of the image"
+          ]
+        }
+      ]
+    }
   },
   "docker-k8s-7": {
     "pitch": "A Dockerfile is a recipe of instructions that builds an image.",
@@ -175,6 +247,35 @@
     "code": {
       "language": "dockerfile",
       "snippet": "ENTRYPOINT [\"python\",\"app.py\"]\nCMD [\"--port\",\"8080\"]   # default arg, overridable"
+    },
+    "comparison": {
+      "headers": [
+        "CMD",
+        "ENTRYPOINT"
+      ],
+      "rows": [
+        {
+          "criterion": "Sets",
+          "cells": [
+            "Default args/command",
+            "Fixed executable"
+          ]
+        },
+        {
+          "criterion": "Overridable",
+          "cells": [
+            "Easily at run",
+            "Only with --entrypoint"
+          ]
+        },
+        {
+          "criterion": "Together",
+          "cells": [
+            "Default args",
+            "The command"
+          ]
+        }
+      ]
     }
   },
   "docker-k8s-9": {
@@ -198,6 +299,42 @@
     "code": {
       "language": "dockerfile",
       "snippet": "COPY app/ /app/            # preferred\nADD release.tar.gz /opt/   # auto-extracts"
+    },
+    "comparison": {
+      "headers": [
+        "COPY",
+        "ADD"
+      ],
+      "rows": [
+        {
+          "criterion": "Copies files",
+          "cells": [
+            "Yes",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Extracts tar",
+          "cells": [
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Fetches URLs",
+          "cells": [
+            "No",
+            "Yes"
+          ]
+        },
+        {
+          "criterion": "Recommended",
+          "cells": [
+            "Yes (default)",
+            "Only for tar"
+          ]
+        }
+      ]
     }
   },
   "docker-k8s-10": {
@@ -529,7 +666,36 @@
       "Capacity planning"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Node",
+        "Cluster"
+      ],
+      "rows": [
+        {
+          "criterion": "Is",
+          "cells": [
+            "One worker machine",
+            "All nodes + control plane"
+          ]
+        },
+        {
+          "criterion": "Runs",
+          "cells": [
+            "Pods",
+            "Schedules across nodes"
+          ]
+        },
+        {
+          "criterion": "Scale",
+          "cells": [
+            "Add resources",
+            "Add nodes"
+          ]
+        }
+      ]
+    }
   },
   "docker-k8s-25": {
     "pitch": "A Pod is the smallest deployable unit - one or more containers.",
@@ -571,7 +737,43 @@
       "Multi-container complexity"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Pod",
+        "Container"
+      ],
+      "rows": [
+        {
+          "criterion": "Is",
+          "cells": [
+            "Smallest K8s unit",
+            "Single process/image"
+          ]
+        },
+        {
+          "criterion": "Holds",
+          "cells": [
+            "One+ containers",
+            "One app"
+          ]
+        },
+        {
+          "criterion": "Shares",
+          "cells": [
+            "IP + volumes",
+            "-"
+          ]
+        },
+        {
+          "criterion": "Scheduled",
+          "cells": [
+            "By K8s",
+            "Via its pod"
+          ]
+        }
+      ]
+    }
   },
   "docker-k8s-27": {
     "pitch": "A Deployment manages a replicated, self-healing, updatable set of pods.",

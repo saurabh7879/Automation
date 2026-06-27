@@ -41,6 +41,42 @@
     "diagram": {
       "title": "Monolith vs Microservices",
       "mermaid": "flowchart LR\n  M[Monolith: one app + one DB]\n  Mi[Microservices: many services + own DBs]"
+    },
+    "comparison": {
+      "headers": [
+        "Monolithic",
+        "Microservices"
+      ],
+      "rows": [
+        {
+          "criterion": "Deploy",
+          "cells": [
+            "One unit",
+            "Independent services"
+          ]
+        },
+        {
+          "criterion": "Database",
+          "cells": [
+            "Shared",
+            "Per service"
+          ]
+        },
+        {
+          "criterion": "Scaling",
+          "cells": [
+            "Whole app",
+            "Per service"
+          ]
+        },
+        {
+          "criterion": "Complexity",
+          "cells": [
+            "Simple ops",
+            "Distributed"
+          ]
+        }
+      ]
     }
   },
   "microservices-3": {
@@ -60,7 +96,43 @@
       "Distributed complexity"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Microservices",
+        "Monolith"
+      ],
+      "rows": [
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Large, multi-team, scale",
+            "Small / early apps"
+          ]
+        },
+        {
+          "criterion": "Teams",
+          "cells": [
+            "Many independent",
+            "One team"
+          ]
+        },
+        {
+          "criterion": "Ops maturity",
+          "cells": [
+            "High (CI/CD, monitoring)",
+            "Low needed"
+          ]
+        },
+        {
+          "criterion": "Deploy",
+          "cells": [
+            "Independent",
+            "Single unit"
+          ]
+        }
+      ]
+    }
   },
   "microservices-4": {
     "pitch": "Microservices trade operational complexity for autonomy and scale.",
@@ -139,7 +211,43 @@
       "Async harder to trace"
     ],
     "similarQuestions": [],
-    "diagram": null
+    "diagram": null,
+    "comparison": {
+      "headers": [
+        "Synchronous",
+        "Asynchronous"
+      ],
+      "rows": [
+        {
+          "criterion": "Pattern",
+          "cells": [
+            "Request / response",
+            "Publish / consume"
+          ]
+        },
+        {
+          "criterion": "Caller",
+          "cells": [
+            "Waits for reply",
+            "Fire and continue"
+          ]
+        },
+        {
+          "criterion": "Coupling",
+          "cells": [
+            "Tighter",
+            "Looser"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Immediate reads",
+            "Decoupled workflows"
+          ]
+        }
+      ]
+    }
   },
   "microservices-8": {
     "pitch": "An API gateway is the single entry that routes and secures services.",
@@ -262,6 +370,42 @@
     "diagram": {
       "title": "Saga",
       "mermaid": "flowchart LR\n  O[Order] -->|event| P[Payment]\n  P -->|event| I[Inventory]\n  I -->|fail| C[Compensate prior steps]"
+    },
+    "comparison": {
+      "headers": [
+        "Choreography",
+        "Orchestration"
+      ],
+      "rows": [
+        {
+          "criterion": "Control",
+          "cells": [
+            "Decentralized (events)",
+            "Central orchestrator"
+          ]
+        },
+        {
+          "criterion": "Coupling",
+          "cells": [
+            "Loose",
+            "Coordinator dependency"
+          ]
+        },
+        {
+          "criterion": "Visibility",
+          "cells": [
+            "Harder to trace",
+            "Clear flow"
+          ]
+        },
+        {
+          "criterion": "Best for",
+          "cells": [
+            "Simple event flows",
+            "Complex workflows"
+          ]
+        }
+      ]
     }
   },
   "microservices-14": {
