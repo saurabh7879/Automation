@@ -1,1 +1,662 @@
-{}
+{
+  "monitoring-1": {
+    "pitch": "OpenTelemetry is the vendor-neutral standard for telemetry.",
+    "definition": "OpenTelemetry (OTel) is an open-source, vendor-neutral standard and set of SDKs/APIs for generating and collecting telemetry - traces, metrics and logs - from applications. It's replacing vendor-specific SDKs because you instrument once with OTel and can export to any backend (Jaeger, Prometheus, Datadog, App Insights), avoiding lock-in and re-instrumentation when you switch tools.",
+    "how": "Instrument code with the OTel API/SDK -> it produces traces/metrics/logs -> export to any compatible backend.",
+    "when": "Standardized, portable observability instrumentation.",
+    "whenNot": "A tiny app with one fixed vendor and no portability need.",
+    "advantages": [
+      "Vendor-neutral, no lock-in",
+      "One instrumentation, any backend",
+      "CNCF standard"
+    ],
+    "disadvantages": [
+      "Maturing ecosystem",
+      "Configuration learning curve",
+      "Some backends lag features"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-2": {
+    "pitch": "The OTel Collector receives, processes and exports telemetry centrally.",
+    "definition": "The OpenTelemetry Collector is a standalone agent/service that receives telemetry, processes it, and exports it to backends - decoupling apps from vendors. Its pipeline has three stages: receivers (ingest data in various formats), processors (batch, filter, enrich, sample), and exporters (send to backends). It runs as an agent (per host/sidecar) or a gateway (central), so you can change backends without touching apps.",
+    "how": "Receivers ingest -> processors transform/sample/batch -> exporters ship to one or many backends.",
+    "when": "Centralizing and routing telemetry flexibly.",
+    "whenNot": "Trivial setups exporting directly from the SDK.",
+    "advantages": [
+      "Decouples apps from backends",
+      "Batching/sampling/enrichment",
+      "Agent or gateway modes"
+    ],
+    "disadvantages": [
+      "Extra component to run",
+      "Pipeline config",
+      "Resource overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "OTel Collector",
+      "mermaid": "flowchart LR\n  R[Receivers] --> Pr[Processors]\n  Pr --> E[Exporters]\n  E --> B[Backends]"
+    }
+  },
+  "monitoring-3": {
+    "pitch": "Instrument ASP.NET Core with the OpenTelemetry .NET SDK.",
+    "definition": "You instrument an ASP.NET Core app with OpenTelemetry by adding the OpenTelemetry .NET packages and configuring tracing and metrics in Program.cs: enable auto-instrumentation for ASP.NET Core, HttpClient and EF Core, add custom activities/meters where needed, and configure an exporter (OTLP to the Collector, or directly to Jaeger/Prometheus). Logs integrate via ILogger. Minimal code yields rich traces and metrics.",
+    "how": "AddOpenTelemetry().WithTracing/WithMetrics -> enable instrumentation + exporters -> telemetry flows automatically.",
+    "when": "Adding standards-based observability to .NET apps.",
+    "whenNot": "Apps with no monitoring requirements.",
+    "advantages": [
+      "Auto-instruments common libs",
+      "Custom spans/metrics easy",
+      "Exports anywhere (OTLP)"
+    ],
+    "disadvantages": [
+      "Package/config setup",
+      "Sampling tuning",
+      "Version churn"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "builder.Services.AddOpenTelemetry()\n  .WithTracing(t => t.AddAspNetCoreInstrumentation().AddOtlpExporter())\n  .WithMetrics(m => m.AddAspNetCoreInstrumentation().AddOtlpExporter());"
+    }
+  },
+  "monitoring-4": {
+    "pitch": "Prometheus pulls metrics by scraping HTTP endpoints on a schedule.",
+    "definition": "Prometheus collects metrics using a pull model: targets expose a /metrics HTTP endpoint in a text format, and the Prometheus server scrapes them at a configured interval, storing the samples in its time-series database. Targets are discovered statically or via service discovery (Kubernetes, Consul). This pull-based scraping is simple, resilient, and lets Prometheus know when a target is down (scrape fails).",
+    "how": "Configure scrape targets -> Prometheus periodically GETs each /metrics endpoint -> stores samples in its TSDB.",
+    "when": "Metrics monitoring of services and infrastructure.",
+    "whenNot": "Short-lived jobs (use the Pushgateway).",
+    "advantages": [
+      "Simple pull model",
+      "Service discovery",
+      "Detects down targets"
+    ],
+    "disadvantages": [
+      "Pull needs reachable endpoints",
+      "Short-lived jobs awkward",
+      "Long-term storage external"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "yaml",
+      "snippet": "scrape_configs:\n  - job_name: api\n    static_configs: [{ targets: [\"app:8080\"] }]"
+    }
+  },
+  "monitoring-5": {
+    "pitch": "PromQL is Prometheus's query language for time-series data.",
+    "definition": "PromQL (Prometheus Query Language) is the functional query language for selecting, aggregating and computing over the time-series metrics Prometheus stores. You use it to filter by labels, apply functions (rate, histogram_quantile), aggregate across instances (sum, avg by), and build alerting rules and Grafana panels. It's how you turn raw metrics into rates, percentiles and SLO indicators.",
+    "how": "Select series by metric + labels -> apply functions/aggregations (rate, sum by) -> get a graphable/alertable result.",
+    "when": "Querying metrics, alerts and dashboards.",
+    "whenNot": "Log search (PromQL is for metrics only).",
+    "advantages": [
+      "Powerful metric queries",
+      "Rates + percentiles",
+      "Drives alerts + Grafana"
+    ],
+    "disadvantages": [
+      "Learning curve",
+      "Metrics-only",
+      "Cardinality pitfalls"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "text",
+      "snippet": "rate(http_requests_total{status=\"500\"}[5m])   # error rate over 5m"
+    }
+  },
+  "monitoring-6": {
+    "pitch": "Grafana dashboards visualize metrics from data sources via panels.",
+    "definition": "You configure Grafana dashboards by connecting a data source (Prometheus, Loki, Elasticsearch, etc.), then adding panels - each running a query (e.g. PromQL) and rendering it as a graph, gauge, table or heatmap. You use variables for reusable, templated dashboards (per service/environment), set thresholds and alerts, and organize panels into rows. Dashboards are saved as JSON and can be version-controlled.",
+    "how": "Add a data source -> create panels with queries -> use variables/thresholds -> save dashboard JSON.",
+    "when": "Visualizing metrics and building ops dashboards.",
+    "whenNot": "Ad-hoc one-off queries (use Explore).",
+    "advantages": [
+      "Rich visualizations",
+      "Templated variables",
+      "JSON = version control"
+    ],
+    "disadvantages": [
+      "Query knowledge needed",
+      "Dashboard sprawl",
+      "Maintenance over time"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-7": {
+    "pitch": "Expose custom metrics from your app for business/technical KPIs.",
+    "definition": "You create custom application metrics by defining instruments in code - counters (count events), gauges (current values), and histograms (distributions like latency) - via OpenTelemetry/Prometheus client libraries, incrementing/recording them at the right points, and exposing them on a /metrics endpoint Prometheus scrapes. This captures domain-specific signals (orders placed, queue depth) beyond default infrastructure metrics.",
+    "how": "Define a counter/gauge/histogram -> record values in code -> expose on /metrics -> Prometheus scrapes it.",
+    "when": "Tracking app-specific and business KPIs.",
+    "whenNot": "Metrics already covered by auto-instrumentation.",
+    "advantages": [
+      "Domain-specific signals",
+      "Counters/gauges/histograms",
+      "Feeds dashboards/alerts"
+    ],
+    "disadvantages": [
+      "Cardinality risk (labels)",
+      "Code to maintain",
+      "Naming discipline"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var meter = new Meter(\"app\");\nvar orders = meter.CreateCounter<long>(\"orders_placed\");\norders.Add(1);"
+    }
+  },
+  "monitoring-8": {
+    "pitch": "Splunk Enterprise is self-managed; Observability Cloud is SaaS APM.",
+    "definition": "Splunk Enterprise is the on-premises/self-managed platform for ingesting, indexing and searching machine data (logs) at scale with SPL. Splunk Observability Cloud is a SaaS suite focused on full-stack observability - metrics, traces (APM) and real-time monitoring built on OpenTelemetry. Enterprise centers on log analytics you operate; Observability Cloud is a managed metrics/traces/APM platform.",
+    "how": "Enterprise: index + search logs yourself. Observability Cloud: SaaS metrics/traces/APM via OTel.",
+    "when": "Enterprise for owned log analytics; Observability Cloud for managed APM.",
+    "whenNot": "Confusing the log platform with the APM suite.",
+    "advantages": [
+      "Enterprise: powerful log search",
+      "Observability Cloud: managed APM",
+      "Both scale"
+    ],
+    "disadvantages": [
+      "Enterprise: you operate it",
+      "Cost at volume",
+      "Two different products"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-9": {
+    "pitch": "SPL is Splunk's search language for querying machine data.",
+    "definition": "SPL (Search Processing Language) is Splunk's query language for searching and analyzing indexed machine data. You start with search terms to match events, then pipe results through commands (stats, eval, table, sort, timechart) to filter, transform, aggregate and visualize. SPL's pipeline model lets you progressively refine logs into insights, dashboards and alerts.",
+    "how": "Match events with search terms -> pipe through commands (stats, eval, timechart) to aggregate and visualize.",
+    "when": "Searching and analyzing logs in Splunk.",
+    "whenNot": "Metric-first monitoring (Splunk does logs primarily).",
+    "advantages": [
+      "Powerful log search",
+      "Pipeline command model",
+      "Drives dashboards/alerts"
+    ],
+    "disadvantages": [
+      "SPL learning curve",
+      "Splunk-specific",
+      "Cost per ingested volume"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "text",
+      "snippet": "index=api status=500 | stats count by service | sort -count"
+    }
+  },
+  "monitoring-10": {
+    "pitch": "Build Splunk alerts from saved searches and dashboards from panels.",
+    "definition": "In Splunk you create alerts by saving an SPL search and configuring it to run on a schedule or in real time, triggering when results meet a condition (e.g. error count > threshold) and then notifying (email, webhook, ticket). Dashboards are built by adding panels, each backed by an SPL search rendered as a chart/table, with inputs/tokens for interactivity. Both turn SPL queries into ongoing monitoring.",
+    "how": "Save an SPL search -> set a trigger condition + schedule -> alert fires/notifies; panels visualize searches on dashboards.",
+    "when": "Operationalizing log searches into alerts/dashboards.",
+    "whenNot": "One-off investigations.",
+    "advantages": [
+      "Alerts from saved searches",
+      "Scheduled/real-time triggers",
+      "Interactive dashboards"
+    ],
+    "disadvantages": [
+      "Tuning to avoid noise",
+      "SPL knowledge needed",
+      "Maintenance"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-11": {
+    "pitch": "OneAgent is Dynatrace's auto-instrumenting monitoring agent.",
+    "definition": "OneAgent is Dynatrace's single agent installed on a host (or as a Kubernetes operator) that automatically discovers and instruments everything running on it - processes, services, containers, code-level traces, metrics and logs - with no manual code changes. It feeds full-stack telemetry to Dynatrace, enabling automatic dependency mapping and AI-driven analysis out of the box.",
+    "how": "Install OneAgent on a host -> it auto-detects + instruments all processes -> streams full-stack telemetry to Dynatrace.",
+    "when": "Zero-config, full-stack monitoring with Dynatrace.",
+    "whenNot": "Wanting open standards (use OpenTelemetry).",
+    "advantages": [
+      "Automatic, code-free instrumentation",
+      "Full-stack telemetry",
+      "Feeds AI analysis"
+    ],
+    "disadvantages": [
+      "Dynatrace-specific",
+      "Agent on every host",
+      "Less open than OTel"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-12": {
+    "pitch": "Smartscape is Dynatrace's live topology map of your environment.",
+    "definition": "Smartscape is Dynatrace's automatically-generated, real-time topology visualization that maps all entities - applications, services, processes, hosts and their dependencies - and how they interact, across all tiers. Built from OneAgent data, it updates continuously as the environment changes, giving an always-current dependency map used for impact analysis and understanding system relationships.",
+    "how": "OneAgent observes interactions -> Dynatrace builds a live multi-tier dependency map (Smartscape) that auto-updates.",
+    "when": "Understanding dependencies and impact in Dynatrace.",
+    "whenNot": "Static, tiny systems with obvious topology.",
+    "advantages": [
+      "Auto, real-time topology",
+      "Multi-tier dependencies",
+      "Impact analysis"
+    ],
+    "disadvantages": [
+      "Dynatrace-specific",
+      "Needs OneAgent coverage",
+      "Large maps can overwhelm"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-13": {
+    "pitch": "Davis AI auto-detects problems and finds their root cause.",
+    "definition": "Davis is Dynatrace's AI engine that continuously analyzes the full-stack telemetry and dependency map to automatically detect anomalies, correlate related events, and pinpoint the root cause of a problem - rather than just alerting on symptoms. Because it understands the topology (Smartscape) and causal relationships, it groups symptoms into a single problem with the likely cause, cutting alert noise and mean-time-to-resolution.",
+    "how": "Davis baselines behaviour + uses the topology to correlate anomalies -> surfaces one root cause, not many alerts.",
+    "when": "Fast root-cause analysis in complex systems.",
+    "whenNot": "Simple systems where manual analysis suffices.",
+    "advantages": [
+      "Automatic root cause",
+      "Correlates symptoms",
+      "Reduces alert noise + MTTR"
+    ],
+    "disadvantages": [
+      "Dynatrace-specific",
+      "Trust/explainability",
+      "Needs good coverage"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-14": {
+    "pitch": "Dynatrace auto-maps dependencies from observed real traffic.",
+    "definition": "Dynatrace performs automatic dependency mapping using OneAgent, which observes every transaction and call between processes/services in real time and builds the relationships into Smartscape - no manual configuration or tagging. Distributed traces (PurePath) capture each request's full path across services, so the dependency map reflects actual runtime behaviour, staying accurate as the system evolves.",
+    "how": "OneAgent traces real calls between services -> Dynatrace infers and continuously updates the dependency graph.",
+    "when": "Keeping an accurate service map automatically.",
+    "whenNot": "Static documentation is enough (rarely).",
+    "advantages": [
+      "No manual mapping",
+      "Reflects real traffic",
+      "Always up to date"
+    ],
+    "disadvantages": [
+      "Dynatrace-specific",
+      "Coverage-dependent",
+      "Agent everywhere"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-15": {
+    "pitch": "Datadog unifies APM, infrastructure metrics and logs in one platform.",
+    "definition": "Datadog is a SaaS observability platform. APM provides distributed tracing and code-level performance for services (latency, errors, traces). Infrastructure Monitoring collects host/container/cloud metrics with dashboards and alerts. Log Management ingests, parses, indexes and searches logs. Together, correlated by tags and trace IDs, they give unified visibility across traces, metrics and logs in one place.",
+    "how": "Agents/integrations send traces, metrics and logs to Datadog -> correlated by tags -> unified dashboards + alerts.",
+    "when": "Unified, managed full-stack observability.",
+    "whenNot": "Cost-sensitive setups (Datadog can be pricey).",
+    "advantages": [
+      "APM + infra + logs unified",
+      "Correlated by tags/traces",
+      "Managed SaaS"
+    ],
+    "disadvantages": [
+      "Cost at scale",
+      "Vendor lock-in",
+      "Tagging discipline"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-16": {
+    "pitch": "Monitor Kubernetes with the Datadog Agent (DaemonSet) + integrations.",
+    "definition": "You monitor Kubernetes with Datadog by deploying the Datadog Agent as a DaemonSet (one per node) plus the Cluster Agent, which auto-discover pods/services and collect metrics, logs and traces. It integrates with the Kubernetes API, kube-state-metrics and container runtime to give cluster, node, pod and workload visibility, live container maps, and APM correlation - with autodiscovery applying the right checks as pods come and go.",
+    "how": "Deploy the Datadog Agent (DaemonSet) + Cluster Agent -> autodiscovery collects K8s metrics/logs/traces -> dashboards.",
+    "when": "Observability for Kubernetes workloads.",
+    "whenNot": "Non-Kubernetes single hosts.",
+    "advantages": [
+      "Node + pod + cluster metrics",
+      "Autodiscovery of workloads",
+      "APM + log correlation"
+    ],
+    "disadvantages": [
+      "Agent footprint",
+      "Cost per host/container",
+      "Config for autodiscovery"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-17": {
+    "pitch": "Logstash ingests, parses and transforms logs in a pipeline.",
+    "definition": "Logstash (the 'L' in ELK) is a data processing pipeline that ingests logs/events from many sources, transforms them, and ships them to a destination (usually Elasticsearch). Its pipeline has inputs (file, beats, syslog, kafka), filters (grok parsing, mutate, enrich, geoip) and outputs (Elasticsearch, etc.). It turns raw, unstructured logs into structured, queryable documents.",
+    "how": "Inputs collect logs -> filters parse/enrich (grok) -> outputs send structured docs to Elasticsearch.",
+    "when": "Centralizing and structuring diverse logs.",
+    "whenNot": "Lightweight shipping (Beats/Fluent Bit may suffice).",
+    "advantages": [
+      "Many inputs/outputs",
+      "Powerful parsing (grok)",
+      "Structures raw logs"
+    ],
+    "disadvantages": [
+      "Resource-heavy",
+      "Grok complexity",
+      "Pipeline maintenance"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-18": {
+    "pitch": "ELK indexes full log content; Loki indexes only labels (cheaper).",
+    "definition": "The ELK Stack (Elasticsearch) fully indexes log content, enabling rich, fast full-text search and complex queries - powerful but storage- and resource-intensive. Grafana Loki indexes only metadata labels (not the log body) and stores compressed chunks, making it far cheaper and simpler, with querying via LogQL (and tight Grafana/Prometheus integration) - but with less powerful full-text search. ELK = search power; Loki = cost-efficient, label-based.",
+    "how": "ELK indexes everything for full-text search; Loki indexes labels only and greps chunks, cutting cost.",
+    "when": "ELK for deep search; Loki for cheap, label-scoped logs.",
+    "whenNot": "Heavy full-text search needs on Loki.",
+    "advantages": [
+      "ELK: rich full-text search",
+      "Loki: cheap, label-based",
+      "Loki: Grafana-native"
+    ],
+    "disadvantages": [
+      "ELK: storage/cost heavy",
+      "Loki: weaker search",
+      "Different query languages"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-19": {
+    "pitch": "Choose Elasticsearch when you need powerful full-text log search.",
+    "definition": "You choose Elasticsearch over Loki when you need fast, rich full-text search and complex analytics across log content - ad-hoc queries on arbitrary fields, aggregations, security/SIEM use cases, or high query flexibility - and can afford the storage and operational cost. Loki is better when logs are high-volume, you mainly filter by labels (service/pod) and grep, and you want low cost and Grafana-native simplicity.",
+    "how": "Pick Elasticsearch when full-text search/analytics on content outweighs Loki's lower cost and label-only indexing.",
+    "when": "Deep log search, analytics, SIEM.",
+    "whenNot": "Cost-sensitive, label-scoped log filtering (use Loki).",
+    "advantages": [
+      "Powerful content search",
+      "Rich aggregations",
+      "Mature ecosystem"
+    ],
+    "disadvantages": [
+      "Higher storage/cost",
+      "More to operate",
+      "Overkill for simple grep"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-20": {
+    "pitch": "Jaeger and Zipkin collect, store and visualize distributed traces.",
+    "definition": "Jaeger and Zipkin are open-source distributed tracing backends. Applications (instrumented via OpenTelemetry) propagate a trace context across services and emit spans; the backend collects spans, assembles them into end-to-end traces, stores them, and provides a UI to visualize request flow, latency per span, and dependencies. Both implement the same core idea; they differ in architecture, storage options and ecosystem.",
+    "how": "Apps emit spans with a shared trace id -> Jaeger/Zipkin collector assembles + stores traces -> UI visualizes them.",
+    "when": "Tracing requests across distributed services.",
+    "whenNot": "A monolith with a single call stack.",
+    "advantages": [
+      "End-to-end request traces",
+      "Latency per span",
+      "OTel-compatible"
+    ],
+    "disadvantages": [
+      "Instrumentation needed",
+      "Trace storage scaling",
+      "Sampling decisions"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Distributed tracing",
+      "mermaid": "flowchart LR\n  A[Service A span] --> B[Service B span]\n  B --> C[Service C span]\n  C --> J[Jaeger/Zipkin UI]"
+    }
+  },
+  "monitoring-21": {
+    "pitch": "I'd choose Jaeger for cloud-native OTel-first tracing.",
+    "definition": "Between the two, I would generally choose Jaeger today: it's a CNCF graduated project with first-class OpenTelemetry support, scalable storage backends (Elasticsearch/Cassandra), good Kubernetes integration and an active ecosystem. Zipkin is simpler and lighter, a fine choice for smaller setups or existing Zipkin environments. The decision hinges on scale, existing stack and OTel alignment - both are solid, OTel-compatible backends.",
+    "how": "Weigh scale + OTel/cloud-native fit -> Jaeger for CNCF/K8s scale, Zipkin for simplicity/legacy.",
+    "when": "Selecting a tracing backend for your stack.",
+    "whenNot": "When a managed APM (Datadog/Dynatrace) fits better.",
+    "advantages": [
+      "Jaeger: CNCF + OTel + scale",
+      "Zipkin: simple + light",
+      "Both open + compatible"
+    ],
+    "disadvantages": [
+      "Self-hosting effort",
+      "Storage scaling",
+      "Migration if you switch"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-22": {
+    "pitch": "App Insights is the APM feature within the broader Azure Monitor.",
+    "definition": "Application Insights and Azure Monitor work together as one platform: Application Insights is the application performance monitoring component (request/dependency/exception telemetry, distributed tracing, live metrics) that feeds into Azure Monitor, the umbrella that also collects platform/infrastructure metrics and logs. Both store data in Log Analytics workspaces queried with KQL, and share alerts, dashboards and workbooks - App Insights for the app view, Azure Monitor for the whole estate.",
+    "how": "App Insights captures app telemetry -> stored in Azure Monitor/Log Analytics -> unified KQL queries, alerts, dashboards.",
+    "when": "Full-stack monitoring of Azure apps + infra.",
+    "whenNot": "Non-Azure-centric stacks.",
+    "advantages": [
+      "App view + infra view unified",
+      "Shared Log Analytics/KQL",
+      "Common alerts/dashboards"
+    ],
+    "disadvantages": [
+      "Azure-centric",
+      "Instrumentation needed",
+      "Telemetry cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-23": {
+    "pitch": "CloudWatch Logs store logs, Metrics track numbers, Alarms trigger on thresholds.",
+    "definition": "Amazon CloudWatch provides three core capabilities. Logs: ingest and search application/infrastructure logs (with Logs Insights queries). Metrics: numeric time-series (CPU, latency, custom) with dashboards. Alarms: watch a metric (or log-based metric) against a threshold and trigger actions - notify via SNS, or auto-scale. You publish logs/metrics, build dashboards, and set alarms to detect and respond to issues automatically.",
+    "how": "Apps emit logs + metrics to CloudWatch -> dashboards visualize -> alarms fire actions (SNS/autoscale) on thresholds.",
+    "when": "Monitoring and alerting on AWS workloads.",
+    "whenNot": "Deep cross-service tracing alone (add X-Ray).",
+    "advantages": [
+      "Logs + metrics + alarms",
+      "Triggers scaling/notifications",
+      "Logs Insights queries"
+    ],
+    "disadvantages": [
+      "Cost at high volume",
+      "Basic tracing vs X-Ray",
+      "Config effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-24": {
+    "pitch": "Design K8s monitoring with OTel + Prometheus/Grafana + logs + tracing.",
+    "definition": "A complete monitoring solution for ASP.NET Core microservices on Kubernetes: instrument every service with OpenTelemetry (traces, metrics, logs); scrape metrics with Prometheus and visualize/alert in Grafana; collect logs centrally (Loki or ELK); send traces to Jaeger; and correlate all three via trace/correlation IDs. Add Kubernetes/cluster metrics, health probes, SLO-based alerting, and dashboards for technical and business KPIs - giving full-stack, correlated observability.",
+    "how": "OTel instruments services -> Prometheus/Grafana (metrics) + Loki/ELK (logs) + Jaeger (traces), correlated by trace id.",
+    "when": "Observability for microservices on Kubernetes.",
+    "whenNot": "A single service (simpler tooling suffices).",
+    "advantages": [
+      "Metrics + logs + traces",
+      "Correlated by trace id",
+      "SLO-based alerting"
+    ],
+    "disadvantages": [
+      "Multiple components to run",
+      "Instrumentation + cost",
+      "Operational complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "K8s observability",
+      "mermaid": "flowchart LR\n  S[Services + OTel] --> P[Prometheus]\n  S --> L[Loki/ELK]\n  S --> J[Jaeger]\n  P --> G[Grafana]\n  L --> G\n  J --> G"
+    }
+  },
+  "monitoring-25": {
+    "pitch": "Troubleshoot latency by working from metrics to traces to the slow span.",
+    "definition": "When an API's response time jumps from 200ms to 5s, I troubleshoot top-down: check dashboards/metrics to see when and where it started (which endpoint, which service, correlate with deploys/traffic), then open distributed traces to find which span dominates the latency (DB query, downstream call, lock), inspect logs and resource metrics (CPU/memory/GC, DB load) for that component, and form a hypothesis (slow query, N+1, exhausted pool, noisy neighbor) - then fix and verify the metric recovers.",
+    "how": "Metrics pinpoint when/where -> traces find the slow span -> logs/resources confirm the cause -> fix + verify.",
+    "when": "Diagnosing production latency regressions.",
+    "whenNot": "Guessing without telemetry.",
+    "advantages": [
+      "Metrics -> traces -> logs flow",
+      "Pinpoints the slow component",
+      "Evidence-based fix"
+    ],
+    "disadvantages": [
+      "Needs good instrumentation",
+      "Multiple layers to check",
+      "Intermittent issues harder"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-26": {
+    "pitch": "Find the failing service via distributed traces and error metrics.",
+    "definition": "To identify which microservice is causing failures, you use distributed tracing and correlated telemetry: error-rate dashboards show which service's metrics spiked, and following a failed request's trace (by trace/correlation ID) reveals exactly which span/service threw the error or timed out. A service dependency map shows blast radius, and logs for that service give the stack trace. Tracing turns 'something is broken' into 'service X, this call, this error'.",
+    "how": "Error metrics flag the spiking service -> trace a failed request to the faulting span -> read that service's logs.",
+    "when": "Pinpointing faults in a distributed system.",
+    "whenNot": "A monolith (one place to look).",
+    "advantages": [
+      "Traces localize the fault",
+      "Error metrics per service",
+      "Dependency map shows impact"
+    ],
+    "disadvantages": [
+      "Requires tracing in place",
+      "Trace sampling gaps",
+      "Cross-team coordination"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-27": {
+    "pitch": "Monitor 100+ services with standardized OTel, central metrics and SLOs.",
+    "definition": "To monitor 100+ microservices across multiple Kubernetes clusters, you standardize instrumentation with OpenTelemetry across all services, ship telemetry through OTel Collectors (per cluster) to centralized, scalable backends (e.g. Thanos/Mimir for Prometheus metrics, Loki/ELK for logs, Jaeger for traces), use consistent labels/tags for service/cluster, and define SLOs with alerting on symptoms (error budgets) rather than every metric. Service catalogs and templated dashboards keep it manageable at scale.",
+    "how": "Standard OTel + per-cluster Collectors -> central scalable backends (Thanos/Loki/Jaeger) -> SLO-based alerts + templates.",
+    "when": "Large-scale multi-cluster observability.",
+    "whenNot": "A handful of services on one cluster.",
+    "advantages": [
+      "Standardized + centralized",
+      "Scalable backends (Thanos)",
+      "SLO-based, low-noise alerts"
+    ],
+    "disadvantages": [
+      "Significant platform effort",
+      "Telemetry cost at scale",
+      "Label/tag governance"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-28": {
+    "pitch": "Centralize logs by shipping structured logs to Splunk or ELK.",
+    "definition": "To implement centralized logging with Splunk or ELK, each service emits structured (JSON) logs with a correlation/trace ID; a shipper (Splunk forwarder, Filebeat/Fluent Bit, or Logstash) collects and forwards them to the central platform (Splunk indexers or Elasticsearch), where they're parsed, indexed and searchable (SPL or Kibana/KQL), with dashboards and alerts. Correlation IDs let you trace one request's logs across services.",
+    "how": "Services log structured JSON + correlation id -> shipper forwards -> Splunk/Elasticsearch indexes -> search/dashboards.",
+    "when": "Unified log search across many services.",
+    "whenNot": "A single service with local logs.",
+    "advantages": [
+      "One searchable log store",
+      "Correlation across services",
+      "Dashboards + alerting"
+    ],
+    "disadvantages": [
+      "Ingest/storage cost",
+      "Shipping pipeline to run",
+      "PII/retention governance"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-29": {
+    "pitch": "Implement tracing with OpenTelemetry instrumentation exporting to Jaeger.",
+    "definition": "To implement distributed tracing with OpenTelemetry and Jaeger, you instrument each service with the OTel SDK (auto-instrumentation for web/HTTP/DB plus custom spans), propagate the trace context (W3C traceparent headers) across service calls, and export spans via OTLP to an OTel Collector that forwards to Jaeger, where end-to-end traces are stored and visualized. Sampling controls volume. The result is a full latency/error view of each request across services.",
+    "how": "OTel instruments + propagates trace context -> spans via OTLP to a Collector -> Jaeger assembles + shows the trace.",
+    "when": "Cross-service latency and failure analysis.",
+    "whenNot": "A monolith with one process.",
+    "advantages": [
+      "Standards-based (OTel)",
+      "End-to-end request traces",
+      "Vendor-neutral via Collector"
+    ],
+    "disadvantages": [
+      "Instrumentation + context propagation",
+      "Sampling tuning",
+      "Trace storage scaling"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-30": {
+    "pitch": "Migrate to OTel incrementally, dual-exporting then cutting over.",
+    "definition": "To migrate from Application Insights to OpenTelemetry, you switch instrumentation to the OTel SDK (Azure Monitor supports OTel-based instrumentation), keep exporting to Application Insights via the Azure Monitor OTel exporter so you lose nothing, optionally dual-export to a new backend during validation, then cut over once parity is confirmed. Because OTel is vendor-neutral, future backend changes won't require re-instrumentation. Do it service by service to reduce risk.",
+    "how": "Adopt OTel SDK -> export to App Insights (Azure Monitor OTel exporter) -> dual-export to validate -> cut over per service.",
+    "when": "Moving to vendor-neutral instrumentation.",
+    "whenNot": "Staying fully on App Insights with no portability need.",
+    "advantages": [
+      "Vendor-neutral going forward",
+      "No telemetry loss (dual export)",
+      "Incremental, low-risk"
+    ],
+    "disadvantages": [
+      "Migration effort",
+      "Temporary dual config",
+      "Feature-parity checks"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-31": {
+    "pitch": "Cut false positives with SLO-based, symptom-focused, tuned alerts.",
+    "definition": "You minimize false-positive alerts by alerting on symptoms users feel (error rate, latency SLO breaches, error budgets) rather than every raw metric, using appropriate thresholds with duration/'for' clauses (sustained, not momentary spikes), baselines/anomaly detection instead of fixed limits where load varies, deduplication and grouping of related alerts, severity tiers, and continuous tuning based on which alerts proved actionable. Fewer, meaningful alerts reduce fatigue.",
+    "how": "Alert on SLO/symptom breaches with duration windows + baselines + grouping -> tune based on actionability.",
+    "when": "Reliable, low-noise alerting.",
+    "whenNot": "Alerting on every metric blindly.",
+    "advantages": [
+      "Symptom/SLO-based",
+      "Duration + baselines reduce noise",
+      "Grouping + tuning"
+    ],
+    "disadvantages": [
+      "Requires SLO definition",
+      "Ongoing tuning",
+      "Risk of under-alerting"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-32": {
+    "pitch": "Build separate technical and business KPI dashboards from the same data.",
+    "definition": "You build dashboards for technical and business KPIs by tailoring views to the audience: technical dashboards show the golden signals (latency, traffic, errors, saturation), per-service health, infra metrics and traces for engineers; business dashboards show outcome KPIs (orders/min, revenue, conversion, signups, SLA compliance) for stakeholders - often from the same telemetry plus custom business metrics. Use templated variables, clear thresholds, and link technical drill-downs to business impact.",
+    "how": "Emit technical + custom business metrics -> build audience-specific Grafana/dashboards -> link impact to causes.",
+    "when": "Communicating health to engineers and the business.",
+    "whenNot": "A single ops view for everyone.",
+    "advantages": [
+      "Audience-tailored views",
+      "Golden signals + business KPIs",
+      "Drill-down from impact"
+    ],
+    "disadvantages": [
+      "Custom business metrics needed",
+      "Dashboard maintenance",
+      "Avoiding metric overload"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "monitoring-33": {
+    "pitch": "End-to-end observability: OTel everywhere, the three pillars, correlated.",
+    "definition": "An end-to-end observability architecture I would describe: every service instrumented with OpenTelemetry emitting the three pillars - metrics (to Prometheus/Grafana), logs (to Loki/ELK), and traces (to Jaeger) - all carrying a shared correlation/trace ID so you can pivot from a metric spike to the exact trace to the relevant logs. OTel Collectors centralize and route telemetry; SLO-based alerting drives on-call; and dashboards serve both technical golden signals and business KPIs. This gives fast detection and root-cause analysis across the whole system.",
+    "how": "OTel emits metrics/logs/traces with one trace id -> Collectors route to Prometheus/Loki/Jaeger -> correlated dashboards + SLO alerts.",
+    "when": "Full-stack observability for distributed systems.",
+    "whenNot": "A small app where basic logging suffices.",
+    "advantages": [
+      "Three pillars, correlated",
+      "OTel = vendor-neutral",
+      "Fast detection + RCA"
+    ],
+    "disadvantages": [
+      "Platform build effort",
+      "Telemetry cost",
+      "Operational maturity needed"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Observability architecture",
+      "mermaid": "flowchart LR\n  S[Services + OTel] --> Col[OTel Collector]\n  Col --> Met[Prometheus]\n  Col --> Log[Loki/ELK]\n  Col --> Tr[Jaeger]\n  Met --> Dash[Grafana + Alerts]\n  Log --> Dash\n  Tr --> Dash"
+    },
+    "realWorld": "On a microservices platform, standardizing on OpenTelemetry with correlated metrics/logs/traces cut mean-time-to-resolution from hours to minutes by letting engineers pivot from an alert straight to the failing trace and its logs."
+  }
+}
