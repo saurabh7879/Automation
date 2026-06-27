@@ -1,1 +1,793 @@
-{}
+{
+  "agentic-ai-1": {
+    "pitch": "Agentic AI is AI that autonomously plans and acts to reach goals.",
+    "definition": "Agentic AI refers to AI systems that act autonomously to achieve goals - they plan multi-step tasks, choose and use tools, observe results, and adapt, rather than just producing a single output. Built on LLMs plus tools, memory and a control loop, an agentic system can take actions in the world (call APIs, query data, run code) to accomplish objectives with minimal human intervention.",
+    "how": "An LLM-driven loop: plan -> act (use tools) -> observe -> reflect -> repeat until the goal is achieved.",
+    "when": "Multi-step tasks needing tools, planning and autonomy.",
+    "whenNot": "Simple single-prompt Q&A (use a plain LLM).",
+    "advantages": [
+      "Autonomous goal pursuit",
+      "Tool use + planning",
+      "Adapts to results"
+    ],
+    "disadvantages": [
+      "Less predictable",
+      "Can loop/err",
+      "Harder to control/test"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-2": {
+    "pitch": "Generative AI produces content; Agentic AI takes actions toward goals.",
+    "definition": "Generative AI generates content (text, images, code) in response to a prompt - it answers. Agentic AI uses generative models as a reasoning engine but adds autonomy: planning, tool use, memory and iteration to accomplish multi-step goals - it acts. So generative AI is a capability (creation), while agentic AI is a system architecture that wraps that capability in a goal-directed action loop.",
+    "how": "GenAI: prompt -> generated output. Agentic AI: goal -> plan -> use tools -> observe -> iterate -> result.",
+    "when": "Agentic for tasks/actions; generative for content.",
+    "whenNot": "Using a heavy agent where one generation suffices.",
+    "advantages": [
+      "Agentic: autonomous action",
+      "GenAI: content creation",
+      "Agentic builds on GenAI"
+    ],
+    "disadvantages": [
+      "Agentic adds complexity/risk",
+      "Harder to predict",
+      "More to operate"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-3": {
+    "pitch": "An AI agent is an LLM that perceives, decides and acts via tools.",
+    "definition": "An AI Agent is a software entity, driven by an LLM, that perceives input/context, reasons about what to do, takes actions through tools/functions, observes the results, and repeats until it accomplishes a goal - often with memory across steps. Unlike a one-shot model call, an agent runs a control loop and can interact with the world (APIs, databases, files) autonomously.",
+    "how": "Receive a goal -> the LLM reasons + selects a tool -> execute it -> feed the result back -> loop to completion.",
+    "when": "Tasks requiring autonomous multi-step action.",
+    "whenNot": "Simple stateless Q&A.",
+    "advantages": [
+      "Reason + act loop",
+      "Uses tools + memory",
+      "Autonomous"
+    ],
+    "disadvantages": [
+      "Unpredictable paths",
+      "Error/loop risk",
+      "Needs guardrails"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "AI agent loop",
+      "mermaid": "flowchart LR\n  G[Goal] --> R[Reason/Plan]\n  R --> A[Act via Tool]\n  A --> O[Observe]\n  O --> R\n  O --> Done[Result]"
+    }
+  },
+  "agentic-ai-4": {
+    "pitch": "An agent = LLM brain + tools + memory + planning + a control loop.",
+    "definition": "The core components of an AI agent are: the LLM (the reasoning 'brain'), Tools/Function calling (to act and fetch data), Memory (short- and long-term context across steps), a Planner (to decompose goals into steps), and an orchestration loop (reason-act-observe) that ties them together, plus guardrails for safety. Together these turn a stateless model into a goal-directed actor.",
+    "how": "The loop sends context to the LLM -> it plans + picks a tool -> tool runs -> result goes to memory -> repeat.",
+    "when": "Designing or understanding agent systems.",
+    "whenNot": "Trivial single-call tasks.",
+    "advantages": [
+      "LLM brain + tools",
+      "Memory + planning",
+      "Orchestration loop"
+    ],
+    "disadvantages": [
+      "Many moving parts",
+      "Each adds failure modes",
+      "Coordination complexity"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-5": {
+    "pitch": "An agent plans and acts autonomously; a chatbot just replies.",
+    "definition": "A traditional chatbot follows scripted flows or single-turn Q&A and only responds with text. An AI agent uses an LLM to plan, decide and take actions via tools across multiple steps, with memory, working toward a goal autonomously. The agent doesn't just answer - it can fetch data, call APIs and complete tasks, adapting based on results. Autonomy, tool use and planning are the key differences.",
+    "how": "Chatbot: match -> reply. Agent: reason -> act with tools -> observe -> iterate to achieve a goal.",
+    "when": "Tasks needing actions and autonomy.",
+    "whenNot": "Simple FAQ/scripted conversations.",
+    "advantages": [
+      "Autonomous, multi-step",
+      "Tool use + memory",
+      "Goal-directed"
+    ],
+    "disadvantages": [
+      "Less predictable",
+      "Harder to test",
+      "Needs safety controls"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-6": {
+    "pitch": "Single-agent uses one agent; multi-agent splits work across specialists.",
+    "definition": "A single-agent system has one agent handling the whole task with its tools and memory - simpler to build and reason about. A multi-agent system uses several specialized agents (e.g. planner, researcher, coder, reviewer) that collaborate or are orchestrated to solve complex tasks, dividing responsibilities and sometimes debating/critiquing each other. Multi-agent adds capability and modularity for complex workflows at the cost of coordination complexity.",
+    "how": "Single: one agent + tools. Multi: specialized agents coordinate (orchestrated or collaborative) on sub-tasks.",
+    "when": "Multi-agent for complex, decomposable workflows.",
+    "whenNot": "Simple tasks one agent handles fine.",
+    "advantages": [
+      "Single: simple, predictable",
+      "Multi: specialized + modular",
+      "Multi scales complex tasks"
+    ],
+    "disadvantages": [
+      "Multi: coordination overhead",
+      "More cost/latency",
+      "Harder to debug"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-7": {
+    "pitch": "Agent types range from reactive to learning and autonomous.",
+    "definition": "Classic agent types: Reactive agents respond to current input with no internal state; Goal-Based agents act to achieve explicit goals (planning toward them); Utility-Based agents choose actions maximizing a utility/score among options; Learning agents improve over time from feedback/experience; and Autonomous agents operate with minimal human intervention, combining the above. They form a spectrum of increasing sophistication and independence.",
+    "how": "Each type adds capability: react -> pursue goals -> optimize utility -> learn -> act autonomously.",
+    "when": "Classifying an agent's sophistication.",
+    "whenNot": "Memorizing categories without applying them.",
+    "advantages": [
+      "Reactive: simple, fast",
+      "Goal/utility: purposeful choice",
+      "Learning/autonomous: adaptive"
+    ],
+    "disadvantages": [
+      "Spectrum, not strict bins",
+      "More sophistication = more risk",
+      "Harder to control"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-8": {
+    "pitch": "An agent workflow is the orchestrated sequence of steps an agent runs.",
+    "definition": "An Agent Workflow is the defined sequence or graph of steps an agent (or agents) follows to accomplish a task - the orchestration of reasoning, tool calls, retrieval and decisions, sometimes with branches, loops and human checkpoints. Frameworks (LangGraph, Semantic Kernel) model these as graphs/state machines, giving structure and control over how the agent progresses rather than fully open-ended behaviour.",
+    "how": "Define steps/nodes (reason, tool, retrieve, decide) + transitions -> the agent executes the workflow to completion.",
+    "when": "Structuring and controlling agent behaviour.",
+    "whenNot": "Trivial one-step tasks.",
+    "advantages": [
+      "Structured, controllable",
+      "Branches/loops/checkpoints",
+      "Framework-modeled"
+    ],
+    "disadvantages": [
+      "Design effort",
+      "Rigid if over-specified",
+      "Workflow maintenance"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-9": {
+    "pitch": "Planning lets an agent decide the steps to reach a goal.",
+    "definition": "Agent Planning is the agent's process of figuring out the sequence of actions/steps needed to achieve a goal before (or while) executing - rather than acting blindly. The LLM produces a plan (and can replan as it learns), which guides tool use and sub-tasks. Planning is important because it makes complex, multi-step tasks tractable, reduces wasted/erroneous actions, and gives structure you can inspect and control.",
+    "how": "The LLM generates a step plan for the goal -> executes steps -> observes -> replans if needed.",
+    "when": "Complex multi-step tasks needing structure.",
+    "whenNot": "Single trivial actions.",
+    "advantages": [
+      "Makes complex tasks tractable",
+      "Fewer wasted actions",
+      "Inspectable plan"
+    ],
+    "disadvantages": [
+      "Plans can be wrong",
+      "Replanning cost",
+      "Over-planning latency"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-10": {
+    "pitch": "Task decomposition breaks a big goal into smaller sub-tasks.",
+    "definition": "Task Decomposition is breaking a complex goal into smaller, manageable sub-tasks the agent can tackle one at a time (often recursively). The LLM splits the objective, solves or delegates each part, and combines results. It's central to agentic AI because LLMs handle focused sub-problems far better than huge vague goals - decomposition improves reliability, enables tool selection per step, and supports multi-agent delegation.",
+    "how": "Split the goal into sub-tasks -> solve/delegate each (possibly recursively) -> combine into the final result.",
+    "when": "Complex goals too big for one step.",
+    "whenNot": "Already-atomic simple tasks.",
+    "advantages": [
+      "Tackles complexity",
+      "Better per-step accuracy",
+      "Enables delegation"
+    ],
+    "disadvantages": [
+      "Bad splits cascade errors",
+      "Coordination overhead",
+      "More LLM calls"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-11": {
+    "pitch": "Reflection lets an agent critique and improve its own output.",
+    "definition": "Reflection (self-critique) is when an agent reviews its own output or actions against the goal/criteria, identifies errors or gaps, and revises - effectively a feedback loop the agent runs on itself (or via a separate critic agent). It improves quality and reliability: e.g. generate an answer, critique it, then refine. It catches mistakes that a single pass would miss, at the cost of extra LLM calls and latency.",
+    "how": "Generate an output -> the agent (or a critic) evaluates it against criteria -> revise -> repeat until satisfactory.",
+    "when": "Quality-critical tasks (code, analysis, plans).",
+    "whenNot": "Simple tasks where one pass is enough.",
+    "advantages": [
+      "Catches own errors",
+      "Improves quality",
+      "Can use a critic agent"
+    ],
+    "disadvantages": [
+      "Extra calls/latency/cost",
+      "Can over-revise",
+      "Self-critique not infallible"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-12": {
+    "pitch": "Memory gives agents context; short-term is the session, long-term persists.",
+    "definition": "Memory lets an agent retain context beyond a single LLM call. Short-term memory is the working context of the current task/session - recent steps, tool results, conversation - held in the prompt (bounded by the context window). Long-term memory persists across sessions: facts, past interactions and learned knowledge stored externally (often a vector DB) and retrieved when relevant. Together they let agents maintain continuity and learn over time.",
+    "how": "Short-term: keep recent steps in context. Long-term: store + retrieve persistent knowledge from an external store.",
+    "when": "Multi-step or ongoing agent tasks.",
+    "whenNot": "Stateless single-shot operations.",
+    "advantages": [
+      "Continuity across steps",
+      "Long-term via vector store",
+      "Enables personalization"
+    ],
+    "disadvantages": [
+      "Window limits short-term",
+      "Memory store to manage",
+      "Retrieval relevance"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-13": {
+    "pitch": "Tool calling lets an agent invoke functions to act and fetch data.",
+    "definition": "Tool (function) calling is how an agent acts on the world: you describe available tools (name, description, parameter schema) to the LLM, and it decides when to call one with arguments it generates; the agent executes the tool (API call, DB query, calculation, code run) and feeds the result back for the next reasoning step. It's the mechanism that turns a text model into an agent that can do things, not just talk.",
+    "how": "Describe tools -> the LLM emits a structured call -> the agent runs the tool -> result returns -> reason on it.",
+    "when": "Any agent needing real actions/data.",
+    "whenNot": "Pure conversation with no external actions.",
+    "advantages": [
+      "Agent takes real actions",
+      "Reliable structured args",
+      "Extensible via new tools"
+    ],
+    "disadvantages": [
+      "Must secure/validate tools",
+      "Wrong-tool risk",
+      "Extra round trips"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "json",
+      "snippet": "{ \"name\": \"create_event\", \"parameters\": { \"title\": \"string\", \"time\": \"string\" } }"
+    }
+  },
+  "agentic-ai-14": {
+    "pitch": "MCP is an open standard for connecting agents to tools and data.",
+    "definition": "The Model Context Protocol (MCP) is an open standard defining how AI applications/agents connect to external tools, data sources and context in a uniform way - a universal adapter so any MCP-compatible agent can use any MCP server's capabilities (tools, resources, prompts) without bespoke integration. It's used to standardize and simplify giving agents secure, reusable, discoverable access to enterprise systems instead of custom-coding every integration.",
+    "how": "An MCP server exposes tools/resources -> an MCP-aware agent discovers and calls them over the standard protocol.",
+    "when": "Standardizing agent-to-system integrations.",
+    "whenNot": "A single hard-coded tool with no reuse.",
+    "advantages": [
+      "Standard, reusable integrations",
+      "Decouples agents from tools",
+      "Discoverable capabilities"
+    ],
+    "disadvantages": [
+      "Newer standard",
+      "Server to implement/host",
+      "Maturing ecosystem"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-15": {
+    "pitch": "RAG grounds agents in knowledge; agents use it as a retrieval tool.",
+    "definition": "RAG (Retrieval-Augmented Generation) retrieves relevant documents from a knowledge base (via embeddings + vector DB) and adds them to the prompt so the model answers from real data. In agentic AI, RAG becomes a tool the agent calls when it needs information - the agent decides when to retrieve, what to query, and how to use the results within its plan. So RAG provides grounded knowledge, and the agent orchestrates retrieval as one capability among its tools.",
+    "how": "The agent decides it needs info -> calls a retrieval tool (RAG) -> gets relevant chunks -> reasons/acts on them.",
+    "when": "Agents needing current/proprietary knowledge.",
+    "whenNot": "Agents acting only on tool outputs, no knowledge base.",
+    "advantages": [
+      "Grounds agent answers",
+      "Agent-controlled retrieval",
+      "Reduces hallucination"
+    ],
+    "disadvantages": [
+      "Retrieval infra",
+      "Agent may query poorly",
+      "Chunking quality"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-16": {
+    "pitch": "RAG retrieves knowledge; Agentic AI plans and acts (and may use RAG).",
+    "definition": "RAG is a technique for grounding an LLM's answer in retrieved knowledge - it improves a single response. Agentic AI is a broader system where an LLM autonomously plans, uses multiple tools, maintains memory and iterates to accomplish goals - and RAG can be one of the tools it uses. So RAG is about knowledge retrieval for accuracy; agentic AI is about autonomous, multi-step action. They're complementary, not competing.",
+    "how": "RAG: retrieve -> ground one answer. Agentic: plan -> act with tools (one of which may be RAG) -> iterate.",
+    "when": "Agentic for tasks/actions; RAG for grounded answers.",
+    "whenNot": "Building a full agent when RAG alone is needed.",
+    "advantages": [
+      "RAG: grounded answers",
+      "Agentic: autonomous action",
+      "RAG fits inside agents"
+    ],
+    "disadvantages": [
+      "Agentic adds complexity",
+      "RAG alone is simpler",
+      "Different scopes"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-17": {
+    "pitch": "A vector DB stores embeddings so agents can retrieve relevant memory/knowledge.",
+    "definition": "A vector database stores embedding vectors and does fast similarity search, providing the retrieval backbone for an agent's RAG and long-term memory. The agent embeds a query (or stores facts as embeddings) and the vector DB returns the most semantically relevant chunks - enabling knowledge grounding and persistent memory across sessions. Without it, agents would be limited to what fits in the context window.",
+    "how": "Store knowledge/memory as embeddings -> agent embeds a query -> vector DB returns top-k relevant items.",
+    "when": "Agent knowledge grounding and long-term memory.",
+    "whenNot": "Tiny fixed context fitting in the window.",
+    "advantages": [
+      "Semantic retrieval",
+      "Powers RAG + memory",
+      "Scales beyond the window"
+    ],
+    "disadvantages": [
+      "Extra infrastructure",
+      "Embedding quality dependent",
+      "Index cost/tuning"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-18": {
+    "pitch": "Agents decide the next action by reasoning over context with the LLM.",
+    "definition": "An AI agent chooses its next action by feeding its current context - goal, memory, available tools, and observations so far - to the LLM, which reasons (often explicitly, e.g. ReAct-style 'thought') and outputs the next step: call a specific tool with arguments, ask the user, or finish. Patterns like ReAct (reason+act) and plan-and-execute structure this. Each action's result becomes new context for the following decision, forming the agent loop.",
+    "how": "Send goal + memory + tools + observations to the LLM -> it reasons and outputs the next action -> execute -> repeat.",
+    "when": "Understanding the agent decision loop.",
+    "whenNot": "Deterministic fixed pipelines (no decisions needed).",
+    "advantages": [
+      "Context-driven decisions",
+      "ReAct/plan patterns",
+      "Adapts each step"
+    ],
+    "disadvantages": [
+      "Non-deterministic choices",
+      "Can pick wrong action",
+      "Needs guardrails"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-19": {
+    "pitch": "Human-in-the-loop inserts human approval at critical points.",
+    "definition": "Human-in-the-Loop (HITL) is designing the agent to pause for human review, approval or correction at key points rather than acting fully autonomously - e.g. before executing irreversible or high-risk actions (sending money, deleting data, emailing customers). It's required when actions are consequential, regulated, or low-confidence, balancing automation with safety and accountability. The agent proposes; a human approves or edits.",
+    "how": "At a critical step, the agent pauses and surfaces its proposed action -> a human approves/edits -> then it proceeds.",
+    "when": "High-risk, irreversible or regulated actions.",
+    "whenNot": "Low-risk, easily reversible automated steps.",
+    "advantages": [
+      "Safety + accountability",
+      "Catches bad actions",
+      "Meets compliance"
+    ],
+    "disadvantages": [
+      "Slows automation",
+      "Needs review capacity",
+      "Defining the right gates"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-20": {
+    "pitch": "Prevent unsafe agent behaviour with grounding, guardrails and approvals.",
+    "definition": "You keep agents safe by grounding answers in RAG with citations (reducing hallucination), constraining tools to least-privilege scoped actions, validating tool arguments and outputs, adding guardrails (allow-lists, content filters, refusal of unsafe requests, prompt-injection defenses), capping iterations/cost, requiring human approval (HITL) for critical/irreversible actions, and sandboxing risky operations (e.g. code execution). Logging and evaluation catch regressions. Defense in depth assumes the model can err.",
+    "how": "Ground + validate + least-privilege tools + guardrails + HITL on critical actions + sandbox + log.",
+    "when": "Any agent that can take real actions.",
+    "whenNot": "Read-only demos with no real effects.",
+    "advantages": [
+      "RAG grounding cuts hallucination",
+      "Scoped tools + validation",
+      "HITL for risky actions"
+    ],
+    "disadvantages": [
+      "Can't eliminate all risk",
+      "Guardrails add friction",
+      "Prompt injection is hard"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-21": {
+    "pitch": "Secure agent-to-system access with least privilege, scoped creds and validation.",
+    "definition": "You secure agents interacting with external APIs and enterprise systems by giving each tool/integration least-privilege, scoped credentials (via a vault/Managed Identity, never in prompts), validating and sanitizing all arguments the model generates (to prevent injection into queries/commands), allow-listing permitted actions/endpoints, enforcing the calling user's permissions (the agent acts on their behalf, not as an admin), rate-limiting, sandboxing dangerous operations, and auditing every tool call. Treat model-generated calls as untrusted input.",
+    "how": "Scoped vault creds + arg validation + allow-lists + user-permission enforcement + sandbox + full audit per tool call.",
+    "when": "Agents touching real APIs/enterprise data.",
+    "whenNot": "Isolated agents with no external access.",
+    "advantages": [
+      "Least-privilege per tool",
+      "Validated, allow-listed actions",
+      "Acts within user permissions"
+    ],
+    "disadvantages": [
+      "Injection risk via args",
+      "Credential management",
+      "Audit/monitoring overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-22": {
+    "pitch": "AuthN/AuthZ: authenticate the agent and enforce the user's permissions.",
+    "definition": "You implement auth for agents by authenticating the agent/service (Managed Identity, OAuth2 client credentials, or API keys in a vault) and, crucially, enforcing authorization so the agent acts within the permissions of the user it represents - propagating the user's identity/token (on-behalf-of flow) so tool calls and RAG retrieval only access data that user may see. Each tool checks scopes/roles. This prevents an agent from becoming a privilege-escalation path.",
+    "how": "Authenticate the agent -> propagate the user's identity (on-behalf-of) -> each tool authorizes against the user's permissions.",
+    "when": "Agents acting on behalf of users on real data.",
+    "whenNot": "Fully public, permission-less data.",
+    "advantages": [
+      "Agent + user identity",
+      "On-behalf-of authorization",
+      "Per-tool scope checks"
+    ],
+    "disadvantages": [
+      "Token/flow complexity",
+      "Permission propagation effort",
+      "Misconfig = over-access"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-23": {
+    "pitch": "Log agent activity: prompts, decisions, tool calls and outcomes, with tracing.",
+    "definition": "You monitor and log AI agents by capturing the full execution trace of each run: the input/goal, the LLM's reasoning/decisions, every tool call with arguments and results, retrieved context, token usage/cost, latency per step, and the final outcome - tied together by a correlation/trace ID (distributed tracing via OpenTelemetry). Dashboards track success rate, cost and latency; alerts flag failures or anomalies. This gives auditability, debugging and the data to evaluate and improve agents.",
+    "how": "Instrument each step (reasoning, tool call, retrieval) -> emit traced logs + metrics -> dashboards + alerts.",
+    "when": "Operating agents reliably in production.",
+    "whenNot": "Throwaway local experiments.",
+    "advantages": [
+      "Full execution traces",
+      "Cost/latency/success metrics",
+      "Auditable + debuggable"
+    ],
+    "disadvantages": [
+      "Verbose telemetry",
+      "Sensitive data in logs",
+      "Storage/cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-24": {
+    "pitch": "Evaluate agents on task success, reliability, cost and safety with test suites.",
+    "definition": "You evaluate an agent's performance and reliability with task-based benchmarks: a suite of representative tasks with known correct outcomes, measuring success/completion rate, accuracy, number of steps/tool calls, cost and latency, and consistency across runs (since agents are non-deterministic). Add LLM-as-judge and human review for nuanced outputs, trajectory evaluation (did it take sensible steps), and safety checks (no unsafe actions). Run it as regression on every change to catch degradation.",
+    "how": "Run a task suite -> measure success/accuracy/steps/cost + safety -> LLM-judge/human review -> track over time.",
+    "when": "Ensuring agents work reliably and safely.",
+    "whenNot": "One-off demos with no quality bar.",
+    "advantages": [
+      "Task-success measurement",
+      "Trajectory + safety checks",
+      "Regression over time"
+    ],
+    "disadvantages": [
+      "Non-determinism complicates it",
+      "Eval-set effort",
+      "Judge/human cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-25": {
+    "pitch": "Design a scalable agent platform: stateless services, queues and shared infra.",
+    "definition": "You design a scalable agentic architecture by separating concerns: stateless agent-execution services that scale horizontally behind a load balancer; a queue/orchestrator for long-running or async agent runs (so requests don't block); shared, scalable infrastructure for the LLM (provisioned throughput, multiple deployments/regions, retries), vector DB (managed) and memory store; caching of frequent results/embeddings; and centralized observability and guardrails. Statelessness plus async orchestration lets you scale to many concurrent agent runs reliably.",
+    "how": "Stateless agent services autoscaled + queue/orchestrator for async runs + shared LLM/vector/memory infra + caching.",
+    "when": "Running many concurrent agents in production.",
+    "whenNot": "A single low-traffic agent.",
+    "advantages": [
+      "Horizontally scalable",
+      "Async long-running runs",
+      "Resilient shared infra"
+    ],
+    "disadvantages": [
+      "Distributed complexity",
+      "LLM rate limits/cost",
+      "State/memory coordination"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Scalable agent platform",
+      "mermaid": "flowchart LR\n  U[Requests] --> LB[Load Balancer]\n  LB --> Q[Queue/Orchestrator]\n  Q --> Ag[Agent Workers]\n  Ag --> LLM[LLM]\n  Ag --> V[(Vector DB)]\n  Ag --> M[(Memory)]"
+    }
+  },
+  "agentic-ai-26": {
+    "pitch": "Build an agent in ASP.NET Core with Semantic Kernel + Azure OpenAI.",
+    "definition": "You build an AI agent in ASP.NET Core using a framework like Semantic Kernel with Azure OpenAI: define the agent's instructions, register tools (plugins/functions it can call), wire memory and RAG, and run the agent loop - the kernel sends context to the model, which decides tool calls, the kernel executes them and iterates until done, streaming the result via your API. You secure keys (Key Vault/Managed Identity), add guardrails and approvals, and deploy like any web service.",
+    "how": "Define instructions + register tools/plugins -> SK runs the model loop (call tools, observe) -> stream the result via the API.",
+    "when": "Adding agentic features to a .NET backend.",
+    "whenNot": "Simple one-shot generation (no agent needed).",
+    "advantages": [
+      "Native .NET (Semantic Kernel)",
+      "Tools + memory + RAG",
+      "Standard deployment"
+    ],
+    "disadvantages": [
+      "Framework learning curve",
+      "Cost/latency of loops",
+      "Guardrails needed"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var kernel = Kernel.CreateBuilder().AddAzureOpenAIChatCompletion(...).Build();\nkernel.Plugins.AddFromType<CalendarTool>();\nvar result = await agent.InvokeAsync(goal);  // model plans + calls tools"
+    }
+  },
+  "agentic-ai-27": {
+    "pitch": "Orchestrate multiple agents via a coordinator or a workflow graph.",
+    "definition": "You orchestrate multiple agents for a complex workflow by assigning each a specialized role (planner, researcher, coder, reviewer) and coordinating them - either with an orchestrator/manager agent that delegates sub-tasks and aggregates results, or a workflow graph (LangGraph/Semantic Kernel) defining how agents hand off, run in parallel, or loop with critique. Shared memory/state passes context between them, and the orchestrator handles failures and final assembly. This decomposes hard tasks across collaborating specialists.",
+    "how": "An orchestrator/graph routes sub-tasks to specialist agents -> they share state + hand off -> results are aggregated.",
+    "when": "Complex tasks decomposable across specialists.",
+    "whenNot": "Tasks a single agent handles fine.",
+    "advantages": [
+      "Specialized collaboration",
+      "Parallel + critique patterns",
+      "Modular, extensible"
+    ],
+    "disadvantages": [
+      "Coordination complexity",
+      "More cost/latency",
+      "Harder to debug"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Multi-agent orchestration",
+      "mermaid": "flowchart LR\n  O[Orchestrator] --> P[Planner]\n  O --> R[Researcher]\n  O --> C[Coder]\n  O --> Rev[Reviewer]\n  Rev --> O"
+    }
+  },
+  "agentic-ai-28": {
+    "pitch": "Frameworks: Semantic Kernel, LangGraph, AutoGen, CrewAI, LangChain.",
+    "definition": "Common agent frameworks: Semantic Kernel (Microsoft, .NET/Python, plugins + orchestration, enterprise-friendly); LangGraph (graph/state-machine orchestration for controllable agent workflows); AutoGen (Microsoft, multi-agent conversations); CrewAI (role-based multi-agent crews, simple API); and LangChain (broad toolkit for chains, tools, RAG and agents). They differ in language, control model (graph vs conversational), and multi-agent support - you choose by stack (.NET -> Semantic Kernel) and how much workflow control you need.",
+    "how": "Each framework provides tools, memory, orchestration and (some) multi-agent support; pick by language + control model.",
+    "when": "Building agents without reinventing plumbing.",
+    "whenNot": "A trivial single tool call (raw SDK suffices).",
+    "advantages": [
+      "SK: .NET/enterprise",
+      "LangGraph: controllable graphs",
+      "AutoGen/CrewAI: multi-agent"
+    ],
+    "disadvantages": [
+      "Fast-moving ecosystem",
+      "Abstraction lock-in",
+      "Learning curves"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-29": {
+    "pitch": "Enterprise agent flow: request -> orchestrator -> LLM + tools/RAG -> response.",
+    "definition": "The architecture of an enterprise agentic application: a user request enters an ASP.NET Core API (authenticated, with the user's identity); an orchestrator/agent runtime loads instructions, memory and the user's permitted tools; the agent loop sends context to the LLM, which plans and calls tools (RAG retrieval over a vector DB, enterprise APIs, databases) - each call authorized as the user and validated - observing results and iterating, with guardrails and optional human approval on critical actions; finally it streams a grounded, cited response. Everything is logged/traced, secured and monitored.",
+    "how": "Authn'd request -> orchestrator + memory + tools -> LLM plans/calls tools (RAG/APIs, authorized) -> guardrails/HITL -> response.",
+    "when": "Designing a real enterprise agent system.",
+    "whenNot": "A toy single-prompt demo.",
+    "advantages": [
+      "Secure, user-scoped tools",
+      "Grounded via RAG",
+      "Guardrails + observability"
+    ],
+    "disadvantages": [
+      "Many components",
+      "Auth/permission complexity",
+      "Cost + safety engineering"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Enterprise agent",
+      "mermaid": "flowchart LR\n  U[User] --> API[Agent API]\n  API --> Orc[Orchestrator + Memory]\n  Orc --> LLM[LLM]\n  LLM --> Tools[Tools: RAG/APIs/DB]\n  Tools --> Orc\n  Orc --> R[Response]"
+    }
+  },
+  "agentic-ai-30": {
+    "pitch": "A real agent project ties LLM, tools, memory, RAG, orchestration and ops.",
+    "definition": "A real agentic project I would describe: a support-automation agent - an ASP.NET Core service with Semantic Kernel where the agent, acting as the authenticated user, uses tools (RAG over knowledge base via a vector DB, ticketing API, order lookup) to resolve requests; short-term memory holds the conversation and long-term memory (vector store) recalls user history; an orchestrator handles multi-step workflows with reflection and human approval for refunds/critical actions; deployed on AKS with Key Vault, observed via OpenTelemetry (traces of every tool call, cost, success rate) and guarded against unsafe actions. The hard parts were reliability and safe tool use, addressed with validation, guardrails, HITL and evaluation.",
+    "how": "SK agent (as the user) + RAG/API tools + memory + orchestration/reflection + HITL -> deployed, observed, guarded.",
+    "when": "Production agentic automation.",
+    "whenNot": "A throwaway prototype.",
+    "advantages": [
+      "Tool-using, grounded agent",
+      "Memory + orchestration",
+      "Secured + observed"
+    ],
+    "disadvantages": [
+      "Reliability is hard",
+      "Many components",
+      "Safety + cost engineering"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "realWorld": "For a support agent, combining RAG grounding, scoped tools and human approval on refunds let it resolve routine tickets end-to-end while OpenTelemetry traces of every tool call made failures easy to debug."
+  },
+  "agentic-ai-31": {
+    "pitch": "An email agent reads, summarizes and creates calendar events via tools.",
+    "definition": "Design an agent that reads emails, summarizes them and creates calendar events: it uses an email tool (Microsoft Graph) to fetch messages, the LLM to summarize and extract action items/meeting details, and a calendar tool (Graph) to create events - with human approval before creating/sending anything. The agent loops: read -> summarize -> detect a meeting request -> propose an event -> on approval, create it. It runs as the authenticated user with scoped Graph permissions, logging each action.",
+    "how": "Graph email tool fetches mail -> LLM summarizes + extracts event details -> (approval) -> Graph calendar tool creates the event.",
+    "when": "Inbox automation/assistants.",
+    "whenNot": "Reading email with no action needed.",
+    "advantages": [
+      "Automates read + summarize + schedule",
+      "Graph tools + LLM extraction",
+      "Approval before creating"
+    ],
+    "disadvantages": [
+      "Misread details create wrong events",
+      "Permission scope care",
+      "Needs HITL"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Email agent",
+      "mermaid": "flowchart LR\n  M[Email Tool] --> S[LLM Summarize]\n  S --> E[Extract event]\n  E --> Ap[Approval]\n  Ap --> Cal[Calendar Tool]"
+    }
+  },
+  "agentic-ai-32": {
+    "pitch": "A multi-agent support system routes, resolves and escalates via specialists.",
+    "definition": "Design a multi-agent customer support system with specialized agents coordinated by an orchestrator: a triage agent classifies and routes the request; a knowledge agent answers from RAG over docs; an action agent performs tasks (order lookup, refund via tools, with approval); and an escalation path hands complex cases to a human. Shared memory carries customer context; guardrails and HITL gate sensitive actions; everything is traced. This decomposes support into focused, reliable roles.",
+    "how": "Triage routes -> knowledge agent (RAG) answers / action agent executes tools (with approval) -> escalate to human if needed.",
+    "when": "Complex support automation at scale.",
+    "whenNot": "Simple single-FAQ bots.",
+    "advantages": [
+      "Specialized, modular agents",
+      "RAG + actions + escalation",
+      "Traceable + guarded"
+    ],
+    "disadvantages": [
+      "Orchestration complexity",
+      "Cost/latency",
+      "Handoff + safety design"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Support multi-agent",
+      "mermaid": "flowchart LR\n  U[Customer] --> T[Triage]\n  T --> K[Knowledge/RAG]\n  T --> Ac[Action Agent]\n  Ac --> H[Human Escalation]"
+    }
+  },
+  "agentic-ai-33": {
+    "pitch": "A coding agent generates, reviews and tests code in a loop.",
+    "definition": "Design an AI coding assistant that generates, reviews and tests code using an agent loop with tools: it generates code from a spec, runs it in a sandbox, executes tests, reads failures, and reflects/repairs iteratively until tests pass - with a reviewer step (self-critique or a separate reviewer agent) for quality and security. Tools include a code executor (sandboxed), test runner, and repository/file access (scoped). Human approval gates merging. This mirrors a develop-test-fix cycle automated by the agent.",
+    "how": "Generate code -> run + test in a sandbox -> read failures -> reflect/repair -> review -> (approval) -> commit.",
+    "when": "Automating code generation with quality gates.",
+    "whenNot": "Trivial snippets needing no testing.",
+    "advantages": [
+      "Generate + test + fix loop",
+      "Reflection/review for quality",
+      "Sandboxed execution"
+    ],
+    "disadvantages": [
+      "Sandbox security critical",
+      "Can loop/over-edit",
+      "Cost of iterations"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-34": {
+    "pitch": "Add approval workflows so critical agent actions require human sign-off.",
+    "definition": "You implement approval workflows by classifying actions by risk and inserting a human-approval gate before the agent executes critical/irreversible ones (payments, deletes, external emails): the agent pauses, surfaces the proposed action and its rationale/parameters, and waits; a human approves, edits or rejects (via a UI/Teams/Slack notification), and only then does the agent proceed - all logged. Low-risk actions run automatically. This balances autonomy with control and accountability.",
+    "how": "Classify action risk -> for critical actions, pause + notify a human -> on approval/edit, execute -> log the decision.",
+    "when": "Agents performing high-risk/irreversible actions.",
+    "whenNot": "Low-risk, easily reversible operations.",
+    "advantages": [
+      "Human control on risk",
+      "Accountable + auditable",
+      "Auto for low-risk"
+    ],
+    "disadvantages": [
+      "Adds latency/friction",
+      "Needs reviewers/UI",
+      "Defining risk thresholds"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-35": {
+    "pitch": "Let an agent query SQL safely with read-only, parameterized, scoped access.",
+    "definition": "You enable an agent to query SQL databases safely by never letting it run arbitrary raw SQL with broad rights: use a least-privilege, read-only database account; constrain it to approved queries/views or a parameterized query-builder tool (the agent supplies parameters, not raw SQL); validate/limit generated SQL (allow-list tables, block DDL/DML, add row limits and timeouts); run as the user's permissions where possible; and log every query. For free-form NL-to-SQL, review or sandbox before execution. Treat agent-generated SQL as untrusted.",
+    "how": "Agent calls a constrained query tool with parameters -> validated against allow-lists on a read-only account -> results returned.",
+    "when": "Agents answering questions from databases.",
+    "whenNot": "Giving an agent full DB write access (never).",
+    "advantages": [
+      "Read-only, least-privilege",
+      "Parameterized/allow-listed",
+      "Limits + timeouts + audit"
+    ],
+    "disadvantages": [
+      "NL-to-SQL injection risk",
+      "Constrains flexibility",
+      "Validation effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-36": {
+    "pitch": "Integrate agents with Teams/Slack/SharePoint via their APIs/bots.",
+    "definition": "You integrate an agent with Microsoft Teams, Slack or SharePoint by exposing it through each platform's bot/API: a Teams bot (Bot Framework) or Slack app receives messages/events via webhooks, forwards them to your agent service, and posts responses (with adaptive cards/blocks, approvals, streaming where supported); SharePoint integration uses the Graph API to read/write documents for RAG and actions. Auth uses the platform's identity (and on-behalf-of for user permissions), with the agent acting within the user's scope.",
+    "how": "Platform bot/webhook receives messages -> calls the agent service -> posts responses/cards back, authed as the user.",
+    "when": "Delivering agents inside collaboration tools.",
+    "whenNot": "Standalone agents with no chat surface.",
+    "advantages": [
+      "Meets users in their tools",
+      "Cards/approvals/streaming",
+      "Graph for SharePoint docs"
+    ],
+    "disadvantages": [
+      "Per-platform integration",
+      "Auth/permission propagation",
+      "Rate limits + formatting"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-37": {
+    "pitch": "Handle multi-agent failures with retries, fallbacks and orchestrator recovery.",
+    "definition": "When one agent in a multi-agent workflow fails, the orchestrator handles it: retry the sub-task (with backoff), reassign it to an alternate agent or approach, decompose it further, or fall back to a default/human escalation - rather than failing the whole workflow. State/checkpoints let the workflow resume from the failed step, compensating actions undo partial work if needed, and the failure is logged and surfaced. Designing for partial failure keeps the overall task resilient.",
+    "how": "Orchestrator detects the failed sub-task -> retry/reassign/decompose or escalate -> resume from checkpoint or compensate.",
+    "when": "Resilient multi-agent workflows.",
+    "whenNot": "Single-agent tasks with no decomposition.",
+    "advantages": [
+      "Retry/reassign/escalate",
+      "Checkpoint + resume",
+      "Workflow stays resilient"
+    ],
+    "disadvantages": [
+      "Recovery logic complexity",
+      "Partial-state cleanup",
+      "Cost of retries"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-38": {
+    "pitch": "Give agents persistent memory via an external store (vector DB + state).",
+    "definition": "You implement persistent memory for an agent by storing it outside the LLM in a durable store that survives sessions: long-term semantic memory as embeddings in a vector database (facts, past interactions, retrieved by relevance), plus structured state (user profile, preferences, task history) in a database. The agent writes salient information after steps and retrieves the relevant pieces into context on future runs - giving continuity, personalization and learning across conversations within token limits.",
+    "how": "Write salient facts to a vector DB + structured store after steps -> retrieve relevant memory into context on later runs.",
+    "when": "Agents needing continuity/personalization over time.",
+    "whenNot": "Stateless one-shot tasks.",
+    "advantages": [
+      "Continuity across sessions",
+      "Semantic + structured memory",
+      "Personalization"
+    ],
+    "disadvantages": [
+      "Memory store to manage",
+      "Retrieval relevance/freshness",
+      "Privacy of stored data"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-39": {
+    "pitch": "Cut agent latency/tokens with fewer steps, parallel tools, caching and tiering.",
+    "definition": "You optimize latency and token usage in an agentic system by reducing unnecessary LLM round trips: plan efficiently (fewer steps), run independent tool calls in parallel, cache repeated results/embeddings and tool outputs, keep prompts/context lean (retrieve only what's needed, summarize history), cap iterations and output tokens, use smaller/cheaper models for simple sub-tasks (model tiering) and a strong model only where needed, and stream responses for perceived speed. Measuring per-step tokens/latency shows where to optimize.",
+    "how": "Fewer steps + parallel tools + caching + lean context + model tiering + streaming -> lower latency and cost.",
+    "when": "Production agents at scale.",
+    "whenNot": "Low-volume agents where cost is trivial.",
+    "advantages": [
+      "Fewer/parallel steps",
+      "Caching + lean context",
+      "Model tiering saves cost"
+    ],
+    "disadvantages": [
+      "Over-optimizing hurts quality",
+      "Cache staleness",
+      "Tuning effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "agentic-ai-40": {
+    "pitch": "A production agent platform unifies LLMs, tools, memory, RAG, orchestration and ops.",
+    "definition": "An end-to-end production agentic platform: an API gateway authenticates requests and propagates user identity; stateless agent-runtime services (Semantic Kernel/LangGraph) run the reason-act loop, autoscaled behind a load balancer with a queue for long/async runs; the LLM layer uses provisioned/multi-region deployments with retries and model tiering; tools are least-privilege, validated integrations (RAG over a vector DB, enterprise APIs, sandboxed code/SQL) authorized as the user; short- and long-term memory live in a vector DB + state store; guardrails and HITL gate unsafe/critical actions; and full observability (OpenTelemetry traces of every step/tool call, cost, success, safety) plus secrets in Key Vault and CI/CD complete it. It's autonomous yet secure, scalable and auditable.",
+    "how": "Gateway(authn) -> autoscaled agent runtime + queue -> LLM(tiered) + scoped tools(RAG/APIs/sandbox) + memory -> guardrails/HITL -> observed.",
+    "when": "Running enterprise agents reliably at scale.",
+    "whenNot": "A simple single-agent demo.",
+    "advantages": [
+      "Scalable + secure + observable",
+      "Tools/memory/RAG integrated",
+      "Guardrails + HITL"
+    ],
+    "disadvantages": [
+      "High architectural complexity",
+      "Cost + safety engineering",
+      "Requires strong ops"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Production agent platform",
+      "mermaid": "flowchart LR\n  GW[Gateway/Authn] --> RT[Agent Runtime + Queue]\n  RT --> LLM[LLM tiered]\n  RT --> Tools[Tools: RAG/APIs/Sandbox]\n  RT --> Mem[(Memory/Vector DB)]\n  RT --> Obs[Observability + Guardrails]"
+    },
+    "realWorld": "On an enterprise agent platform, standardizing on OpenTelemetry traces per tool call plus HITL on critical actions and least-privilege tools made the agents both auditable and safe enough for production rollout."
+  }
+}
