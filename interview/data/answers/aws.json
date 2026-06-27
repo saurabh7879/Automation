@@ -1,1 +1,984 @@
-{}
+{
+  "aws-1": {
+    "pitch": "AWS is the leading cloud platform offering on-demand IT services.",
+    "definition": "AWS (Amazon Web Services) is a comprehensive cloud platform offering on-demand computing, storage, networking, databases and many managed services on a pay-as-you-go basis. Core services include EC2 (compute), S3 (object storage), RDS/DynamoDB (databases), VPC (networking), IAM (identity), Lambda (serverless) and CloudWatch (monitoring). It lets you build scalable apps without owning hardware.",
+    "how": "Provision managed services via console/CLI/IaC -> AWS runs the infrastructure -> you pay for what you use.",
+    "when": "Scalable apps without managing physical infrastructure.",
+    "whenNot": "Strict on-prem/data-residency mandates.",
+    "advantages": [
+      "Vast managed services",
+      "Pay-as-you-go scaling",
+      "Global infrastructure"
+    ],
+    "disadvantages": [
+      "Cost can sprawl",
+      "Steep breadth to learn",
+      "Vendor lock-in risk"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-2": {
+    "pitch": "Regions are geographic areas; AZs are isolated DCs; Edge serves content close.",
+    "definition": "These are AWS's geographic building blocks. A Region is a separate geographic area (e.g. us-east-1) with multiple Availability Zones. An Availability Zone (AZ) is one or more isolated data centers within a Region, connected by low-latency links - you spread across AZs for high availability. Edge Locations are CDN points (CloudFront) near users for low-latency content delivery and caching.",
+    "how": "Region = geography; AZ = isolated DC for HA; Edge = CDN cache near end users.",
+    "when": "Designing for availability and low latency.",
+    "whenNot": "Confusing them when planning HA.",
+    "advantages": [
+      "Region: data residency",
+      "AZs: high availability",
+      "Edge: low-latency delivery"
+    ],
+    "disadvantages": [
+      "Cross-region cost/latency",
+      "AZ design effort",
+      "Edge for static/cacheable mainly"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Regions/AZs/Edge",
+      "mermaid": "flowchart TB\n  R[Region] --> AZ1[AZ-1]\n  R --> AZ2[AZ-2]\n  Edge[Edge Locations] --> Users"
+    }
+  },
+  "aws-3": {
+    "pitch": "EC2 gives resizable virtual servers in the cloud.",
+    "definition": "Amazon EC2 (Elastic Compute Cloud) provides resizable virtual machines (instances) in the cloud - you choose the OS, CPU, memory and storage, and pay per second/hour. You use it when you need full control over the server/runtime, to run traditional apps, custom software, or workloads that don't fit serverless/containers.",
+    "how": "Launch an instance from an AMI in a VPC -> SSH/RDP or deploy your app -> scale with Auto Scaling groups.",
+    "when": "Full control over servers and custom workloads.",
+    "whenNot": "Event-driven or bursty work (use Lambda) or pure containers (ECS/EKS).",
+    "advantages": [
+      "Full server control",
+      "Many instance types",
+      "Per-second billing"
+    ],
+    "disadvantages": [
+      "You manage the OS/patching",
+      "Scaling needs configuration",
+      "Idle cost if over-provisioned"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-4": {
+    "pitch": "EC2 instance families optimize for compute, memory, storage or GPU.",
+    "definition": "EC2 instance types are grouped into families optimized for different workloads: General Purpose (T/M - balanced), Compute Optimized (C - CPU-heavy), Memory Optimized (R/X - large in-memory), Storage Optimized (I/D - high disk IOPS), and Accelerated Computing (P/G - GPUs for ML/graphics). You pick the family and size that matches your app's resource profile to balance performance and cost.",
+    "how": "Match your workload's bottleneck (CPU/RAM/disk/GPU) to the matching family, then size for the load.",
+    "when": "Right-sizing compute to the workload.",
+    "whenNot": "Over-provisioning a large type 'just in case'.",
+    "advantages": [
+      "Family per workload type",
+      "Wide size range",
+      "Cost/performance tuning"
+    ],
+    "disadvantages": [
+      "Choosing wrong family wastes money",
+      "Many options to learn",
+      "Resizing needs restart"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-5": {
+    "pitch": "An AMI is a template to launch EC2 instances.",
+    "definition": "An Amazon Machine Image (AMI) is a pre-configured template containing the OS, application server and software needed to launch an EC2 instance. You launch instances from an AMI, and you can create custom AMIs from a configured instance for consistent, fast, repeatable deployments (golden images). AWS, the community and the Marketplace provide AMIs.",
+    "how": "Select/build an AMI -> launch instances from it -> every instance starts identically configured.",
+    "when": "Standardizing and quickly scaling identical instances.",
+    "whenNot": "Frequently changing software better baked at deploy time.",
+    "advantages": [
+      "Consistent instances",
+      "Fast launches",
+      "Custom golden images"
+    ],
+    "disadvantages": [
+      "AMIs go stale",
+      "Region-specific copies",
+      "Build/maintenance effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-6": {
+    "pitch": "Auto Scaling adjusts EC2 capacity automatically to match demand.",
+    "definition": "Auto Scaling automatically adds or removes EC2 instances (in an Auto Scaling Group) based on demand, schedules or health. You set minimum, desired and maximum counts and scaling policies tied to metrics (CPU, request count); the service launches/terminates instances to meet load and replaces unhealthy ones - giving elasticity and resilience while controlling cost.",
+    "how": "Define an ASG + scaling policy -> CloudWatch metrics trigger scale-out/in -> instances added/removed to match load.",
+    "when": "Variable traffic needing elastic capacity.",
+    "whenNot": "Perfectly steady load (fixed capacity is simpler).",
+    "advantages": [
+      "Elastic, cost-efficient",
+      "Self-heals unhealthy instances",
+      "Metric/schedule driven"
+    ],
+    "disadvantages": [
+      "Scale-up lag",
+      "Stateless apps needed",
+      "Policy tuning"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-7": {
+    "pitch": "An ELB distributes traffic across targets; ALB/NLB/GLB are the types.",
+    "definition": "Elastic Load Balancing distributes incoming traffic across multiple targets (EC2, containers, IPs) across AZs for availability and scale. Types: Application Load Balancer (ALB - HTTP/HTTPS, path/host routing, layer 7), Network Load Balancer (NLB - TCP/UDP, ultra-low latency, layer 4), and Gateway Load Balancer (GLB - for network appliances). ALB is the common choice for web apps.",
+    "how": "The LB health-checks targets and routes each request to a healthy one; ALB routes by path/host, NLB by connection.",
+    "when": "Distributing traffic for HA and scaling.",
+    "whenNot": "A single instance with no redundancy needs.",
+    "advantages": [
+      "HA across AZs",
+      "ALB: layer-7 routing",
+      "NLB: low-latency TCP"
+    ],
+    "disadvantages": [
+      "Cost per LB + traffic",
+      "Type choice matters",
+      "Health-check config"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-8": {
+    "pitch": "S3 is durable object storage with tiered storage classes.",
+    "definition": "Amazon S3 (Simple Storage Service) is highly durable, scalable object storage for files of any size, accessed over HTTP APIs. It offers storage classes that trade cost for access speed/frequency: S3 Standard (frequent access), Standard-IA / One Zone-IA (infrequent), Intelligent-Tiering (auto-moves data), and Glacier / Glacier Deep Archive (cheap, archival, slow retrieval).",
+    "how": "Store objects in buckets -> pick a storage class per access pattern -> lifecycle rules move data to cheaper tiers over time.",
+    "when": "Files, backups, static assets, data lakes.",
+    "whenNot": "Low-latency block storage for a DB/OS (use EBS).",
+    "advantages": [
+      "11 9s durability",
+      "Tiered cost classes",
+      "Virtually unlimited scale"
+    ],
+    "disadvantages": [
+      "Object (not block) storage",
+      "Retrieval cost/latency (Glacier)",
+      "Eventual consistency nuances"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-9": {
+    "pitch": "S3 classes trade retrieval speed and cost by access frequency.",
+    "definition": "These S3 storage classes differ by access frequency and retrieval cost. Standard: frequent access, highest storage cost, instant. Standard-IA (Infrequent Access): lower storage cost, retrieval fee, instant - for less-accessed data. Glacier: cheap archival, minutes-to-hours retrieval. Glacier Deep Archive: cheapest, hours retrieval - for long-term cold archives. Lifecycle rules move data between them automatically.",
+    "how": "Choose by access pattern: hot -> Standard, warm -> IA, cold -> Glacier, frozen -> Deep Archive; automate with lifecycle.",
+    "when": "Cost-optimizing storage by data temperature.",
+    "whenNot": "Frequently-read data in Glacier (slow + retrieval cost).",
+    "advantages": [
+      "Standard: instant, frequent",
+      "IA: cheaper warm data",
+      "Glacier/Deep: cheap archives"
+    ],
+    "disadvantages": [
+      "Retrieval fees/latency on cold tiers",
+      "Min storage durations",
+      "Wrong tier = surprises"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-10": {
+    "pitch": "EBS is block storage for one instance; S3 is object storage over HTTP.",
+    "definition": "Amazon EBS (Elastic Block Store) provides persistent block-level storage volumes attached to a single EC2 instance - like a virtual hard disk for the OS, databases and apps needing low-latency random access. S3 is object storage accessed over HTTP for files/backups, decoupled from any instance. EBS is for instance disks; S3 is for shared, durable object storage.",
+    "how": "EBS attaches as a disk to one EC2 instance; S3 stores objects accessed via API by anything.",
+    "when": "EBS for instance/DB disks; S3 for files and backups.",
+    "whenNot": "Using S3 as an OS/database disk (it's not block storage).",
+    "advantages": [
+      "EBS: low-latency block disk",
+      "S3: durable shared objects",
+      "EBS snapshots to S3"
+    ],
+    "disadvantages": [
+      "EBS: one-instance, AZ-bound",
+      "S3: not block-level",
+      "Different access models"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-11": {
+    "pitch": "EFS is a shared, elastic file system for many instances.",
+    "definition": "Amazon EFS (Elastic File System) is a managed, elastic NFS file system that multiple EC2 instances (and Lambda/containers) can mount and share simultaneously, growing and shrinking automatically. Use it when you need shared file storage across instances - content management, shared app data, lift-and-shift apps expecting a POSIX file system - unlike EBS which attaches to one instance.",
+    "how": "Mount the EFS file system via NFS on many instances -> they share the same elastic POSIX storage.",
+    "when": "Shared file storage across multiple instances.",
+    "whenNot": "Single-instance disks (EBS) or object storage (S3).",
+    "advantages": [
+      "Shared across instances",
+      "Elastic, fully managed",
+      "POSIX file semantics"
+    ],
+    "disadvantages": [
+      "Pricier than EBS/S3",
+      "NFS latency vs local disk",
+      "Throughput modes to tune"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-12": {
+    "pitch": "RDS is a managed relational database service.",
+    "definition": "Amazon RDS (Relational Database Service) is a managed service that runs relational databases - handling provisioning, patching, backups, replication and failover - so you focus on the data, not the DB server. It supports MySQL, PostgreSQL, MariaDB, Oracle, SQL Server and Amazon Aurora. You get Multi-AZ for HA and read replicas for scaling reads.",
+    "how": "Choose an engine -> RDS provisions + manages it -> automated backups, Multi-AZ failover and read replicas built in.",
+    "when": "Managed SQL databases without DBA toil.",
+    "whenNot": "Massive-scale key-value/NoSQL (use DynamoDB).",
+    "advantages": [
+      "Managed patching/backups",
+      "Multi-AZ HA + replicas",
+      "Multiple engines"
+    ],
+    "disadvantages": [
+      "Less control than self-hosted",
+      "Vertical scaling limits",
+      "Cost vs self-managed"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-13": {
+    "pitch": "DynamoDB is a managed NoSQL key-value/document DB; RDS is relational.",
+    "definition": "Amazon DynamoDB is a fully managed, serverless NoSQL key-value and document database delivering single-digit-millisecond latency at any scale, with automatic scaling and no servers to manage. RDS is relational (SQL, joins, schema). DynamoDB suits high-scale, simple-access-pattern workloads; RDS suits relational data with complex queries and transactions.",
+    "how": "DynamoDB: design tables around access patterns (keys), scales horizontally; RDS: normalized schema queried with SQL.",
+    "when": "DynamoDB for massive scale/simple access; RDS for relational queries.",
+    "whenNot": "Complex joins/ad-hoc queries on DynamoDB.",
+    "advantages": [
+      "DynamoDB: serverless, infinite scale",
+      "Single-digit-ms latency",
+      "RDS: rich SQL/joins"
+    ],
+    "disadvantages": [
+      "DynamoDB: no joins, access-pattern design",
+      "Query flexibility limited",
+      "RDS scaling limits"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-14": {
+    "pitch": "Lambda runs code without servers, billed per execution.",
+    "definition": "AWS Lambda is a serverless compute service that runs your code in response to events (HTTP via API Gateway, S3 uploads, queue messages) without provisioning servers. You upload a function; Lambda runs and scales it automatically, charging only for execution time and requests. Benefits: no server management, automatic scaling, and pay-per-use - ideal for event-driven and bursty workloads.",
+    "how": "An event triggers the function -> Lambda provisions a runtime, runs your code, scales out per concurrent event -> bills per ms.",
+    "when": "Event-driven, bursty, or glue workloads.",
+    "whenNot": "Long-running or steady high-throughput compute.",
+    "advantages": [
+      "No servers to manage",
+      "Auto-scales to zero",
+      "Pay only when running"
+    ],
+    "disadvantages": [
+      "Cold starts",
+      "Execution time limits",
+      "Stateless, vendor-specific"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-15": {
+    "pitch": "API Gateway exposes HTTP APIs that invoke Lambda (and others).",
+    "definition": "Amazon API Gateway is a managed service for creating, publishing and securing APIs at scale. It fronts your backends - commonly invoking Lambda functions - handling routing, authentication/authorization, throttling, caching and request/response transformation. With Lambda it forms the classic serverless API: a request hits API Gateway, which invokes the Lambda that returns the response.",
+    "how": "Define routes -> API Gateway authenticates/throttles -> invokes the integrated Lambda -> returns its response.",
+    "when": "Serverless and managed API front ends.",
+    "whenNot": "Simple internal calls not needing a gateway.",
+    "advantages": [
+      "Managed, scalable API front",
+      "Auth/throttling/caching",
+      "Lambda integration"
+    ],
+    "disadvantages": [
+      "Per-request cost",
+      "Config complexity",
+      "Latency vs direct calls"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "API Gateway + Lambda",
+      "mermaid": "flowchart LR\n  U[Client] --> G[API Gateway]\n  G --> L[Lambda]\n  L --> DB[(DynamoDB)]"
+    }
+  },
+  "aws-16": {
+    "pitch": "ECS is AWS's container orchestrator; EKS is managed Kubernetes.",
+    "definition": "Amazon ECS (Elastic Container Service) is AWS's own container orchestrator - simpler, deeply integrated with AWS, running containers as tasks/services. Amazon EKS (Elastic Kubernetes Service) is managed Kubernetes - standard, portable, with the rich K8s ecosystem but more complexity. Both run on EC2 or Fargate; choose ECS for AWS-native simplicity, EKS for Kubernetes portability/ecosystem.",
+    "how": "ECS: define tasks/services on AWS's scheduler. EKS: run standard Kubernetes managed by AWS.",
+    "when": "ECS for AWS-simple; EKS for Kubernetes standard/portability.",
+    "whenNot": "Wanting K8s portability but choosing ECS (or vice versa).",
+    "advantages": [
+      "ECS: simple, AWS-native",
+      "EKS: standard Kubernetes",
+      "Both run on Fargate"
+    ],
+    "disadvantages": [
+      "ECS: AWS-only",
+      "EKS: more complex/costly",
+      "Different learning curves"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-17": {
+    "pitch": "EKS is managed Kubernetes for portable container orchestration.",
+    "definition": "Amazon EKS runs upstream Kubernetes as a managed control plane on AWS, so you get standard K8s (manifests, Helm, operators, ecosystem) without managing the control plane. You'd use Kubernetes for portability across clouds/on-prem, a rich ecosystem, advanced orchestration, and when teams already know K8s - at the cost of more operational complexity than ECS.",
+    "how": "AWS manages the K8s control plane -> you run worker nodes (EC2/Fargate) -> deploy standard Kubernetes workloads.",
+    "when": "Portable, standard container orchestration.",
+    "whenNot": "Simple AWS-only workloads (ECS is easier).",
+    "advantages": [
+      "Standard, portable K8s",
+      "Rich ecosystem",
+      "Managed control plane"
+    ],
+    "disadvantages": [
+      "More complex than ECS",
+      "Control-plane cost",
+      "K8s expertise needed"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-18": {
+    "pitch": "Fargate runs containers serverlessly; EC2 means you manage the servers.",
+    "definition": "AWS Fargate is a serverless compute engine for containers (with ECS/EKS): you specify CPU/memory for a task and AWS runs the container with no servers to provision, patch or scale. With EC2 launch type you manage the underlying instances (the cluster capacity). Fargate trades a bit more cost for zero server management; EC2 gives control and can be cheaper at steady scale.",
+    "how": "Fargate: AWS provisions right-sized compute per task. EC2: you run and manage the cluster instances yourself.",
+    "when": "Fargate for no-ops containers; EC2 for control/cost at scale.",
+    "whenNot": "Steady, large fleets where EC2 is cheaper.",
+    "advantages": [
+      "Fargate: no servers",
+      "Per-task right-sizing",
+      "EC2: control + cost at scale"
+    ],
+    "disadvantages": [
+      "Fargate pricier per unit",
+      "EC2: you manage capacity",
+      "Tuning trade-offs"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-19": {
+    "pitch": "VPC is your isolated virtual network in AWS.",
+    "definition": "Amazon VPC (Virtual Private Cloud) is a logically isolated virtual network where you launch AWS resources with full control over networking. Its components include subnets (public/private), route tables, an Internet Gateway, NAT Gateways, security groups, network ACLs and VPC endpoints. It lets you define IP ranges, segment tiers, and control inbound/outbound traffic securely.",
+    "how": "Define a CIDR -> create subnets across AZs -> route tables + gateways + security control how traffic flows.",
+    "when": "Securely networking and isolating cloud resources.",
+    "whenNot": "Trivial single-service setups (defaults suffice).",
+    "advantages": [
+      "Network isolation + control",
+      "Public/private segmentation",
+      "Fine-grained security"
+    ],
+    "disadvantages": [
+      "Networking complexity",
+      "Misconfig = outages/exposure",
+      "Many components"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "VPC",
+      "mermaid": "flowchart TB\n  VPC --> Pub[Public Subnet] --> IGW[Internet GW]\n  VPC --> Priv[Private Subnet] --> NAT[NAT GW] --> IGW"
+    }
+  },
+  "aws-20": {
+    "pitch": "Public subnets reach the internet; private subnets don't directly.",
+    "definition": "Within a VPC, a Public Subnet has a route to an Internet Gateway, so resources (with public IPs) can send/receive internet traffic - used for load balancers and bastion hosts. A Private Subnet has no direct internet route; its resources (app servers, databases) reach out only via a NAT Gateway and aren't reachable from the internet - the secure place for backends.",
+    "how": "Public subnet routes 0.0.0.0/0 to an IGW; private subnet routes outbound via a NAT and has no inbound internet path.",
+    "when": "Segmenting internet-facing vs internal tiers.",
+    "whenNot": "Putting databases in a public subnet.",
+    "advantages": [
+      "Public: internet-facing entry",
+      "Private: protected backends",
+      "Tiered security"
+    ],
+    "disadvantages": [
+      "NAT cost for private egress",
+      "Routing config care",
+      "Misplacement exposes resources"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-21": {
+    "pitch": "An IGW connects a VPC to the internet; a NAT lets private subnets go out.",
+    "definition": "An Internet Gateway (IGW) is a VPC component that enables two-way internet connectivity for resources in public subnets (with public IPs). A NAT Gateway lets resources in private subnets initiate outbound internet connections (updates, API calls) while remaining unreachable from the internet - it translates their private IPs. IGW = full internet access; NAT = outbound-only for private resources.",
+    "how": "IGW routes public-subnet traffic to/from the internet; NAT (in a public subnet) proxies private-subnet outbound traffic.",
+    "when": "IGW for public access; NAT for private outbound.",
+    "whenNot": "Exposing private resources via an IGW directly.",
+    "advantages": [
+      "IGW: internet for public subnets",
+      "NAT: safe outbound for private",
+      "Keeps backends hidden"
+    ],
+    "disadvantages": [
+      "NAT Gateway hourly + data cost",
+      "Single point if not multi-AZ",
+      "Routing must be correct"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-22": {
+    "pitch": "Route tables direct traffic; security groups are instance firewalls.",
+    "definition": "Route Tables define where network traffic from a subnet is directed (e.g. internet via IGW, private egress via NAT, internal). Security Groups are stateful virtual firewalls attached to instances/ENIs that control allowed inbound and outbound traffic by rules (ports, protocols, sources). Route tables decide the path; security groups decide what's permitted to a resource.",
+    "how": "Route tables set subnet routes; security groups (stateful) allow/deny traffic to attached resources by rule.",
+    "when": "Controlling traffic flow and access in a VPC.",
+    "whenNot": "Relying on defaults for production security.",
+    "advantages": [
+      "Route tables: traffic paths",
+      "Security groups: stateful firewall",
+      "Per-resource control"
+    ],
+    "disadvantages": [
+      "Misconfig blocks/exposes",
+      "Rule sprawl",
+      "Stateful nuances"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-23": {
+    "pitch": "Security Groups are stateful instance firewalls; NACLs are stateless subnet filters.",
+    "definition": "Both control traffic but differ. Security Groups operate at the instance/ENI level, are stateful (return traffic is automatically allowed), and support only allow rules. Network ACLs operate at the subnet level, are stateless (you must allow both directions), and support allow and deny rules with ordering. Security groups are the primary control; NACLs add a coarse subnet-level layer.",
+    "how": "SG: stateful, instance-level allow rules. NACL: stateless, subnet-level allow/deny rules evaluated in order.",
+    "when": "Layered network security in a VPC.",
+    "whenNot": "Using NACLs where a security group is the right tool.",
+    "advantages": [
+      "SG: stateful, simple",
+      "NACL: subnet-level + deny",
+      "Defense in depth"
+    ],
+    "disadvantages": [
+      "NACL stateless (both ways)",
+      "Rule-order complexity",
+      "Two layers to reason about"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-24": {
+    "pitch": "IAM controls who can do what via users, groups, roles and policies.",
+    "definition": "AWS IAM (Identity and Access Management) controls authentication and authorization for AWS resources. Users are identities for people/apps; Groups bundle users to assign permissions collectively; Roles are assumable identities with temporary credentials (for services, cross-account, or federated access); Policies are JSON documents that grant/deny permissions, attached to users, groups or roles. Together they enforce least-privilege access.",
+    "how": "Attach policies to users/groups/roles -> IAM evaluates them on each request -> allows or denies the action.",
+    "when": "Securing all access to AWS resources.",
+    "whenNot": "Using root/over-broad credentials.",
+    "advantages": [
+      "Fine-grained access control",
+      "Roles = temporary creds",
+      "Group-based management"
+    ],
+    "disadvantages": [
+      "Policy complexity",
+      "Easy to over-grant",
+      "Misconfig = breaches"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "json",
+      "snippet": "{ \"Effect\": \"Allow\", \"Action\": \"s3:GetObject\", \"Resource\": \"arn:aws:s3:::bucket/*\" }"
+    }
+  },
+  "aws-25": {
+    "pitch": "Least privilege grants only the permissions actually needed.",
+    "definition": "The principle of Least Privilege means granting each user, role or service only the minimum permissions required to do its job - nothing more. In AWS you apply it with tightly-scoped IAM policies (specific actions/resources), roles with temporary credentials, and regular reviews/Access Analyzer. It limits the blast radius if credentials are compromised and is a foundation of cloud security.",
+    "how": "Start from deny -> grant only the specific actions/resources needed -> review and tighten over time.",
+    "when": "Every IAM permission you assign.",
+    "whenNot": "Granting broad '*' permissions for convenience.",
+    "advantages": [
+      "Limits breach blast radius",
+      "Scoped, auditable access",
+      "Security best practice"
+    ],
+    "disadvantages": [
+      "More policies to manage",
+      "Can slow initial setup",
+      "Needs ongoing review"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-26": {
+    "pitch": "Secrets Manager stores/rotates secrets; Parameter Store holds config + secrets cheaply.",
+    "definition": "AWS Secrets Manager securely stores secrets (DB credentials, API keys) with built-in automatic rotation, fine-grained access and auditing. SSM Parameter Store stores configuration data and secrets (SecureString) more cheaply but without native rotation. Use Secrets Manager when you need rotation and secret-centric features; Parameter Store for general config and simpler/cheaper secret storage.",
+    "how": "Apps fetch secrets/params at runtime via API/IAM; Secrets Manager additionally rotates them automatically.",
+    "when": "Secrets Manager for rotation; Parameter Store for cheap config/secrets.",
+    "whenNot": "Paying for Secrets Manager when you don't need rotation.",
+    "advantages": [
+      "Secrets Manager: auto-rotation",
+      "Parameter Store: cheap config",
+      "Both IAM-controlled + encrypted"
+    ],
+    "disadvantages": [
+      "Secrets Manager costs per secret",
+      "Parameter Store: no native rotation",
+      "Choosing the right one"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-27": {
+    "pitch": "CloudWatch monitors metrics, logs and alarms for AWS workloads.",
+    "definition": "Amazon CloudWatch is AWS's monitoring and observability service. It collects metrics (CPU, latency, custom), aggregates logs (CloudWatch Logs), sets alarms that trigger actions/notifications on thresholds, and builds dashboards. You monitor applications by emitting metrics/logs, creating alarms (e.g. high error rate), and using Logs Insights to query - enabling detection and automated responses like scaling.",
+    "how": "Resources/apps emit metrics + logs -> CloudWatch stores them -> alarms fire on thresholds -> dashboards + actions.",
+    "when": "Monitoring and alerting on AWS workloads.",
+    "whenNot": "Deep cross-system tracing alone (add X-Ray).",
+    "advantages": [
+      "Metrics + logs + alarms",
+      "Triggers scaling/actions",
+      "Dashboards + Logs Insights"
+    ],
+    "disadvantages": [
+      "Cost at high volume",
+      "Basic tracing vs X-Ray",
+      "Metric/log config effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-28": {
+    "pitch": "CloudTrail records API/audit activity; CloudWatch tracks performance.",
+    "definition": "AWS CloudTrail records a history of API calls and account activity - who did what, when, from where - for governance, compliance and security auditing. CloudWatch focuses on operational monitoring: metrics, logs and alarms about how resources are performing. CloudTrail answers 'who changed this?'; CloudWatch answers 'how is it running?'. They complement each other.",
+    "how": "CloudTrail logs every API action for audit; CloudWatch collects metrics/logs for performance + alarms.",
+    "when": "CloudTrail for audit/security; CloudWatch for ops monitoring.",
+    "whenNot": "Using CloudWatch for an audit trail (use CloudTrail).",
+    "advantages": [
+      "CloudTrail: full audit log",
+      "CloudWatch: performance metrics",
+      "Complementary"
+    ],
+    "disadvantages": [
+      "Different purposes confuse",
+      "CloudTrail volume/cost",
+      "Both need configuration"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-29": {
+    "pitch": "CloudFormation is AWS-native IaC; IaC makes infra repeatable.",
+    "definition": "AWS CloudFormation is AWS's Infrastructure-as-Code service: you define resources declaratively in a JSON/YAML template, and CloudFormation provisions and manages them as a stack, handling dependencies, updates and rollback. IaC matters because it makes infrastructure versioned, reviewable, repeatable and automatable - eliminating manual, error-prone setup and enabling consistent environments and disaster recovery.",
+    "how": "Write a template -> CloudFormation creates a stack, ordering + tracking resources, with change sets + rollback.",
+    "when": "Repeatable AWS infrastructure provisioning.",
+    "whenNot": "Multi-cloud (consider Terraform).",
+    "advantages": [
+      "AWS-native IaC",
+      "Stack management + rollback",
+      "Repeatable, versioned"
+    ],
+    "disadvantages": [
+      "AWS-only",
+      "Verbose templates",
+      "State/stack drift"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-30": {
+    "pitch": "Terraform is cloud-agnostic IaC; CloudFormation is AWS-only.",
+    "definition": "Both are Infrastructure-as-Code tools. Terraform (HashiCorp) is cloud-agnostic, using HCL to provision across AWS, Azure, GCP and more, with a separate state file and a plan/apply workflow. CloudFormation is AWS-native, deeply integrated, managing resources as stacks with no separate state to host. Choose Terraform for multi-cloud/portability, CloudFormation for pure-AWS native integration.",
+    "how": "Terraform: HCL + state, multi-provider. CloudFormation: AWS templates as managed stacks, no external state.",
+    "when": "Terraform for multi-cloud; CloudFormation for AWS-native.",
+    "whenNot": "Forcing one where the other clearly fits.",
+    "advantages": [
+      "Terraform: multi-cloud + plan",
+      "CloudFormation: AWS-native, no state to host",
+      "Both declarative"
+    ],
+    "disadvantages": [
+      "Terraform: manage state",
+      "CloudFormation: AWS-only/verbose",
+      "Ecosystem differences"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-31": {
+    "pitch": "SNS is a pub/sub service for fan-out notifications.",
+    "definition": "Amazon SNS (Simple Notification Service) is a managed publish/subscribe messaging service for fan-out: a publisher sends a message to a topic, and SNS delivers it to all subscribers (Lambda, SQS, HTTP endpoints, email/SMS) simultaneously. Use it to broadcast events to multiple consumers or to send notifications, decoupling producers from many consumers.",
+    "how": "Publish a message to an SNS topic -> SNS pushes it to all subscribed endpoints in parallel (fan-out).",
+    "when": "Fan-out events and push notifications.",
+    "whenNot": "Durable work queues with one consumer (use SQS).",
+    "advantages": [
+      "One-to-many fan-out",
+      "Many endpoint types",
+      "Decouples producers"
+    ],
+    "disadvantages": [
+      "Push (no buffering like SQS)",
+      "Delivery retries limited",
+      "No message ordering"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-32": {
+    "pitch": "SQS is a managed queue; Standard is high-throughput, FIFO is ordered.",
+    "definition": "Amazon SQS (Simple Queue Service) is a managed message queue that decouples producers and consumers - producers send messages, consumers poll and process them. Standard queues offer nearly unlimited throughput with at-least-once delivery and best-effort ordering (possible duplicates/reordering). FIFO queues guarantee exactly-once processing and strict ordering, at lower throughput. Choose by whether ordering/dedup matters.",
+    "how": "Producer sends to a queue -> consumer polls + processes + deletes; FIFO adds strict order + dedup, Standard maximizes throughput.",
+    "when": "Decoupling and buffering work between services.",
+    "whenNot": "Real-time fan-out to many subscribers (use SNS).",
+    "advantages": [
+      "Standard: huge throughput",
+      "FIFO: order + exactly-once",
+      "Decouples + buffers"
+    ],
+    "disadvantages": [
+      "Standard: duplicates/reorder",
+      "FIFO: lower throughput",
+      "Polling model"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-33": {
+    "pitch": "EventBridge is an event bus with routing/filtering; SNS is simple pub/sub.",
+    "definition": "Amazon EventBridge is a serverless event bus that ingests events from AWS services, SaaS apps and your own apps, and routes them to targets using content-based rules and filtering, with schema discovery. SNS is simpler topic-based pub/sub fan-out. EventBridge suits event-driven architectures needing rich routing/filtering and many integrations; SNS suits straightforward broadcast/notifications.",
+    "how": "Events hit the bus -> rules filter/route them to targets (Lambda, SQS, etc.); richer than SNS's topic fan-out.",
+    "when": "Event-driven apps needing routing + filtering.",
+    "whenNot": "Simple fan-out where SNS is enough.",
+    "advantages": [
+      "Content-based routing/filtering",
+      "Many SaaS/AWS sources",
+      "Schema registry"
+    ],
+    "disadvantages": [
+      "More complex than SNS",
+      "Per-event cost",
+      "Rule management"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-34": {
+    "pitch": "CodePipeline orchestrates AWS-native CI/CD stages.",
+    "definition": "AWS CodePipeline is a managed continuous delivery service that models and automates your release process as a pipeline of stages (source -> build -> test -> deploy). It integrates CodeCommit/GitHub (source), CodeBuild (build/test) and CodeDeploy/ECS/CloudFormation (deploy), automatically running the pipeline on each change. You implement CI/CD by defining these stages and approval gates.",
+    "how": "A source change triggers the pipeline -> stages run in order (build via CodeBuild, deploy via CodeDeploy) with gates.",
+    "when": "AWS-native CI/CD automation.",
+    "whenNot": "Multi-cloud or when using GitHub Actions/ADO already.",
+    "advantages": [
+      "Managed AWS CI/CD",
+      "Integrates AWS dev tools",
+      "Stage-based + approvals"
+    ],
+    "disadvantages": [
+      "AWS-centric",
+      "Less flexible than some CI",
+      "Config across tools"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-35": {
+    "pitch": "CodeBuild compiles/tests; CodeDeploy automates deployments.",
+    "definition": "AWS CodeBuild is a fully managed build service that compiles source, runs tests and produces artifacts/Docker images on demand, scaling automatically with no build servers to manage. AWS CodeDeploy automates deploying applications to EC2, Lambda or ECS, supporting in-place, blue-green and rolling strategies with health checks and rollback. Together (often via CodePipeline) they cover build and deploy.",
+    "how": "CodeBuild builds + tests into artifacts; CodeDeploy rolls those artifacts out with a chosen deployment strategy.",
+    "when": "Managed build and deployment on AWS.",
+    "whenNot": "When existing CI/CD tools already cover this.",
+    "advantages": [
+      "CodeBuild: managed builds",
+      "CodeDeploy: safe rollouts",
+      "Blue-green/rolling support"
+    ],
+    "disadvantages": [
+      "AWS-specific",
+      "Config overhead",
+      "Less flexible than generic CI"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-36": {
+    "pitch": "Secure AWS apps with IAM, VPC isolation, encryption and monitoring.",
+    "definition": "You secure an AWS application with defense in depth: least-privilege IAM roles (no hardcoded keys), network isolation via VPC/private subnets/security groups, encryption in transit (TLS) and at rest (KMS), secrets in Secrets Manager, a WAF/Shield for web protection, CloudTrail auditing and CloudWatch/GuardDuty monitoring, and regular patching. Each layer limits the blast radius of a compromise.",
+    "how": "Layer IAM + VPC + encryption + secret management + WAF + auditing/monitoring around the app.",
+    "when": "Any production workload on AWS.",
+    "whenNot": "Never - security is always needed.",
+    "advantages": [
+      "Defense in depth",
+      "Least-privilege + encryption",
+      "Auditing + threat detection"
+    ],
+    "disadvantages": [
+      "Many layers to configure",
+      "Misconfig is the top risk",
+      "Ongoing maintenance"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-37": {
+    "pitch": "Design for HA with multi-AZ redundancy, load balancing and auto scaling.",
+    "definition": "You design a highly available, fault-tolerant AWS app by removing single points of failure: deploy across multiple Availability Zones behind an Elastic Load Balancer, use Auto Scaling for elastic, self-healing compute, Multi-AZ RDS (or DynamoDB) for resilient data, decouple with SQS/SNS, store assets in S3 + CloudFront, and add health checks, retries and automated failover. The system survives instance and AZ failures.",
+    "how": "Spread stateless compute across AZs behind an LB + Auto Scaling, with Multi-AZ data and decoupling - no SPOFs.",
+    "when": "Apps needing high uptime and resilience.",
+    "whenNot": "Low-stakes internal tools tolerant of downtime.",
+    "advantages": [
+      "Survives AZ/instance loss",
+      "Elastic + self-healing",
+      "Decoupled, resilient data"
+    ],
+    "disadvantages": [
+      "Higher cost",
+      "Architectural complexity",
+      "Failover testing needed"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "HA architecture",
+      "mermaid": "flowchart LR\n  U[Users] --> LB[ELB]\n  LB --> A1[AZ-1 instances]\n  LB --> A2[AZ-2 instances]\n  A1 --> DB[(Multi-AZ RDS)]\n  A2 --> DB"
+    }
+  },
+  "aws-38": {
+    "pitch": "Migrate to AWS with the 6 Rs, starting from assessment.",
+    "definition": "You migrate an on-premises app to AWS using a structured approach: assess the portfolio, then choose a strategy per app from the '6 Rs' - Rehost (lift-and-shift), Replatform (lift-and-optimize), Refactor (re-architect), Repurchase (move to SaaS), Retire, or Retain. Tools like AWS Migration Hub, DMS (databases) and Application Migration Service help. You migrate in waves, validate, then optimize for cost and cloud-native features.",
+    "how": "Assess -> pick a 6-Rs strategy per app -> migrate in waves with AWS tools (DMS/MGN) -> validate -> optimize.",
+    "when": "Moving existing workloads to the cloud.",
+    "whenNot": "Greenfield apps (build cloud-native directly).",
+    "advantages": [
+      "Structured 6-Rs strategy",
+      "AWS migration tooling",
+      "Phased, validated waves"
+    ],
+    "disadvantages": [
+      "Migration risk/effort",
+      "Dependency mapping",
+      "Optimization comes later"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-39": {
+    "pitch": "Cut AWS costs with right-sizing, scaling, purchasing options and tiering.",
+    "definition": "You optimize AWS costs by right-sizing resources (match instance types to load), using Auto Scaling to avoid idle capacity, choosing purchasing options (Savings Plans/Reserved/Spot Instances) for predictable or fault-tolerant workloads, moving data to cheaper S3 tiers, deleting unused resources, leveraging serverless to pay-per-use, and monitoring spend with Cost Explorer and budgets. Continuous review keeps costs aligned with value.",
+    "how": "Right-size + autoscale + buy Savings Plans/Spot + tier storage + delete waste + monitor with Cost Explorer.",
+    "when": "Controlling and reducing cloud spend.",
+    "whenNot": "Sacrificing reliability purely to cut cost.",
+    "advantages": [
+      "Right-sizing + autoscaling",
+      "Savings Plans/Spot discounts",
+      "Storage tiering"
+    ],
+    "disadvantages": [
+      "Ongoing effort",
+      "Spot interruptions",
+      "Complexity of options"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-40": {
+    "pitch": "A real AWS project ties compute, data, deploy, monitoring and security together.",
+    "definition": "A real AWS architecture I would describe: an ASP.NET Core app containerized and run on ECS Fargate behind an Application Load Balancer across multiple AZs, with Auto Scaling; data in Multi-AZ RDS plus DynamoDB for high-scale tables; static assets in S3 served by CloudFront; secrets in Secrets Manager; CI/CD via CodePipeline/CodeBuild/CodeDeploy; monitoring with CloudWatch and auditing with CloudTrail; and least-privilege IAM with VPC isolation. It scales, self-heals and is observable end to end.",
+    "how": "Containers on Fargate behind an ALB across AZs + RDS/DynamoDB + S3/CloudFront + CI/CD + CloudWatch + IAM/VPC.",
+    "when": "Describing a production AWS system.",
+    "whenNot": "A trivial app where this is over-engineering.",
+    "advantages": [
+      "HA across AZs",
+      "Managed data + CI/CD",
+      "Observable + secured"
+    ],
+    "disadvantages": [
+      "Architectural complexity",
+      "Cost management",
+      "Requires cloud expertise"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "AWS project",
+      "mermaid": "flowchart LR\n  CF[CloudFront] --> ALB[ALB]\n  ALB --> ECS[Fargate Tasks]\n  ECS --> RDS[(RDS)]\n  ECS --> Dyn[(DynamoDB)]\n  ECS --> S3[(S3)]"
+    }
+  },
+  "aws-41": {
+    "pitch": "Design a HA Web API: ALB + Auto Scaling across AZs + Multi-AZ DB.",
+    "definition": "A highly available Web API on AWS: containers or EC2 instances running the API in an Auto Scaling group spread across at least two AZs, behind an Application Load Balancer that health-checks and distributes traffic; a Multi-AZ RDS (or DynamoDB) for resilient data; caching with ElastiCache; assets/edge via CloudFront; secrets in Secrets Manager; and CloudWatch alarms driving scaling. No single AZ or instance failure takes it down.",
+    "how": "ALB -> Auto Scaling group across AZs -> Multi-AZ RDS + cache; health checks + alarms keep it healthy and elastic.",
+    "when": "Production APIs needing uptime + scale.",
+    "whenNot": "Low-traffic internal APIs.",
+    "advantages": [
+      "Survives instance/AZ failure",
+      "Elastic scaling",
+      "Resilient data tier"
+    ],
+    "disadvantages": [
+      "Higher cost",
+      "More to operate",
+      "Stateless design needed"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "HA Web API",
+      "mermaid": "flowchart LR\n  U[Clients] --> ALB[ALB]\n  ALB --> I1[API AZ-1]\n  ALB --> I2[API AZ-2]\n  I1 --> DB[(Multi-AZ RDS)]\n  I2 --> DB"
+    }
+  },
+  "aws-42": {
+    "pitch": "Serverless app: API Gateway -> Lambda -> DynamoDB.",
+    "definition": "A serverless application uses API Gateway to expose HTTP endpoints that invoke Lambda functions containing the business logic, which read/write data in DynamoDB - with no servers to manage and automatic scaling. Add Cognito for auth, S3 for assets, and CloudWatch for monitoring. You pay only per request/execution, and it scales from zero to high load automatically.",
+    "how": "Request -> API Gateway -> Lambda runs logic -> DynamoDB stores/returns data -> response, all serverless + auto-scaled.",
+    "when": "Event-driven/variable-load apps with no ops.",
+    "whenNot": "Steady heavy compute or long-running tasks.",
+    "advantages": [
+      "No servers, auto-scale",
+      "Pay-per-use",
+      "Fast to build"
+    ],
+    "disadvantages": [
+      "Cold starts",
+      "Execution limits",
+      "DynamoDB access-pattern design"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Serverless app",
+      "mermaid": "flowchart LR\n  U[Client] --> G[API Gateway]\n  G --> L[Lambda]\n  L --> D[(DynamoDB)]"
+    }
+  },
+  "aws-43": {
+    "pitch": "Deploy microservices on AWS via ECS/EKS behind an ALB.",
+    "definition": "You deploy a microservices app on AWS by containerizing each service and running them on ECS Fargate or EKS, each as its own service/deployment that scales independently, fronted by an Application Load Balancer (or API Gateway) with path/host routing; services communicate via internal endpoints or SQS/SNS/EventBridge; data per service in RDS/DynamoDB; secrets in Secrets Manager; and CI/CD per service via CodePipeline. It gives independent scaling and deployment.",
+    "how": "Containerize each service -> ECS/EKS services behind an ALB -> internal/event communication -> per-service CI/CD + data.",
+    "when": "Independently deployable services at scale.",
+    "whenNot": "A monolith better run as one service.",
+    "advantages": [
+      "Independent scale/deploy",
+      "ECS/EKS orchestration",
+      "Event-driven decoupling"
+    ],
+    "disadvantages": [
+      "Operational complexity",
+      "Service networking",
+      "Distributed data consistency"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-44": {
+    "pitch": "Handle spikes with Auto Scaling behind Elastic Load Balancing.",
+    "definition": "You handle high traffic by combining an Elastic Load Balancer (distributing across healthy instances/AZs) with Auto Scaling (adding instances/tasks as load rises and removing them as it falls, driven by CloudWatch metrics). Add caching (ElastiCache/CloudFront) to cut backend load, ensure services are stateless so instances are interchangeable, and use SQS to absorb spikes. The system scales out automatically and stays responsive.",
+    "how": "ELB spreads traffic -> Auto Scaling adds capacity on metric thresholds -> caching + queues absorb spikes.",
+    "when": "Variable or spiky traffic patterns.",
+    "whenNot": "Perfectly steady, predictable load.",
+    "advantages": [
+      "Automatic scale-out",
+      "LB spreads load + AZs",
+      "Caching/queues cut pressure"
+    ],
+    "disadvantages": [
+      "Scale-up lag",
+      "Needs stateless apps",
+      "Cost rises with scale"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-45": {
+    "pitch": "Implement uploads with S3, ideally via pre-signed URLs.",
+    "definition": "You implement file upload and storage with Amazon S3: the recommended pattern is the backend issuing a pre-signed URL so the client uploads directly to S3 (offloading bandwidth from your servers), with the object stored durably in a bucket. You secure access with IAM/bucket policies, enable encryption, optionally trigger Lambda on upload (e.g. to process/thumbnail), and serve downloads via CloudFront or pre-signed URLs.",
+    "how": "Backend returns a pre-signed URL -> client PUTs the file directly to S3 -> optional Lambda trigger processes it.",
+    "when": "Storing user files, media, backups at scale.",
+    "whenNot": "Tiny transient data better kept elsewhere.",
+    "advantages": [
+      "Durable, scalable storage",
+      "Direct-to-S3 uploads",
+      "Event triggers + lifecycle"
+    ],
+    "disadvantages": [
+      "Pre-signed URL setup",
+      "Access policy care",
+      "Retrieval/egress cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var url = s3.GetPreSignedURL(new() { BucketName=\"up\", Key=key, Verb=Put, Expires=DateTime.Now.AddMinutes(5) });"
+    }
+  },
+  "aws-46": {
+    "pitch": "Secure service-to-service traffic with private networking, TLS and IAM.",
+    "definition": "You secure communication between microservices in AWS by keeping them in private subnets (no public exposure), encrypting traffic with TLS/mTLS (often via a service mesh like App Mesh), authenticating calls with IAM roles or signed requests, restricting access with security groups, and using PrivateLink/VPC endpoints for private connectivity to AWS services. This enforces zero-trust between services.",
+    "how": "Private subnets + security groups limit who can call -> TLS/mTLS encrypts -> IAM/mesh authenticates each call.",
+    "when": "Production microservices, especially regulated.",
+    "whenNot": "A single service on a trusted network.",
+    "advantages": [
+      "Private, encrypted traffic",
+      "IAM/mesh authentication",
+      "Zero-trust between services"
+    ],
+    "disadvantages": [
+      "Mesh/cert complexity",
+      "Performance overhead",
+      "Networking setup"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-47": {
+    "pitch": "Centralize logging/monitoring with CloudWatch (and X-Ray) plus alarms.",
+    "definition": "You implement centralized logging and monitoring on AWS by sending all application and infrastructure logs to CloudWatch Logs (or an ELK/OpenSearch stack), collecting metrics in CloudWatch, tracing requests across services with X-Ray, building dashboards, and configuring alarms that notify (SNS) or trigger actions on anomalies. Correlation/trace IDs tie logs together. This gives one place to detect, diagnose and alert on issues.",
+    "how": "Apps emit logs/metrics/traces -> CloudWatch + X-Ray aggregate -> dashboards + alarms -> notify/act on anomalies.",
+    "when": "Operating distributed systems on AWS.",
+    "whenNot": "A single tiny service with local logs.",
+    "advantages": [
+      "One observability place",
+      "Metrics + logs + traces",
+      "Alarms + auto-actions"
+    ],
+    "disadvantages": [
+      "Telemetry cost",
+      "Setup/instrumentation",
+      "Alert tuning"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-48": {
+    "pitch": "Do blue-green/rolling deploys with CodeDeploy or ECS strategies.",
+    "definition": "You perform blue-green or rolling deployments on AWS using CodeDeploy (for EC2/Lambda/ECS) or ECS/EKS deployment strategies. Blue-green provisions a parallel 'green' environment, tests it, then shifts traffic via the load balancer (instant rollback to blue). Rolling replaces instances/tasks gradually with health checks for zero downtime. Both integrate with CodePipeline and use health checks plus automatic rollback on failure.",
+    "how": "CodeDeploy/ECS spins up the new version (green or batches) -> health-check -> shift traffic -> rollback if unhealthy.",
+    "when": "Zero-downtime releases on AWS.",
+    "whenNot": "Breaking changes needing a maintenance window.",
+    "advantages": [
+      "Zero downtime",
+      "Blue-green: instant rollback",
+      "Health-gated rollout"
+    ],
+    "disadvantages": [
+      "Blue-green: double resources",
+      "Backward compatibility",
+      "DB migration care"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-49": {
+    "pitch": "Back up RDS with automated backups/snapshots; restore to a new instance.",
+    "definition": "You back up an RDS database using automated backups (daily snapshots + transaction logs enabling point-in-time recovery within a retention window) and manual DB snapshots for long-term/pre-change backups. To restore, you create a new RDS instance from a snapshot or to a specific point in time (RDS doesn't overwrite the existing instance), then repoint the app. Multi-AZ and cross-region snapshot copies add resilience.",
+    "how": "Enable automated backups + take snapshots -> restore creates a NEW instance from a snapshot or point-in-time -> repoint app.",
+    "when": "Protecting and recovering relational data.",
+    "whenNot": "Ephemeral data that needs no recovery.",
+    "advantages": [
+      "Point-in-time recovery",
+      "Automated + manual snapshots",
+      "Cross-region copies"
+    ],
+    "disadvantages": [
+      "Restore makes a new instance",
+      "Storage cost for backups",
+      "Restore time for large DBs"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "aws-50": {
+    "pitch": "Request flow: user -> CloudFront/ALB -> app -> RDS -> response.",
+    "definition": "The end-to-end flow for an ASP.NET Core app on AWS: a user request hits Route 53 (DNS) and CloudFront (CDN, for cacheable/static content), then the Application Load Balancer, which routes to a healthy app instance/container (EC2/ECS/Fargate) in a private subnet across AZs; the app authenticates, runs logic, and queries RDS (or DynamoDB), possibly checking ElastiCache first; the response returns back up through the ALB to the user. CloudWatch monitors the whole path.",
+    "how": "Route 53 -> CloudFront -> ALB -> app instance (private subnet) -> cache/RDS -> response back up the chain.",
+    "when": "Understanding a full AWS request path.",
+    "whenNot": "A single-tier app with no AWS services.",
+    "advantages": [
+      "Clear end-to-end path",
+      "HA + caching layers",
+      "Monitored throughout"
+    ],
+    "disadvantages": [
+      "Many components",
+      "Latency per hop",
+      "Each layer to configure"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "Request flow",
+      "mermaid": "flowchart LR\n  U[User] --> R53[Route 53]\n  R53 --> CF[CloudFront]\n  CF --> ALB[ALB]\n  ALB --> App[App Instance]\n  App --> Cache[(Cache)]\n  App --> DB[(RDS)]"
+    }
+  }
+}
