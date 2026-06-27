@@ -1,1 +1,600 @@
-{}
+{
+  "gen-ai-1": {
+    "pitch": "Generative AI creates new content; traditional AI mostly predicts/classifies.",
+    "definition": "Generative AI is a class of AI that creates new content - text, images, code, audio, video - by learning patterns from training data and generating novel outputs (e.g. via LLMs or diffusion models). Traditional (discriminative) AI typically classifies or predicts from existing data (spam or not, price estimate). The key difference: generative AI produces new artifacts, while traditional AI analyzes or labels existing inputs.",
+    "how": "Learn the distribution of training data -> sample from it to generate new, original content.",
+    "when": "Creating text/images/code from prompts.",
+    "whenNot": "Deterministic classification/prediction tasks.",
+    "advantages": [
+      "Creates new content",
+      "Versatile across modalities",
+      "Prompt-driven, no per-task training"
+    ],
+    "disadvantages": [
+      "Can hallucinate",
+      "Compute/cost heavy",
+      "Probabilistic outputs"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-2": {
+    "pitch": "An LLM is a large neural network that generates and understands text.",
+    "definition": "A Large Language Model is a Transformer-based neural network trained on massive text corpora to predict the next token, giving it broad language understanding and generation ability. With billions of parameters, it can answer questions, summarize, translate, write and reason via prompting - the core engine behind most generative-AI text applications.",
+    "how": "Trained to predict tokens on huge text -> at inference, generates text token by token from a prompt.",
+    "when": "Text generation, Q&A, summarization, coding.",
+    "whenNot": "Tasks needing guaranteed-correct, deterministic output.",
+    "advantages": [
+      "Broad language ability",
+      "Prompt-adaptable",
+      "Strong general knowledge"
+    ],
+    "disadvantages": [
+      "Hallucinations",
+      "Cost/latency",
+      "Knowledge cutoff"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-3": {
+    "pitch": "AI > ML > Deep Learning > Generative AI, each a nested subset.",
+    "definition": "These are nested fields. AI is the broad goal of machines performing intelligent tasks. Machine Learning is a subset where systems learn patterns from data instead of explicit rules. Deep Learning is a subset of ML using multi-layer neural networks for complex patterns (images, language). Generative AI is an application of deep learning focused on creating new content (LLMs, diffusion models). Each is a more specialized layer within the previous.",
+    "how": "AI (goal) contains ML (learns from data), which contains Deep Learning (neural nets), which enables Generative AI.",
+    "when": "Placing a technique in the AI landscape.",
+    "whenNot": "Treating the terms as interchangeable.",
+    "advantages": [
+      "Clear nested hierarchy",
+      "DL powers GenAI",
+      "Shared foundations"
+    ],
+    "disadvantages": [
+      "Terms often conflated",
+      "Boundaries blur",
+      "Jargon overload"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "AI hierarchy",
+      "mermaid": "flowchart TB\n  AI --> ML\n  ML --> DL[Deep Learning]\n  DL --> GenAI[Generative AI]"
+    }
+  },
+  "gen-ai-4": {
+    "pitch": "Tokens are text chunks; the context window is how many fit at once.",
+    "definition": "Tokens are the subword units LLMs process (roughly 0.75 words each), produced by tokenization which splits text into IDs the model understands. The context window is the maximum tokens (input + output) the model can handle in one call - prompt, history, retrieved context and answer must all fit, and you're billed per token. Managing tokens is central to cost and what the model can 'see'.",
+    "how": "Tokenizer splits text into subword tokens -> the model processes them within its fixed context window.",
+    "when": "Managing prompt size, cost and context limits.",
+    "whenNot": "Assuming tokens equal words.",
+    "advantages": [
+      "Tokens drive cost + limits",
+      "Subword handles any text",
+      "Window bounds input"
+    ],
+    "disadvantages": [
+      "Window caps long inputs",
+      "Token != word",
+      "Truncation loses info"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-5": {
+    "pitch": "Prompt engineering crafts inputs; best practices make outputs reliable.",
+    "definition": "Prompt engineering is designing the input to an LLM to get accurate, consistent results. Best practices: give clear, specific instructions; set a role/context; specify the output format (and provide a schema/example); include relevant context (RAG) not the whole world; use few-shot examples for tricky patterns; break complex tasks into steps; ask it to reason or cite sources; and iterate based on results. Good prompts dramatically improve quality without any training.",
+    "how": "Write clear role + task + format + examples + relevant context -> the model follows the specified pattern.",
+    "when": "Steering model behaviour cheaply and quickly.",
+    "whenNot": "When examples/data are huge (use RAG/fine-tuning).",
+    "advantages": [
+      "No training needed",
+      "Format + few-shot improve accuracy",
+      "Fast iteration"
+    ],
+    "disadvantages": [
+      "Prompt brittleness",
+      "Examples cost tokens",
+      "Trial and error"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-6": {
+    "pitch": "Shots are examples in the prompt: zero, one or few.",
+    "definition": "These describe how many examples you give the model in the prompt. Zero-shot: just the instruction, no examples - relies on the model's general ability. One-shot: a single example demonstrating the task. Few-shot: several examples showing the desired pattern/format. More examples generally improve accuracy and format adherence on harder or output-sensitive tasks, at the cost of more tokens.",
+    "how": "Include 0, 1 or several input->output examples before the real input -> the model mimics the demonstrated pattern.",
+    "when": "Improving accuracy/format without training.",
+    "whenNot": "When examples are too large for the context window.",
+    "advantages": [
+      "Few-shot boosts accuracy",
+      "No fine-tuning needed",
+      "Controls output format"
+    ],
+    "disadvantages": [
+      "More examples = more tokens",
+      "Example quality matters",
+      "Diminishing returns"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-7": {
+    "pitch": "RAG retrieves relevant knowledge and adds it to the prompt.",
+    "definition": "Retrieval-Augmented Generation grounds an LLM in external knowledge: at query time you retrieve relevant documents from a knowledge base (via embeddings + a vector database) and add them to the prompt, so the model answers from real, current, proprietary data rather than only its training. It's used to reduce hallucinations, provide up-to-date and domain-specific answers with citations, and avoid expensive retraining.",
+    "how": "Embed the query -> retrieve top-k relevant docs from a vector DB -> add them to the prompt -> LLM answers grounded.",
+    "when": "Answering from current/proprietary knowledge.",
+    "whenNot": "Pure creative generation with no knowledge base.",
+    "advantages": [
+      "Grounded, current answers",
+      "Citations + less hallucination",
+      "No retraining needed"
+    ],
+    "disadvantages": [
+      "Retrieval infra (vector DB)",
+      "Chunking/embedding quality",
+      "More moving parts"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-8": {
+    "pitch": "RAG injects knowledge at query time; fine-tuning changes the weights.",
+    "definition": "RAG keeps the model frozen and supplies relevant knowledge at query time from a vector store - ideal for up-to-date, proprietary facts with citations, easy to update. Fine-tuning retrains the model's weights on examples to change behaviour, tone, or skill - ideal for style/format consistency but costly and static for facts. Use RAG for knowledge, fine-tuning for behaviour; they can be combined.",
+    "how": "RAG: fetch docs and prepend to the prompt. Fine-tune: bake patterns into the model's weights via training.",
+    "when": "RAG for facts; fine-tune for behaviour/style.",
+    "whenNot": "Fine-tuning to inject frequently-changing facts.",
+    "advantages": [
+      "RAG: fresh, cited, updatable",
+      "Fine-tune: behaviour/style",
+      "Combine for both"
+    ],
+    "disadvantages": [
+      "Fine-tune: costly + static",
+      "RAG: retrieval infra",
+      "Each fits different needs"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-9": {
+    "pitch": "Embeddings are meaning-vectors that power semantic search.",
+    "definition": "Embeddings are dense numeric vectors capturing the semantic meaning of text, so similar meanings sit close in vector space. In semantic search you embed documents and the user query with the same model, then find the nearest document vectors (by cosine similarity) - matching by meaning, not keywords. This retrieves relevant results even when wording differs, and is the retrieval foundation of RAG.",
+    "how": "Embed docs + query -> compute vector similarity -> return the closest (most semantically relevant) documents.",
+    "when": "Semantic search and RAG retrieval.",
+    "whenNot": "Exact keyword/string matching.",
+    "advantages": [
+      "Match by meaning",
+      "Powers RAG/search",
+      "Robust to wording"
+    ],
+    "disadvantages": [
+      "Needs an embedding model",
+      "Vector storage",
+      "Quality varies by model"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-10": {
+    "pitch": "Vector databases store embeddings for fast similarity retrieval in RAG.",
+    "definition": "A vector database stores embedding vectors and performs fast approximate nearest-neighbor search by similarity - the retrieval engine RAG depends on. You ingest documents as chunked embeddings; at query time the vector DB returns the most similar chunks to feed the LLM. They're required because brute-force similarity over millions of vectors is too slow; vector DBs index them for millisecond retrieval at scale. Examples: Azure AI Search, Pinecone, Qdrant, Weaviate, pgvector.",
+    "how": "Index doc embeddings -> ANN search returns top-k similar vectors per query -> feed to the LLM.",
+    "when": "Scalable retrieval for RAG/semantic search.",
+    "whenNot": "Tiny fixed datasets (a simple index works).",
+    "advantages": [
+      "Fast ANN similarity search",
+      "Scales to millions of vectors",
+      "Backbone of RAG"
+    ],
+    "disadvantages": [
+      "Extra infrastructure",
+      "Index tuning/cost",
+      "Embedding-quality dependent"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-11": {
+    "pitch": "Hallucinations are confident wrong outputs; grounding minimizes them.",
+    "definition": "Hallucinations occur when an LLM produces plausible but false or fabricated content, because it predicts likely text rather than verified facts. You minimize them with RAG grounding (answer only from retrieved sources), citations so claims are checkable, lower temperature, prompting the model to say 'I don't know', output validation/guardrails, and narrowing tasks. Grounding plus verification is the core defense - they can't be fully eliminated.",
+    "how": "Predicting text without a fact source causes them -> ground with retrieved data + citations + validation.",
+    "when": "Any factual generative-AI application.",
+    "whenNot": "Creative tasks where invention is wanted.",
+    "advantages": [
+      "RAG grounding helps most",
+      "Citations enable checking",
+      "Lower temperature"
+    ],
+    "disadvantages": [
+      "Never fully eliminated",
+      "Hard to auto-detect",
+      "Grounding adds infra"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-12": {
+    "pitch": "GPT, Claude, Gemini and Llama are leading model families with trade-offs.",
+    "definition": "These are major LLM families. OpenAI GPT and Anthropic Claude are strong proprietary models known for reasoning, coding and safety. Google Gemini is multimodal and integrated with Google's ecosystem. Meta's Llama is open-weight - free to self-host and fine-tune. They differ in quality, context length, multimodality, cost, openness and licensing; you choose by capability needs, budget, privacy/hosting and ecosystem rather than a single 'best'.",
+    "how": "Each family trades quality, cost, context, multimodality and openness; select per requirement.",
+    "when": "Choosing a model for a project.",
+    "whenNot": "Assuming one model is best for everything.",
+    "advantages": [
+      "Proprietary: top quality",
+      "Llama: open + self-hostable",
+      "Varied strengths"
+    ],
+    "disadvantages": [
+      "Proprietary: cost + lock-in",
+      "Open: you host it",
+      "Fast-changing field"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-13": {
+    "pitch": "Function calling lets the LLM invoke your tools with structured arguments.",
+    "definition": "Function (tool) calling lets you give an LLM a set of functions (name, description, JSON-schema parameters); instead of answering directly, the model can return a structured call with extracted arguments, your app executes it (fetch data, take an action), and feeds the result back for the final answer. It enables live data access, reliable structured output, and actions - the foundation of AI agents and tool-using assistants.",
+    "how": "Describe tools -> model emits a structured call with args -> your code runs it -> result returned -> model answers.",
+    "when": "Live data, actions, structured output, agents.",
+    "whenNot": "Pure text generation needing no external actions.",
+    "advantages": [
+      "LLM takes real actions",
+      "Reliable structured args",
+      "Basis of agents"
+    ],
+    "disadvantages": [
+      "Implement + secure tools",
+      "Wrong-tool risk",
+      "Extra round trips"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "json",
+      "snippet": "{ \"name\": \"search_orders\", \"parameters\": { \"customerId\": \"string\" } }"
+    }
+  },
+  "gen-ai-14": {
+    "pitch": "AI agents plan and use tools autonomously; chatbots just reply.",
+    "definition": "An AI agent is an LLM-driven system that can plan and take multi-step actions toward a goal - it decides which tools/functions to call, observes results, and iterates (reason-act loops), often with memory. A traditional chatbot follows scripted flows or single-turn Q&A with no autonomous action. Agents differ by autonomy, tool use, planning and adaptability: they don't just answer, they act to accomplish tasks.",
+    "how": "Agent: LLM plans -> calls tools -> observes -> repeats until the goal is met. Chatbot: pattern-match a reply.",
+    "when": "Multi-step tasks needing tools and autonomy.",
+    "whenNot": "Simple FAQ/scripted Q&A (a chatbot suffices).",
+    "advantages": [
+      "Autonomous, multi-step",
+      "Uses tools + memory",
+      "Adapts to results"
+    ],
+    "disadvantages": [
+      "Less predictable",
+      "Can loop/err",
+      "Harder to test/control"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-15": {
+    "pitch": "MCP is an open standard for connecting LLMs to tools and data.",
+    "definition": "MCP (Model Context Protocol) is an open standard that defines how AI applications connect language models to external tools, data sources and context in a consistent way - like a universal adapter between models and the systems they use. Instead of bespoke integrations per tool, an MCP server exposes capabilities (tools, resources, prompts) that any MCP-compatible client/model can use. It standardizes and simplifies giving models secure, reusable access to context.",
+    "how": "An MCP server exposes tools/resources -> an MCP-aware client/model discovers and calls them over the protocol.",
+    "when": "Standardizing model-to-tool/data integrations.",
+    "whenNot": "A single hard-coded tool with no reuse need.",
+    "advantages": [
+      "Standard, reusable integrations",
+      "Decouples models from tools",
+      "Growing ecosystem"
+    ],
+    "disadvantages": [
+      "Newer standard",
+      "Server to implement/host",
+      "Maturing tooling"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-16": {
+    "pitch": "Secure GenAI apps by protecting keys, data, and the model boundary.",
+    "definition": "You secure an LLM application with layered controls: keep API keys in a secret store (Key Vault) and use Managed Identity; redact/minimize sensitive data before sending and use no-training enterprise endpoints; enforce authentication/authorization so users only access permitted data/RAG content; guard against prompt injection and unsafe output with input/output filtering and guardrails; rate-limit and audit; and apply least privilege to any tools the model can call. Treat the model boundary as untrusted.",
+    "how": "Vault keys + redact data + authz on RAG + input/output guardrails + rate limit/audit + least-privilege tools.",
+    "when": "Any production GenAI app handling real data.",
+    "whenNot": "Throwaway local demos.",
+    "advantages": [
+      "Keys/secrets protected",
+      "Data minimization + authz",
+      "Prompt-injection guardrails"
+    ],
+    "disadvantages": [
+      "Many layers to configure",
+      "Injection hard to fully stop",
+      "Ongoing review"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-17": {
+    "pitch": "Evaluate GenAI with golden tests, LLM-judge, groundedness and human review.",
+    "definition": "You evaluate an LLM application with a mix: a golden/regression test set run on every change; automated metrics (semantic similarity to references, valid JSON, correct citations); 'LLM-as-a-judge' scoring outputs on defined criteria; RAG-specific groundedness/faithfulness and retrieval-relevance checks; and human review for nuance. You track quality, latency, cost and safety over time, so you catch regressions and quantify improvements rather than relying on vibes.",
+    "how": "Run a golden set -> score with metrics + LLM-judge + groundedness checks + human review -> track over time.",
+    "when": "Maintaining quality of a GenAI app.",
+    "whenNot": "Quick prototypes.",
+    "advantages": [
+      "Catches regressions",
+      "LLM-judge scales scoring",
+      "Groundedness for RAG"
+    ],
+    "disadvantages": [
+      "No single perfect metric",
+      "Judge bias",
+      "Human review cost"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-18": {
+    "pitch": "Build a RAG chatbot: ingest+embed docs, retrieve, then call Azure OpenAI.",
+    "definition": "You build a RAG chatbot in C#/ASP.NET Core by: ingesting documents (chunk + embed via an embedding model) into a vector database (Azure AI Search/Qdrant); at request time, embedding the user's question, retrieving the top relevant chunks, composing a prompt (system instructions + retrieved context + history), and calling Azure OpenAI/OpenAI's chat API (streaming) to produce a cited answer. Add conversation memory, auth, guardrails, caching and monitoring. Semantic Kernel can orchestrate this.",
+    "how": "Ingest+embed docs -> per query: embed -> retrieve top-k -> build prompt -> call Azure OpenAI -> stream cited answer.",
+    "when": "Grounded enterprise Q&A assistants in .NET.",
+    "whenNot": "Simple chat with no knowledge base.",
+    "advantages": [
+      "Grounded + cited answers",
+      "Native .NET (SK/SDK)",
+      "Current without retraining"
+    ],
+    "disadvantages": [
+      "Retrieval/ingestion infra",
+      "Chunking + prompt tuning",
+      "Cost + safety work"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var ctx = await search.RetrieveAsync(await embed(query), topK: 5);\nvar answer = await chat.CompleteAsync(BuildPrompt(system, ctx, query));"
+    }
+  },
+  "gen-ai-19": {
+    "pitch": "Deploy/scale GenAI like a web app, plus model-call resilience.",
+    "definition": "You deploy and scale a generative-AI app by hosting the ASP.NET Core service on App Service/AKS/Container Apps behind a load balancer with autoscaling, keeping it stateless; scaling the model layer via provisioned throughput or multiple Azure OpenAI deployments/regions with retries, backoff and a circuit breaker for rate limits; caching frequent responses/embeddings; running the vector DB as managed, scalable infra; and adding monitoring of latency, token usage, cost and quality. Async/streaming improves responsiveness.",
+    "how": "Stateless app autoscaled behind an LB + resilient model calls (retry/backoff/multi-deployment) + caching + monitoring.",
+    "when": "Production GenAI at scale.",
+    "whenNot": "Low-traffic internal tools.",
+    "advantages": [
+      "Autoscaled, stateless app",
+      "Resilient model calls",
+      "Caching cuts cost/latency"
+    ],
+    "disadvantages": [
+      "Model rate limits/quota",
+      "Cost management",
+      "Multiple components to operate"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-20": {
+    "pitch": "A real GenAI project combines RAG, prompts, embeddings and deployment.",
+    "definition": "A real generative-AI project I would describe: a RAG knowledge assistant - an ingestion pipeline chunks and embeds enterprise documents into a vector DB (Azure AI Search) with access metadata; an ASP.NET Core API embeds queries, retrieves permitted chunks, applies carefully designed prompts (system rules + context + history), selects a model balancing quality and cost, and streams cited answers from Azure OpenAI; deployed on App Service/AKS with Key Vault, monitored (token usage, latency, quality evals) and secured (auth, PII redaction, guardrails). The hard parts were retrieval quality and hallucination, solved via better chunking, citations and evaluation.",
+    "how": "Ingest+embed -> retrieve permitted context -> prompt + model selection -> stream cited answers -> deploy + monitor + secure.",
+    "when": "Production, grounded GenAI applications.",
+    "whenNot": "A toy single-prompt demo.",
+    "advantages": [
+      "Grounded + cited",
+      "Cost-aware model choice",
+      "Monitored + secured"
+    ],
+    "disadvantages": [
+      "Many components",
+      "Retrieval/prompt tuning",
+      "Cost + safety engineering"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "GenAI project",
+      "mermaid": "flowchart LR\n  Docs --> Emb[Chunk+Embed]\n  Emb --> V[(Vector DB)]\n  U[User] --> API\n  API --> V\n  API --> AOAI[Azure OpenAI]\n  AOAI --> API --> U"
+    }
+  },
+  "gen-ai-21": {
+    "pitch": "Design doc search with RAG: ingest, embed, retrieve, generate.",
+    "definition": "An AI-powered document search system using RAG: an ingestion pipeline extracts text from documents, splits it into overlapping chunks, embeds each chunk and stores them in a vector database with metadata; at query time the user's question is embedded, the vector DB returns the most relevant chunks, and an LLM generates a concise, cited answer (or ranked snippets) from them. Add filters/permissions, hybrid keyword+vector search for precision, and re-ranking for quality.",
+    "how": "Ingest -> chunk + embed -> vector DB; query -> embed -> retrieve (hybrid + re-rank) -> LLM generates cited answer.",
+    "when": "Semantic search/Q&A over a document corpus.",
+    "whenNot": "Exact-keyword lookup in a small fixed set.",
+    "advantages": [
+      "Semantic, cited answers",
+      "Hybrid search + re-rank",
+      "Scales to large corpora"
+    ],
+    "disadvantages": [
+      "Ingestion/embedding pipeline",
+      "Chunking quality matters",
+      "Vector DB cost"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "RAG doc search",
+      "mermaid": "flowchart LR\n  D[Docs] --> Ch[Chunk+Embed] --> V[(Vector DB)]\n  Q[Query] --> E[Embed] --> V\n  V --> L[LLM] --> Ans[Cited Answer]"
+    }
+  },
+  "gen-ai-22": {
+    "pitch": "Build a multi-source chatbot by ingesting PDF/Word/SharePoint into RAG.",
+    "definition": "You build an enterprise chatbot over PDF, Word and SharePoint by creating connectors/loaders for each source that extract text (and metadata/permissions), chunk and embed it into a vector database on a schedule, preserving access controls (trim results to what the user may see). At query time it retrieves permitted chunks and the LLM answers with citations. SharePoint integration uses Graph API; you re-index on document changes and respect each source's security.",
+    "how": "Connectors extract PDF/Word/SharePoint text + permissions -> chunk+embed into RAG -> answer from permitted chunks, cited.",
+    "when": "Cross-source enterprise knowledge assistants.",
+    "whenNot": "A single static FAQ.",
+    "advantages": [
+      "Unifies multiple sources",
+      "Respects per-doc permissions",
+      "Cited, current answers"
+    ],
+    "disadvantages": [
+      "Connector + permission complexity",
+      "Re-indexing on changes",
+      "Parsing varied formats"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-23": {
+    "pitch": "Reduce production hallucinations with grounding, citations and guardrails.",
+    "definition": "You reduce hallucinations in production by grounding answers in RAG (instruct the model to answer only from retrieved sources and say 'I don't know' otherwise), requiring citations and verifying them, lowering temperature, adding output validation/guardrails (schema checks, fact/groundedness checks, refusal of unsupported claims), improving retrieval quality (better chunking, re-ranking, hybrid search), and continuously evaluating with a golden set. Human review for high-stakes answers adds a final safety net.",
+    "how": "Ground with RAG + force citations + validate groundedness + improve retrieval + evaluate continuously.",
+    "when": "Any factual production AI application.",
+    "whenNot": "Creative generation where invention is fine.",
+    "advantages": [
+      "Grounding + citations",
+      "Groundedness validation",
+      "Better retrieval helps"
+    ],
+    "disadvantages": [
+      "Not fully eliminable",
+      "Validation adds latency/cost",
+      "Retrieval tuning effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-24": {
+    "pitch": "Choose a vector DB by scale, ops model, ecosystem and cost.",
+    "definition": "You choose among Pinecone, Azure AI Search, Qdrant, Weaviate and pgvector by your constraints. Pinecone: fully managed, easy, scalable (SaaS cost). Azure AI Search: great if you're on Azure, with hybrid search + integration. Qdrant/Weaviate: powerful open-source, self-host or cloud, rich filtering. pgvector: simplest if you already run PostgreSQL and have modest scale. Decide by managed-vs-self-host, scale, hybrid-search needs, existing stack and budget.",
+    "how": "Match needs (scale, managed vs self-host, hybrid search, existing stack, cost) to the DB that fits best.",
+    "when": "Picking retrieval storage for a RAG app.",
+    "whenNot": "Tiny datasets where a simple index works.",
+    "advantages": [
+      "Azure AI Search: Azure-native + hybrid",
+      "Pinecone: managed + scalable",
+      "pgvector: reuse Postgres"
+    ],
+    "disadvantages": [
+      "Trade-offs per option",
+      "Managed cost vs self-host ops",
+      "Migration effort later"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-25": {
+    "pitch": "Add memory by including recent turns and retrieving relevant history.",
+    "definition": "Because the LLM is stateless, you implement conversation memory in an AI assistant by managing history yourself: include recent turns in the prompt (short-term memory within the context window), summarize older turns to save tokens, and for long-running memory embed past messages/facts into a vector store and retrieve the relevant ones per turn (long-term memory). Optionally maintain structured user profile/state. This keeps context coherent without exceeding token limits.",
+    "how": "Append recent turns + summarize old ones; for long memory, embed+retrieve relevant past context per turn.",
+    "when": "Multi-turn assistants and chatbots.",
+    "whenNot": "Stateless single-shot requests.",
+    "advantages": [
+      "Coherent multi-turn",
+      "Summarize to save tokens",
+      "Retrieval for long memory"
+    ],
+    "disadvantages": [
+      "Window limits history",
+      "Summaries lose detail",
+      "Memory store to manage"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-26": {
+    "pitch": "Integrate Azure OpenAI via its .NET SDK in your Web API.",
+    "definition": "You integrate ChatGPT/Azure OpenAI into an ASP.NET Core Web API using the official Azure.AI.OpenAI (or OpenAI) .NET SDK: register a client (authenticated via Key Vault key or Managed Identity), and in your endpoint build the chat messages (system + user + any RAG context), call the chat completion (optionally streaming), and return the result. Add retries/backoff for rate limits, caching, and monitoring. Semantic Kernel can add orchestration, prompts and tools.",
+    "how": "Register the OpenAI client (Managed Identity) -> build messages -> call chat completion -> return/stream the answer.",
+    "when": "Adding AI features to a .NET API.",
+    "whenNot": "Apps with no language/AI need.",
+    "advantages": [
+      "Official .NET SDK",
+      "Managed Identity (no keys in code)",
+      "Streaming supported"
+    ],
+    "disadvantages": [
+      "API cost/latency",
+      "Rate-limit handling",
+      "Prompt engineering"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "var client = new AzureOpenAIClient(uri, new DefaultAzureCredential());\nvar r = await client.GetChatClient(\"gpt-4o\").CompleteChatAsync(messages);"
+    }
+  },
+  "gen-ai-27": {
+    "pitch": "Stream AI responses token-by-token via SSE to the web app.",
+    "definition": "You stream AI responses to a web app by calling the model's streaming API and forwarding tokens as they arrive, typically over Server-Sent Events (text/event-stream) or WebSockets; the ASP.NET Core endpoint writes and flushes each chunk, and the browser appends them so text appears progressively. This greatly improves perceived latency for chat UIs. Handle client disconnects/cancellation to stop generation and free resources.",
+    "how": "Call the streaming completion -> await foreach token chunks -> write+flush each over SSE -> browser appends them.",
+    "when": "Chat UIs needing responsive output.",
+    "whenNot": "Batch processing needing the full result at once.",
+    "advantages": [
+      "Lower perceived latency",
+      "Progressive UX",
+      "Cancellation frees resources"
+    ],
+    "disadvantages": [
+      "Streaming plumbing",
+      "Partial-failure handling",
+      "Client must support SSE/WS"
+    ],
+    "similarQuestions": [],
+    "diagram": null,
+    "code": {
+      "language": "csharp",
+      "snippet": "await foreach (var u in chat.CompleteChatStreamingAsync(messages))\n    await Response.WriteAsync($\"data: {u.ContentUpdate[0].Text}\\n\\n\");"
+    }
+  },
+  "gen-ai-28": {
+    "pitch": "Optimize cost by trimming context, capping output, caching and tiering.",
+    "definition": "You optimize prompt cost and token usage by sending only what's needed: retrieve just the most relevant RAG context (not whole docs), keep system prompts concise, summarize/trim conversation history, cap max output tokens, cache repeated answers and embeddings, batch requests, and route simple queries to smaller/cheaper models (model tiering). Monitoring tokens per request shows where to optimize, and prompt compression helps for large recurring context.",
+    "how": "Minimal relevant context + concise prompts + output cap + caching + cheaper models for easy tasks.",
+    "when": "Controlling GenAI API spend.",
+    "whenNot": "Low-volume apps where cost is trivial.",
+    "advantages": [
+      "Less context = less cost",
+      "Caching avoids re-calls",
+      "Model tiering saves money"
+    ],
+    "disadvantages": [
+      "Over-trimming hurts quality",
+      "Cache staleness",
+      "Tuning effort"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-29": {
+    "pitch": "Protect keys with a vault and user data with authz, redaction and audit.",
+    "definition": "You secure API keys and user data in an AI application by storing keys in a secret store (Key Vault) accessed via Managed Identity (never in code/config), enforcing authentication and least-privilege authorization so users only reach permitted data/RAG content, redacting or minimizing PII before sending to the model, using no-training enterprise endpoints with private networking, encrypting data in transit and at rest, and logging/auditing prompts and access. Treat prompts and outputs as a sensitive data path.",
+    "how": "Vault keys + Managed Identity + authz + PII redaction + no-training endpoints + encryption + audit.",
+    "when": "Any AI app handling real keys/user data.",
+    "whenNot": "Public, non-sensitive demos.",
+    "advantages": [
+      "Keys never in code",
+      "Least-privilege + redaction",
+      "Encrypted + audited"
+    ],
+    "disadvantages": [
+      "Setup/maintenance",
+      "Redaction can miss data",
+      "Compliance overhead"
+    ],
+    "similarQuestions": [],
+    "diagram": null
+  },
+  "gen-ai-30": {
+    "pitch": "GenAI flow: query -> embed -> retrieve -> prompt -> LLM -> response.",
+    "definition": "The complete architecture of a GenAI (RAG) application: the user query enters the ASP.NET Core API, which embeds it and queries a vector database to retrieve the most relevant, permitted document chunks; it composes an augmented prompt (system instructions + retrieved context + conversation history) and sends it to the LLM (Azure OpenAI), which performs inference and streams a grounded, cited response back to the user. Separately, an ingestion pipeline chunks and embeds documents into the vector DB, and the whole system is secured, monitored and evaluated.",
+    "how": "Query -> embed -> vector DB retrieve -> augmented prompt -> LLM inference -> stream cited response; docs ingested offline.",
+    "when": "Understanding a full GenAI app path.",
+    "whenNot": "A single stateless prompt with no knowledge base.",
+    "advantages": [
+      "Grounded end-to-end flow",
+      "Cited, current answers",
+      "Secured + monitored"
+    ],
+    "disadvantages": [
+      "Multiple components",
+      "Retrieval + prompt tuning",
+      "Cost + safety to manage"
+    ],
+    "similarQuestions": [],
+    "diagram": {
+      "title": "GenAI architecture",
+      "mermaid": "flowchart LR\n  U[Query] --> E[Embed]\n  E --> V[(Vector DB)]\n  V --> P[Augmented Prompt]\n  P --> L[LLM]\n  L --> R[Cited Response]"
+    }
+  }
+}
